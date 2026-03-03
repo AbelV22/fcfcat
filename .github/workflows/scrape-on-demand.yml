@@ -12,6 +12,9 @@ name: ⚽ Scrape FCF - On Demand
 #     -d '{"event_type":"scrape-team","client_payload":{"team":"Fundacio Academia","rival":"AE Prat","full":"false"}}'
 # ────────────────────────────────────────────────────────────────────────────
 
+permissions:
+  contents: write
+
 on:
   workflow_dispatch:
     inputs:

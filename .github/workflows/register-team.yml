@@ -58,6 +58,10 @@ on:
   repository_dispatch:
     types: [register-team]
 
+permissions:
+  contents: write
+  actions: write
+
 jobs:
   register:
     name: Register Team & Trigger Initial Scrape
