@@ -4,6 +4,7 @@ FCF Scraper - Main Orchestrator
 Usage:
     python -m scraper.main --team "Fundació Acadèmia" --rival "AE Prat"
     python -m scraper.main --team "Fundació Acadèmia" --full
+    python -m scraper.main --team "Fundació Acadèmia" --season 2526 --competition segona-catalana --group grup-3
     python -m scraper.main --team "Fundació Acadèmia" --no-cache
 
 This orchestrates all scrapers, runs cross-validation, builds team
@@ -38,21 +39,27 @@ logger = logging.getLogger("fcf_scraper")
 
 # ─── URL Configuration ────────────────────────────────
 BASE = "https://www.fcf.cat"
-SEASON = "2526"
 SPORT = "futbol-11"
-COMPETITION = "segona-catalana"
-GROUP = "grup-3"
 
-URLS = {
-    "standings": f"{BASE}/classificacio/{SEASON}/{SPORT}/{COMPETITION}/{GROUP}",
-    "calendar": f"{BASE}/calendari/{SEASON}/{SPORT}/{COMPETITION}/{GROUP}",
-    "results": f"{BASE}/resultats/{SEASON}/{SPORT}/{COMPETITION}/{GROUP}",
-    "scorers": f"{BASE}/golejadors/{SEASON}/{SPORT}/{COMPETITION}/{GROUP}",
-    "sanctions": f"{BASE}/sancions/{SEASON}/{SPORT}/{COMPETITION}/{GROUP}",
-    "fair_play": f"{BASE}/jocnet/{SEASON}/{SPORT}/{COMPETITION}/{GROUP}",
-}
+# Defaults (used when not provided via CLI)
+DEFAULT_SEASON = "2526"
+DEFAULT_COMPETITION = "segona-catalana"
+DEFAULT_GROUP = "grup-3"
 
 OUTPUT_DIR = Path(__file__).parent.parent / "data"
+
+
+def build_urls(season: str, competition: str, group: str) -> dict:
+    """Build all FCF URLs for a given season/competition/group."""
+    base = f"{BASE}"
+    return {
+        "standings": f"{base}/classificacio/{season}/{SPORT}/{competition}/{group}",
+        "calendar":  f"{base}/calendari/{season}/{SPORT}/{competition}/{group}",
+        "results":   f"{base}/resultats/{season}/{SPORT}/{competition}/{group}",
+        "scorers":   f"{base}/golejadors/{season}/{SPORT}/{competition}/{group}",
+        "sanctions": f"{base}/sancions/{season}/{SPORT}/{competition}/{group}",
+        "fair_play": f"{base}/jocnet/{season}/{SPORT}/{competition}/{group}",
+    }
 
 
 def setup_logging(verbose: bool = False):
@@ -79,6 +86,10 @@ def run_scraper(
     use_cache: bool = True,
     max_actas: int = 0,
     verbose: bool = False,
+    season: str = DEFAULT_SEASON,
+    competition: str = DEFAULT_COMPETITION,
+    group: str = DEFAULT_GROUP,
+    output_file: str | None = None,
 ) -> dict:
     """
     Main scraping orchestration.
@@ -86,6 +97,8 @@ def run_scraper(
     """
     setup_logging(verbose)
     start_time = time.time()
+
+    URLS = build_urls(season, competition, group)
 
     client = FCFClient(
         rate_limit_seconds=1.5,
@@ -100,8 +113,8 @@ def run_scraper(
     print(f"║  Team:    {team:<39}║")
     if rival:
         print(f"║  Rival:   {rival:<39}║")
-    print(f"║  Season:  {SEASON:<39}║")
-    print(f"║  Group:   {COMPETITION} / {GROUP:<23}║")
+    print(f"║  Season:  {season:<39}║")
+    print(f"║  Group:   {competition} / {group:<23}║")
     print("╚══════════════════════════════════════════════════╝\n")
 
     all_data = {}
@@ -232,16 +245,30 @@ def run_scraper(
         all_data["rival_insights"] = rival_insights
         print(f"   ✓ {rival}: {len(rival_intel.players)} players, {len(rival_intel.results)} matches analyzed")
 
+    # Store metadata
+    all_data["meta"] = {
+        "team": team,
+        "rival": rival,
+        "season": season,
+        "competition": competition,
+        "group": group,
+        "scraped_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    }
+
     # ── Export Data ──
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    output_file = OUTPUT_DIR / "fcf_data.json"
-    with open(output_file, "w", encoding="utf-8") as f:
+    if output_file:
+        out_path = Path(output_file)
+    else:
+        out_path = OUTPUT_DIR / "fcf_data.json"
+
+    with open(out_path, "w", encoding="utf-8") as f:
         json.dump(all_data, f, cls=DataEncoder, ensure_ascii=False, indent=2)
 
     elapsed = time.time() - start_time
 
     print(f"\n{'=' * 50}")
-    print(f"  Data exported to: {output_file}")
+    print(f"  Data exported to: {out_path}")
     print(f"  Total time: {elapsed:.1f}s")
     print(f"  HTTP requests: {client.stats['requests_made']}")
     print(f"  Cache hits: {client.stats['cache_hits']}")
@@ -282,6 +309,7 @@ def main():
 Examples:
   python -m scraper.main --team "Fundació Acadèmia" --rival "AE Prat"
   python -m scraper.main --team "Fundació Acadèmia" --full
+  python -m scraper.main --team "Fundació Acadèmia" --season 2526 --competition segona-catalana --group grup-3
   python -m scraper.main --team "Fundació Acadèmia" --no-cache --verbose
         """,
     )
@@ -313,6 +341,22 @@ Examples:
         "--clear-cache", action="store_true",
         help="Clear HTTP cache and exit",
     )
+    parser.add_argument(
+        "--season", default=DEFAULT_SEASON,
+        help=f"Season code (default: {DEFAULT_SEASON}, e.g. 2526 for 2025-2026)",
+    )
+    parser.add_argument(
+        "--competition", default=DEFAULT_COMPETITION,
+        help=f"Competition slug (default: {DEFAULT_COMPETITION})",
+    )
+    parser.add_argument(
+        "--group", default=DEFAULT_GROUP,
+        help=f"Group slug (default: {DEFAULT_GROUP}, e.g. grup-3)",
+    )
+    parser.add_argument(
+        "--output", default=None,
+        help="Output JSON file path (default: data/fcf_data.json)",
+    )
 
     args = parser.parse_args()
 
@@ -329,6 +373,10 @@ Examples:
         use_cache=not args.no_cache,
         max_actas=args.max_actas,
         verbose=args.verbose,
+        season=args.season,
+        competition=args.competition,
+        group=args.group,
+        output_file=args.output,
     )
 
 

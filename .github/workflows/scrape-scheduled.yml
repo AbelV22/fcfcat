@@ -72,41 +72,24 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Configure competition URLs
-        run: |
-          python -c "
-          import re, pathlib, json
-
-          team = json.loads('${{ toJSON(matrix.team) }}')
-          season = team.get('season', '2526')
-          competition = team.get('competition', 'segona-catalana')
-          group = team.get('group', 'grup-3')
-
-          main_path = pathlib.Path('scraper/main.py')
-          content = main_path.read_text(encoding='utf-8')
-          content = re.sub(r'SEASON = \"[^\"]+\"', f'SEASON = \"{season}\"', content)
-          content = re.sub(r'COMPETITION = \"[^\"]+\"', f'COMPETITION = \"{competition}\"', content)
-          content = re.sub(r'GROUP = \"[^\"]+\"', f'GROUP = \"{group}\"', content)
-          main_path.write_text(content, encoding='utf-8')
-
-          print(f'Config: season={season}, competition={competition}, group={group}')
-          "
-
       - name: Run scraper for team
         env:
           PYTHONIOENCODING: utf-8
         run: |
           TEAM='${{ matrix.team.team_keyword }}'
+          SEASON='${{ matrix.team.season }}'
+          COMPETITION='${{ matrix.team.competition }}'
+          GROUP='${{ matrix.team.group }}'
           FULL='${{ inputs.force_full || 'false' }}'
 
-          # Saturdays/Sundays: run full scrape (after weekend matches)
+          # Mondays: run full scrape (after weekend matches)
           DOW=$(date +%u)
           if [ "$DOW" = "1" ]; then
             echo "Monday → full scrape (weekend games processed)"
             FULL="true"
           fi
 
-          CMD="python -m scraper.main --team \"$TEAM\""
+          CMD="python -m scraper.main --team \"$TEAM\" --season \"$SEASON\" --competition \"$COMPETITION\" --group \"$GROUP\""
           if [ "$FULL" = "true" ]; then
             CMD="$CMD --full"
           fi
@@ -114,7 +97,7 @@ jobs:
           echo "Running: $CMD"
           eval $CMD
 
-      - name: Validate & save output
+      - name: Validate & check output
         run: |
           python -c "
           import json, sys
@@ -131,18 +114,25 @@ jobs:
               sys.exit(1)
           "
 
-      - name: Save team-specific data file
+      - name: Generate HTML report
+        env:
+          PYTHONIOENCODING: utf-8
         run: |
           TEAM_ID='${{ matrix.team.id }}'
-          mkdir -p data/teams
+          mkdir -p data/teams reports
           cp data/fcf_data.json "data/teams/${TEAM_ID}.json"
-          echo "Saved to data/teams/${TEAM_ID}.json"
+          python -m scraper.report \
+            --input "data/teams/${TEAM_ID}.json" \
+            --output "reports/${TEAM_ID}.html"
+          echo "Saved data/teams/${TEAM_ID}.json and reports/${TEAM_ID}.html"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: fcf-${{ matrix.team.id }}-${{ github.run_number }}
-          path: data/teams/${{ matrix.team.id }}.json
+          path: |
+            data/teams/${{ matrix.team.id }}.json
+            reports/${{ matrix.team.id }}.html
           retention-days: 7
 
   commit-results:
@@ -161,18 +151,21 @@ jobs:
         with:
           path: artifacts/
 
-      - name: Merge artifacts into data/teams/
+      - name: Merge artifacts into data/teams/ and reports/
         run: |
-          mkdir -p data/teams
+          mkdir -p data/teams reports
           find artifacts/ -name "*.json" -exec cp {} data/teams/ \;
+          find artifacts/ -name "*.html" -exec cp {} reports/ \;
           echo "Files in data/teams/:"
           ls -la data/teams/
+          echo "Files in reports/:"
+          ls -la reports/
 
       - name: Commit & push
         run: |
           git config user.name  "FCF Bot"
           git config user.email "bot@fcfcat.github.io"
-          git add data/teams/
+          git add data/teams/ reports/
           git diff --staged --quiet && echo "No changes" || \
             git commit -m "data: daily update $(date -u '+%Y-%m-%d') — all teams" && \
             git push origin HEAD

@@ -52,3 +52,12 @@ logs/
 
 # Data (keep structure, ignore large caches)
 data/*.json.bak
+data/fcf_data.json
+
+# Generated reports
+reports/
+
+# Pytest / test artifacts
+.pytest_cache/
+.coverage
+htmlcov/

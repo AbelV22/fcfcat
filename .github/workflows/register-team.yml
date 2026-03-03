@@ -3,9 +3,10 @@ name: 🆕 Register New Team
 # ────────────────────────────────────────────────────────────────────────────
 # A user registers their team to receive automatic scraping.
 # This workflow:
-#  1. Adds the team to data/teams_registry.json
-#  2. Immediately triggers the on-demand scraper for the new team
-#  3. Commits the updated registry
+#  1. (Optional) Auto-discovers the team's competition/group using discover.py
+#  2. Adds the team to data/teams_registry.json
+#  3. Immediately triggers the on-demand scraper for the new team
+#  4. Commits the updated registry
 #
 # Trigger via GitHub UI (Actions tab) or API:
 #   curl -X POST https://api.github.com/repos/AbelV22/fcfcat/dispatches \
@@ -16,7 +17,6 @@ name: 🆕 Register New Team
 #       "client_payload": {
 #         "team": "Racing Vallbona",
 #         "team_keyword": "Racing Vallbona",
-#         "rival": "Sporting Gava",
 #         "season": "2526",
 #         "competition": "segona-catalana",
 #         "group": "grup-3",
@@ -34,22 +34,18 @@ on:
       team_keyword:
         description: 'Palabra clave para buscar el equipo (nombre corto, sin tildes)'
         required: true
-      rival:
-        description: 'Rival para scouting (opcional)'
-        required: false
-        default: ''
       season:
         description: 'Temporada (ej: 2526)'
         required: false
         default: '2526'
       competition:
-        description: 'Competición'
+        description: 'Competición (dejar vacío para auto-detectar)'
         required: false
-        default: 'segona-catalana'
+        default: ''
       group:
-        description: 'Grupo'
+        description: 'Grupo (dejar vacío para auto-detectar)'
         required: false
-        default: 'grup-3'
+        default: ''
       notify_email:
         description: 'Email de notificación (opcional)'
         required: false
@@ -66,7 +62,7 @@ jobs:
   register:
     name: Register Team & Trigger Initial Scrape
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
@@ -77,45 +73,87 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
       - name: Resolve parameters
         id: params
         run: |
           TEAM="${{ github.event.client_payload.team || inputs.team }}"
           KEYWORD="${{ github.event.client_payload.team_keyword || inputs.team_keyword }}"
-          RIVAL="${{ github.event.client_payload.rival || inputs.rival || '' }}"
           SEASON="${{ github.event.client_payload.season || inputs.season || '2526' }}"
-          COMPETITION="${{ github.event.client_payload.competition || inputs.competition || 'segona-catalana' }}"
-          GROUP="${{ github.event.client_payload.group || inputs.group || 'grup-3' }}"
+          COMPETITION="${{ github.event.client_payload.competition || inputs.competition || '' }}"
+          GROUP="${{ github.event.client_payload.group || inputs.group || '' }}"
           EMAIL="${{ github.event.client_payload.notify_email || inputs.notify_email || '' }}"
 
           echo "team=$TEAM" >> $GITHUB_OUTPUT
           echo "keyword=$KEYWORD" >> $GITHUB_OUTPUT
-          echo "rival=$RIVAL" >> $GITHUB_OUTPUT
           echo "season=$SEASON" >> $GITHUB_OUTPUT
           echo "competition=$COMPETITION" >> $GITHUB_OUTPUT
           echo "group=$GROUP" >> $GITHUB_OUTPUT
           echo "email=$EMAIL" >> $GITHUB_OUTPUT
 
+      - name: Auto-discover competition (if not provided)
+        id: discover
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          COMPETITION="${{ steps.params.outputs.competition }}"
+          GROUP="${{ steps.params.outputs.group }}"
+
+          if [ -z "$COMPETITION" ] || [ -z "$GROUP" ]; then
+            echo "Competition/group not provided — running auto-discovery..."
+            RESULT=$(python -m scraper.discover \
+              --team "${{ steps.params.outputs.keyword }}" \
+              --season "${{ steps.params.outputs.season }}" \
+              --json 2>/dev/null || echo '{"found":false}')
+
+            echo "Discovery result: $RESULT"
+
+            FOUND=$(python -c "import json,sys; d=json.loads(sys.argv[1]); print('true' if d.get('team_name') else 'false')" "$RESULT" 2>/dev/null || echo "false")
+
+            if [ "$FOUND" = "true" ]; then
+              COMPETITION=$(python -c "import json,sys; print(json.loads(sys.argv[1]).get('competition',''))" "$RESULT")
+              GROUP=$(python -c "import json,sys; print(json.loads(sys.argv[1]).get('group',''))" "$RESULT")
+              OFFICIAL_NAME=$(python -c "import json,sys; print(json.loads(sys.argv[1]).get('team_name',''))" "$RESULT")
+              echo "✅ Auto-discovered: $COMPETITION / $GROUP (official: $OFFICIAL_NAME)"
+            else
+              echo "⚠️  Could not auto-discover. Using defaults."
+              COMPETITION="segona-catalana"
+              GROUP="grup-3"
+              OFFICIAL_NAME="${{ steps.params.outputs.team }}"
+            fi
+          else
+            OFFICIAL_NAME="${{ steps.params.outputs.team }}"
+            echo "Using provided competition: $COMPETITION / $GROUP"
+          fi
+
+          echo "competition=$COMPETITION" >> $GITHUB_OUTPUT
+          echo "group=$GROUP" >> $GITHUB_OUTPUT
+          echo "official_name=$OFFICIAL_NAME" >> $GITHUB_OUTPUT
+
       - name: Add team to registry
         id: registry
         run: |
           python -c "
-          import json, re
+          import json, re, os
           from datetime import datetime, timezone
           from pathlib import Path
 
           registry_path = Path('data/teams_registry.json')
           registry = json.loads(registry_path.read_text(encoding='utf-8'))
 
-          team_name = '''${{ steps.params.outputs.team }}'''
+          team_name = '''${{ steps.discover.outputs.official_name || steps.params.outputs.team }}'''
           keyword   = '''${{ steps.params.outputs.keyword }}'''
           season    = '${{ steps.params.outputs.season }}'
-          comp      = '${{ steps.params.outputs.competition }}'
-          group     = '${{ steps.params.outputs.group }}'
+          comp      = '${{ steps.discover.outputs.competition }}'
+          group     = '${{ steps.discover.outputs.group }}'
           email     = '''${{ steps.params.outputs.email }}'''
 
           # Generate slug ID
-          slug = re.sub(r'[^a-z0-9]+', '-', keyword.lower()).strip('-')
+          import unicodedata
+          norm = ''.join(c for c in unicodedata.normalize('NFD', keyword.lower()) if unicodedata.category(c) != 'Mn')
+          slug = re.sub(r'[^a-z0-9]+', '-', norm).strip('-')
 
           # Check if already registered
           existing = next((t for t in registry['teams'] if t['id'] == slug), None)
@@ -143,18 +181,11 @@ jobs:
           print(f'Total teams: {len(registry[\"teams\"])}')
           with open(os.environ.get('GITHUB_OUTPUT', '/dev/null'), 'a') as f:
               f.write(f'slug={slug}\n')
-          " 2>&1 || true
-
-          SLUG=$(python -c "
-          import re
-          kw = '''${{ steps.params.outputs.keyword }}'''
-          print(re.sub(r'[^a-z0-9]+', '-', kw.lower()).strip('-'))
-          ")
-          echo "slug=$SLUG" >> $GITHUB_OUTPUT
+          "
 
       - name: Create team data directory
         run: |
-          mkdir -p data/teams
+          mkdir -p data/teams reports
           echo "{}" > "data/teams/${{ steps.registry.outputs.slug }}.json"
 
       - name: Commit registry update
@@ -163,7 +194,7 @@ jobs:
           git config user.email "bot@fcfcat.github.io"
           git add data/teams_registry.json data/teams/
           git diff --staged --quiet && echo "No changes" || \
-            git commit -m "register: add team '${{ steps.params.outputs.keyword }}' — ${{ steps.params.outputs.competition }}/${{ steps.params.outputs.group }}" && \
+            git commit -m "register: add team '${{ steps.params.outputs.keyword }}' — ${{ steps.discover.outputs.competition }}/${{ steps.discover.outputs.group }}" && \
             git push origin HEAD
 
       - name: Trigger initial scrape for new team
@@ -174,10 +205,9 @@ jobs:
             'event_type': 'scrape-team',
             'client_payload': {
               'team': '''${{ steps.params.outputs.keyword }}''',
-              'rival': '''${{ steps.params.outputs.rival }}''',
               'season': '${{ steps.params.outputs.season }}',
-              'competition': '${{ steps.params.outputs.competition }}',
-              'group': '${{ steps.params.outputs.group }}',
+              'competition': '${{ steps.discover.outputs.competition }}',
+              'group': '${{ steps.discover.outputs.group }}',
               'full': 'false',
             }
           }
@@ -199,11 +229,10 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Campo | Valor |" >> $GITHUB_STEP_SUMMARY
           echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Team | ${{ steps.params.outputs.team }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Team | ${{ steps.discover.outputs.official_name || steps.params.outputs.team }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Keyword | ${{ steps.params.outputs.keyword }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Season | ${{ steps.params.outputs.season }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Competition | ${{ steps.params.outputs.competition }} / ${{ steps.params.outputs.group }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Rival (scouting) | ${{ steps.params.outputs.rival }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Competition | ${{ steps.discover.outputs.competition }} / ${{ steps.discover.outputs.group }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "✅ El scraper inicial se ha lanzado automáticamente." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY

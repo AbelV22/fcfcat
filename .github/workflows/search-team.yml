@@ -1,0 +1,166 @@
+name: 🔍 Search Team — Find Competition & Group
+
+# ────────────────────────────────────────────────────────────────────────────
+# Given a team keyword, searches ALL FCF Futbol 11 competitions to find
+# which league and group the team belongs to.
+#
+# Use this BEFORE registering a team if you don't know their competition.
+#
+# Trigger via GitHub UI (Actions tab → "Search Team") or API:
+#   curl -X POST https://api.github.com/repos/AbelV22/fcfcat/dispatches \
+#     -H "Authorization: Bearer $GITHUB_TOKEN" \
+#     -H "Accept: application/vnd.github+json" \
+#     -d '{"event_type":"search-team","client_payload":{"team":"Racing Vallbona","season":"2526"}}'
+# ────────────────────────────────────────────────────────────────────────────
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+    inputs:
+      team:
+        description: 'Nombre del equipo (o parte del nombre, sin tildes)'
+        required: true
+      season:
+        description: 'Temporada (ej: 2526)'
+        required: false
+        default: '2526'
+      quick:
+        description: 'Búsqueda rápida (solo top 8 categorías)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+  repository_dispatch:
+    types: [search-team]
+
+jobs:
+  search:
+    name: Search Team in FCF
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Resolve parameters
+        id: params
+        run: |
+          TEAM="${{ github.event.client_payload.team || inputs.team }}"
+          SEASON="${{ github.event.client_payload.season || inputs.season || '2526' }}"
+          QUICK="${{ github.event.client_payload.quick || inputs.quick || 'false' }}"
+          echo "team=$TEAM" >> $GITHUB_OUTPUT
+          echo "season=$SEASON" >> $GITHUB_OUTPUT
+          echo "quick=$QUICK" >> $GITHUB_OUTPUT
+
+      - name: Search team across all competitions
+        id: search
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          TEAM="${{ steps.params.outputs.team }}"
+          SEASON="${{ steps.params.outputs.season }}"
+          QUICK="${{ steps.params.outputs.quick }}"
+
+          QUICK_FLAG=""
+          if [ "$QUICK" = "true" ]; then
+            QUICK_FLAG="--quick"
+          fi
+
+          echo "🔍 Searching for: $TEAM (season $SEASON)"
+          echo ""
+
+          RESULT=$(python -m scraper.discover \
+            --team "$TEAM" \
+            --season "$SEASON" \
+            $QUICK_FLAG \
+            --verbose \
+            --json 2>&1)
+
+          echo "Raw result: $RESULT"
+
+          # Extract the last JSON line (verbose output goes to stdout)
+          JSON_RESULT=$(echo "$RESULT" | python -c "
+          import sys, json
+          lines = sys.stdin.read().strip().split('\n')
+          for line in reversed(lines):
+              try:
+                  d = json.loads(line)
+                  print(json.dumps(d))
+                  break
+              except:
+                  continue
+          " 2>/dev/null || echo '{"found":false}')
+
+          echo "json_result=$JSON_RESULT" >> $GITHUB_OUTPUT
+
+          FOUND=$(python -c "import json,sys; d=json.loads(sys.argv[1]); print('true' if d.get('team_name') else 'false')" "$JSON_RESULT" 2>/dev/null || echo "false")
+          echo "found=$FOUND" >> $GITHUB_OUTPUT
+
+          if [ "$FOUND" = "true" ]; then
+            COMP=$(python -c "import json,sys; print(json.loads(sys.argv[1]).get('competition',''))" "$JSON_RESULT")
+            GROUP=$(python -c "import json,sys; print(json.loads(sys.argv[1]).get('group',''))" "$JSON_RESULT")
+            NAME=$(python -c "import json,sys; print(json.loads(sys.argv[1]).get('team_name',''))" "$JSON_RESULT")
+            TIER=$(python -c "import json,sys; print(json.loads(sys.argv[1]).get('tier',''))" "$JSON_RESULT")
+            COMP_NAME=$(python -c "import json,sys; print(json.loads(sys.argv[1]).get('competition_name',''))" "$JSON_RESULT")
+            echo "competition=$COMP" >> $GITHUB_OUTPUT
+            echo "group=$GROUP" >> $GITHUB_OUTPUT
+            echo "official_name=$NAME" >> $GITHUB_OUTPUT
+            echo "tier=$TIER" >> $GITHUB_OUTPUT
+            echo "competition_name=$COMP_NAME" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Summary — Found
+        if: steps.search.outputs.found == 'true'
+        run: |
+          echo "## ✅ Equipo Encontrado!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Campo | Valor |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Nombre oficial | ${{ steps.search.outputs.official_name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Competición | ${{ steps.search.outputs.competition_name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Slug competición | \`${{ steps.search.outputs.competition }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Grupo | \`${{ steps.search.outputs.group }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Temporada | ${{ steps.params.outputs.season }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Nivel | ${{ steps.search.outputs.tier }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ⏭️ Siguiente paso — Registra el equipo" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Ve a **Actions → 🆕 Register New Team** y usa estos valores:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **team**: \`${{ steps.search.outputs.official_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **team_keyword**: \`${{ steps.params.outputs.team }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **season**: \`${{ steps.params.outputs.season }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **competition**: \`${{ steps.search.outputs.competition }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **group**: \`${{ steps.search.outputs.group }}\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Summary — Not Found
+        if: steps.search.outputs.found != 'true'
+        run: |
+          echo "## ❌ Equipo No Encontrado" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "No se encontró **${{ steps.params.outputs.team }}** en ninguna competición de Futbol 11 para la temporada ${{ steps.params.outputs.season }}." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 💡 Sugerencias" >> $GITHUB_STEP_SUMMARY
+          echo "- Prueba con un nombre más corto (ej: 'Academia' en vez de 'Fundació Acadèmia')" >> $GITHUB_STEP_SUMMARY
+          echo "- Verifica la temporada correcta" >> $GITHUB_STEP_SUMMARY
+          echo "- Si la búsqueda fue rápida, prueba sin el flag \`quick\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Busca el equipo manualmente en [fcf.cat](https://www.fcf.cat)" >> $GITHUB_STEP_SUMMARY
+
+      - name: Fail if not found
+        if: steps.search.outputs.found != 'true'
+        run: |
+          echo "Team '${{ steps.params.outputs.team }}' not found in season ${{ steps.params.outputs.season }}"
+          exit 1

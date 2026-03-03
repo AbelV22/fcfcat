@@ -9,7 +9,7 @@ name: ⚽ Scrape FCF - On Demand
 #   curl -X POST https://api.github.com/repos/AbelV22/fcfcat/dispatches \
 #     -H "Authorization: Bearer $GITHUB_TOKEN" \
 #     -H "Accept: application/vnd.github+json" \
-#     -d '{"event_type":"scrape-team","client_payload":{"team":"Fundacio Academia","rival":"AE Prat","full":"false"}}'
+#     -d '{"event_type":"scrape-team","client_payload":{"team":"Fundacio Academia","rival":"AE Prat","full":"false","season":"2526","competition":"segona-catalana","group":"grup-3"}}'
 # ────────────────────────────────────────────────────────────────────────────
 
 permissions:
@@ -98,26 +98,6 @@ jobs:
           echo "| Season | $SEASON |" >> $GITHUB_STEP_SUMMARY
           echo "| Competition | $COMPETITION / $GROUP |" >> $GITHUB_STEP_SUMMARY
 
-      - name: Update scraper config for this run
-        run: |
-          python -c "
-          import re, pathlib
-
-          main_path = pathlib.Path('scraper/main.py')
-          content = main_path.read_text(encoding='utf-8')
-
-          season = '${{ steps.params.outputs.season }}'
-          competition = '${{ steps.params.outputs.competition }}'
-          group = '${{ steps.params.outputs.group }}'
-
-          content = re.sub(r'SEASON = \"[^\"]+\"', f'SEASON = \"{season}\"', content)
-          content = re.sub(r'COMPETITION = \"[^\"]+\"', f'COMPETITION = \"{competition}\"', content)
-          content = re.sub(r'GROUP = \"[^\"]+\"', f'GROUP = \"{group}\"', content)
-
-          main_path.write_text(content, encoding='utf-8')
-          print(f'Config updated: season={season}, competition={competition}, group={group}')
-          "
-
       - name: Run FCF Scraper
         id: scraper
         env:
@@ -126,8 +106,11 @@ jobs:
           TEAM="${{ steps.params.outputs.team }}"
           RIVAL="${{ steps.params.outputs.rival }}"
           FULL="${{ steps.params.outputs.full }}"
+          SEASON="${{ steps.params.outputs.season }}"
+          COMPETITION="${{ steps.params.outputs.competition }}"
+          GROUP="${{ steps.params.outputs.group }}"
 
-          CMD="python -m scraper.main --team \"$TEAM\""
+          CMD="python -m scraper.main --team \"$TEAM\" --season \"$SEASON\" --competition \"$COMPETITION\" --group \"$GROUP\""
 
           if [ -n "$RIVAL" ]; then
             CMD="$CMD --rival \"$RIVAL\""
@@ -159,6 +142,7 @@ jobs:
           standings = data.get('standings', [])
           actas = data.get('actas', [])
           team_intel = data.get('team_intelligence', {})
+          rival_intel = data.get('rival_intelligence', {})
 
           print('=== DATA QUALITY REPORT ===')
           print(f'Standings:       {len(standings)} teams')
@@ -167,6 +151,7 @@ jobs:
           print(f'Scorers:         {len(data.get(\"scorers_from_actas\", []))}')
           print(f'Sanctions:       {len(data.get(\"sanctions\", []))}')
           print(f'Team players:    {len(team_intel.get(\"players\", {}))}')
+          print(f'Rival players:   {len(rival_intel.get(\"players\", {}))}')
           print(f'Validation acc:  {validation.get(\"accuracy_pct\", 0):.1f}%')
           print(f'Errors:          {len(validation.get(\"errors\", []))}')
 
@@ -177,6 +162,24 @@ jobs:
               sys.exit(1)
           print('Validation: PASS')
           "
+
+      - name: Generate HTML report
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          TEAM="${{ steps.params.outputs.team }}"
+          SLUG=$(python -c "
+          import re, unicodedata
+          t = '''${{ steps.params.outputs.team }}'''
+          n = ''.join(c for c in unicodedata.normalize('NFD', t.lower()) if unicodedata.category(c) != 'Mn')
+          print(re.sub(r'[^a-z0-9]+', '-', n).strip('-'))
+          ")
+          mkdir -p reports
+          python -m scraper.report \
+            --input data/fcf_data.json \
+            --output "reports/${SLUG}.html"
+          echo "report_slug=$SLUG" >> $GITHUB_OUTPUT
+        id: report
 
       - name: Generate job summary
         if: always()
@@ -233,13 +236,13 @@ jobs:
                   lines.append(f'- **{i[\"label\"]}**: {i[\"detail\"]}')
 
           print('\n'.join(lines))
-          " >> \$GITHUB_STEP_SUMMARY
+          " >> $GITHUB_STEP_SUMMARY
 
       - name: Commit & push updated data
         run: |
           git config user.name  "FCF Bot"
           git config user.email "bot@fcfcat.github.io"
-          git add data/fcf_data.json
+          git add data/fcf_data.json reports/ || true
           git diff --staged --quiet && echo "No changes to commit" || \
             git commit -m "data: scrape $(date -u '+%Y-%m-%d %H:%M UTC') — ${{ steps.params.outputs.team }}" && \
             git push origin HEAD
@@ -248,5 +251,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: fcf-data-${{ github.run_number }}
-          path: data/fcf_data.json
+          path: |
+            data/fcf_data.json
+            reports/
           retention-days: 30
