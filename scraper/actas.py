@@ -320,7 +320,17 @@ def _parse_cards(rows: list[Tag], table: Tag) -> list[CardEvent]:
 
 
 def _parse_substitutions(rows: list[Tag]) -> list[SubstitutionEvent]:
-    """Parse substitutions from the Substitucions table."""
+    """
+    Parse substitutions from the Substitucions table.
+    
+    FCF HTML structure uses row pairs:
+      Row 0 (OUT): minute (rowspan=2, class='fs-30') | jersey# | OUT_PLAYER | icon
+      Row 1 (IN):                                      jersey# | IN_PLAYER  | icon
+      Row 2 (OUT): minute (rowspan=2)                 | jersey# | OUT_PLAYER | icon
+      Row 3 (IN):                                      jersey# | IN_PLAYER  | icon
+    
+    The minute cell spans 2 rows, so even rows have 4 cols, odd rows have 3 cols.
+    """
     subs = []
     i = 0
     while i < len(rows):
@@ -330,53 +340,43 @@ def _parse_substitutions(rows: list[Tag]) -> list[SubstitutionEvent]:
             i += 1
             continue
 
-        # Structure: minute | number_out | name_out | (icon)
-        # Next row:          number_in  | name_in  | (icon)
-        text_parts = [c.get_text(strip=True) for c in cols]
-
+        # Detect if this row has a minute cell (the OUT player row)
+        # The minute cell has class 'fs-30' and rowspan="2"
         minute = ""
-        player_out = ""
-        player_in = ""
-
-        # Find minute in this row
-        for part in text_parts:
-            m = re.match(r"^(\d+)['\u2032]?$", part)
-            if m:
-                minute = m.group(1)
+        has_minute_cell = False
+        for col in cols:
+            cls = col.get("class", [])
+            rowspan = col.get("rowspan", "")
+            if "fs-30" in cls or rowspan == "2":
+                minute_text = col.get_text(strip=True)
+                # Remove apostrophe: "46'" -> "46"
+                minute = re.sub(r"['\u2032]", "", minute_text).strip()
+                has_minute_cell = True
                 break
 
-        # Find player out name (link in this row)
-        link = row.find("a")
-        if link:
-            player_out = link.get_text(strip=True)
+        if not has_minute_cell:
+            # This might be a standalone IN row (if we got out of sync)
+            i += 1
+            continue
 
-        # Next row has the player in
+        # Extract player OUT name from this row
+        player_out = ""
+        link_out = row.find("a")
+        if link_out:
+            player_out = link_out.get_text(strip=True)
+
+        # Next row should be the IN player
+        player_in = ""
         if i + 1 < len(rows):
             next_row = rows[i + 1]
-            next_cols = next_row.find_all("td")
-            next_text = [c.get_text(strip=True) for c in next_cols]
-
-            # Check if next row is a continuation (no minute = it's the "in" player)
-            has_minute = any(re.match(r"^\d+['\u2032]?$", t) for t in next_text)
-
-            if not has_minute:
-                next_link = next_row.find("a")
-                if next_link:
-                    player_in = next_link.get_text(strip=True)
-                i += 2  # Skip both rows
-            else:
-                i += 1  # Next row is a new substitution
+            link_in = next_row.find("a")
+            if link_in:
+                player_in = link_in.get_text(strip=True)
+            i += 2  # Skip both rows
         else:
             i += 1
 
-        if player_out and player_in:
-            subs.append(SubstitutionEvent(
-                player_out=player_out,
-                player_in=player_in,
-                minute=minute,
-            ))
-        elif player_out or player_in:
-            # Partial data - still record it
+        if player_out or player_in:
             subs.append(SubstitutionEvent(
                 player_out=player_out or "?",
                 player_in=player_in or "?",
