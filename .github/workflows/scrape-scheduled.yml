@@ -1,0 +1,186 @@
+name: ⏰ Scrape FCF - Daily Auto Update
+
+# ────────────────────────────────────────────────────────────────────────────
+# Runs automatically every day at 07:00 UTC (9:00 CET / 8:00 CEST)
+# for ALL registered teams in data/teams_registry.json
+# ────────────────────────────────────────────────────────────────────────────
+
+on:
+  schedule:
+    - cron: '0 7 * * *'   # Every day at 07:00 UTC
+  workflow_dispatch:
+    inputs:
+      force_full:
+        description: 'Forzar scrape completo de todas las actas'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+jobs:
+  load-registry:
+    name: Load Teams Registry
+    runs-on: ubuntu-latest
+    outputs:
+      teams: ${{ steps.load.outputs.teams }}
+      count: ${{ steps.load.outputs.count }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Load teams registry
+        id: load
+        run: |
+          TEAMS=$(python -c "
+          import json
+          registry = json.load(open('data/teams_registry.json'))
+          teams = registry.get('teams', [])
+          print(json.dumps(teams))
+          ")
+          COUNT=$(python -c "import json; print(len(json.loads('$TEAMS')))" 2>/dev/null || echo "0")
+          echo "teams=$TEAMS" >> $GITHUB_OUTPUT
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+          echo "Loaded $COUNT registered teams"
+
+  scrape-all-teams:
+    name: Scrape — ${{ matrix.team.team_keyword }}
+    runs-on: ubuntu-latest
+    needs: load-registry
+    timeout-minutes: 45
+    if: needs.load-registry.outputs.count != '0'
+
+    strategy:
+      fail-fast: false
+      matrix:
+        team: ${{ fromJson(needs.load-registry.outputs.teams) }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Configure competition URLs
+        run: |
+          python -c "
+          import re, pathlib, json
+
+          team = json.loads('${{ toJSON(matrix.team) }}')
+          season = team.get('season', '2526')
+          competition = team.get('competition', 'segona-catalana')
+          group = team.get('group', 'grup-3')
+
+          main_path = pathlib.Path('scraper/main.py')
+          content = main_path.read_text(encoding='utf-8')
+          content = re.sub(r'SEASON = \"[^\"]+\"', f'SEASON = \"{season}\"', content)
+          content = re.sub(r'COMPETITION = \"[^\"]+\"', f'COMPETITION = \"{competition}\"', content)
+          content = re.sub(r'GROUP = \"[^\"]+\"', f'GROUP = \"{group}\"', content)
+          main_path.write_text(content, encoding='utf-8')
+
+          print(f'Config: season={season}, competition={competition}, group={group}')
+          "
+
+      - name: Run scraper for team
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          TEAM='${{ matrix.team.team_keyword }}'
+          FULL='${{ inputs.force_full || 'false' }}'
+
+          # Saturdays/Sundays: run full scrape (after weekend matches)
+          DOW=$(date +%u)
+          if [ "$DOW" = "1" ]; then
+            echo "Monday → full scrape (weekend games processed)"
+            FULL="true"
+          fi
+
+          CMD="python -m scraper.main --team \"$TEAM\""
+          if [ "$FULL" = "true" ]; then
+            CMD="$CMD --full"
+          fi
+
+          echo "Running: $CMD"
+          eval $CMD
+
+      - name: Validate & save output
+        run: |
+          python -c "
+          import json, sys
+          from pathlib import Path
+
+          data = json.loads(Path('data/fcf_data.json').read_text(encoding='utf-8'))
+          val = data.get('validation', {})
+          actas = data.get('actas', [])
+
+          print(f'Actas: {len(actas)}, Validation: {val.get(\"accuracy_pct\", 0):.1f}%')
+
+          if len(actas) == 0:
+              print('ERROR: No actas scraped')
+              sys.exit(1)
+          "
+
+      - name: Save team-specific data file
+        run: |
+          TEAM_ID='${{ matrix.team.id }}'
+          mkdir -p data/teams
+          cp data/fcf_data.json "data/teams/${TEAM_ID}.json"
+          echo "Saved to data/teams/${TEAM_ID}.json"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fcf-${{ matrix.team.id }}-${{ github.run_number }}
+          path: data/teams/${{ matrix.team.id }}.json
+          retention-days: 7
+
+  commit-results:
+    name: Commit All Results
+    runs-on: ubuntu-latest
+    needs: scrape-all-teams
+    if: always() && needs.scrape-all-teams.result != 'skipped'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Merge artifacts into data/teams/
+        run: |
+          mkdir -p data/teams
+          find artifacts/ -name "*.json" -exec cp {} data/teams/ \;
+          echo "Files in data/teams/:"
+          ls -la data/teams/
+
+      - name: Commit & push
+        run: |
+          git config user.name  "FCF Bot"
+          git config user.email "bot@fcfcat.github.io"
+          git add data/teams/
+          git diff --staged --quiet && echo "No changes" || \
+            git commit -m "data: daily update $(date -u '+%Y-%m-%d') — all teams" && \
+            git push origin HEAD
+
+      - name: Job summary
+        run: |
+          echo "## ⏰ Daily Scrape Complete — $(date -u '+%Y-%m-%d')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Team file | Size |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|------|" >> $GITHUB_STEP_SUMMARY
+          for f in data/teams/*.json; do
+            SIZE=$(wc -c < "$f")
+            echo "| $(basename $f) | ${SIZE} bytes |" >> $GITHUB_STEP_SUMMARY
+          done

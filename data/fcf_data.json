@@ -1,0 +1,5745 @@
+{
+  "standings": [
+    {
+      "position": 1,
+      "name": "RACING VALLBONA, C.F. A",
+      "points": 42,
+      "played": 20,
+      "won": 12,
+      "drawn": 6,
+      "lost": 2,
+      "goals_for": 46,
+      "goals_against": 24,
+      "home_won": 8,
+      "home_drawn": 2,
+      "home_lost": 0,
+      "away_won": 4,
+      "away_drawn": 4,
+      "away_lost": 2,
+      "team_slug": "racing-vallbona-cf-a"
+    },
+    {
+      "position": 2,
+      "name": "SPORTING GAVA 2013 FUTBOL CLUB A",
+      "points": 42,
+      "played": 20,
+      "won": 13,
+      "drawn": 3,
+      "lost": 4,
+      "goals_for": 45,
+      "goals_against": 23,
+      "home_won": 5,
+      "home_drawn": 3,
+      "home_lost": 1,
+      "away_won": 8,
+      "away_drawn": 0,
+      "away_lost": 3,
+      "team_slug": "sporting-gava-2013-futbol-club-a"
+    },
+    {
+      "position": 3,
+      "name": "UNIFICACION BELLVITGE, U.D. A",
+      "points": 36,
+      "played": 20,
+      "won": 11,
+      "drawn": 3,
+      "lost": 6,
+      "goals_for": 42,
+      "goals_against": 28,
+      "home_won": 6,
+      "home_drawn": 2,
+      "home_lost": 3,
+      "away_won": 5,
+      "away_drawn": 1,
+      "away_lost": 3,
+      "team_slug": "unificacion-bellvitge-ud-a"
+    },
+    {
+      "position": 4,
+      "name": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "points": 35,
+      "played": 20,
+      "won": 11,
+      "drawn": 2,
+      "lost": 7,
+      "goals_for": 36,
+      "goals_against": 37,
+      "home_won": 8,
+      "home_drawn": 1,
+      "home_lost": 1,
+      "away_won": 3,
+      "away_drawn": 1,
+      "away_lost": 6,
+      "team_slug": "bon-pastor-agrupacio-esportiva-a"
+    },
+    {
+      "position": 5,
+      "name": "BARCELONETA, C.F. A",
+      "points": 30,
+      "played": 20,
+      "won": 8,
+      "drawn": 6,
+      "lost": 6,
+      "goals_for": 31,
+      "goals_against": 29,
+      "home_won": 4,
+      "home_drawn": 3,
+      "home_lost": 4,
+      "away_won": 4,
+      "away_drawn": 3,
+      "away_lost": 2,
+      "team_slug": "barceloneta-cf-a"
+    },
+    {
+      "position": 6,
+      "name": "FUNDACIÓ ACADEMIA F. L'HOSPITALET A",
+      "points": 29,
+      "played": 20,
+      "won": 8,
+      "drawn": 5,
+      "lost": 7,
+      "goals_for": 33,
+      "goals_against": 38,
+      "home_won": 6,
+      "home_drawn": 4,
+      "home_lost": 0,
+      "away_won": 2,
+      "away_drawn": 1,
+      "away_lost": 7,
+      "team_slug": "fundacio-academia-f-lhospitalet-a"
+    },
+    {
+      "position": 7,
+      "name": "GAVA, C.F. A",
+      "points": 27,
+      "played": 20,
+      "won": 6,
+      "drawn": 9,
+      "lost": 5,
+      "goals_for": 25,
+      "goals_against": 24,
+      "home_won": 3,
+      "home_drawn": 6,
+      "home_lost": 1,
+      "away_won": 3,
+      "away_drawn": 3,
+      "away_lost": 4,
+      "team_slug": "gava-cf-a"
+    },
+    {
+      "position": 8,
+      "name": "SANT ILDEFONS, U.E. A",
+      "points": 26,
+      "played": 20,
+      "won": 8,
+      "drawn": 2,
+      "lost": 10,
+      "goals_for": 37,
+      "goals_against": 36,
+      "home_won": 5,
+      "home_drawn": 0,
+      "home_lost": 4,
+      "away_won": 3,
+      "away_drawn": 2,
+      "away_lost": 6,
+      "team_slug": "sant-ildefons-ue-a"
+    },
+    {
+      "position": 9,
+      "name": "SANT IGNASI C.E. A",
+      "points": 26,
+      "played": 20,
+      "won": 8,
+      "drawn": 2,
+      "lost": 10,
+      "goals_for": 50,
+      "goals_against": 49,
+      "home_won": 6,
+      "home_drawn": 1,
+      "home_lost": 4,
+      "away_won": 2,
+      "away_drawn": 1,
+      "away_lost": 6,
+      "team_slug": "sant-ignasi-ce-a"
+    },
+    {
+      "position": 10,
+      "name": "CANYELLES,C.E. A",
+      "points": 26,
+      "played": 20,
+      "won": 7,
+      "drawn": 5,
+      "lost": 8,
+      "goals_for": 31,
+      "goals_against": 29,
+      "home_won": 4,
+      "home_drawn": 3,
+      "home_lost": 3,
+      "away_won": 3,
+      "away_drawn": 2,
+      "away_lost": 5,
+      "team_slug": "canyelles-ce-a"
+    },
+    {
+      "position": 11,
+      "name": "MARIANAO POBLET UD A",
+      "points": 26,
+      "played": 20,
+      "won": 6,
+      "drawn": 8,
+      "lost": 6,
+      "goals_for": 35,
+      "goals_against": 36,
+      "home_won": 5,
+      "home_drawn": 2,
+      "home_lost": 2,
+      "away_won": 1,
+      "away_drawn": 6,
+      "away_lost": 4,
+      "team_slug": "marianao-poblet-ud-a"
+    },
+    {
+      "position": 12,
+      "name": "SECTOR MONTSERRATINA U.D. A",
+      "points": 24,
+      "played": 20,
+      "won": 6,
+      "drawn": 6,
+      "lost": 8,
+      "goals_for": 28,
+      "goals_against": 34,
+      "home_won": 3,
+      "home_drawn": 2,
+      "home_lost": 4,
+      "away_won": 3,
+      "away_drawn": 4,
+      "away_lost": 4,
+      "team_slug": "sector-montserratina-ud-a"
+    },
+    {
+      "position": 13,
+      "name": "PRAT, A.E. B",
+      "points": 23,
+      "played": 20,
+      "won": 6,
+      "drawn": 5,
+      "lost": 9,
+      "goals_for": 34,
+      "goals_against": 32,
+      "home_won": 3,
+      "home_drawn": 4,
+      "home_lost": 4,
+      "away_won": 3,
+      "away_drawn": 1,
+      "away_lost": 5,
+      "team_slug": "prat-ae-b"
+    },
+    {
+      "position": 14,
+      "name": "ESCOLA ESPORTIVA GUINEUETA C.F  A",
+      "points": 23,
+      "played": 20,
+      "won": 7,
+      "drawn": 2,
+      "lost": 11,
+      "goals_for": 42,
+      "goals_against": 59,
+      "home_won": 6,
+      "home_drawn": 1,
+      "home_lost": 4,
+      "away_won": 1,
+      "away_drawn": 1,
+      "away_lost": 7,
+      "team_slug": "escola-esportiva-guineueta-cf-a"
+    },
+    {
+      "position": 15,
+      "name": "SARRIA, C.P. A",
+      "points": 17,
+      "played": 20,
+      "won": 3,
+      "drawn": 8,
+      "lost": 9,
+      "goals_for": 24,
+      "goals_against": 37,
+      "home_won": 2,
+      "home_drawn": 2,
+      "home_lost": 5,
+      "away_won": 1,
+      "away_drawn": 6,
+      "away_lost": 4,
+      "team_slug": "sarria-cp-a"
+    },
+    {
+      "position": 16,
+      "name": "IBERIA, C. AT. A",
+      "points": 11,
+      "played": 20,
+      "won": 3,
+      "drawn": 2,
+      "lost": 15,
+      "goals_for": 27,
+      "goals_against": 51,
+      "home_won": 3,
+      "home_drawn": 1,
+      "home_lost": 6,
+      "away_won": 0,
+      "away_drawn": 1,
+      "away_lost": 9,
+      "team_slug": "iberia-c-at-a"
+    }
+  ],
+  "scorers": [],
+  "sanctions": [
+    {
+      "player": "REINHARDT BRU, GERARD",
+      "team": "",
+      "article": "334",
+      "matches_suspended": 5,
+      "reason": "REINHARDT BRU, GERARD",
+      "notes": "1 partit de suspensió.Un partit de suspensió per acumulació d'amonestacions.",
+      "player_url": "https://www.fcf.cat/equip/2526/2cat/"
+    },
+    {
+      "player": "ESCOBAR ROVIRA, POL",
+      "team": "",
+      "article": "338.1d",
+      "matches_suspended": 0,
+      "reason": "Un partit de suspensió per protestar de forma ostensible o insistent a l'àrbitre o als àrbitres assistents.",
+      "notes": "",
+      "player_url": "https://www.fcf.cat/equip/2526/2cat/"
+    },
+    {
+      "player": "CANABAL ALBELLA, DAVID",
+      "team": "",
+      "article": "334",
+      "matches_suspended": 5,
+      "reason": "CANABAL ALBELLA, DAVID",
+      "notes": "1 partit de suspensió.Un partit de suspensió per acumulació d'amonestacions.",
+      "player_url": "https://www.fcf.cat/equip/2526/2cat/"
+    },
+    {
+      "player": "UCEDA CERDÁN, MARC",
+      "team": "",
+      "article": "338.1c",
+      "matches_suspended": 0,
+      "reason": "Dos partits de suspensió per pronunciar termes o expressions atemptatoris contra el decòrum o la dignitat o fer servir gests o signes que, per llur procacitat, es tinguessin en el concepte públic per ofensius.",
+      "notes": "",
+      "player_url": "https://www.fcf.cat/equip/2526/2cat/"
+    },
+    {
+      "player": "MARTINEZ DOMINGUEZ, DANIEL",
+      "team": "",
+      "article": "334",
+      "matches_suspended": 5,
+      "reason": "MARTINEZ DOMINGUEZ, DANIEL",
+      "notes": "1 partit de suspensió.Un partit de suspensió per acumulació d'amonestacions.",
+      "player_url": "https://www.fcf.cat/equip/2526/2cat/"
+    },
+    {
+      "player": "MAESTRE BAYO, ANTONIO",
+      "team": "",
+      "article": "334",
+      "matches_suspended": 5,
+      "reason": "MAESTRE BAYO, ANTONIO",
+      "notes": "1 partit de suspensió.Un partit de suspensió per acumulació d'amonestacions.",
+      "player_url": "https://www.fcf.cat/equip/2526/2cat/"
+    },
+    {
+      "player": "PEÑA GIRALDEZ, OSCAR",
+      "team": "",
+      "article": "334",
+      "matches_suspended": 5,
+      "reason": "1 partit de suspensió.Un partit de suspensió per acumulació d'amonestacions.",
+      "notes": "",
+      "player_url": "https://www.fcf.cat/equip/2526/2cat/"
+    },
+    {
+      "player": "KARAM EL BANA CHENTOUF, KHALED",
+      "team": "",
+      "article": "336",
+      "matches_suspended": 0,
+      "reason": "KARAM EL BANA CHENTOUF, KHALED",
+      "notes": "Un partit de suspensió per la seva expulsió al rebre dues amonestacions.",
+      "player_url": "https://www.fcf.cat/equip/2526/2cat/"
+    },
+    {
+      "player": "LASGAA LASGAA, YUSEF",
+      "team": "",
+      "article": "334",
+      "matches_suspended": 5,
+      "reason": "1 partit de suspensió.Un partit de suspensió per acumulació d'amonestacions.",
+      "notes": "",
+      "player_url": "https://www.fcf.cat/equip/2526/2cat/"
+    },
+    {
+      "player": "MEDINA DE BLAS, ERIC",
+      "team": "",
+      "article": "334",
+      "matches_suspended": 5,
+      "reason": "1 partit de suspensió.Un partit de suspensió per acumulació d'amonestacions.",
+      "notes": "",
+      "player_url": "https://www.fcf.cat/equip/2526/2cat/"
+    },
+    {
+      "player": "GONZALEZ BRIONES, ADRIAN",
+      "team": "",
+      "article": "336",
+      "matches_suspended": 0,
+      "reason": "GONZALEZ BRIONES, ADRIAN",
+      "notes": "Un partit de suspensió per la seva expulsió al rebre dues amonestacions.",
+      "player_url": "https://www.fcf.cat/equip/2526/2cat/"
+    },
+    {
+      "player": "CORTÉS SÁNCHEZ, JOSÉ",
+      "team": "",
+      "article": "339",
+      "matches_suspended": 0,
+      "reason": "Quatre partits de suspensió per agredir a un altre.",
+      "notes": "",
+      "player_url": "https://www.fcf.cat/equip/2526/2cat/"
+    },
+    {
+      "player": "ZAIRI CHAHOUB, SALAHEDDINE",
+      "team": "",
+      "article": "338.1k",
+      "matches_suspended": 0,
+      "reason": "ZAIRI CHAHOUB, SALAHEDDINE",
+      "notes": "Dos partits de suspensió pel fet d'arrapar, empènyer o sacsar, o produir-se, en general, altres actituds envers jugadors, tècnics o auxiliars que, pel fet d'ésser només lleument violentes, no acreditin ànim agressiu per part de l'agent.",
+      "player_url": "https://www.fcf.cat/equip/2526/2cat/"
+    },
+    {
+      "player": "GAVA, C.F. A",
+      "team": "",
+      "article": "",
+      "matches_suspended": 0,
+      "reason": "Examinada la prova de vídeo aportada pel club GAVÀ CF, es considera que l'acció del jugador és incardinable en el contingut de l'article 338.1k del Reglament General i, per tant, es considera adient la imposició de dos partits de suspensió.",
+      "notes": "",
+      "player_url": "https://www.fcf.cat/equip/2526/2cat/gava-cf-a"
+    }
+  ],
+  "fair_play": [],
+  "matches": [
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Bon Pastor Agrupacio Esportiva A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/iberia-c-at-a/2cat/bon-pastor-agrupacio-esportiva-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "iberia-c-at-a",
+      "away_slug": "bon-pastor-agrupacio-esportiva-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Fundacio Academia F Lhospitalet A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/marianao-poblet-ud-a/2cat/fundacio-academia-f-lhospitalet-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "marianao-poblet-ud-a",
+      "away_slug": "fundacio-academia-f-lhospitalet-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Escola Esportiva Guineueta Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ildefons-ue-a/2cat/escola-esportiva-guineueta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ildefons-ue-a",
+      "away_slug": "escola-esportiva-guineueta-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Prat Ae B",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sporting-gava-2013-futbol-club-a/2cat/prat-ae-b",
+      "status": "",
+      "referee": "",
+      "home_slug": "sporting-gava-2013-futbol-club-a",
+      "away_slug": "prat-ae-b"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sant Ignasi Ce A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sector-montserratina-ud-a/2cat/sant-ignasi-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sector-montserratina-ud-a",
+      "away_slug": "sant-ignasi-ce-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Unificacion Bellvitge Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/gava-cf-a/2cat/unificacion-bellvitge-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "gava-cf-a",
+      "away_slug": "unificacion-bellvitge-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Barceloneta Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/racing-vallbona-cf-a/2cat/barceloneta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "racing-vallbona-cf-a",
+      "away_slug": "barceloneta-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Canyelles Ce A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sarria-cp-a/2cat/canyelles-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sarria-cp-a",
+      "away_slug": "canyelles-ce-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sarria Cp A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/bon-pastor-agrupacio-esportiva-a/2cat/sarria-cp-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "bon-pastor-agrupacio-esportiva-a",
+      "away_slug": "sarria-cp-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Iberia C At A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/fundacio-academia-f-lhospitalet-a/2cat/iberia-c-at-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "fundacio-academia-f-lhospitalet-a",
+      "away_slug": "iberia-c-at-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Marianao Poblet Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/escola-esportiva-guineueta-cf-a/2cat/marianao-poblet-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "escola-esportiva-guineueta-cf-a",
+      "away_slug": "marianao-poblet-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sant Ildefons Ue A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/prat-ae-b/2cat/sant-ildefons-ue-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "prat-ae-b",
+      "away_slug": "sant-ildefons-ue-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sporting Gava 2013 Futbol Club A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ignasi-ce-a/2cat/sporting-gava-2013-futbol-club-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ignasi-ce-a",
+      "away_slug": "sporting-gava-2013-futbol-club-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sector Montserratina Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/unificacion-bellvitge-ud-a/2cat/sector-montserratina-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "unificacion-bellvitge-ud-a",
+      "away_slug": "sector-montserratina-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Gava Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/barceloneta-cf-a/2cat/gava-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "barceloneta-cf-a",
+      "away_slug": "gava-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Racing Vallbona Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/canyelles-ce-a/2cat/racing-vallbona-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "canyelles-ce-a",
+      "away_slug": "racing-vallbona-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Fundacio Academia F Lhospitalet A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/bon-pastor-agrupacio-esportiva-a/2cat/fundacio-academia-f-lhospitalet-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "bon-pastor-agrupacio-esportiva-a",
+      "away_slug": "fundacio-academia-f-lhospitalet-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Escola Esportiva Guineueta Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/iberia-c-at-a/2cat/escola-esportiva-guineueta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "iberia-c-at-a",
+      "away_slug": "escola-esportiva-guineueta-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Prat Ae B",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/marianao-poblet-ud-a/2cat/prat-ae-b",
+      "status": "",
+      "referee": "",
+      "home_slug": "marianao-poblet-ud-a",
+      "away_slug": "prat-ae-b"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sant Ignasi Ce A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ildefons-ue-a/2cat/sant-ignasi-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ildefons-ue-a",
+      "away_slug": "sant-ignasi-ce-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Unificacion Bellvitge Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sporting-gava-2013-futbol-club-a/2cat/unificacion-bellvitge-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sporting-gava-2013-futbol-club-a",
+      "away_slug": "unificacion-bellvitge-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Barceloneta Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sector-montserratina-ud-a/2cat/barceloneta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sector-montserratina-ud-a",
+      "away_slug": "barceloneta-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Canyelles Ce A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/gava-cf-a/2cat/canyelles-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "gava-cf-a",
+      "away_slug": "canyelles-ce-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Racing Vallbona Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sarria-cp-a/2cat/racing-vallbona-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sarria-cp-a",
+      "away_slug": "racing-vallbona-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sarria Cp A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/fundacio-academia-f-lhospitalet-a/2cat/sarria-cp-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "fundacio-academia-f-lhospitalet-a",
+      "away_slug": "sarria-cp-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Bon Pastor Agrupacio Esportiva A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/escola-esportiva-guineueta-cf-a/2cat/bon-pastor-agrupacio-esportiva-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "escola-esportiva-guineueta-cf-a",
+      "away_slug": "bon-pastor-agrupacio-esportiva-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Iberia C At A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/prat-ae-b/2cat/iberia-c-at-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "prat-ae-b",
+      "away_slug": "iberia-c-at-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Marianao Poblet Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ignasi-ce-a/2cat/marianao-poblet-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ignasi-ce-a",
+      "away_slug": "marianao-poblet-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sant Ildefons Ue A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/unificacion-bellvitge-ud-a/2cat/sant-ildefons-ue-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "unificacion-bellvitge-ud-a",
+      "away_slug": "sant-ildefons-ue-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sporting Gava 2013 Futbol Club A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/barceloneta-cf-a/2cat/sporting-gava-2013-futbol-club-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "barceloneta-cf-a",
+      "away_slug": "sporting-gava-2013-futbol-club-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sector Montserratina Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/canyelles-ce-a/2cat/sector-montserratina-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "canyelles-ce-a",
+      "away_slug": "sector-montserratina-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Gava Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/racing-vallbona-cf-a/2cat/gava-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "racing-vallbona-cf-a",
+      "away_slug": "gava-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Escola Esportiva Guineueta Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/fundacio-academia-f-lhospitalet-a/2cat/escola-esportiva-guineueta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "fundacio-academia-f-lhospitalet-a",
+      "away_slug": "escola-esportiva-guineueta-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Prat Ae B",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/bon-pastor-agrupacio-esportiva-a/2cat/prat-ae-b",
+      "status": "",
+      "referee": "",
+      "home_slug": "bon-pastor-agrupacio-esportiva-a",
+      "away_slug": "prat-ae-b"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sant Ignasi Ce A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/iberia-c-at-a/2cat/sant-ignasi-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "iberia-c-at-a",
+      "away_slug": "sant-ignasi-ce-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Unificacion Bellvitge Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/marianao-poblet-ud-a/2cat/unificacion-bellvitge-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "marianao-poblet-ud-a",
+      "away_slug": "unificacion-bellvitge-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Barceloneta Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ildefons-ue-a/2cat/barceloneta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ildefons-ue-a",
+      "away_slug": "barceloneta-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Canyelles Ce A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sporting-gava-2013-futbol-club-a/2cat/canyelles-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sporting-gava-2013-futbol-club-a",
+      "away_slug": "canyelles-ce-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Racing Vallbona Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sector-montserratina-ud-a/2cat/racing-vallbona-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sector-montserratina-ud-a",
+      "away_slug": "racing-vallbona-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Gava Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sarria-cp-a/2cat/gava-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sarria-cp-a",
+      "away_slug": "gava-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sarria Cp A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/escola-esportiva-guineueta-cf-a/2cat/sarria-cp-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "escola-esportiva-guineueta-cf-a",
+      "away_slug": "sarria-cp-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Fundacio Academia F Lhospitalet A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/prat-ae-b/2cat/fundacio-academia-f-lhospitalet-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "prat-ae-b",
+      "away_slug": "fundacio-academia-f-lhospitalet-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Bon Pastor Agrupacio Esportiva A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ignasi-ce-a/2cat/bon-pastor-agrupacio-esportiva-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ignasi-ce-a",
+      "away_slug": "bon-pastor-agrupacio-esportiva-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Iberia C At A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/unificacion-bellvitge-ud-a/2cat/iberia-c-at-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "unificacion-bellvitge-ud-a",
+      "away_slug": "iberia-c-at-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Marianao Poblet Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/barceloneta-cf-a/2cat/marianao-poblet-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "barceloneta-cf-a",
+      "away_slug": "marianao-poblet-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sant Ildefons Ue A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/canyelles-ce-a/2cat/sant-ildefons-ue-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "canyelles-ce-a",
+      "away_slug": "sant-ildefons-ue-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sporting Gava 2013 Futbol Club A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/racing-vallbona-cf-a/2cat/sporting-gava-2013-futbol-club-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "racing-vallbona-cf-a",
+      "away_slug": "sporting-gava-2013-futbol-club-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sector Montserratina Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/gava-cf-a/2cat/sector-montserratina-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "gava-cf-a",
+      "away_slug": "sector-montserratina-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Prat Ae B",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/escola-esportiva-guineueta-cf-a/2cat/prat-ae-b",
+      "status": "",
+      "referee": "",
+      "home_slug": "escola-esportiva-guineueta-cf-a",
+      "away_slug": "prat-ae-b"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sant Ignasi Ce A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/fundacio-academia-f-lhospitalet-a/2cat/sant-ignasi-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "fundacio-academia-f-lhospitalet-a",
+      "away_slug": "sant-ignasi-ce-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Unificacion Bellvitge Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/bon-pastor-agrupacio-esportiva-a/2cat/unificacion-bellvitge-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "bon-pastor-agrupacio-esportiva-a",
+      "away_slug": "unificacion-bellvitge-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Barceloneta Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/iberia-c-at-a/2cat/barceloneta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "iberia-c-at-a",
+      "away_slug": "barceloneta-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Canyelles Ce A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/marianao-poblet-ud-a/2cat/canyelles-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "marianao-poblet-ud-a",
+      "away_slug": "canyelles-ce-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Racing Vallbona Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ildefons-ue-a/2cat/racing-vallbona-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ildefons-ue-a",
+      "away_slug": "racing-vallbona-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Gava Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sporting-gava-2013-futbol-club-a/2cat/gava-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sporting-gava-2013-futbol-club-a",
+      "away_slug": "gava-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sector Montserratina Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sarria-cp-a/2cat/sector-montserratina-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sarria-cp-a",
+      "away_slug": "sector-montserratina-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sarria Cp A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/prat-ae-b/2cat/sarria-cp-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "prat-ae-b",
+      "away_slug": "sarria-cp-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Escola Esportiva Guineueta Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ignasi-ce-a/2cat/escola-esportiva-guineueta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ignasi-ce-a",
+      "away_slug": "escola-esportiva-guineueta-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Fundacio Academia F Lhospitalet A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/unificacion-bellvitge-ud-a/2cat/fundacio-academia-f-lhospitalet-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "unificacion-bellvitge-ud-a",
+      "away_slug": "fundacio-academia-f-lhospitalet-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Bon Pastor Agrupacio Esportiva A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/barceloneta-cf-a/2cat/bon-pastor-agrupacio-esportiva-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "barceloneta-cf-a",
+      "away_slug": "bon-pastor-agrupacio-esportiva-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Iberia C At A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/canyelles-ce-a/2cat/iberia-c-at-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "canyelles-ce-a",
+      "away_slug": "iberia-c-at-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Marianao Poblet Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/racing-vallbona-cf-a/2cat/marianao-poblet-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "racing-vallbona-cf-a",
+      "away_slug": "marianao-poblet-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sant Ildefons Ue A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/gava-cf-a/2cat/sant-ildefons-ue-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "gava-cf-a",
+      "away_slug": "sant-ildefons-ue-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sporting Gava 2013 Futbol Club A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sector-montserratina-ud-a/2cat/sporting-gava-2013-futbol-club-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sector-montserratina-ud-a",
+      "away_slug": "sporting-gava-2013-futbol-club-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sant Ignasi Ce A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/prat-ae-b/2cat/sant-ignasi-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "prat-ae-b",
+      "away_slug": "sant-ignasi-ce-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Unificacion Bellvitge Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/escola-esportiva-guineueta-cf-a/2cat/unificacion-bellvitge-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "escola-esportiva-guineueta-cf-a",
+      "away_slug": "unificacion-bellvitge-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Barceloneta Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/fundacio-academia-f-lhospitalet-a/2cat/barceloneta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "fundacio-academia-f-lhospitalet-a",
+      "away_slug": "barceloneta-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Canyelles Ce A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/bon-pastor-agrupacio-esportiva-a/2cat/canyelles-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "bon-pastor-agrupacio-esportiva-a",
+      "away_slug": "canyelles-ce-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Racing Vallbona Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/iberia-c-at-a/2cat/racing-vallbona-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "iberia-c-at-a",
+      "away_slug": "racing-vallbona-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Gava Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/marianao-poblet-ud-a/2cat/gava-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "marianao-poblet-ud-a",
+      "away_slug": "gava-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sector Montserratina Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ildefons-ue-a/2cat/sector-montserratina-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ildefons-ue-a",
+      "away_slug": "sector-montserratina-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sporting Gava 2013 Futbol Club A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sarria-cp-a/2cat/sporting-gava-2013-futbol-club-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sarria-cp-a",
+      "away_slug": "sporting-gava-2013-futbol-club-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sarria Cp A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ignasi-ce-a/2cat/sarria-cp-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ignasi-ce-a",
+      "away_slug": "sarria-cp-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Prat Ae B",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/unificacion-bellvitge-ud-a/2cat/prat-ae-b",
+      "status": "",
+      "referee": "",
+      "home_slug": "unificacion-bellvitge-ud-a",
+      "away_slug": "prat-ae-b"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Escola Esportiva Guineueta Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/barceloneta-cf-a/2cat/escola-esportiva-guineueta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "barceloneta-cf-a",
+      "away_slug": "escola-esportiva-guineueta-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Fundacio Academia F Lhospitalet A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/canyelles-ce-a/2cat/fundacio-academia-f-lhospitalet-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "canyelles-ce-a",
+      "away_slug": "fundacio-academia-f-lhospitalet-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Bon Pastor Agrupacio Esportiva A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/racing-vallbona-cf-a/2cat/bon-pastor-agrupacio-esportiva-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "racing-vallbona-cf-a",
+      "away_slug": "bon-pastor-agrupacio-esportiva-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Iberia C At A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/gava-cf-a/2cat/iberia-c-at-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "gava-cf-a",
+      "away_slug": "iberia-c-at-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Marianao Poblet Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sector-montserratina-ud-a/2cat/marianao-poblet-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sector-montserratina-ud-a",
+      "away_slug": "marianao-poblet-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sant Ildefons Ue A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sporting-gava-2013-futbol-club-a/2cat/sant-ildefons-ue-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sporting-gava-2013-futbol-club-a",
+      "away_slug": "sant-ildefons-ue-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Unificacion Bellvitge Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ignasi-ce-a/2cat/unificacion-bellvitge-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ignasi-ce-a",
+      "away_slug": "unificacion-bellvitge-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Barceloneta Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/prat-ae-b/2cat/barceloneta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "prat-ae-b",
+      "away_slug": "barceloneta-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Canyelles Ce A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/escola-esportiva-guineueta-cf-a/2cat/canyelles-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "escola-esportiva-guineueta-cf-a",
+      "away_slug": "canyelles-ce-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Racing Vallbona Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/fundacio-academia-f-lhospitalet-a/2cat/racing-vallbona-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "fundacio-academia-f-lhospitalet-a",
+      "away_slug": "racing-vallbona-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Gava Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/bon-pastor-agrupacio-esportiva-a/2cat/gava-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "bon-pastor-agrupacio-esportiva-a",
+      "away_slug": "gava-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sector Montserratina Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/iberia-c-at-a/2cat/sector-montserratina-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "iberia-c-at-a",
+      "away_slug": "sector-montserratina-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sporting Gava 2013 Futbol Club A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/marianao-poblet-ud-a/2cat/sporting-gava-2013-futbol-club-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "marianao-poblet-ud-a",
+      "away_slug": "sporting-gava-2013-futbol-club-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sant Ildefons Ue A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sarria-cp-a/2cat/sant-ildefons-ue-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sarria-cp-a",
+      "away_slug": "sant-ildefons-ue-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sarria Cp A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/unificacion-bellvitge-ud-a/2cat/sarria-cp-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "unificacion-bellvitge-ud-a",
+      "away_slug": "sarria-cp-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sant Ignasi Ce A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/barceloneta-cf-a/2cat/sant-ignasi-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "barceloneta-cf-a",
+      "away_slug": "sant-ignasi-ce-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Prat Ae B",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/canyelles-ce-a/2cat/prat-ae-b",
+      "status": "",
+      "referee": "",
+      "home_slug": "canyelles-ce-a",
+      "away_slug": "prat-ae-b"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Escola Esportiva Guineueta Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/racing-vallbona-cf-a/2cat/escola-esportiva-guineueta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "racing-vallbona-cf-a",
+      "away_slug": "escola-esportiva-guineueta-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Fundacio Academia F Lhospitalet A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/gava-cf-a/2cat/fundacio-academia-f-lhospitalet-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "gava-cf-a",
+      "away_slug": "fundacio-academia-f-lhospitalet-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Bon Pastor Agrupacio Esportiva A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sector-montserratina-ud-a/2cat/bon-pastor-agrupacio-esportiva-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sector-montserratina-ud-a",
+      "away_slug": "bon-pastor-agrupacio-esportiva-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Iberia C At A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sporting-gava-2013-futbol-club-a/2cat/iberia-c-at-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sporting-gava-2013-futbol-club-a",
+      "away_slug": "iberia-c-at-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Marianao Poblet Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ildefons-ue-a/2cat/marianao-poblet-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ildefons-ue-a",
+      "away_slug": "marianao-poblet-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Barceloneta Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/unificacion-bellvitge-ud-a/2cat/barceloneta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "unificacion-bellvitge-ud-a",
+      "away_slug": "barceloneta-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Canyelles Ce A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ignasi-ce-a/2cat/canyelles-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ignasi-ce-a",
+      "away_slug": "canyelles-ce-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Racing Vallbona Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/prat-ae-b/2cat/racing-vallbona-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "prat-ae-b",
+      "away_slug": "racing-vallbona-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Gava Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/escola-esportiva-guineueta-cf-a/2cat/gava-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "escola-esportiva-guineueta-cf-a",
+      "away_slug": "gava-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sector Montserratina Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/fundacio-academia-f-lhospitalet-a/2cat/sector-montserratina-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "fundacio-academia-f-lhospitalet-a",
+      "away_slug": "sector-montserratina-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sporting Gava 2013 Futbol Club A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/bon-pastor-agrupacio-esportiva-a/2cat/sporting-gava-2013-futbol-club-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "bon-pastor-agrupacio-esportiva-a",
+      "away_slug": "sporting-gava-2013-futbol-club-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sant Ildefons Ue A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/iberia-c-at-a/2cat/sant-ildefons-ue-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "iberia-c-at-a",
+      "away_slug": "sant-ildefons-ue-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Marianao Poblet Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sarria-cp-a/2cat/marianao-poblet-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sarria-cp-a",
+      "away_slug": "marianao-poblet-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sarria Cp A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/barceloneta-cf-a/2cat/sarria-cp-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "barceloneta-cf-a",
+      "away_slug": "sarria-cp-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Unificacion Bellvitge Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/canyelles-ce-a/2cat/unificacion-bellvitge-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "canyelles-ce-a",
+      "away_slug": "unificacion-bellvitge-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sant Ignasi Ce A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/racing-vallbona-cf-a/2cat/sant-ignasi-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "racing-vallbona-cf-a",
+      "away_slug": "sant-ignasi-ce-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Prat Ae B",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/gava-cf-a/2cat/prat-ae-b",
+      "status": "",
+      "referee": "",
+      "home_slug": "gava-cf-a",
+      "away_slug": "prat-ae-b"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Escola Esportiva Guineueta Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sector-montserratina-ud-a/2cat/escola-esportiva-guineueta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sector-montserratina-ud-a",
+      "away_slug": "escola-esportiva-guineueta-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Fundacio Academia F Lhospitalet A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sporting-gava-2013-futbol-club-a/2cat/fundacio-academia-f-lhospitalet-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sporting-gava-2013-futbol-club-a",
+      "away_slug": "fundacio-academia-f-lhospitalet-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Bon Pastor Agrupacio Esportiva A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ildefons-ue-a/2cat/bon-pastor-agrupacio-esportiva-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ildefons-ue-a",
+      "away_slug": "bon-pastor-agrupacio-esportiva-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Iberia C At A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/marianao-poblet-ud-a/2cat/iberia-c-at-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "marianao-poblet-ud-a",
+      "away_slug": "iberia-c-at-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Canyelles Ce A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/barceloneta-cf-a/2cat/canyelles-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "barceloneta-cf-a",
+      "away_slug": "canyelles-ce-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Racing Vallbona Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/unificacion-bellvitge-ud-a/2cat/racing-vallbona-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "unificacion-bellvitge-ud-a",
+      "away_slug": "racing-vallbona-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Gava Cf A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ignasi-ce-a/2cat/gava-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ignasi-ce-a",
+      "away_slug": "gava-cf-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sector Montserratina Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/prat-ae-b/2cat/sector-montserratina-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "prat-ae-b",
+      "away_slug": "sector-montserratina-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sporting Gava 2013 Futbol Club A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/escola-esportiva-guineueta-cf-a/2cat/sporting-gava-2013-futbol-club-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "escola-esportiva-guineueta-cf-a",
+      "away_slug": "sporting-gava-2013-futbol-club-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sant Ildefons Ue A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/fundacio-academia-f-lhospitalet-a/2cat/sant-ildefons-ue-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "fundacio-academia-f-lhospitalet-a",
+      "away_slug": "sant-ildefons-ue-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Marianao Poblet Ud A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/bon-pastor-agrupacio-esportiva-a/2cat/marianao-poblet-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "bon-pastor-agrupacio-esportiva-a",
+      "away_slug": "marianao-poblet-ud-a"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "",
+      "home_team": "IBERIA, C. AT. A",
+      "away_team": "Sarria Cp A",
+      "home_score": 21,
+      "away_score": 9,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/iberia-c-at-a/2cat/sarria-cp-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "iberia-c-at-a",
+      "away_slug": "sarria-cp-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Iberia C At A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/bon-pastor-agrupacio-esportiva-a/2cat/iberia-c-at-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "bon-pastor-agrupacio-esportiva-a",
+      "away_slug": "iberia-c-at-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Marianao Poblet Ud A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/fundacio-academia-f-lhospitalet-a/2cat/marianao-poblet-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "fundacio-academia-f-lhospitalet-a",
+      "away_slug": "marianao-poblet-ud-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Sant Ildefons Ue A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/escola-esportiva-guineueta-cf-a/2cat/sant-ildefons-ue-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "escola-esportiva-guineueta-cf-a",
+      "away_slug": "sant-ildefons-ue-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Sporting Gava 2013 Futbol Club A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/prat-ae-b/2cat/sporting-gava-2013-futbol-club-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "prat-ae-b",
+      "away_slug": "sporting-gava-2013-futbol-club-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Sector Montserratina Ud A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ignasi-ce-a/2cat/sector-montserratina-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ignasi-ce-a",
+      "away_slug": "sector-montserratina-ud-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Gava Cf A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/unificacion-bellvitge-ud-a/2cat/gava-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "unificacion-bellvitge-ud-a",
+      "away_slug": "gava-cf-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Racing Vallbona Cf A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/barceloneta-cf-a/2cat/racing-vallbona-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "barceloneta-cf-a",
+      "away_slug": "racing-vallbona-cf-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Sarria Cp A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/canyelles-ce-a/2cat/sarria-cp-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "canyelles-ce-a",
+      "away_slug": "sarria-cp-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Bon Pastor Agrupacio Esportiva A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sarria-cp-a/2cat/bon-pastor-agrupacio-esportiva-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sarria-cp-a",
+      "away_slug": "bon-pastor-agrupacio-esportiva-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Fundacio Academia F Lhospitalet A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/iberia-c-at-a/2cat/fundacio-academia-f-lhospitalet-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "iberia-c-at-a",
+      "away_slug": "fundacio-academia-f-lhospitalet-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Escola Esportiva Guineueta Cf A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/marianao-poblet-ud-a/2cat/escola-esportiva-guineueta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "marianao-poblet-ud-a",
+      "away_slug": "escola-esportiva-guineueta-cf-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Prat Ae B",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ildefons-ue-a/2cat/prat-ae-b",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ildefons-ue-a",
+      "away_slug": "prat-ae-b"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Sant Ignasi Ce A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sporting-gava-2013-futbol-club-a/2cat/sant-ignasi-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sporting-gava-2013-futbol-club-a",
+      "away_slug": "sant-ignasi-ce-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Unificacion Bellvitge Ud A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sector-montserratina-ud-a/2cat/unificacion-bellvitge-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sector-montserratina-ud-a",
+      "away_slug": "unificacion-bellvitge-ud-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Barceloneta Cf A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/gava-cf-a/2cat/barceloneta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "gava-cf-a",
+      "away_slug": "barceloneta-cf-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Canyelles Ce A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/racing-vallbona-cf-a/2cat/canyelles-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "racing-vallbona-cf-a",
+      "away_slug": "canyelles-ce-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Bon Pastor Agrupacio Esportiva A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/fundacio-academia-f-lhospitalet-a/2cat/bon-pastor-agrupacio-esportiva-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "fundacio-academia-f-lhospitalet-a",
+      "away_slug": "bon-pastor-agrupacio-esportiva-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Iberia C At A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/escola-esportiva-guineueta-cf-a/2cat/iberia-c-at-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "escola-esportiva-guineueta-cf-a",
+      "away_slug": "iberia-c-at-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Marianao Poblet Ud A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/prat-ae-b/2cat/marianao-poblet-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "prat-ae-b",
+      "away_slug": "marianao-poblet-ud-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Sant Ildefons Ue A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ignasi-ce-a/2cat/sant-ildefons-ue-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ignasi-ce-a",
+      "away_slug": "sant-ildefons-ue-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Sporting Gava 2013 Futbol Club A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/unificacion-bellvitge-ud-a/2cat/sporting-gava-2013-futbol-club-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "unificacion-bellvitge-ud-a",
+      "away_slug": "sporting-gava-2013-futbol-club-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Sector Montserratina Ud A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/barceloneta-cf-a/2cat/sector-montserratina-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "barceloneta-cf-a",
+      "away_slug": "sector-montserratina-ud-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Gava Cf A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/canyelles-ce-a/2cat/gava-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "canyelles-ce-a",
+      "away_slug": "gava-cf-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Sarria Cp A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/racing-vallbona-cf-a/2cat/sarria-cp-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "racing-vallbona-cf-a",
+      "away_slug": "sarria-cp-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Fundacio Academia F Lhospitalet A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sarria-cp-a/2cat/fundacio-academia-f-lhospitalet-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sarria-cp-a",
+      "away_slug": "fundacio-academia-f-lhospitalet-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Escola Esportiva Guineueta Cf A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/bon-pastor-agrupacio-esportiva-a/2cat/escola-esportiva-guineueta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "bon-pastor-agrupacio-esportiva-a",
+      "away_slug": "escola-esportiva-guineueta-cf-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Prat Ae B",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/iberia-c-at-a/2cat/prat-ae-b",
+      "status": "",
+      "referee": "",
+      "home_slug": "iberia-c-at-a",
+      "away_slug": "prat-ae-b"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Sant Ignasi Ce A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/marianao-poblet-ud-a/2cat/sant-ignasi-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "marianao-poblet-ud-a",
+      "away_slug": "sant-ignasi-ce-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Unificacion Bellvitge Ud A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ildefons-ue-a/2cat/unificacion-bellvitge-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ildefons-ue-a",
+      "away_slug": "unificacion-bellvitge-ud-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Barceloneta Cf A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sporting-gava-2013-futbol-club-a/2cat/barceloneta-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sporting-gava-2013-futbol-club-a",
+      "away_slug": "barceloneta-cf-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Canyelles Ce A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sector-montserratina-ud-a/2cat/canyelles-ce-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sector-montserratina-ud-a",
+      "away_slug": "canyelles-ce-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Racing Vallbona Cf A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/gava-cf-a/2cat/racing-vallbona-cf-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "gava-cf-a",
+      "away_slug": "racing-vallbona-cf-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Fundacio Academia F Lhospitalet A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/escola-esportiva-guineueta-cf-a/2cat/fundacio-academia-f-lhospitalet-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "escola-esportiva-guineueta-cf-a",
+      "away_slug": "fundacio-academia-f-lhospitalet-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Bon Pastor Agrupacio Esportiva A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/prat-ae-b/2cat/bon-pastor-agrupacio-esportiva-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "prat-ae-b",
+      "away_slug": "bon-pastor-agrupacio-esportiva-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Iberia C At A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sant-ignasi-ce-a/2cat/iberia-c-at-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "sant-ignasi-ce-a",
+      "away_slug": "iberia-c-at-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Marianao Poblet Ud A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/unificacion-bellvitge-ud-a/2cat/marianao-poblet-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "unificacion-bellvitge-ud-a",
+      "away_slug": "marianao-poblet-ud-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Sant Ildefons Ue A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/barceloneta-cf-a/2cat/sant-ildefons-ue-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "barceloneta-cf-a",
+      "away_slug": "sant-ildefons-ue-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Sporting Gava 2013 Futbol Club A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/canyelles-ce-a/2cat/sporting-gava-2013-futbol-club-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "canyelles-ce-a",
+      "away_slug": "sporting-gava-2013-futbol-club-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Sector Montserratina Ud A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/racing-vallbona-cf-a/2cat/sector-montserratina-ud-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "racing-vallbona-cf-a",
+      "away_slug": "sector-montserratina-ud-a"
+    },
+    {
+      "jornada": 16,
+      "date": "25-01-2026",
+      "time": "",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "Sarria Cp A",
+      "home_score": 25,
+      "away_score": 1,
+      "venue": "",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/gava-cf-a/2cat/sarria-cp-a",
+      "status": "",
+      "referee": "",
+      "home_slug": "gava-cf-a",
+      "away_slug": "sarria-cp-a"
+    }
+  ],
+  "actas": [
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "18:00",
+      "home_team": "MARIANAO POBLET UD A",
+      "away_team": "FUNDACIÓ ACADEMIA F. L'HOSPITALET A",
+      "home_score": 3,
+      "away_score": 0,
+      "venue": "CAMP DE FUTBOL MPAL. MARIANAO  ctra. Sant Climent, 1, Sant Boi De Llobregat",
+      "home_lineup": [
+        {
+          "name": "MARTÍNEZ CRESPO, CARLOS",
+          "number": 1,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/7011426"
+        },
+        {
+          "name": "FERNÁNDEZ MONTES, ALEJANDRO",
+          "number": 5,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/784432"
+        },
+        {
+          "name": "MARTÍ TORRAS, ANDREU",
+          "number": 8,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/785455"
+        },
+        {
+          "name": "PAREDES LEONES, JOEL",
+          "number": 10,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/735556"
+        },
+        {
+          "name": "TUDELA GUERRERO, ALEJANDRO",
+          "number": 11,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/630397"
+        },
+        {
+          "name": "MASEGOSA SANCHEZ, FRANCESC",
+          "number": 12,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15084771"
+        },
+        {
+          "name": "NIETO PIÑERO, ENRIQUE",
+          "number": 14,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/560111"
+        },
+        {
+          "name": "FALL , BIRAHIM",
+          "number": 15,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/45201436"
+        },
+        {
+          "name": "RODRÍGUEZ MANSERGAS, IVÁN",
+          "number": 17,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18716844"
+        },
+        {
+          "name": "FEDELE , JOAQUIN IGNACIO",
+          "number": 20,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/756413"
+        },
+        {
+          "name": "JIMENEZ RODRIGUEZ, VICTOR",
+          "number": 24,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15481201"
+        }
+      ],
+      "away_lineup": [
+        {
+          "name": "CERDAN BERTRAN, MARC",
+          "number": 1,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/720659"
+        },
+        {
+          "name": "GOMEZ LUQUE, CARLOS",
+          "number": 2,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15607331"
+        },
+        {
+          "name": "GARCÍA MARTINEZ, ÁNGEL",
+          "number": 3,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15552095"
+        },
+        {
+          "name": "TOMICO CARMONA, ALEJANDRO",
+          "number": 4,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/26581314"
+        },
+        {
+          "name": "NGUEMA DORADO, HUGO",
+          "number": 5,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/20263319"
+        },
+        {
+          "name": "LOPEZ HERNANDEZ, RANDY ALEXANDER",
+          "number": 6,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/25763968"
+        },
+        {
+          "name": "BENAICHA SIDI BEN BRAHIM, RACHID",
+          "number": 7,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15660973"
+        },
+        {
+          "name": "CANABAL ALBELLA, DAVID",
+          "number": 8,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18715511"
+        },
+        {
+          "name": "REINHARDT BRU, GERARD",
+          "number": 9,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/726582"
+        },
+        {
+          "name": "SANTOS MOLINA, ERIC",
+          "number": 10,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/784469"
+        },
+        {
+          "name": "PANTALEÓN GARCÍA, HÉCTOR",
+          "number": 11,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18657616"
+        }
+      ],
+      "home_bench": [
+        {
+          "name": "LOPEZ BAÑOS, FRANCISCO",
+          "number": 2,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/662140"
+        },
+        {
+          "name": "CHULI",
+          "number": 3,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15559272"
+        },
+        {
+          "name": "LINARES CAMACHO, MANUEL",
+          "number": 7,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15045702"
+        },
+        {
+          "name": "RODRIGUEZ MANSERGAS, JORDI",
+          "number": 9,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/734874"
+        },
+        {
+          "name": "CHAMUSCA MARTINS, ANDERSON",
+          "number": 13,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15544649"
+        },
+        {
+          "name": "AGRAZ LLAVES, JOEL",
+          "number": 16,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/739924"
+        },
+        {
+          "name": "IZQUIERDO NAVARRO, JONATAN",
+          "number": 30,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/54400388"
+        }
+      ],
+      "away_bench": [
+        {
+          "name": "CEPRIAN PAEZ, ERIC",
+          "number": 12,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/718621"
+        },
+        {
+          "name": "MOLES  FORNALÉS, MARCEL",
+          "number": 13,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/21539639"
+        },
+        {
+          "name": "GONZÁLEZ SÁNCHEZ, MARCEL",
+          "number": 14,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/19869995"
+        },
+        {
+          "name": "BERNAL DURAN, ALEX",
+          "number": 15,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/443346"
+        },
+        {
+          "name": "MAS RIBE, EDUARDO",
+          "number": 16,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/657096"
+        },
+        {
+          "name": "QUERO TENA, ORIOL",
+          "number": 17,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/694378"
+        },
+        {
+          "name": "MEDINA AYBAR, WILLY YANIEL",
+          "number": 18,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18744187"
+        },
+        {
+          "name": "EDJANG ELO, SANTIAGO ESTEBAN",
+          "number": 19,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/23748068"
+        }
+      ],
+      "goals": [
+        {
+          "player": "BENAICHA SIDI BEN BRAHIM, RACHID",
+          "minute": "12",
+          "team": "away"
+        },
+        {
+          "player": "GARCÍA MARTINEZ, ÁNGEL",
+          "minute": "25",
+          "team": "away"
+        }
+      ],
+      "yellow_cards": [
+        {
+          "player": "JIMENEZ RODRIGUEZ, VICTOR",
+          "minute": "35",
+          "card_type": "yellow",
+          "team": "home"
+        },
+        {
+          "player": "BENAICHA SIDI BEN BRAHIM, RACHID",
+          "minute": "25",
+          "card_type": "yellow",
+          "team": "away"
+        },
+        {
+          "player": "LOPEZ HERNANDEZ, RANDY ALEXANDER",
+          "minute": "29",
+          "card_type": "yellow",
+          "team": "away"
+        }
+      ],
+      "red_cards": [],
+      "substitutions": [],
+      "referees": [
+        "GARCIA CARRANZA, RAUL",
+        "TOMAS GARCIA, ENRIQUE",
+        "LUNA CASTILLO, IZAN"
+      ],
+      "home_coach": "",
+      "away_coach": "LOPEZ GARCIA, CRISTINO",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/marianao-poblet-ud-a/2cat/fundacio-academia-f-lhospitalet-a",
+      "status": "ACTA TANCADA"
+    },
+    {
+      "jornada": 1,
+      "date": "21-09-2025",
+      "time": "12:00",
+      "home_team": "SPORTING GAVA 2013 FUTBOL CLUB A",
+      "away_team": "PRAT, A.E. B",
+      "home_score": 0,
+      "away_score": 2,
+      "venue": "CAMP DE FUTBOL ZEM CAN TINTORER  rbla. Pompeu Fabra, 144, Gavà",
+      "home_lineup": [
+        {
+          "name": "ANDREU RUIZ, LLUIS",
+          "number": 1,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/671226"
+        },
+        {
+          "name": "MENDEZ SAMPERE, PAU",
+          "number": 2,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/54345560"
+        },
+        {
+          "name": "JAQUERO RALUY, CRISTIAN",
+          "number": 3,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/630228"
+        },
+        {
+          "name": "SANVIDAL PADULLES, MIGUEL ANGEL",
+          "number": 4,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/654545"
+        },
+        {
+          "name": "HERNANDEZ GARCÍA, ESTEVE",
+          "number": 5,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/674058"
+        },
+        {
+          "name": "HIDALGO HURTADO, VICTOR",
+          "number": 8,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/633967"
+        },
+        {
+          "name": "AMADOR HIDALGO, JUAN",
+          "number": 10,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/633869"
+        },
+        {
+          "name": "SÁNCHEZ GARCÍA, JOEL",
+          "number": 11,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/708240"
+        },
+        {
+          "name": "LOPEZ MOLINA, PAU",
+          "number": 15,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18762162"
+        },
+        {
+          "name": "MALIEV , ALEXANDER",
+          "number": 17,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/19152581"
+        },
+        {
+          "name": "BORJAS SALGUERO, ERIC",
+          "number": 19,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18475239"
+        }
+      ],
+      "away_lineup": [
+        {
+          "name": "RODRIGUEZ LAMIEL, CARLOS",
+          "number": 1,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18716638"
+        },
+        {
+          "name": "GIMENO GALLARDO, LUIS",
+          "number": 2,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18705045"
+        },
+        {
+          "name": "MARTÍN GARCIA, JOAN",
+          "number": 3,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/31750284"
+        },
+        {
+          "name": "PUGES ROVIRA, DAVID",
+          "number": 4,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15566284"
+        },
+        {
+          "name": "CRESPO , LUCA THOMAS",
+          "number": 5,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/46811448"
+        },
+        {
+          "name": "GONZALEZ POLO, SERGI",
+          "number": 6,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15682795"
+        },
+        {
+          "name": "INOCENCIO ROMERO, RAUL",
+          "number": 7,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/742021"
+        },
+        {
+          "name": "JIMÉNEZ LEÓN, DAVID",
+          "number": 8,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/730057"
+        },
+        {
+          "name": "RANCEL SALAZAR, CHRISTOPHER AUGUSTO",
+          "number": 9,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/20893254"
+        },
+        {
+          "name": "CABELLO CARRILLO, RAFAEL",
+          "number": 10,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15588349"
+        },
+        {
+          "name": "ESCAMILLA ARBOL, ASIER",
+          "number": 11,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15195177"
+        }
+      ],
+      "home_bench": [
+        {
+          "name": "LUNES SEIJAS, PAU",
+          "number": 7,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/54301820"
+        },
+        {
+          "name": "GUERRERO RODRÍGUEZ, CARLOS",
+          "number": 9,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15617524"
+        },
+        {
+          "name": "NAVARRO ACOSTA, FRANCESC XAVIER",
+          "number": 13,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15552187"
+        },
+        {
+          "name": "CAZORLA FERNANDEZ, ALBERT MIQUEL",
+          "number": 21,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/900008731"
+        },
+        {
+          "name": "CALAHORRO FERNANDEZ, ANTONIO",
+          "number": 22,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/744832"
+        },
+        {
+          "name": "BLÁZQUEZ GÓMEZ, IKER",
+          "number": 24,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15544894"
+        }
+      ],
+      "away_bench": [
+        {
+          "name": "RODRIGUEZ GALLEGO, JORDI",
+          "number": 12,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15654118"
+        },
+        {
+          "name": "ARCHS HORTIGÓN, PABLO",
+          "number": 13,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/25236944"
+        },
+        {
+          "name": "MORENO DOMINGUEZ, XAVIER",
+          "number": 14,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18569397"
+        },
+        {
+          "name": "GODOY FLORES, JOEL",
+          "number": 15,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/44531790"
+        },
+        {
+          "name": "INOCENCIO ROMERO, ERIC",
+          "number": 16,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15588394"
+        },
+        {
+          "name": "BASUALDO PUGÉS, XAVIER",
+          "number": 17,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15030093"
+        },
+        {
+          "name": "CORBELLA PASCUET, POL",
+          "number": 18,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/19703965"
+        },
+        {
+          "name": "JIMÉNEZ LEÓN, DANIEL",
+          "number": 19,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18569491"
+        },
+        {
+          "name": "GODOY ORTIZ, OSCAR",
+          "number": 20,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/33733205"
+        }
+      ],
+      "goals": [
+        {
+          "player": "INOCENCIO ROMERO, RAUL",
+          "minute": "19",
+          "team": "away"
+        },
+        {
+          "player": "JIMÉNEZ LEÓN, DANIEL",
+          "minute": "85",
+          "team": "away"
+        }
+      ],
+      "yellow_cards": [
+        {
+          "player": "AMADOR HIDALGO, JUAN",
+          "minute": "31",
+          "card_type": "yellow",
+          "team": "home"
+        },
+        {
+          "player": "SANVIDAL PADULLES, MIGUEL ANGEL",
+          "minute": "45",
+          "card_type": "yellow",
+          "team": "home"
+        },
+        {
+          "player": "HERNANDEZ GARCÍA, ESTEVE",
+          "minute": "69",
+          "card_type": "yellow",
+          "team": "home"
+        },
+        {
+          "player": "SÁNCHEZ GARCÍA, JOEL",
+          "minute": "85",
+          "card_type": "yellow",
+          "team": "home"
+        },
+        {
+          "player": "RANCEL SALAZAR, CHRISTOPHER AUGUSTO",
+          "minute": "45",
+          "card_type": "yellow",
+          "team": "away"
+        },
+        {
+          "player": "CORBELLA PASCUET, POL",
+          "minute": "81",
+          "card_type": "yellow",
+          "team": "away"
+        },
+        {
+          "player": "RODRIGUEZ LAMIEL, CARLOS",
+          "minute": "82",
+          "card_type": "yellow",
+          "team": "away"
+        }
+      ],
+      "red_cards": [],
+      "substitutions": [
+        {
+          "player_out": "JAQUERO RALUY, CRISTIAN",
+          "player_in": "?",
+          "minute": "16",
+          "team": "home"
+        },
+        {
+          "player_out": "GUERRERO RODRÍGUEZ, CARLOS",
+          "player_in": "?",
+          "minute": "9",
+          "team": "home"
+        },
+        {
+          "player_out": "HIDALGO HURTADO, VICTOR",
+          "player_in": "?",
+          "minute": "46",
+          "team": "home"
+        },
+        {
+          "player_out": "CALAHORRO FERNANDEZ, ANTONIO",
+          "player_in": "?",
+          "minute": "22",
+          "team": "home"
+        },
+        {
+          "player_out": "MENDEZ SAMPERE, PAU",
+          "player_in": "?",
+          "minute": "57",
+          "team": "home"
+        },
+        {
+          "player_out": "LUNES SEIJAS, PAU",
+          "player_in": "?",
+          "minute": "7",
+          "team": "home"
+        },
+        {
+          "player_out": "CABELLO CARRILLO, RAFAEL",
+          "player_in": "?",
+          "minute": "46",
+          "team": "away"
+        },
+        {
+          "player_out": "JIMÉNEZ LEÓN, DANIEL",
+          "player_in": "?",
+          "minute": "19",
+          "team": "away"
+        },
+        {
+          "player_out": "INOCENCIO ROMERO, RAUL",
+          "player_in": "?",
+          "minute": "57",
+          "team": "away"
+        },
+        {
+          "player_out": "CORBELLA PASCUET, POL",
+          "player_in": "?",
+          "minute": "18",
+          "team": "away"
+        },
+        {
+          "player_out": "RANCEL SALAZAR, CHRISTOPHER AUGUSTO",
+          "player_in": "?",
+          "minute": "57",
+          "team": "away"
+        },
+        {
+          "player_out": "GODOY ORTIZ, OSCAR",
+          "player_in": "?",
+          "minute": "20",
+          "team": "away"
+        },
+        {
+          "player_out": "ESCAMILLA ARBOL, ASIER",
+          "player_in": "?",
+          "minute": "81",
+          "team": "away"
+        },
+        {
+          "player_out": "BASUALDO PUGÉS, XAVIER",
+          "player_in": "?",
+          "minute": "17",
+          "team": "away"
+        },
+        {
+          "player_out": "JIMÉNEZ LEÓN, DAVID",
+          "player_in": "?",
+          "minute": "85",
+          "team": "away"
+        },
+        {
+          "player_out": "GODOY FLORES, JOEL",
+          "player_in": "?",
+          "minute": "15",
+          "team": "away"
+        }
+      ],
+      "referees": [
+        "RAIMUNDO BARBERO, ARNAU",
+        "GHITA CRETU, EDUARD",
+        "HOMS HINAREJOS, ROGER"
+      ],
+      "home_coach": "JARABO FLORIDO, JAVIER",
+      "away_coach": "RODRIGUEZ RAMOS, HECTOR",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/sporting-gava-2013-futbol-club-a/2cat/prat-ae-b",
+      "status": "ACTA TANCADA"
+    },
+    {
+      "jornada": 2,
+      "date": "27-09-2025",
+      "time": "19:30",
+      "home_team": "FUNDACIÓ ACADEMIA F. L'HOSPITALET A",
+      "away_team": "IBERIA, C. AT. A",
+      "home_score": 2,
+      "away_score": 1,
+      "venue": "CAMP DE FUTBOL MPAL. PUBILLA CASAS  ctra. de Collblanc, 208, L'Hospitalet de Llobregat",
+      "home_lineup": [
+        {
+          "name": "CERDAN BERTRAN, MARC",
+          "number": 1,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/720659"
+        },
+        {
+          "name": "GOMEZ LUQUE, CARLOS",
+          "number": 2,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15607331"
+        },
+        {
+          "name": "GARCÍA MARTINEZ, ÁNGEL",
+          "number": 3,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15552095"
+        },
+        {
+          "name": "BERNAL DURAN, ALEX",
+          "number": 4,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/443346"
+        },
+        {
+          "name": "NGUEMA DORADO, HUGO",
+          "number": 5,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/20263319"
+        },
+        {
+          "name": "PARRALES VILLAMAR, JOSEP MARTIN",
+          "number": 6,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15055271"
+        },
+        {
+          "name": "BENAICHA SIDI BEN BRAHIM, RACHID",
+          "number": 7,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15660973"
+        },
+        {
+          "name": "CANABAL ALBELLA, DAVID",
+          "number": 8,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18715511"
+        },
+        {
+          "name": "REINHARDT BRU, GERARD",
+          "number": 9,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/726582"
+        },
+        {
+          "name": "SANTOS MOLINA, ERIC",
+          "number": 10,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/784469"
+        },
+        {
+          "name": "PANTALEÓN GARCÍA, HÉCTOR",
+          "number": 11,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18657616"
+        }
+      ],
+      "away_lineup": [
+        {
+          "name": "MOJICA NAVARRO, GERARDO DAVID",
+          "number": 1,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/38923738"
+        },
+        {
+          "name": "ARIAS , IVAN GABRIEL",
+          "number": 3,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/32073529"
+        },
+        {
+          "name": "JA-AFARI , HAQ",
+          "number": 4,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/51699984"
+        },
+        {
+          "name": "ROJAS OLIVARES, JAVIER ARTURO",
+          "number": 5,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/36466972"
+        },
+        {
+          "name": "MUNNE ESCOS, ANTONIO",
+          "number": 8,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/674807"
+        },
+        {
+          "name": "CASTRO ÁLVAREZ, BRYAN",
+          "number": 10,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18647238"
+        },
+        {
+          "name": "RAMOS ALCALÁ, ORIOL",
+          "number": 14,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/730872"
+        },
+        {
+          "name": "VALENTÍN SANTOS, ISMAEL",
+          "number": 15,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/674274"
+        },
+        {
+          "name": "GARI DARDER, ERIC",
+          "number": 19,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/711346"
+        },
+        {
+          "name": "ARAU SANNICOLAS, ADRIÀ",
+          "number": 20,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18578152"
+        },
+        {
+          "name": "PORCUNA SABATES, HUGO",
+          "number": 24,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/45068360"
+        }
+      ],
+      "home_bench": [
+        {
+          "name": "CEPRIAN PAEZ, ERIC",
+          "number": 12,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/718621"
+        },
+        {
+          "name": "MOLES  FORNALÉS, MARCEL",
+          "number": 13,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/21539639"
+        },
+        {
+          "name": "GONZÁLEZ SÁNCHEZ, MARCEL",
+          "number": 14,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/19869995"
+        },
+        {
+          "name": "TOMICO CARMONA, ALEJANDRO",
+          "number": 15,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/26581314"
+        },
+        {
+          "name": "MAS RIBE, EDUARDO",
+          "number": 16,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/657096"
+        },
+        {
+          "name": "QUERO TENA, ORIOL",
+          "number": 17,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/694378"
+        },
+        {
+          "name": "LOPEZ HERNANDEZ, RANDY ALEXANDER",
+          "number": 18,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/25763968"
+        },
+        {
+          "name": "EDJANG ELO, SANTIAGO ESTEBAN",
+          "number": 19,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/23748068"
+        },
+        {
+          "name": "CORTEZ VASQUEZ, GEOVANNY ALBERTO",
+          "number": 20,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/53286341"
+        }
+      ],
+      "away_bench": [
+        {
+          "name": "SILVA BATISTA, NATAN EDUARDO",
+          "number": 2,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18350696"
+        },
+        {
+          "name": "SANSALONI OCHANDO, HUGO",
+          "number": 7,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18657426"
+        },
+        {
+          "name": "PACHECO SUAREZ, MAURICIO ALEJANDRO",
+          "number": 11,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/45173058"
+        },
+        {
+          "name": "CORRALES LLAMAS, DEREK",
+          "number": 13,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18722916"
+        },
+        {
+          "name": "CABEZA GARCIA, JOSUA",
+          "number": 16,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/43725739"
+        },
+        {
+          "name": "MARQUÉS COLOMER, VÍCTOR",
+          "number": 17,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/727791"
+        },
+        {
+          "name": "FERNÁNDEZ ASENSIO, RAÚL",
+          "number": 18,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15556101"
+        },
+        {
+          "name": "OLIVÉ CASTAÑO, GABRIEL",
+          "number": 21,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18538487"
+        },
+        {
+          "name": "GARCIA PEREZ, IVAN",
+          "number": 23,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/20449680"
+        }
+      ],
+      "goals": [
+        {
+          "player": "MUNNE ESCOS, ANTONIO",
+          "minute": "10",
+          "team": "away"
+        },
+        {
+          "player": "SANTOS MOLINA, ERIC",
+          "minute": "80",
+          "team": "home"
+        },
+        {
+          "player": "TOMICO CARMONA, ALEJANDRO",
+          "minute": "89",
+          "team": "home"
+        }
+      ],
+      "yellow_cards": [
+        {
+          "player": "CERDAN BERTRAN, MARC",
+          "minute": "9",
+          "card_type": "yellow",
+          "team": "home"
+        },
+        {
+          "player": "REINHARDT BRU, GERARD",
+          "minute": "43",
+          "card_type": "yellow",
+          "team": "home"
+        },
+        {
+          "player": "CASTRO ÁLVAREZ, BRYAN",
+          "minute": "15",
+          "card_type": "yellow",
+          "team": "away"
+        },
+        {
+          "player": "ROJAS OLIVARES, JAVIER ARTURO",
+          "minute": "55",
+          "card_type": "yellow",
+          "team": "away"
+        },
+        {
+          "player": "ARAU SANNICOLAS, ADRIÀ",
+          "minute": "67",
+          "card_type": "yellow",
+          "team": "away"
+        },
+        {
+          "player": "GONZÁLEZ PEÑA, JORGE",
+          "minute": "75",
+          "card_type": "yellow",
+          "team": "away"
+        },
+        {
+          "player": "SILVA BATISTA, NATAN EDUARDO",
+          "minute": "84",
+          "card_type": "yellow",
+          "team": "away"
+        },
+        {
+          "player": "CABEZA GARCIA, JOSUA",
+          "minute": "86",
+          "card_type": "yellow",
+          "team": "away"
+        }
+      ],
+      "red_cards": [],
+      "substitutions": [
+        {
+          "player_out": "GOMEZ LUQUE, CARLOS",
+          "player_in": "?",
+          "minute": "58",
+          "team": "home"
+        },
+        {
+          "player_out": "CEPRIAN PAEZ, ERIC",
+          "player_in": "?",
+          "minute": "12",
+          "team": "home"
+        },
+        {
+          "player_out": "NGUEMA DORADO, HUGO",
+          "player_in": "?",
+          "minute": "58",
+          "team": "home"
+        },
+        {
+          "player_out": "GONZÁLEZ SÁNCHEZ, MARCEL",
+          "player_in": "?",
+          "minute": "14",
+          "team": "home"
+        },
+        {
+          "player_out": "PARRALES VILLAMAR, JOSEP MARTIN",
+          "player_in": "?",
+          "minute": "58",
+          "team": "home"
+        },
+        {
+          "player_out": "QUERO TENA, ORIOL",
+          "player_in": "?",
+          "minute": "17",
+          "team": "home"
+        },
+        {
+          "player_out": "REINHARDT BRU, GERARD",
+          "player_in": "?",
+          "minute": "64",
+          "team": "home"
+        },
+        {
+          "player_out": "TOMICO CARMONA, ALEJANDRO",
+          "player_in": "?",
+          "minute": "15",
+          "team": "home"
+        },
+        {
+          "player_out": "CANABAL ALBELLA, DAVID",
+          "player_in": "?",
+          "minute": "71",
+          "team": "home"
+        },
+        {
+          "player_out": "EDJANG ELO, SANTIAGO ESTEBAN",
+          "player_in": "?",
+          "minute": "19",
+          "team": "home"
+        },
+        {
+          "player_out": "MUNNE ESCOS, ANTONIO",
+          "player_in": "?",
+          "minute": "58",
+          "team": "away"
+        },
+        {
+          "player_out": "PACHECO SUAREZ, MAURICIO ALEJANDRO",
+          "player_in": "?",
+          "minute": "11",
+          "team": "away"
+        },
+        {
+          "player_out": "CASTRO ÁLVAREZ, BRYAN",
+          "player_in": "?",
+          "minute": "58",
+          "team": "away"
+        },
+        {
+          "player_out": "MARQUÉS COLOMER, VÍCTOR",
+          "player_in": "?",
+          "minute": "17",
+          "team": "away"
+        },
+        {
+          "player_out": "GARI DARDER, ERIC",
+          "player_in": "?",
+          "minute": "64",
+          "team": "away"
+        },
+        {
+          "player_out": "FERNÁNDEZ ASENSIO, RAÚL",
+          "player_in": "?",
+          "minute": "18",
+          "team": "away"
+        },
+        {
+          "player_out": "RAMOS ALCALÁ, ORIOL",
+          "player_in": "?",
+          "minute": "71",
+          "team": "away"
+        },
+        {
+          "player_out": "CABEZA GARCIA, JOSUA",
+          "player_in": "?",
+          "minute": "16",
+          "team": "away"
+        },
+        {
+          "player_out": "PORCUNA SABATES, HUGO",
+          "player_in": "?",
+          "minute": "71",
+          "team": "away"
+        },
+        {
+          "player_out": "OLIVÉ CASTAÑO, GABRIEL",
+          "player_in": "?",
+          "minute": "21",
+          "team": "away"
+        },
+        {
+          "player_out": "ROJAS OLIVARES, JAVIER ARTURO",
+          "player_in": "?",
+          "minute": "77",
+          "team": "away"
+        },
+        {
+          "player_out": "SILVA BATISTA, NATAN EDUARDO",
+          "player_in": "?",
+          "minute": "2",
+          "team": "away"
+        }
+      ],
+      "referees": [
+        "MARTIN TORRES, PAU",
+        "RIBAS CLIVILLE, POL",
+        "BARAKA ZOUAOUI, ABDELRAHMN AHMED"
+      ],
+      "home_coach": "LOPEZ GARCIA, CRISTINO",
+      "away_coach": "GONZÁLEZ PEÑA, JORGE",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/fundacio-academia-f-lhospitalet-a/2cat/iberia-c-at-a",
+      "status": "ACTA TANCADA"
+    },
+    {
+      "jornada": 2,
+      "date": "27-09-2025",
+      "time": "18:40",
+      "home_team": "PRAT, A.E. B",
+      "away_team": "SANT ILDEFONS, U.E. A",
+      "home_score": 0,
+      "away_score": 0,
+      "venue": "CAMP DE FUTBOL CEM SAGNIER  c/ del Roure, 418, El Prat de Llobregat",
+      "home_lineup": [
+        {
+          "name": "RODRIGUEZ LAMIEL, CARLOS",
+          "number": 1,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18716638"
+        },
+        {
+          "name": "GIMENO GALLARDO, LUIS",
+          "number": 2,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18705045"
+        },
+        {
+          "name": "MARTÍN GARCIA, JOAN",
+          "number": 3,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/31750284"
+        },
+        {
+          "name": "PUGES ROVIRA, DAVID",
+          "number": 4,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15566284"
+        },
+        {
+          "name": "CRESPO , LUCA THOMAS",
+          "number": 5,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/46811448"
+        },
+        {
+          "name": "BASUALDO PUGÉS, XAVIER",
+          "number": 6,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15030093"
+        },
+        {
+          "name": "INOCENCIO ROMERO, RAUL",
+          "number": 7,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/742021"
+        },
+        {
+          "name": "JIMÉNEZ LEÓN, DAVID",
+          "number": 8,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/730057"
+        },
+        {
+          "name": "RANCEL SALAZAR, CHRISTOPHER AUGUSTO",
+          "number": 9,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/20893254"
+        },
+        {
+          "name": "JIMÉNEZ LEÓN, DANIEL",
+          "number": 10,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18569491"
+        },
+        {
+          "name": "GODOY ORTIZ, OSCAR",
+          "number": 11,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/33733205"
+        }
+      ],
+      "away_lineup": [
+        {
+          "name": "PACHECO NAUCKHOFF, ALEXANDER",
+          "number": 22,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/628251"
+        },
+        {
+          "name": "GARCIA MATEOS, DANIEL",
+          "number": 2,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/634418"
+        },
+        {
+          "name": "ESPERT GAS, JORDI",
+          "number": 3,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/20016967"
+        },
+        {
+          "name": "MELERO CORDERO, POL",
+          "number": 4,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/748448"
+        },
+        {
+          "name": "VALLS FEMENÍA, JOAN",
+          "number": 5,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/769220"
+        },
+        {
+          "name": "ALONSO FRANCO, ARNAU",
+          "number": 6,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15554307"
+        },
+        {
+          "name": "FAJARDO BAUTISTA, EMERICK",
+          "number": 7,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/697420"
+        },
+        {
+          "name": "SANCHEZ PARRA, DIEGO ARMANDO",
+          "number": 8,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/47789820"
+        },
+        {
+          "name": "GRIS GARRIDO, MARC",
+          "number": 9,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/748404"
+        },
+        {
+          "name": "VASQUEZ BANCES, GIANCARLO",
+          "number": 10,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/688247"
+        },
+        {
+          "name": "EL ATTAK , ADAM",
+          "number": 11,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/41437161"
+        }
+      ],
+      "home_bench": [
+        {
+          "name": "RODRIGUEZ GALLEGO, JORDI",
+          "number": 12,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15654118"
+        },
+        {
+          "name": "ARCHS HORTIGÓN, PABLO",
+          "number": 13,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/25236944"
+        },
+        {
+          "name": "MORENO DOMINGUEZ, XAVIER",
+          "number": 14,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18569397"
+        },
+        {
+          "name": "GODOY FLORES, JOEL",
+          "number": 15,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/44531790"
+        },
+        {
+          "name": "INOCENCIO ROMERO, ERIC",
+          "number": 16,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15588394"
+        },
+        {
+          "name": "GONZALEZ POLO, SERGI",
+          "number": 17,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15682795"
+        },
+        {
+          "name": "CORBELLA PASCUET, POL",
+          "number": 18,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/19703965"
+        },
+        {
+          "name": "CABELLO CARRILLO, RAFAEL",
+          "number": 19,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15588349"
+        },
+        {
+          "name": "ESCAMILLA ARBOL, ASIER",
+          "number": 20,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15195177"
+        }
+      ],
+      "away_bench": [
+        {
+          "name": "COSTA ANDREU, JOAQUIN",
+          "number": 12,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/709008"
+        },
+        {
+          "name": "ROCA POZO, HUGO",
+          "number": 13,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/750643"
+        },
+        {
+          "name": "GADZHIKHANOV , MAGOMED",
+          "number": 14,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/36208569"
+        },
+        {
+          "name": "FERNANDEZ MERCHAN, CARLOS",
+          "number": 15,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18584185"
+        },
+        {
+          "name": "KALLOUL BRARKI, ANÁS",
+          "number": 16,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/27355843"
+        },
+        {
+          "name": "RODRIGUEZ CRISPI, ARAN",
+          "number": 17,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18715806"
+        },
+        {
+          "name": "GUANTE PAULINO, IVERSON JOSÉ",
+          "number": 18,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15175788"
+        }
+      ],
+      "goals": [],
+      "yellow_cards": [
+        {
+          "player": "CRESPO , LUCA THOMAS",
+          "minute": "16",
+          "card_type": "yellow",
+          "team": "home"
+        },
+        {
+          "player": "RODRIGUEZ RAMOS, HECTOR",
+          "minute": "64",
+          "card_type": "yellow",
+          "team": "home"
+        },
+        {
+          "player": "PUGES ROVIRA, DAVID",
+          "minute": "76",
+          "card_type": "yellow",
+          "team": "home"
+        },
+        {
+          "player": "GONZALEZ POLO, SERGI",
+          "minute": "88",
+          "card_type": "yellow",
+          "team": "home"
+        },
+        {
+          "player": "RODRÍGUEZ RAMOS, EDGAR",
+          "minute": "89",
+          "card_type": "yellow",
+          "team": "home"
+        },
+        {
+          "player": "ESPERT GAS, JORDI",
+          "minute": "55",
+          "card_type": "yellow",
+          "team": "away"
+        },
+        {
+          "player": "GRIS GARRIDO, MARC",
+          "minute": "57",
+          "card_type": "yellow",
+          "team": "away"
+        },
+        {
+          "player": "VALLS FEMENÍA, JOAN",
+          "minute": "86",
+          "card_type": "yellow",
+          "team": "away"
+        }
+      ],
+      "red_cards": [],
+      "substitutions": [
+        {
+          "player_out": "CRESPO , LUCA THOMAS",
+          "player_in": "?",
+          "minute": "46",
+          "team": "home"
+        },
+        {
+          "player_out": "RODRIGUEZ GALLEGO, JORDI",
+          "player_in": "?",
+          "minute": "12",
+          "team": "home"
+        },
+        {
+          "player_out": "JIMÉNEZ LEÓN, DAVID",
+          "player_in": "?",
+          "minute": "58",
+          "team": "home"
+        },
+        {
+          "player_out": "GONZALEZ POLO, SERGI",
+          "player_in": "?",
+          "minute": "17",
+          "team": "home"
+        },
+        {
+          "player_out": "RANCEL SALAZAR, CHRISTOPHER AUGUSTO",
+          "player_in": "?",
+          "minute": "69",
+          "team": "home"
+        },
+        {
+          "player_out": "ESCAMILLA ARBOL, ASIER",
+          "player_in": "?",
+          "minute": "20",
+          "team": "home"
+        },
+        {
+          "player_out": "BASUALDO PUGÉS, XAVIER",
+          "player_in": "?",
+          "minute": "75",
+          "team": "home"
+        },
+        {
+          "player_out": "MORENO DOMINGUEZ, XAVIER",
+          "player_in": "?",
+          "minute": "14",
+          "team": "home"
+        },
+        {
+          "player_out": "INOCENCIO ROMERO, RAUL",
+          "player_in": "?",
+          "minute": "83",
+          "team": "home"
+        },
+        {
+          "player_out": "CORBELLA PASCUET, POL",
+          "player_in": "?",
+          "minute": "18",
+          "team": "home"
+        },
+        {
+          "player_out": "PUGES ROVIRA, DAVID",
+          "player_in": "?",
+          "minute": "86",
+          "team": "home"
+        },
+        {
+          "player_out": "INOCENCIO ROMERO, ERIC",
+          "player_in": "?",
+          "minute": "16",
+          "team": "home"
+        },
+        {
+          "player_out": "VASQUEZ BANCES, GIANCARLO",
+          "player_in": "?",
+          "minute": "46",
+          "team": "away"
+        },
+        {
+          "player_out": "GADZHIKHANOV , MAGOMED",
+          "player_in": "?",
+          "minute": "14",
+          "team": "away"
+        },
+        {
+          "player_out": "EL ATTAK , ADAM",
+          "player_in": "?",
+          "minute": "58",
+          "team": "away"
+        },
+        {
+          "player_out": "COSTA ANDREU, JOAQUIN",
+          "player_in": "?",
+          "minute": "12",
+          "team": "away"
+        },
+        {
+          "player_out": "SANCHEZ PARRA, DIEGO ARMANDO",
+          "player_in": "?",
+          "minute": "75",
+          "team": "away"
+        },
+        {
+          "player_out": "KALLOUL BRARKI, ANÁS",
+          "player_in": "?",
+          "minute": "16",
+          "team": "away"
+        },
+        {
+          "player_out": "GARCIA MATEOS, DANIEL",
+          "player_in": "?",
+          "minute": "83",
+          "team": "away"
+        },
+        {
+          "player_out": "FERNANDEZ MERCHAN, CARLOS",
+          "player_in": "?",
+          "minute": "15",
+          "team": "away"
+        },
+        {
+          "player_out": "ALONSO FRANCO, ARNAU",
+          "player_in": "?",
+          "minute": "83",
+          "team": "away"
+        },
+        {
+          "player_out": "RODRIGUEZ CRISPI, ARAN",
+          "player_in": "?",
+          "minute": "17",
+          "team": "away"
+        }
+      ],
+      "referees": [
+        "PUIG DOMINGUEZ, GUILLEM",
+        "TORRES SORIANO, IGNACIO",
+        "MESA JIMÉNEZ, NACHO"
+      ],
+      "home_coach": "RODRIGUEZ RAMOS, HECTOR",
+      "away_coach": "GARCIA MANZANA, JUAN AURELIO",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/prat-ae-b/2cat/sant-ildefons-ue-a",
+      "status": "ACTA TANCADA"
+    },
+    {
+      "jornada": 3,
+      "date": "04-10-2025",
+      "time": "18:00",
+      "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+      "away_team": "FUNDACIÓ ACADEMIA F. L'HOSPITALET A",
+      "home_score": 0,
+      "away_score": 2,
+      "venue": "CAMP DE FUTBOL CEM BON PASTOR  c/ de la Ciutat d'Asuncion, 16B, Barcelona",
+      "home_lineup": [
+        {
+          "name": "FERNÁNDEZ MARTÍNEZ, SERGI",
+          "number": 1,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/19488382"
+        },
+        {
+          "name": "FERNÁNDEZ LLOPIS, JUAN CARLOS",
+          "number": 2,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15116148"
+        },
+        {
+          "name": "MORENO POBLADOR, ERIC",
+          "number": 4,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/753890"
+        },
+        {
+          "name": "RUIZ GARCÍA, EDUARDO",
+          "number": 6,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15693350"
+        },
+        {
+          "name": "ISRA",
+          "number": 8,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15128854"
+        },
+        {
+          "name": "RUIZ DEL CARMEN, KEVIN",
+          "number": 9,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18707332"
+        },
+        {
+          "name": "RUIZ GARCIA, YERAY",
+          "number": 14,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15116180"
+        },
+        {
+          "name": "GONZALEZ TOVAR, GERARD",
+          "number": 16,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/56229234"
+        },
+        {
+          "name": "CERVELO MARTINEZ, RICARDO",
+          "number": 17,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/46666086"
+        },
+        {
+          "name": "PALACIOS ORTEGA, FRANC",
+          "number": 21,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/733296"
+        },
+        {
+          "name": "CRISTALDO FLEITAS, PEDRO RAMON",
+          "number": 24,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/44687555"
+        }
+      ],
+      "away_lineup": [
+        {
+          "name": "CERDAN BERTRAN, MARC",
+          "number": 1,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/720659"
+        },
+        {
+          "name": "GOMEZ LUQUE, CARLOS",
+          "number": 2,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15607331"
+        },
+        {
+          "name": "GARCÍA MARTINEZ, ÁNGEL",
+          "number": 3,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15552095"
+        },
+        {
+          "name": "BERNAL DURAN, ALEX",
+          "number": 4,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/443346"
+        },
+        {
+          "name": "NGUEMA DORADO, HUGO",
+          "number": 5,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/20263319"
+        },
+        {
+          "name": "PARRALES VILLAMAR, JOSEP MARTIN",
+          "number": 6,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15055271"
+        },
+        {
+          "name": "BENAICHA SIDI BEN BRAHIM, RACHID",
+          "number": 7,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15660973"
+        },
+        {
+          "name": "CANABAL ALBELLA, DAVID",
+          "number": 8,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18715511"
+        },
+        {
+          "name": "REINHARDT BRU, GERARD",
+          "number": 9,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/726582"
+        },
+        {
+          "name": "SANTOS MOLINA, ERIC",
+          "number": 10,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/784469"
+        },
+        {
+          "name": "PANTALEÓN GARCÍA, HÉCTOR",
+          "number": 11,
+          "is_starter": true,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18657616"
+        }
+      ],
+      "home_bench": [
+        {
+          "name": "ALCAINA  SIMON, ISAK",
+          "number": 7,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15695111"
+        },
+        {
+          "name": "GARRIDO PÉREZ, IZAN",
+          "number": 10,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15116168"
+        },
+        {
+          "name": "LUQUE PRADOS, JUAN",
+          "number": 11,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/900008648"
+        },
+        {
+          "name": "GUERRERO ZALDIVAR, DANIEL SNEIJDER",
+          "number": 13,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/30284280"
+        },
+        {
+          "name": "LÓPEZ MURO, HERNAN",
+          "number": 15,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15680317"
+        },
+        {
+          "name": "RUIZ CHAVERRI, PABLO",
+          "number": 19,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/15657428"
+        },
+        {
+          "name": "NARANJO OLVERA, DERIAN ALBERTO",
+          "number": 20,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/53477814"
+        },
+        {
+          "name": "CABRERA FRANCO, MICHAEL STEVEN",
+          "number": 22,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/43556046"
+        },
+        {
+          "name": "CESPEDES MOLINA, MARIO",
+          "number": 23,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18681440"
+        }
+      ],
+      "away_bench": [
+        {
+          "name": "CEPRIAN PAEZ, ERIC",
+          "number": 12,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/718621"
+        },
+        {
+          "name": "MOLES  FORNALÉS, MARCEL",
+          "number": 13,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/21539639"
+        },
+        {
+          "name": "GONZÁLEZ SÁNCHEZ, MARCEL",
+          "number": 14,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/19869995"
+        },
+        {
+          "name": "TOMICO CARMONA, ALEJANDRO",
+          "number": 15,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/26581314"
+        },
+        {
+          "name": "MAS RIBE, EDUARDO",
+          "number": 16,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/657096"
+        },
+        {
+          "name": "QUERO TENA, ORIOL",
+          "number": 17,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/694378"
+        },
+        {
+          "name": "CORTEZ VASQUEZ, GEOVANNY ALBERTO",
+          "number": 18,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/53286341"
+        },
+        {
+          "name": "EDJANG ELO, SANTIAGO ESTEBAN",
+          "number": 19,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/23748068"
+        },
+        {
+          "name": "VILA BELMONTE, POL",
+          "number": 20,
+          "is_starter": false,
+          "player_url": "https://www.fcf.cat/jugador/2526/futbol-11/segona-catalana/grup-3/54322941/18750776"
+        }
+      ],
+      "goals": [
+        {
+          "player": "TOMICO CARMONA, ALEJANDRO",
+          "minute": "69",
+          "team": "away"
+        },
+        {
+          "player": "BENAICHA SIDI BEN BRAHIM, RACHID",
+          "minute": "76",
+          "team": "away"
+        }
+      ],
+      "yellow_cards": [
+        {
+          "player": "GONZALEZ TOVAR, GERARD",
+          "minute": "35",
+          "card_type": "yellow",
+          "team": "home"
+        },
+        {
+          "player": "CRISTALDO FLEITAS, PEDRO RAMON",
+          "minute": "48",
+          "card_type": "yellow",
+          "team": "home"
+        },
+        {
+          "player": "LÓPEZ MURO, HERNAN",
+          "minute": "55",
+          "card_type": "yellow",
+          "team": "home"
+        },
+        {
+          "player": "GARRIDO PÉREZ, IZAN",
+          "minute": "62",
+          "card_type": "yellow",
+          "team": "home"
+        },
+        {
+          "player": "LUQUE PRADOS, JUAN",
+          "minute": "64",
+          "card_type": "yellow",
+          "team": "home"
+        },
+        {
+          "player": "CANABAL ALBELLA, DAVID",
+          "minute": "32",
+          "card_type": "yellow",
+          "team": "away"
+        },
+        {
+          "player": "GOMEZ LUQUE, CARLOS",
+          "minute": "80",
+          "card_type": "yellow",
+          "team": "away"
+        },
+        {
+          "player": "SANTOS MOLINA, ERIC",
+          "minute": "85",
+          "card_type": "yellow",
+          "team": "away"
+        },
+        {
+          "player": "TOMICO CARMONA, ALEJANDRO",
+          "minute": "87",
+          "card_type": "yellow",
+          "team": "away"
+        }
+      ],
+      "red_cards": [],
+      "substitutions": [
+        {
+          "player_out": "PALACIOS ORTEGA, FRANC",
+          "player_in": "?",
+          "minute": "3",
+          "team": "home"
+        },
+        {
+          "player_out": "LUQUE PRADOS, JUAN",
+          "player_in": "?",
+          "minute": "11",
+          "team": "home"
+        },
+        {
+          "player_out": "RUIZ DEL CARMEN, KEVIN",
+          "player_in": "?",
+          "minute": "46",
+          "team": "home"
+        },
+        {
+          "player_out": "GARRIDO PÉREZ, IZAN",
+          "player_in": "?",
+          "minute": "10",
+          "team": "home"
+        },
+        {
+          "player_out": "GONZALEZ TOVAR, GERARD",
+          "player_in": "?",
+          "minute": "46",
+          "team": "home"
+        },
+        {
+          "player_out": "LÓPEZ MURO, HERNAN",
+          "player_in": "?",
+          "minute": "15",
+          "team": "home"
+        },
+        {
+          "player_out": "LÓPEZ MURO, HERNAN",
+          "player_in": "?",
+          "minute": "74",
+          "team": "home"
+        },
+        {
+          "player_out": "RUIZ CHAVERRI, PABLO",
+          "player_in": "?",
+          "minute": "19",
+          "team": "home"
+        },
+        {
+          "player_out": "MORENO POBLADOR, ERIC",
+          "player_in": "?",
+          "minute": "74",
+          "team": "home"
+        },
+        {
+          "player_out": "CABRERA FRANCO, MICHAEL STEVEN",
+          "player_in": "?",
+          "minute": "22",
+          "team": "home"
+        },
+        {
+          "player_out": "FERNÁNDEZ LLOPIS, JUAN CARLOS",
+          "player_in": "?",
+          "minute": "80",
+          "team": "home"
+        },
+        {
+          "player_out": "NARANJO OLVERA, DERIAN ALBERTO",
+          "player_in": "?",
+          "minute": "20",
+          "team": "home"
+        },
+        {
+          "player_out": "REINHARDT BRU, GERARD",
+          "player_in": "?",
+          "minute": "46",
+          "team": "away"
+        },
+        {
+          "player_out": "TOMICO CARMONA, ALEJANDRO",
+          "player_in": "?",
+          "minute": "15",
+          "team": "away"
+        },
+        {
+          "player_out": "PARRALES VILLAMAR, JOSEP MARTIN",
+          "player_in": "?",
+          "minute": "46",
+          "team": "away"
+        },
+        {
+          "player_out": "QUERO TENA, ORIOL",
+          "player_in": "?",
+          "minute": "17",
+          "team": "away"
+        },
+        {
+          "player_out": "CANABAL ALBELLA, DAVID",
+          "player_in": "?",
+          "minute": "66",
+          "team": "away"
+        },
+        {
+          "player_out": "CEPRIAN PAEZ, ERIC",
+          "player_in": "?",
+          "minute": "12",
+          "team": "away"
+        },
+        {
+          "player_out": "BERNAL DURAN, ALEX",
+          "player_in": "?",
+          "minute": "74",
+          "team": "away"
+        },
+        {
+          "player_out": "MAS RIBE, EDUARDO",
+          "player_in": "?",
+          "minute": "16",
+          "team": "away"
+        },
+        {
+          "player_out": "PANTALEÓN GARCÍA, HÉCTOR",
+          "player_in": "?",
+          "minute": "80",
+          "team": "away"
+        },
+        {
+          "player_out": "CORTEZ VASQUEZ, GEOVANNY ALBERTO",
+          "player_in": "?",
+          "minute": "18",
+          "team": "away"
+        },
+        {
+          "player_out": "BENAICHA SIDI BEN BRAHIM, RACHID",
+          "player_in": "?",
+          "minute": "80",
+          "team": "away"
+        },
+        {
+          "player_out": "EDJANG ELO, SANTIAGO ESTEBAN",
+          "player_in": "?",
+          "minute": "19",
+          "team": "away"
+        },
+        {
+          "player_out": "SANTOS MOLINA, ERIC",
+          "player_in": "?",
+          "minute": "87",
+          "team": "away"
+        },
+        {
+          "player_out": "VILA BELMONTE, POL",
+          "player_in": "?",
+          "minute": "20",
+          "team": "away"
+        }
+      ],
+      "referees": [
+        "GOMEZ MUÑOZ, GERARD",
+        "ERENCIA CASTRO, CARLOS",
+        "LEON PEÑA, HUGO"
+      ],
+      "home_coach": "PIRIS CAVA, CRISTIAN",
+      "away_coach": "LOPEZ GARCIA, CRISTINO",
+      "acta_url": "https://www.fcf.cat/acta/2526/futbol-11/segona-catalana/grup-3/2cat/bon-pastor-agrupacio-esportiva-a/2cat/fundacio-academia-f-lhospitalet-a",
+      "status": "ACTA TANCADA"
+    }
+  ],
+  "scorers_from_actas": [
+    {
+      "position": 1,
+      "name": "BENAICHA SIDI BEN BRAHIM, RACHID",
+      "team": "FUNDACIÓ ACADEMIA F. L'HOSPITALET A",
+      "goals": 2,
+      "penalties": 0,
+      "matches": 3,
+      "goals_per_match": 0.67,
+      "player_url": "",
+      "team_slug": ""
+    },
+    {
+      "position": 2,
+      "name": "TOMICO CARMONA, ALEJANDRO",
+      "team": "FUNDACIÓ ACADEMIA F. L'HOSPITALET A",
+      "goals": 2,
+      "penalties": 0,
+      "matches": 3,
+      "goals_per_match": 0.67,
+      "player_url": "",
+      "team_slug": ""
+    },
+    {
+      "position": 3,
+      "name": "GARCÍA MARTINEZ, ÁNGEL",
+      "team": "FUNDACIÓ ACADEMIA F. L'HOSPITALET A",
+      "goals": 1,
+      "penalties": 0,
+      "matches": 3,
+      "goals_per_match": 0.33,
+      "player_url": "",
+      "team_slug": ""
+    },
+    {
+      "position": 4,
+      "name": "INOCENCIO ROMERO, RAUL",
+      "team": "PRAT, A.E. B",
+      "goals": 1,
+      "penalties": 0,
+      "matches": 2,
+      "goals_per_match": 0.5,
+      "player_url": "",
+      "team_slug": ""
+    },
+    {
+      "position": 5,
+      "name": "JIMÉNEZ LEÓN, DANIEL",
+      "team": "PRAT, A.E. B",
+      "goals": 1,
+      "penalties": 0,
+      "matches": 2,
+      "goals_per_match": 0.5,
+      "player_url": "",
+      "team_slug": ""
+    },
+    {
+      "position": 6,
+      "name": "MUNNE ESCOS, ANTONIO",
+      "team": "IBERIA, C. AT. A",
+      "goals": 1,
+      "penalties": 0,
+      "matches": 1,
+      "goals_per_match": 1.0,
+      "player_url": "",
+      "team_slug": ""
+    },
+    {
+      "position": 7,
+      "name": "SANTOS MOLINA, ERIC",
+      "team": "FUNDACIÓ ACADEMIA F. L'HOSPITALET A",
+      "goals": 1,
+      "penalties": 0,
+      "matches": 3,
+      "goals_per_match": 0.33,
+      "player_url": "",
+      "team_slug": ""
+    }
+  ],
+  "validation": {
+    "total_checks": 51,
+    "passed": 28,
+    "failed": 23,
+    "warnings": [
+      "[Standings vs Results] RACING VALLBONA, C.F. A: no matching acta data",
+      "[Standings vs Results] UNIFICACION BELLVITGE, U.D. A: no matching acta data",
+      "[Standings vs Results] BARCELONETA, C.F. A: no matching acta data",
+      "[Standings vs Results] GAVA, C.F. A: no matching acta data",
+      "[Standings vs Results] SANT IGNASI C.E. A: no matching acta data",
+      "[Standings vs Results] CANYELLES,C.E. A: no matching acta data",
+      "[Standings vs Results] SECTOR MONTSERRATINA U.D. A: no matching acta data",
+      "[Standings vs Results] ESCOLA ESPORTIVA GUINEUETA C.F  A: no matching acta data",
+      "[Standings vs Results] SARRIA, C.P. A: no matching acta data"
+    ],
+    "errors": [
+      "[Acta Internal] Acta MARIANAO POBLET UD A vs FUNDACIÓ ACADEMIA F. L'HOSPITALET A: home goals events(0) != score(3)",
+      "[Acta Internal] Acta MARIANAO POBLET UD A vs FUNDACIÓ ACADEMIA F. L'HOSPITALET A: away goals events(2) != score(0)",
+      "[Standings vs Results] SPORTING GAVA 2013 FUTBOL CLUB A: PJ mismatch - standings=20 vs computed=1",
+      "[Standings vs Results] SPORTING GAVA 2013 FUTBOL CLUB A: Points mismatch - standings=42 vs computed=0",
+      "[Standings vs Results] SPORTING GAVA 2013 FUTBOL CLUB A: GF mismatch - standings=45 vs computed=0",
+      "[Standings vs Results] BON PASTOR AGRUPACIO ESPORTIVA A: PJ mismatch - standings=20 vs computed=1",
+      "[Standings vs Results] BON PASTOR AGRUPACIO ESPORTIVA A: Points mismatch - standings=35 vs computed=0",
+      "[Standings vs Results] BON PASTOR AGRUPACIO ESPORTIVA A: GF mismatch - standings=36 vs computed=0",
+      "[Standings vs Results] FUNDACIÓ ACADEMIA F. L'HOSPITALET A: PJ mismatch - standings=20 vs computed=3",
+      "[Standings vs Results] FUNDACIÓ ACADEMIA F. L'HOSPITALET A: Points mismatch - standings=29 vs computed=6",
+      "[Standings vs Results] FUNDACIÓ ACADEMIA F. L'HOSPITALET A: GF mismatch - standings=33 vs computed=4",
+      "[Standings vs Results] SANT ILDEFONS, U.E. A: PJ mismatch - standings=20 vs computed=1",
+      "[Standings vs Results] SANT ILDEFONS, U.E. A: Points mismatch - standings=26 vs computed=1",
+      "[Standings vs Results] SANT ILDEFONS, U.E. A: GF mismatch - standings=37 vs computed=0",
+      "[Standings vs Results] MARIANAO POBLET UD A: PJ mismatch - standings=20 vs computed=1",
+      "[Standings vs Results] MARIANAO POBLET UD A: Points mismatch - standings=26 vs computed=3",
+      "[Standings vs Results] MARIANAO POBLET UD A: GF mismatch - standings=35 vs computed=3",
+      "[Standings vs Results] PRAT, A.E. B: PJ mismatch - standings=20 vs computed=2",
+      "[Standings vs Results] PRAT, A.E. B: Points mismatch - standings=23 vs computed=4",
+      "[Standings vs Results] PRAT, A.E. B: GF mismatch - standings=34 vs computed=2",
+      "[Standings vs Results] IBERIA, C. AT. A: PJ mismatch - standings=20 vs computed=1",
+      "[Standings vs Results] IBERIA, C. AT. A: Points mismatch - standings=11 vs computed=0",
+      "[Standings vs Results] IBERIA, C. AT. A: GF mismatch - standings=27 vs computed=1"
+    ],
+    "cross_validation_results": [
+      "Results vs Actas: 5 actas available for cross-check",
+      "Standings vs Results: validated 16 teams against 5 actas",
+      "Scorers vs Actas: 7 matched, 0 mismatched out of top 7",
+      "Cards vs Sanctions: 14 sanctions checked against 35 yellow and 0 red card events"
+    ]
+  },
+  "team_intelligence": {
+    "team_name": "Fundacio Academia",
+    "players": {
+      "CERDAN BERTRAN, MARC": {
+        "name": "CERDAN BERTRAN, MARC",
+        "appearances": 3,
+        "starts": 3,
+        "goals": 0,
+        "yellow_cards": 1,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [
+          "9"
+        ],
+        "minutes_reds": []
+      },
+      "GOMEZ LUQUE, CARLOS": {
+        "name": "GOMEZ LUQUE, CARLOS",
+        "appearances": 3,
+        "starts": 3,
+        "goals": 0,
+        "yellow_cards": 1,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [
+          "80"
+        ],
+        "minutes_reds": []
+      },
+      "GARCÍA MARTINEZ, ÁNGEL": {
+        "name": "GARCÍA MARTINEZ, ÁNGEL",
+        "appearances": 3,
+        "starts": 3,
+        "goals": 1,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [
+          "25"
+        ],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "TOMICO CARMONA, ALEJANDRO": {
+        "name": "TOMICO CARMONA, ALEJANDRO",
+        "appearances": 1,
+        "starts": 1,
+        "goals": 2,
+        "yellow_cards": 1,
+        "red_cards": 0,
+        "minutes_goals": [
+          "89",
+          "69"
+        ],
+        "minutes_yellows": [
+          "87"
+        ],
+        "minutes_reds": []
+      },
+      "NGUEMA DORADO, HUGO": {
+        "name": "NGUEMA DORADO, HUGO",
+        "appearances": 3,
+        "starts": 3,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "LOPEZ HERNANDEZ, RANDY ALEXANDER": {
+        "name": "LOPEZ HERNANDEZ, RANDY ALEXANDER",
+        "appearances": 1,
+        "starts": 1,
+        "goals": 0,
+        "yellow_cards": 1,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [
+          "29"
+        ],
+        "minutes_reds": []
+      },
+      "BENAICHA SIDI BEN BRAHIM, RACHID": {
+        "name": "BENAICHA SIDI BEN BRAHIM, RACHID",
+        "appearances": 3,
+        "starts": 3,
+        "goals": 2,
+        "yellow_cards": 1,
+        "red_cards": 0,
+        "minutes_goals": [
+          "12",
+          "76"
+        ],
+        "minutes_yellows": [
+          "25"
+        ],
+        "minutes_reds": []
+      },
+      "CANABAL ALBELLA, DAVID": {
+        "name": "CANABAL ALBELLA, DAVID",
+        "appearances": 3,
+        "starts": 3,
+        "goals": 0,
+        "yellow_cards": 1,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [
+          "32"
+        ],
+        "minutes_reds": []
+      },
+      "REINHARDT BRU, GERARD": {
+        "name": "REINHARDT BRU, GERARD",
+        "appearances": 3,
+        "starts": 3,
+        "goals": 0,
+        "yellow_cards": 1,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [
+          "43"
+        ],
+        "minutes_reds": []
+      },
+      "SANTOS MOLINA, ERIC": {
+        "name": "SANTOS MOLINA, ERIC",
+        "appearances": 3,
+        "starts": 3,
+        "goals": 1,
+        "yellow_cards": 1,
+        "red_cards": 0,
+        "minutes_goals": [
+          "80"
+        ],
+        "minutes_yellows": [
+          "85"
+        ],
+        "minutes_reds": []
+      },
+      "PANTALEÓN GARCÍA, HÉCTOR": {
+        "name": "PANTALEÓN GARCÍA, HÉCTOR",
+        "appearances": 3,
+        "starts": 3,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "CEPRIAN PAEZ, ERIC": {
+        "name": "CEPRIAN PAEZ, ERIC",
+        "appearances": 0,
+        "starts": 0,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "MOLES  FORNALÉS, MARCEL": {
+        "name": "MOLES  FORNALÉS, MARCEL",
+        "appearances": 0,
+        "starts": 0,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "GONZÁLEZ SÁNCHEZ, MARCEL": {
+        "name": "GONZÁLEZ SÁNCHEZ, MARCEL",
+        "appearances": 0,
+        "starts": 0,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "BERNAL DURAN, ALEX": {
+        "name": "BERNAL DURAN, ALEX",
+        "appearances": 2,
+        "starts": 2,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "MAS RIBE, EDUARDO": {
+        "name": "MAS RIBE, EDUARDO",
+        "appearances": 0,
+        "starts": 0,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "QUERO TENA, ORIOL": {
+        "name": "QUERO TENA, ORIOL",
+        "appearances": 0,
+        "starts": 0,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "MEDINA AYBAR, WILLY YANIEL": {
+        "name": "MEDINA AYBAR, WILLY YANIEL",
+        "appearances": 0,
+        "starts": 0,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "EDJANG ELO, SANTIAGO ESTEBAN": {
+        "name": "EDJANG ELO, SANTIAGO ESTEBAN",
+        "appearances": 0,
+        "starts": 0,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "PARRALES VILLAMAR, JOSEP MARTIN": {
+        "name": "PARRALES VILLAMAR, JOSEP MARTIN",
+        "appearances": 2,
+        "starts": 2,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "CORTEZ VASQUEZ, GEOVANNY ALBERTO": {
+        "name": "CORTEZ VASQUEZ, GEOVANNY ALBERTO",
+        "appearances": 0,
+        "starts": 0,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "VILA BELMONTE, POL": {
+        "name": "VILA BELMONTE, POL",
+        "appearances": 0,
+        "starts": 0,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      }
+    },
+    "results": [
+      {
+        "jornada": 1,
+        "date": "21-09-2025",
+        "time": "18:00",
+        "home_team": "MARIANAO POBLET UD A",
+        "away_team": "FUNDACIÓ ACADEMIA F. L'HOSPITALET A",
+        "home_score": 3,
+        "away_score": 0,
+        "venue": "CAMP DE FUTBOL MPAL. MARIANAO  ctra. Sant Climent, 1, Sant Boi De Llobregat",
+        "acta_url": "",
+        "status": "",
+        "referee": "",
+        "home_slug": "",
+        "away_slug": ""
+      },
+      {
+        "jornada": 2,
+        "date": "27-09-2025",
+        "time": "19:30",
+        "home_team": "FUNDACIÓ ACADEMIA F. L'HOSPITALET A",
+        "away_team": "IBERIA, C. AT. A",
+        "home_score": 2,
+        "away_score": 1,
+        "venue": "CAMP DE FUTBOL MPAL. PUBILLA CASAS  ctra. de Collblanc, 208, L'Hospitalet de Llobregat",
+        "acta_url": "",
+        "status": "",
+        "referee": "",
+        "home_slug": "",
+        "away_slug": ""
+      },
+      {
+        "jornada": 3,
+        "date": "04-10-2025",
+        "time": "18:00",
+        "home_team": "BON PASTOR AGRUPACIO ESPORTIVA A",
+        "away_team": "FUNDACIÓ ACADEMIA F. L'HOSPITALET A",
+        "home_score": 0,
+        "away_score": 2,
+        "venue": "CAMP DE FUTBOL CEM BON PASTOR  c/ de la Ciutat d'Asuncion, 16B, Barcelona",
+        "acta_url": "",
+        "status": "",
+        "referee": "",
+        "home_slug": "",
+        "away_slug": ""
+      }
+    ],
+    "goals_by_period": {
+      "0-15": {
+        "scored": 1,
+        "conceded": 1
+      },
+      "16-30": {
+        "scored": 1,
+        "conceded": 0
+      },
+      "31-45": {
+        "scored": 0,
+        "conceded": 0
+      },
+      "46-60": {
+        "scored": 0,
+        "conceded": 0
+      },
+      "61-75": {
+        "scored": 1,
+        "conceded": 0
+      },
+      "76-90": {
+        "scored": 3,
+        "conceded": 0
+      }
+    },
+    "total_yellows": 8,
+    "total_reds": 0
+  },
+  "team_insights": [
+    {
+      "type": "home_record",
+      "label": "Casa: 1V 0E 0D",
+      "detail": "1 partidos en casa",
+      "win_pct": 100.0
+    },
+    {
+      "type": "away_record",
+      "label": "Fuera: 1V 0E 1D",
+      "detail": "2 partidos fuera",
+      "win_pct": 50.0
+    },
+    {
+      "type": "recent_form",
+      "label": "Racha (Últ. 3): D-V-V",
+      "detail": "6 de 9 puntos posibles"
+    },
+    {
+      "type": "strongest_period",
+      "label": "Más peligrosos en min 76-90",
+      "detail": "3 goles marcados en esa franja"
+    },
+    {
+      "type": "weakest_period",
+      "label": "Más vulnerables en min 0-15",
+      "detail": "1 goles encajados en esa franja"
+    }
+  ],
+  "rival_intelligence": {
+    "team_name": "Prat",
+    "players": {
+      "RODRIGUEZ LAMIEL, CARLOS": {
+        "name": "RODRIGUEZ LAMIEL, CARLOS",
+        "appearances": 2,
+        "starts": 2,
+        "goals": 0,
+        "yellow_cards": 1,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [
+          "82"
+        ],
+        "minutes_reds": []
+      },
+      "GIMENO GALLARDO, LUIS": {
+        "name": "GIMENO GALLARDO, LUIS",
+        "appearances": 2,
+        "starts": 2,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "MARTÍN GARCIA, JOAN": {
+        "name": "MARTÍN GARCIA, JOAN",
+        "appearances": 2,
+        "starts": 2,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "PUGES ROVIRA, DAVID": {
+        "name": "PUGES ROVIRA, DAVID",
+        "appearances": 2,
+        "starts": 2,
+        "goals": 0,
+        "yellow_cards": 1,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [
+          "76"
+        ],
+        "minutes_reds": []
+      },
+      "CRESPO , LUCA THOMAS": {
+        "name": "CRESPO , LUCA THOMAS",
+        "appearances": 2,
+        "starts": 2,
+        "goals": 0,
+        "yellow_cards": 1,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [
+          "16"
+        ],
+        "minutes_reds": []
+      },
+      "GONZALEZ POLO, SERGI": {
+        "name": "GONZALEZ POLO, SERGI",
+        "appearances": 1,
+        "starts": 1,
+        "goals": 0,
+        "yellow_cards": 1,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [
+          "88"
+        ],
+        "minutes_reds": []
+      },
+      "INOCENCIO ROMERO, RAUL": {
+        "name": "INOCENCIO ROMERO, RAUL",
+        "appearances": 2,
+        "starts": 2,
+        "goals": 1,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [
+          "19"
+        ],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "JIMÉNEZ LEÓN, DAVID": {
+        "name": "JIMÉNEZ LEÓN, DAVID",
+        "appearances": 2,
+        "starts": 2,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "RANCEL SALAZAR, CHRISTOPHER AUGUSTO": {
+        "name": "RANCEL SALAZAR, CHRISTOPHER AUGUSTO",
+        "appearances": 2,
+        "starts": 2,
+        "goals": 0,
+        "yellow_cards": 1,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [
+          "45"
+        ],
+        "minutes_reds": []
+      },
+      "CABELLO CARRILLO, RAFAEL": {
+        "name": "CABELLO CARRILLO, RAFAEL",
+        "appearances": 1,
+        "starts": 1,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "ESCAMILLA ARBOL, ASIER": {
+        "name": "ESCAMILLA ARBOL, ASIER",
+        "appearances": 1,
+        "starts": 1,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "RODRIGUEZ GALLEGO, JORDI": {
+        "name": "RODRIGUEZ GALLEGO, JORDI",
+        "appearances": 0,
+        "starts": 0,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "ARCHS HORTIGÓN, PABLO": {
+        "name": "ARCHS HORTIGÓN, PABLO",
+        "appearances": 0,
+        "starts": 0,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "MORENO DOMINGUEZ, XAVIER": {
+        "name": "MORENO DOMINGUEZ, XAVIER",
+        "appearances": 0,
+        "starts": 0,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "GODOY FLORES, JOEL": {
+        "name": "GODOY FLORES, JOEL",
+        "appearances": 0,
+        "starts": 0,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "INOCENCIO ROMERO, ERIC": {
+        "name": "INOCENCIO ROMERO, ERIC",
+        "appearances": 0,
+        "starts": 0,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "BASUALDO PUGÉS, XAVIER": {
+        "name": "BASUALDO PUGÉS, XAVIER",
+        "appearances": 1,
+        "starts": 1,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "CORBELLA PASCUET, POL": {
+        "name": "CORBELLA PASCUET, POL",
+        "appearances": 0,
+        "starts": 0,
+        "goals": 0,
+        "yellow_cards": 1,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [
+          "81"
+        ],
+        "minutes_reds": []
+      },
+      "JIMÉNEZ LEÓN, DANIEL": {
+        "name": "JIMÉNEZ LEÓN, DANIEL",
+        "appearances": 1,
+        "starts": 1,
+        "goals": 1,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [
+          "85"
+        ],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      },
+      "GODOY ORTIZ, OSCAR": {
+        "name": "GODOY ORTIZ, OSCAR",
+        "appearances": 1,
+        "starts": 1,
+        "goals": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "minutes_goals": [],
+        "minutes_yellows": [],
+        "minutes_reds": []
+      }
+    },
+    "results": [
+      {
+        "jornada": 1,
+        "date": "21-09-2025",
+        "time": "12:00",
+        "home_team": "SPORTING GAVA 2013 FUTBOL CLUB A",
+        "away_team": "PRAT, A.E. B",
+        "home_score": 0,
+        "away_score": 2,
+        "venue": "CAMP DE FUTBOL ZEM CAN TINTORER  rbla. Pompeu Fabra, 144, Gavà",
+        "acta_url": "",
+        "status": "",
+        "referee": "",
+        "home_slug": "",
+        "away_slug": ""
+      },
+      {
+        "jornada": 2,
+        "date": "27-09-2025",
+        "time": "18:40",
+        "home_team": "PRAT, A.E. B",
+        "away_team": "SANT ILDEFONS, U.E. A",
+        "home_score": 0,
+        "away_score": 0,
+        "venue": "CAMP DE FUTBOL CEM SAGNIER  c/ del Roure, 418, El Prat de Llobregat",
+        "acta_url": "",
+        "status": "",
+        "referee": "",
+        "home_slug": "",
+        "away_slug": ""
+      }
+    ],
+    "goals_by_period": {
+      "0-15": {
+        "scored": 0,
+        "conceded": 0
+      },
+      "16-30": {
+        "scored": 1,
+        "conceded": 0
+      },
+      "31-45": {
+        "scored": 0,
+        "conceded": 0
+      },
+      "46-60": {
+        "scored": 0,
+        "conceded": 0
+      },
+      "61-75": {
+        "scored": 0,
+        "conceded": 0
+      },
+      "76-90": {
+        "scored": 1,
+        "conceded": 0
+      }
+    },
+    "total_yellows": 8,
+    "total_reds": 0
+  },
+  "rival_insights": [
+    {
+      "type": "home_record",
+      "label": "Casa: 0V 1E 0D",
+      "detail": "1 partidos en casa",
+      "win_pct": 0.0
+    },
+    {
+      "type": "away_record",
+      "label": "Fuera: 1V 0E 0D",
+      "detail": "1 partidos fuera",
+      "win_pct": 100.0
+    },
+    {
+      "type": "recent_form",
+      "label": "Racha (Últ. 2): V-E",
+      "detail": "4 de 6 puntos posibles"
+    },
+    {
+      "type": "strongest_period",
+      "label": "Más peligrosos en min 16-30",
+      "detail": "1 goles marcados en esa franja"
+    }
+  ]
+}

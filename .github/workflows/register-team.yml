@@ -1,0 +1,206 @@
+name: 🆕 Register New Team
+
+# ────────────────────────────────────────────────────────────────────────────
+# A user registers their team to receive automatic scraping.
+# This workflow:
+#  1. Adds the team to data/teams_registry.json
+#  2. Immediately triggers the on-demand scraper for the new team
+#  3. Commits the updated registry
+#
+# Trigger via GitHub UI (Actions tab) or API:
+#   curl -X POST https://api.github.com/repos/AbelV22/fcfcat/dispatches \
+#     -H "Authorization: Bearer $GITHUB_TOKEN" \
+#     -H "Accept: application/vnd.github+json" \
+#     -d '{
+#       "event_type": "register-team",
+#       "client_payload": {
+#         "team": "Racing Vallbona",
+#         "team_keyword": "Racing Vallbona",
+#         "rival": "Sporting Gava",
+#         "season": "2526",
+#         "competition": "segona-catalana",
+#         "group": "grup-3",
+#         "notify_email": "mister@club.cat"
+#       }
+#     }'
+# ────────────────────────────────────────────────────────────────────────────
+
+on:
+  workflow_dispatch:
+    inputs:
+      team:
+        description: 'Nombre completo del equipo (como aparece en FCF)'
+        required: true
+      team_keyword:
+        description: 'Palabra clave para buscar el equipo (nombre corto, sin tildes)'
+        required: true
+      rival:
+        description: 'Rival para scouting (opcional)'
+        required: false
+        default: ''
+      season:
+        description: 'Temporada (ej: 2526)'
+        required: false
+        default: '2526'
+      competition:
+        description: 'Competición'
+        required: false
+        default: 'segona-catalana'
+      group:
+        description: 'Grupo'
+        required: false
+        default: 'grup-3'
+      notify_email:
+        description: 'Email de notificación (opcional)'
+        required: false
+        default: ''
+
+  repository_dispatch:
+    types: [register-team]
+
+jobs:
+  register:
+    name: Register Team & Trigger Initial Scrape
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Resolve parameters
+        id: params
+        run: |
+          TEAM="${{ github.event.client_payload.team || inputs.team }}"
+          KEYWORD="${{ github.event.client_payload.team_keyword || inputs.team_keyword }}"
+          RIVAL="${{ github.event.client_payload.rival || inputs.rival || '' }}"
+          SEASON="${{ github.event.client_payload.season || inputs.season || '2526' }}"
+          COMPETITION="${{ github.event.client_payload.competition || inputs.competition || 'segona-catalana' }}"
+          GROUP="${{ github.event.client_payload.group || inputs.group || 'grup-3' }}"
+          EMAIL="${{ github.event.client_payload.notify_email || inputs.notify_email || '' }}"
+
+          echo "team=$TEAM" >> $GITHUB_OUTPUT
+          echo "keyword=$KEYWORD" >> $GITHUB_OUTPUT
+          echo "rival=$RIVAL" >> $GITHUB_OUTPUT
+          echo "season=$SEASON" >> $GITHUB_OUTPUT
+          echo "competition=$COMPETITION" >> $GITHUB_OUTPUT
+          echo "group=$GROUP" >> $GITHUB_OUTPUT
+          echo "email=$EMAIL" >> $GITHUB_OUTPUT
+
+      - name: Add team to registry
+        id: registry
+        run: |
+          python -c "
+          import json, re
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          registry_path = Path('data/teams_registry.json')
+          registry = json.loads(registry_path.read_text(encoding='utf-8'))
+
+          team_name = '''${{ steps.params.outputs.team }}'''
+          keyword   = '''${{ steps.params.outputs.keyword }}'''
+          season    = '${{ steps.params.outputs.season }}'
+          comp      = '${{ steps.params.outputs.competition }}'
+          group     = '${{ steps.params.outputs.group }}'
+          email     = '''${{ steps.params.outputs.email }}'''
+
+          # Generate slug ID
+          slug = re.sub(r'[^a-z0-9]+', '-', keyword.lower()).strip('-')
+
+          # Check if already registered
+          existing = next((t for t in registry['teams'] if t['id'] == slug), None)
+          if existing:
+              print(f'Team {slug} already registered. Updating...')
+              registry['teams'].remove(existing)
+
+          entry = {
+            'id': slug,
+            'team': team_name,
+            'team_keyword': keyword,
+            'season': season,
+            'competition': comp,
+            'group': group,
+            'registered_at': datetime.now(timezone.utc).isoformat(),
+            'notify_email': email,
+          }
+          registry['teams'].append(entry)
+
+          registry_path.write_text(
+            json.dumps(registry, ensure_ascii=False, indent=2),
+            encoding='utf-8'
+          )
+          print(f'Registered: {slug} ({team_name})')
+          print(f'Total teams: {len(registry[\"teams\"])}')
+          with open(os.environ.get('GITHUB_OUTPUT', '/dev/null'), 'a') as f:
+              f.write(f'slug={slug}\n')
+          " 2>&1 || true
+
+          SLUG=$(python -c "
+          import re
+          kw = '''${{ steps.params.outputs.keyword }}'''
+          print(re.sub(r'[^a-z0-9]+', '-', kw.lower()).strip('-'))
+          ")
+          echo "slug=$SLUG" >> $GITHUB_OUTPUT
+
+      - name: Create team data directory
+        run: |
+          mkdir -p data/teams
+          echo "{}" > "data/teams/${{ steps.registry.outputs.slug }}.json"
+
+      - name: Commit registry update
+        run: |
+          git config user.name  "FCF Bot"
+          git config user.email "bot@fcfcat.github.io"
+          git add data/teams_registry.json data/teams/
+          git diff --staged --quiet && echo "No changes" || \
+            git commit -m "register: add team '${{ steps.params.outputs.keyword }}' — ${{ steps.params.outputs.competition }}/${{ steps.params.outputs.group }}" && \
+            git push origin HEAD
+
+      - name: Trigger initial scrape for new team
+        run: |
+          PAYLOAD=$(python -c "
+          import json
+          payload = {
+            'event_type': 'scrape-team',
+            'client_payload': {
+              'team': '''${{ steps.params.outputs.keyword }}''',
+              'rival': '''${{ steps.params.outputs.rival }}''',
+              'season': '${{ steps.params.outputs.season }}',
+              'competition': '${{ steps.params.outputs.competition }}',
+              'group': '${{ steps.params.outputs.group }}',
+              'full': 'false',
+            }
+          }
+          print(json.dumps(payload))
+          ")
+
+          curl -s -X POST \
+            "https://api.github.com/repos/${{ github.repository }}/dispatches" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD"
+
+          echo "Initial scrape triggered for: ${{ steps.params.outputs.keyword }}"
+
+      - name: Summary
+        run: |
+          echo "## 🆕 Team Registered Successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Campo | Valor |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Team | ${{ steps.params.outputs.team }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Keyword | ${{ steps.params.outputs.keyword }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Season | ${{ steps.params.outputs.season }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Competition | ${{ steps.params.outputs.competition }} / ${{ steps.params.outputs.group }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Rival (scouting) | ${{ steps.params.outputs.rival }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ El scraper inicial se ha lanzado automáticamente." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Los datos estarán disponibles en **data/teams/${{ steps.registry.outputs.slug }}.json** en unos minutos." >> $GITHUB_STEP_SUMMARY

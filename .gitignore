@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.whl
+venv/
+env/
+.venv/
+pip-wheel-metadata/
+
+# Scraper cache (local only - never commit)
+.scraper_cache/
+
+# Node / frontend
+node_modules/
+procoach/node_modules/
+procoach/dist/
+procoach/.vite/
+procoach/coverage/
+
+# Build outputs
+*.local
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Logs
+*.log
+logs/
+
+# Data (keep structure, ignore large caches)
+data/*.json.bak

@@ -1,0 +1,249 @@
+name: ⚽ Scrape FCF - On Demand
+
+# ────────────────────────────────────────────────────────────────────────────
+# Triggered in two ways:
+#  1. workflow_dispatch  → Manual run from GitHub UI (Actions tab → Run workflow)
+#  2. repository_dispatch → API call (e.g., when a user registers their team)
+#
+# External API trigger example:
+#   curl -X POST https://api.github.com/repos/AbelV22/fcfcat/dispatches \
+#     -H "Authorization: Bearer $GITHUB_TOKEN" \
+#     -H "Accept: application/vnd.github+json" \
+#     -d '{"event_type":"scrape-team","client_payload":{"team":"Fundacio Academia","rival":"AE Prat","full":"false"}}'
+# ────────────────────────────────────────────────────────────────────────────
+
+on:
+  workflow_dispatch:
+    inputs:
+      team:
+        description: 'Nombre de tu equipo (o parte del nombre)'
+        required: true
+        default: 'Fundacio Academia'
+      rival:
+        description: 'Nombre del rival (opcional, para scouting enfocado)'
+        required: false
+        default: ''
+      full:
+        description: 'Scrape TODAS las actas (más lento, validación completa)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+      season:
+        description: 'Temporada (ej: 2526 para 2025-2026)'
+        required: false
+        default: '2526'
+      competition:
+        description: 'Competición slug'
+        required: false
+        default: 'segona-catalana'
+      group:
+        description: 'Grupo slug'
+        required: false
+        default: 'grup-3'
+
+  repository_dispatch:
+    types: [scrape-team, register-team]
+
+jobs:
+  scrape:
+    name: Scraping FCF Data
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Resolve parameters
+        id: params
+        run: |
+          # Prefer repository_dispatch payload, fallback to workflow_dispatch inputs
+          TEAM="${{ github.event.client_payload.team || inputs.team || 'Fundacio Academia' }}"
+          RIVAL="${{ github.event.client_payload.rival || inputs.rival || '' }}"
+          FULL="${{ github.event.client_payload.full || inputs.full || 'false' }}"
+          SEASON="${{ github.event.client_payload.season || inputs.season || '2526' }}"
+          COMPETITION="${{ github.event.client_payload.competition || inputs.competition || 'segona-catalana' }}"
+          GROUP="${{ github.event.client_payload.group || inputs.group || 'grup-3' }}"
+
+          echo "team=$TEAM" >> $GITHUB_OUTPUT
+          echo "rival=$RIVAL" >> $GITHUB_OUTPUT
+          echo "full=$FULL" >> $GITHUB_OUTPUT
+          echo "season=$SEASON" >> $GITHUB_OUTPUT
+          echo "competition=$COMPETITION" >> $GITHUB_OUTPUT
+          echo "group=$GROUP" >> $GITHUB_OUTPUT
+
+          echo "### ⚽ Scraping Parameters" >> $GITHUB_STEP_SUMMARY
+          echo "| Parámetro | Valor |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Team | $TEAM |" >> $GITHUB_STEP_SUMMARY
+          echo "| Rival | ${RIVAL:-'(todas las actas del equipo)'} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Full scrape | $FULL |" >> $GITHUB_STEP_SUMMARY
+          echo "| Season | $SEASON |" >> $GITHUB_STEP_SUMMARY
+          echo "| Competition | $COMPETITION / $GROUP |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Update scraper config for this run
+        run: |
+          python -c "
+          import re, pathlib
+
+          main_path = pathlib.Path('scraper/main.py')
+          content = main_path.read_text(encoding='utf-8')
+
+          season = '${{ steps.params.outputs.season }}'
+          competition = '${{ steps.params.outputs.competition }}'
+          group = '${{ steps.params.outputs.group }}'
+
+          content = re.sub(r'SEASON = \"[^\"]+\"', f'SEASON = \"{season}\"', content)
+          content = re.sub(r'COMPETITION = \"[^\"]+\"', f'COMPETITION = \"{competition}\"', content)
+          content = re.sub(r'GROUP = \"[^\"]+\"', f'GROUP = \"{group}\"', content)
+
+          main_path.write_text(content, encoding='utf-8')
+          print(f'Config updated: season={season}, competition={competition}, group={group}')
+          "
+
+      - name: Run FCF Scraper
+        id: scraper
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          TEAM="${{ steps.params.outputs.team }}"
+          RIVAL="${{ steps.params.outputs.rival }}"
+          FULL="${{ steps.params.outputs.full }}"
+
+          CMD="python -m scraper.main --team \"$TEAM\""
+
+          if [ -n "$RIVAL" ]; then
+            CMD="$CMD --rival \"$RIVAL\""
+          fi
+
+          if [ "$FULL" = "true" ]; then
+            CMD="$CMD --full"
+          fi
+
+          echo "Running: $CMD"
+          eval $CMD
+
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+
+      - name: Validate output data
+        run: |
+          python -c "
+          import json, sys
+          from pathlib import Path
+
+          data_file = Path('data/fcf_data.json')
+          if not data_file.exists():
+              print('ERROR: data/fcf_data.json not found!')
+              sys.exit(1)
+
+          data = json.loads(data_file.read_text(encoding='utf-8'))
+          validation = data.get('validation', {})
+
+          standings = data.get('standings', [])
+          actas = data.get('actas', [])
+          team_intel = data.get('team_intelligence', {})
+
+          print('=== DATA QUALITY REPORT ===')
+          print(f'Standings:       {len(standings)} teams')
+          print(f'Matches:         {len(data.get(\"matches\", []))}')
+          print(f'Actas:           {len(actas)}')
+          print(f'Scorers:         {len(data.get(\"scorers_from_actas\", []))}')
+          print(f'Sanctions:       {len(data.get(\"sanctions\", []))}')
+          print(f'Team players:    {len(team_intel.get(\"players\", {}))}')
+          print(f'Validation acc:  {validation.get(\"accuracy_pct\", 0):.1f}%')
+          print(f'Errors:          {len(validation.get(\"errors\", []))}')
+
+          if len(standings) == 0:
+              print('WARNING: No standings data')
+          if len(actas) == 0:
+              print('ERROR: No actas scraped!')
+              sys.exit(1)
+          print('Validation: PASS')
+          "
+
+      - name: Generate job summary
+        if: always()
+        run: |
+          python -c "
+          import json
+          from pathlib import Path
+
+          try:
+              data = json.loads(Path('data/fcf_data.json').read_text(encoding='utf-8'))
+          except:
+              print('Could not read data file')
+              exit(0)
+
+          val = data.get('validation', {})
+          standings = data.get('standings', [])
+          actas = data.get('actas', [])
+          team_intel = data.get('team_intelligence', {})
+          rival_intel = data.get('rival_intelligence', {})
+          insights = data.get('team_insights', [])
+          rival_insights = data.get('rival_insights', [])
+
+          lines = [
+              '',
+              '## 📊 Resultados del Scraping',
+              '',
+              '| Dato | Cantidad |',
+              '|------|----------|',
+              f'| Equipos en clasificación | {len(standings)} |',
+              f'| Partidos en calendario | {len(data.get(\"matches\", []))} |',
+              f'| Actas procesadas | {len(actas)} |',
+              f'| Goleadores calculados | {len(data.get(\"scorers_from_actas\", []))} |',
+              f'| Sanciones activas | {len(data.get(\"sanctions\", []))} |',
+              f'| Jugadores tracked (equipo) | {len(team_intel.get(\"players\", {}))} |',
+              f'| Jugadores tracked (rival) | {len(rival_intel.get(\"players\", {}))} |',
+              '',
+              f'### ✅ Validación: {val.get(\"accuracy_pct\", 0):.1f}% ({val.get(\"passed\", 0)}/{val.get(\"total_checks\", 0)} checks OK)',
+          ]
+
+          if standings:
+              lines += ['', '### 🏆 Top 5 Clasificación']
+              for t in standings[:5]:
+                  marker = ' ← **TU EQUIPO**' if '${{ steps.params.outputs.team }}'.lower() in t.get('name','').lower() else ''
+                  lines.append(f'{t[\"position\"]}. **{t[\"name\"]}** — {t[\"points\"]}pts, {t[\"played\"]}PJ{marker}')
+
+          if insights:
+              lines += ['', f'### 🧠 Insights — {team_intel.get(\"team_name\", \"Equipo\")}']
+              for i in insights:
+                  lines.append(f'- **{i[\"label\"]}**: {i[\"detail\"]}')
+
+          if rival_intel and rival_insights:
+              lines += ['', f'### 🎯 Scouting Rival — {rival_intel.get(\"team_name\", \"Rival\")}']
+              for i in rival_insights:
+                  lines.append(f'- **{i[\"label\"]}**: {i[\"detail\"]}')
+
+          print('\n'.join(lines))
+          " >> \$GITHUB_STEP_SUMMARY
+
+      - name: Commit & push updated data
+        run: |
+          git config user.name  "FCF Bot"
+          git config user.email "bot@fcfcat.github.io"
+          git add data/fcf_data.json
+          git diff --staged --quiet && echo "No changes to commit" || \
+            git commit -m "data: scrape $(date -u '+%Y-%m-%d %H:%M UTC') — ${{ steps.params.outputs.team }}" && \
+            git push origin HEAD
+
+      - name: Upload data artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fcf-data-${{ github.run_number }}
+          path: data/fcf_data.json
+          retention-days: 30
