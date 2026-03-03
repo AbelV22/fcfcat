@@ -61,3 +61,4 @@ reports/
 .pytest_cache/
 .coverage
 htmlcov/
+.venv_packages/

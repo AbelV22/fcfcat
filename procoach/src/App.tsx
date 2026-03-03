@@ -3,11 +3,14 @@ import {
   BarChart2, Calendar, Shield, Users, Video,
   Settings, Bell, Search, AlertTriangle,
   TrendingUp, Crosshair, Map, Award, Gavel, Clock, Target,
-  UserCheck, Zap, Activity, Eye, ChevronLeft, ChevronRight
+  UserCheck, Zap, Activity, Eye, ChevronLeft, ChevronRight,
+  Database
 } from 'lucide-react';
 import './App.css';
 import TrainingPlanner from './TrainingPlanner';
 import TeamManagement from './TeamManagement';
+import FCFSetup, { type FCFTeamData } from './FCFSetup';
+import IntelligenceView from './IntelligenceView';
 
 // ─── TYPES ────────────────────────────────────────────
 interface NavItemProps { icon: React.ReactNode; label: string; active: boolean; onClick: () => void; badge?: string; isSidebarOpen?: boolean }
@@ -22,6 +25,7 @@ interface PlayerDotProps { x: string; y: string; num: string; color: string }
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [fcfTeamData, setFcfTeamData] = useState<FCFTeamData | null>(null);
 
   return (
     <div className="app-container" style={{ flexDirection: 'row', backgroundColor: '#090f1a' }}>
@@ -59,6 +63,8 @@ function App() {
           <NavItem icon={<Map size={20} />} label="Entrenamientos" active={activeTab === 'training'} onClick={() => setActiveTab('training')} badge="Nuevo" isSidebarOpen={isSidebarOpen} />
           <NavItem icon={<Video size={20} />} label="Video Análisis" active={activeTab === 'video'} onClick={() => setActiveTab('video')} isSidebarOpen={isSidebarOpen} />
           <NavItem icon={<Calendar size={20} />} label="Calendario" active={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} isSidebarOpen={isSidebarOpen} />
+          <div style={{ height: '1px', background: 'rgba(255,255,255,0.05)', margin: '0.5rem 0' }} />
+          <NavItem icon={<Database size={20} />} label="FCF Intelligence" active={activeTab === 'fcf'} onClick={() => setActiveTab('fcf')} badge={fcfTeamData ? '✓' : 'NEW'} isSidebarOpen={isSidebarOpen} />
         </div>
         <div style={{ padding: isSidebarOpen ? '1.5rem' : '1.5rem 0', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'center' }}>
           <NavItem icon={<Settings size={20} />} label="Configuración" active={false} onClick={() => { }} isSidebarOpen={isSidebarOpen} />
@@ -87,7 +93,16 @@ function App() {
         </header>
 
         {/* ── Dynamic Content ── */}
-        {activeTab === 'training' ? (
+        {activeTab === 'fcf' ? (
+          fcfTeamData ? (
+            <IntelligenceView
+              teamData={fcfTeamData}
+              onReset={() => setFcfTeamData(null)}
+            />
+          ) : (
+            <FCFSetup onComplete={(data) => { setFcfTeamData(data); }} />
+          )
+        ) : activeTab === 'training' ? (
           <TrainingPlanner />
         ) : activeTab === 'team' ? (
           <TeamManagement />
