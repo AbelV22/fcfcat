@@ -64,10 +64,17 @@ def build_urls(season: str, competition: str, group: str) -> dict:
 
 def setup_logging(verbose: bool = False):
     level = logging.DEBUG if verbose else logging.INFO
+    log_dir = Path(__file__).parent.parent / "logs"
+    log_dir.mkdir(exist_ok=True)
+    
     logging.basicConfig(
         level=level,
         format="%(asctime)s [%(levelname)s] %(message)s",
-        datefmt="%H:%M:%S",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        handlers=[
+            logging.FileHandler(log_dir / "scraper.log", encoding="utf-8"),
+            logging.StreamHandler(sys.stdout)
+        ]
     )
 
 

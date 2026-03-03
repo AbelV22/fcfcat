@@ -8,6 +8,7 @@ raw data into coaching insights.
 import logging
 from collections import defaultdict
 from dataclasses import asdict
+from typing import Optional
 
 from .models import (
     MatchReport, TeamStanding, Scorer, PlayerStats,
@@ -51,7 +52,7 @@ def _minute_to_period(minute: int) -> str:
 def build_team_intelligence(
     team_name: str,
     actas: list[MatchReport],
-    standings: list[TeamStanding] | None = None,
+    standings: Optional[list[TeamStanding]] = None,
 ) -> TeamIntelligence:
     """
     Build comprehensive intelligence for a specific team
@@ -95,92 +96,127 @@ def build_team_intelligence(
             venue=acta.venue,
         )
         intel.results.append(result)
+        
+        intel.goals_scored += scored
+        intel.goals_conceded += conceded
+        if scored > conceded:
+            intel.wins += 1
+            intel.form.append("W")
+        elif scored == conceded:
+            intel.draws += 1
+            intel.form.append("D")
+        else:
+            intel.losses += 1
+            intel.form.append("L")
+
+        # Keep track of minutes played in this match
+        match_players_names = [p.name for p in lineup + bench]
+        match_minutes = {p.name: 90 if p.is_starter else 0 for p in lineup + bench}
+        team_side = "home" if is_home else "away"
+
+        # ── Process substitutions for minutes ──
+        for sub in acta.substitutions:
+            if sub.team == team_side:
+                minute_val = _parse_minute_value(sub.minute)
+                
+                out_name = _find_best_player_match(sub.player_out, match_players_names)
+                if out_name:
+                    match_minutes[out_name] = min(minute_val, match_minutes[out_name])
+                    
+                in_name = _find_best_player_match(sub.player_in, match_players_names)
+                if in_name:
+                    match_minutes[in_name] += max(0, 90 - minute_val)
+
+        # ── Adjust minutes for red cards ──
+        for card in acta.red_cards:
+            if card.team == team_side:
+                minute_val = _parse_minute_value(card.minute)
+                card_name = _find_best_player_match(card.player, match_players_names)
+                if card_name and match_minutes[card_name] > 0:
+                    # They didn't finish the game, so they lose the remaining minutes
+                    # Assuming they were on the pitch at minute_val
+                    match_minutes[card_name] -= max(0, 90 - minute_val)
+                    match_minutes[card_name] = max(0, match_minutes[card_name])
 
         # ── Process player appearances ──
         for player in lineup:
             name = player.name
             if name not in intel.players:
-                intel.players[name] = PlayerStats(name=name)
+                intel.players[name] = PlayerStats(name=name, dorsal=player.number)
+            elif intel.players[name].dorsal == 0 and player.number > 0:
+                intel.players[name].dorsal = player.number
+            
             intel.players[name].appearances += 1
             intel.players[name].starts += 1
+            intel.players[name].minutes_played += match_minutes.get(name, 90)
 
         for player in bench:
             name = player.name
             if name not in intel.players:
-                intel.players[name] = PlayerStats(name=name)
-            # Only count as appearance if they actually came on (via substitutions)
-            # For now count bench listing
-            # We'll refine with substitution data below
+                intel.players[name] = PlayerStats(name=name, dorsal=player.number)
+            elif intel.players[name].dorsal == 0 and player.number > 0:
+                intel.players[name].dorsal = player.number
+                
+            # Only count as appearance if they actually played > 0 mins
+            mins = match_minutes.get(name, 0)
+            if mins > 0:
+                intel.players[name].appearances += 1
+                intel.players[name].minutes_played += mins
 
         # ── Process goals ──
         for goal in acta.goals:
             minute_val = _parse_minute_value(goal.minute)
             period = _minute_to_period(minute_val)
 
-            # Determine if this goal was scored by or against our team
-            goal_player_lower = goal.player.lower()
-
-            # Check if the scorer is in our lineup
             is_our_goal = False
-            all_our_players = [p.name.lower() for p in lineup + bench]
-
-            if goal.team == ("home" if is_home else "away"):
+            if goal.team == team_side:
                 is_our_goal = True
-            elif goal.team == ("away" if is_home else "home"):
+            elif goal.team:
                 is_our_goal = False
             else:
-                # Fallback: check if player name matches our roster
-                is_our_goal = any(goal_player_lower in p or p in goal_player_lower for p in all_our_players)
+                is_our_goal = _find_best_player_match(goal.player, match_players_names) is not None
 
             if is_our_goal:
                 intel.goals_by_period[period]["scored"] += 1
-                # Track individual scorer
-                for p_name in intel.players:
-                    if goal_player_lower in p_name.lower() or p_name.lower() in goal_player_lower:
-                        intel.players[p_name].goals += 1
-                        intel.players[p_name].minutes_goals.append(goal.minute)
-                        break
+                scorer_name = _find_best_player_match(goal.player, list(intel.players.keys()))
+                if scorer_name:
+                    intel.players[scorer_name].goals += 1
+                    intel.players[scorer_name].minutes_goals.append(goal.minute)
             else:
                 intel.goals_by_period[period]["conceded"] += 1
 
         # ── Process cards ──
-        our_players = [p.name.lower() for p in lineup + bench]
-
         for card in acta.yellow_cards:
-            card_player_lower = card.player.lower()
             is_ours = False
-            if card.team == ("home" if is_home else "away"):
+            if card.team == team_side:
                 is_ours = True
             elif card.team:
                 is_ours = False
             else:
-                is_ours = any(card_player_lower in p or p in card_player_lower for p in our_players)
+                is_ours = _find_best_player_match(card.player, match_players_names) is not None
 
             if is_ours:
                 intel.total_yellows += 1
-                for p_name in intel.players:
-                    if card_player_lower in p_name.lower() or p_name.lower() in card_player_lower:
-                        intel.players[p_name].yellow_cards += 1
-                        intel.players[p_name].minutes_yellows.append(card.minute)
-                        break
+                card_name = _find_best_player_match(card.player, list(intel.players.keys()))
+                if card_name:
+                    intel.players[card_name].yellow_cards += 1
+                    intel.players[card_name].minutes_yellows.append(card.minute)
 
         for card in acta.red_cards:
-            card_player_lower = card.player.lower()
             is_ours = False
-            if card.team == ("home" if is_home else "away"):
+            if card.team == team_side:
                 is_ours = True
             elif card.team:
                 is_ours = False
             else:
-                is_ours = any(card_player_lower in p or p in card_player_lower for p in our_players)
+                is_ours = _find_best_player_match(card.player, match_players_names) is not None
 
             if is_ours:
                 intel.total_reds += 1
-                for p_name in intel.players:
-                    if card_player_lower in p_name.lower() or p_name.lower() in card_player_lower:
-                        intel.players[p_name].red_cards += 1
-                        intel.players[p_name].minutes_reds.append(card.minute)
-                        break
+                card_name = _find_best_player_match(card.player, list(intel.players.keys()))
+                if card_name:
+                    intel.players[card_name].red_cards += 1
+                    intel.players[card_name].minutes_reds.append(card.minute)
 
     logger.info(
         f"Intelligence for {team_name}: "
@@ -335,3 +371,37 @@ def _team_matches(full_name: str, keywords: list[str]) -> bool:
     """Check if a full team name matches any of the search keywords."""
     normalized = _normalize(full_name)
     return any(kw in normalized for kw in keywords)
+
+
+def _find_best_player_match(search_name: str, roster_names: list[str]) -> Optional[str]:
+    """Find the best matching player name from the roster."""
+    if not search_name or not roster_names:
+        return None
+        
+    s_norm = _normalize(search_name)
+    
+    # 1. Exact or simple substring
+    for r in roster_names:
+        r_norm = _normalize(r)
+        if s_norm == r_norm or s_norm in r_norm or r_norm in s_norm:
+            return r
+            
+    # 2. Word overlap (at least 1 significant word)
+    s_words = set(w for w in s_norm.split() if len(w) >= 3 and w not in ("del", "de", "los", "las", "les"))
+    if not s_words:
+        return None
+        
+    best_match = None
+    best_score = 0
+    for r in roster_names:
+        r_words = set(w for w in _normalize(r).split() if len(w) >= 3)
+        score = len(s_words.intersection(r_words))
+        if score > best_score:
+            best_score = score
+            best_match = r
+            
+    if best_score > 0:
+        return best_match
+        
+    return None
+

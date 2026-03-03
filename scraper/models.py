@@ -178,11 +178,13 @@ class FairPlayEntry:
 @dataclass
 class PlayerStats:
     name: str
+    dorsal: int = 0
     appearances: int = 0
     starts: int = 0
     goals: int = 0
     yellow_cards: int = 0
     red_cards: int = 0
+    minutes_played: int = 0
     minutes_goals: list[str] = field(default_factory=list)
     minutes_yellows: list[str] = field(default_factory=list)
     minutes_reds: list[str] = field(default_factory=list)
@@ -198,6 +200,12 @@ class TeamIntelligence:
     # "0-15": {"scored": 2, "conceded": 7}
     total_yellows: int = 0
     total_reds: int = 0
+    wins: int = 0
+    draws: int = 0
+    losses: int = 0
+    goals_scored: int = 0
+    goals_conceded: int = 0
+    form: list[str] = field(default_factory=list)
 
 
 # ─── Validation Report ───────────────────────────────
