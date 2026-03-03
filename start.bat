@@ -8,8 +8,8 @@ echo.
 set PYTHONPATH=%~dp0.venv_packages;%PYTHONPATH%
 
 :: Start FastAPI backend in a new window
-echo [1/2] Starting FastAPI backend on http://localhost:8000
-start "ProCoach API" cmd /k "set PYTHONPATH=%~dp0.venv_packages;%PYTHONPATH% && python -m uvicorn api.server:app --reload --port 8000 --log-level info"
+echo [1/2] Starting FastAPI backend on http://localhost:8080
+start "ProCoach API" cmd /k "set PYTHONPATH=%~dp0.venv_packages;%PYTHONPATH% && python -m uvicorn api.server:app --reload --port 8080 --log-level info"
 
 :: Wait a moment for API to start
 timeout /t 3 /nobreak >nul
@@ -25,8 +25,8 @@ echo ===============================================
 echo   Servidores iniciados!
 echo.
 echo   Frontend:  http://localhost:5173
-echo   API:       http://localhost:8000
-echo   API docs:  http://localhost:8000/docs
+echo   API:       http://localhost:8080
+echo   API docs:  http://localhost:8080/docs
 echo ===============================================
 echo.
 echo Abre http://localhost:5173 en tu navegador
