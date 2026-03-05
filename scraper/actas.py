@@ -301,13 +301,24 @@ def _parse_cards(rows: list[Tag], table: Tag) -> list[CardEvent]:
     FCF uses a single "Targetes" section for ALL cards (yellow and red).
     The card type is indicated by a CSS class inside .acta-stat-box:
       - div.groga-s    → yellow card (groga = yellow in Catalan)
-      - div.vermella-s → red card (direct or second yellow)
-      - div.doble-groga-s → double yellow (also a dismissal, treated as red)
+      - div.vermella-s → direct red card
+      - div.doble-groga-s → double yellow (treated as red; rare/unseen in practice)
 
     The table header is ALWAYS "Targetes" regardless of card colour,
     so we must read the per-row CSS class, NOT the table header.
+
+    Double yellow detection:
+    FCF does NOT add a separate vermella-s entry when a 2nd yellow causes expulsion.
+    Instead the same player appears TWICE with groga-s in the same team section.
+    We detect this by tracking seen groga-s players within this call and marking
+    the 2nd occurrence with is_double_yellow_dismissal=True.
+    Both yellows still count as card_type="yellow" (both accumulate toward suspension).
     """
     cards = []
+
+    # Track players already seen with a groga-s in this section (for double-yellow detection).
+    # Key = normalised player name; value = True once first yellow seen.
+    seen_yellow: set[str] = set()
 
     for row in rows:
         # Player name: prefer the link inside .samarreta-acta2, fallback to any <a>
@@ -333,6 +344,7 @@ def _parse_cards(rows: list[Tag], table: Tag) -> list[CardEvent]:
         # ── Determine card type from CSS class inside .acta-stat-box ──
         # This is the ONLY reliable way; table header is always "Targetes".
         card_type = "yellow"  # default
+        is_groga = True       # assume yellow until proven otherwise
         stat_box = row.find(class_="acta-stat-box")
         if stat_box:
             inner_classes = " ".join(
@@ -341,11 +353,24 @@ def _parse_cards(rows: list[Tag], table: Tag) -> list[CardEvent]:
             ).lower()
             if "vermella-s" in inner_classes or "doble-groga-s" in inner_classes:
                 card_type = "red"
+                is_groga = False
+
+        # ── Double-yellow detection ──
+        # If this is a groga-s and we already saw a groga-s for this player in this section,
+        # then this is the dismissal-causing second yellow.
+        is_double_yellow_dismissal = False
+        if is_groga:
+            name_key = name.strip().lower()
+            if name_key in seen_yellow:
+                is_double_yellow_dismissal = True
+            else:
+                seen_yellow.add(name_key)
 
         cards.append(CardEvent(
             player=name,
             minute=minute,
             card_type=card_type,
+            is_double_yellow_dismissal=is_double_yellow_dismissal,
         ))
 
     return cards

@@ -85,6 +85,7 @@ class CardEvent:
     minute: str
     card_type: str  # "yellow" or "red"
     team: str = ""
+    is_double_yellow_dismissal: bool = False  # True on the 2nd groga-s that causes expulsion
 
 
 @dataclass
@@ -137,6 +138,44 @@ class MatchReport:
         return errors
 
 
+# ─── Referee Global Database ──────────────────────────
+@dataclass
+class RefereeMatchInfo:
+    """Minimized acta data stored for referee intelligence."""
+    id: str  # e.g., "Jornada X - Team A vs Team B"
+    competition: str
+    group: str
+    season: str
+    jornada: int
+    date: str
+    home_team: str
+    away_team: str
+    home_score: int
+    away_score: int
+    referees: list[str] = field(default_factory=list)
+    yellow_cards: list[CardEvent] = field(default_factory=list)
+    red_cards: list[CardEvent] = field(default_factory=list)
+
+    @classmethod
+    def from_acta(cls, acta: MatchReport, comp: str, group: str, season: str) -> 'RefereeMatchInfo':
+        match_id = f"J{acta.jornada}-{acta.home_team}-v-{acta.away_team}"
+        return cls(
+            id=match_id,
+            competition=comp,
+            group=group,
+            season=season,
+            jornada=acta.jornada,
+            date=acta.date,
+            home_team=acta.home_team,
+            away_team=acta.away_team,
+            home_score=acta.home_score,
+            away_score=acta.away_score,
+            referees=acta.referees,
+            yellow_cards=acta.yellow_cards,
+            red_cards=acta.red_cards
+        )
+
+
 # ─── Top Scorers ──────────────────────────────────────
 @dataclass
 class Scorer:
@@ -184,6 +223,7 @@ class PlayerStats:
     goals: int = 0
     yellow_cards: int = 0
     red_cards: int = 0
+    double_yellows: int = 0   # dismissals caused by 2nd yellow. Per FCF Art.336 neither yellow accumulates — NOT in yellow_cards
     minutes_played: int = 0
     minutes_goals: list[str] = field(default_factory=list)
     minutes_yellows: list[str] = field(default_factory=list)
@@ -200,6 +240,7 @@ class TeamIntelligence:
     # "0-15": {"scored": 2, "conceded": 7}
     total_yellows: int = 0
     total_reds: int = 0
+    total_double_yellows: int = 0   # expulsions via 2nd yellow. NOT counted in total_yellows (FCF Art.336: neither yellow accumulates)
     wins: int = 0
     draws: int = 0
     losses: int = 0

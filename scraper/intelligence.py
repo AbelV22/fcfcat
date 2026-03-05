@@ -130,14 +130,19 @@ def build_team_intelligence(
                 if in_name:
                     match_minutes[in_name] += max(0, 90 - minute_val)
 
-        # ── Adjust minutes for red cards ──
-        for card in acta.red_cards:
+        # ── Adjust minutes for all dismissals (direct reds + double-yellow reds) ──
+        # Collect direct reds first, then add double-yellow dismissals from yellow_cards.
+        dismissal_cards = list(acta.red_cards)
+        for yc in acta.yellow_cards:
+            if yc.is_double_yellow_dismissal and yc.team == team_side:
+                dismissal_cards.append(yc)
+
+        for card in dismissal_cards:
             if card.team == team_side:
                 minute_val = _parse_minute_value(card.minute)
                 card_name = _find_best_player_match(card.player, match_players_names)
-                if card_name and match_minutes[card_name] > 0:
-                    # They didn't finish the game, so they lose the remaining minutes
-                    # Assuming they were on the pitch at minute_val
+                if card_name and match_minutes.get(card_name, 0) > 0:
+                    # Player didn't finish the game — reduce minutes from this point
                     match_minutes[card_name] -= max(0, 90 - minute_val)
                     match_minutes[card_name] = max(0, match_minutes[card_name])
 
@@ -189,6 +194,30 @@ def build_team_intelligence(
                 intel.goals_by_period[period]["conceded"] += 1
 
         # ── Process cards ──
+        #
+        # FCF / RFEF accumulation rule (Art. 336):
+        #   • Doble amarilla (2× groga-s same match):  1 match auto-suspension, but
+        #     NEITHER yellow counts toward the 5-yellow accumulation cycle.
+        #   • Amarilla + roja directa (different infractions): the yellow DOES accumulate;
+        #     the red card generates its own sanction independently.
+        #
+        # Implementation:
+        #   1. Pre-scan yellow_cards for players dismissed via double yellow.
+        #   2. For those players, skip accumulation for both their yellows.
+        #   3. For all other yellows (single or yellow-before-direct-red) → accumulate normally.
+
+        # Build set of player keys that received a double-yellow dismissal in this match
+        double_yellow_dismissed: set[str] = set()
+        for card in acta.yellow_cards:
+            if not card.is_double_yellow_dismissal:
+                continue
+            is_ours = (
+                card.team == team_side if card.team
+                else _find_best_player_match(card.player, match_players_names) is not None
+            )
+            if is_ours:
+                double_yellow_dismissed.add(card.player.strip().lower())
+
         for card in acta.yellow_cards:
             is_ours = False
             if card.team == team_side:
@@ -198,7 +227,23 @@ def build_team_intelligence(
             else:
                 is_ours = _find_best_player_match(card.player, match_players_names) is not None
 
-            if is_ours:
+            if not is_ours:
+                continue
+
+            player_key = card.player.strip().lower()
+            is_double_yellow_player = player_key in double_yellow_dismissed
+
+            if is_double_yellow_player:
+                # Neither yellow from a double-yellow dismissal accumulates.
+                # We only count the dismissal itself (once, on the 2nd yellow).
+                if card.is_double_yellow_dismissal:
+                    intel.total_double_yellows += 1
+                    card_name = _find_best_player_match(card.player, list(intel.players.keys()))
+                    if card_name:
+                        intel.players[card_name].double_yellows += 1
+                # Skip accumulation for BOTH yellows (don't touch yellow_cards counter)
+            else:
+                # Regular yellow (or 1st yellow before a direct red) → accumulates normally.
                 intel.total_yellows += 1
                 card_name = _find_best_player_match(card.player, list(intel.players.keys()))
                 if card_name:
@@ -225,7 +270,7 @@ def build_team_intelligence(
         f"Intelligence for {team_name}: "
         f"{len(intel.results)} matches, "
         f"{len(intel.players)} players tracked, "
-        f"{intel.total_yellows} yellows, {intel.total_reds} reds"
+        f"{intel.total_yellows} yellows ({intel.total_double_yellows} dobles), {intel.total_reds} direct reds"
     )
 
     return intel
@@ -425,9 +470,14 @@ def build_rival_report(
     ]
 
     # ── Cards & warnings (apercibidos) ──
+    # FCF accumulation rule (Art. 336):
+    #   • yellow_cards  = only accumulation yellows (single cards, or yellow before direct red).
+    #   • double_yellows = dismissals via 2nd yellow — DO NOT count toward yellow_cards.
+    #   • Threshold: 5 yellows in same cycle → 1-match auto-suspension → counter resets to 0.
+    #   • apercibido: player is at 4 in their current cycle (one away from suspension).
     carded = sorted(
         [p for p in players if p.yellow_cards > 0 or p.red_cards > 0],
-        key=lambda p: (p.yellow_cards + p.red_cards * 3),
+        key=lambda p: (p.yellow_cards + p.red_cards * 3 + p.double_yellows * 2),
         reverse=True
     )
     report["cards"] = [
@@ -436,12 +486,17 @@ def build_rival_report(
             "dorsal": p.dorsal,
             "yellows": p.yellow_cards,
             "reds": p.red_cards,
-            "apercibido": p.yellow_cards >= 4,  # 4 yellows = 1 away from suspension in Cat leagues
+            "double_yellows": p.double_yellows,  # dismissals via 2nd yellow
+            # apercibido: at risk of next suspension.
+            # yellow_cards % 5 gives position in current accumulation cycle.
+            "apercibido": (p.yellow_cards % 5) == 4,
+            "yellows_in_cycle": p.yellow_cards % 5,  # how far into current cycle (0-4)
         }
         for p in carded[:10]
     ]
     report["total_yellows"] = rival_intel.total_yellows
     report["total_reds"] = rival_intel.total_reds
+    report["total_double_yellows"] = rival_intel.total_double_yellows
 
     # ── Sanctioned rival players ──
     if sanctions:
