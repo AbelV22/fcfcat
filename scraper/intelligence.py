@@ -613,11 +613,14 @@ def build_referee_intelligence(
     ref_kw = _normalize(referee_name)
     our_kw = _build_search_keywords(our_team) if our_team else []
 
+    # 15-minute period buckets for card distribution analysis
+    CARD_PERIODS = ["0-15", "16-30", "31-45", "46-60", "61-75", "76-90"]
+
     ref_matches = []
     for acta in global_refs:
         if acta.get("competition") != competition:
             continue
-            
+
         for ref in acta.get("referees", []):
             if ref_kw in _normalize(ref):
                 ref_matches.append(acta)
@@ -627,21 +630,36 @@ def build_referee_intelligence(
         return {"name": referee_name, "matches": 0}
 
     total = len(ref_matches)
-    total_yellows = 0
-    total_reds = 0
+
+    # ── Running totals ──
+    total_yellows = 0           # player yellows (accumulation type)
+    total_reds = 0              # direct red cards (players)
+    total_double_yellows = 0    # double-yellow dismissals (players)
+    total_staff_yellows = 0     # technical staff yellow cards
+    total_staff_reds = 0        # technical staff red cards
+
     home_yellows = 0
     away_yellows = 0
     home_reds = 0
     away_reds = 0
-    matches_with_expulsion = 0
+    home_staff_yellows = 0
+    away_staff_yellows = 0
+    home_staff_reds = 0
+    away_staff_reds = 0
+
+    matches_with_expulsion = 0      # at least 1 red or double-yellow dismissal
+    matches_with_staff_card = 0     # at least 1 tech staff card
+
     first_half_cards = 0
     second_half_cards = 0
+    period_dist: dict[str, int] = {p: 0 for p in CARD_PERIODS}
+
     home_wins = 0
     away_wins = 0
     draws = 0
     our_history = []
-
     match_history = []
+
     for acta in ref_matches:
         home_team = acta.get("home_team", "")
         away_team = acta.get("away_team", "")
@@ -649,31 +667,61 @@ def build_referee_intelligence(
         away_score = acta.get("away_score", 0)
         yellow_cards = acta.get("yellow_cards", [])
         red_cards = acta.get("red_cards", [])
-        
-        match_yellows_home = sum(1 for c in yellow_cards if c.get("team") == "home")
-        match_yellows_away = sum(1 for c in yellow_cards if c.get("team") == "away")
-        match_reds_home = sum(1 for c in red_cards if c.get("team") == "home")
-        match_reds_away = sum(1 for c in red_cards if c.get("team") == "away")
 
-        total_yellows += match_yellows_home + match_yellows_away
-        total_reds += match_reds_home + match_reds_away
-        home_yellows += match_yellows_home
-        away_yellows += match_yellows_away
-        home_reds += match_reds_home
-        away_reds += match_reds_away
+        # ── Classify every card by team / recipient ──
+        def _is_staff(c: dict) -> bool:
+            return c.get("recipient_type", "player") == "technical_staff"
 
-        if match_reds_home + match_reds_away > 0:
+        def _is_double_yellow(c: dict) -> bool:
+            return c.get("is_double_yellow_dismissal", False)
+
+        match_yc_home = sum(1 for c in yellow_cards if c.get("team") == "home" and not _is_staff(c))
+        match_yc_away = sum(1 for c in yellow_cards if c.get("team") == "away" and not _is_staff(c))
+        match_rc_home = sum(1 for c in red_cards if c.get("team") == "home" and not _is_staff(c))
+        match_rc_away = sum(1 for c in red_cards if c.get("team") == "away" and not _is_staff(c))
+        match_dy = sum(1 for c in yellow_cards if _is_double_yellow(c) and not _is_staff(c))
+        match_sy_home = sum(1 for c in yellow_cards if c.get("team") == "home" and _is_staff(c))
+        match_sy_away = sum(1 for c in yellow_cards if c.get("team") == "away" and _is_staff(c))
+        match_sr_home = sum(1 for c in red_cards if c.get("team") == "home" and _is_staff(c))
+        match_sr_away = sum(1 for c in red_cards if c.get("team") == "away" and _is_staff(c))
+
+        total_yellows += match_yc_home + match_yc_away
+        total_reds += match_rc_home + match_rc_away
+        total_double_yellows += match_dy
+        total_staff_yellows += match_sy_home + match_sy_away
+        total_staff_reds += match_sr_home + match_sr_away
+
+        home_yellows += match_yc_home
+        away_yellows += match_yc_away
+        home_reds += match_rc_home
+        away_reds += match_rc_away
+        home_staff_yellows += match_sy_home
+        away_staff_yellows += match_sy_away
+        home_staff_reds += match_sr_home
+        away_staff_reds += match_sr_away
+
+        # Expulsion = any direct red or double-yellow dismissal (player only)
+        if match_rc_home + match_rc_away + match_dy > 0:
             matches_with_expulsion += 1
 
-        # Card timing
+        # Staff card match
+        if match_sy_home + match_sy_away + match_sr_home + match_sr_away > 0:
+            matches_with_staff_card += 1
+
+        # ── Card timing (all cards including staff) ──
         for card in yellow_cards + red_cards:
             m = _parse_minute_value(card.get("minute", "0"))
             if m <= 45:
                 first_half_cards += 1
             else:
                 second_half_cards += 1
+            # 15-min bucket
+            for label, start, end in PERIODS:
+                if start <= m <= end:
+                    period_dist[label] = period_dist.get(label, 0) + 1
+                    break
 
-        # Results
+        # ── Match result ──
         if home_score > away_score:
             home_wins += 1
         elif home_score < away_score:
@@ -688,14 +736,25 @@ def build_referee_intelligence(
             "away_team": away_team,
             "home_score": home_score,
             "away_score": away_score,
-            "yellows": match_yellows_home + match_yellows_away,
-            "reds": match_reds_home + match_reds_away,
-            "yellows_home": match_yellows_home,
-            "yellows_away": match_yellows_away,
+            # Player cards
+            "yellows_home": match_yc_home,
+            "yellows_away": match_yc_away,
+            "reds_home": match_rc_home,
+            "reds_away": match_rc_away,
+            "double_yellows": match_dy,
+            # Staff cards
+            "staff_yellows_home": match_sy_home,
+            "staff_yellows_away": match_sy_away,
+            "staff_reds_home": match_sr_home,
+            "staff_reds_away": match_sr_away,
+            # Convenience totals
+            "yellows": match_yc_home + match_yc_away,
+            "reds": match_rc_home + match_rc_away,
+            "staff_cards": match_sy_home + match_sy_away + match_sr_home + match_sr_away,
         }
         match_history.append(match_info)
 
-        # Our history with this ref
+        # ── Our history with this referee ──
         if our_kw:
             we_play = _team_matches(home_team, our_kw) or _team_matches(away_team, our_kw)
             if we_play:
@@ -703,38 +762,87 @@ def build_referee_intelligence(
                 our_score = home_score if our_is_home else away_score
                 their_score = away_score if our_is_home else home_score
                 res = "V" if our_score > their_score else ("E" if our_score == their_score else "D")
-                our_history.append({**match_info, "our_result": res})
+                our_cards_yc = match_yc_home if our_is_home else match_yc_away
+                our_cards_rc = match_rc_home if our_is_home else match_rc_away
+                our_staff_yc = match_sy_home if our_is_home else match_sy_away
+                our_staff_rc = match_sr_home if our_is_home else match_sr_away
+                our_history.append({
+                    **match_info,
+                    "our_result": res,
+                    "our_yellows": our_cards_yc,
+                    "our_reds": our_cards_rc,
+                    "our_staff_yellows": our_staff_yc,
+                    "our_staff_reds": our_staff_rc,
+                })
 
-    total_cards = total_yellows + total_reds
+    total_player_cards = total_yellows + total_reds
+    total_all_cards = total_player_cards + total_staff_yellows + total_staff_reds
+
+    # ── Home/away bias — do away teams get more cards? ──
+    home_card_total = home_yellows + home_reds
+    away_card_total = away_yellows + away_reds
+
     report = {
         "name": referee_name,
         "matches": total,
-        "yellows_per_match": round(total_yellows / total, 1),
-        "reds_per_match": round(total_reds / total, 1),
+
+        # ── Player cards ──
         "total_yellows": total_yellows,
         "total_reds": total_reds,
+        "total_double_yellows": total_double_yellows,
+        "yellows_per_match": round(total_yellows / total, 2),
+        "reds_per_match": round(total_reds / total, 2),
+
+        # ── Technical staff cards ──
+        "total_staff_yellows": total_staff_yellows,
+        "total_staff_reds": total_staff_reds,
+        "staff_cards_per_match": round((total_staff_yellows + total_staff_reds) / total, 2),
+        "matches_with_staff_card": matches_with_staff_card,
+        "staff_card_match_pct": round(matches_with_staff_card / total * 100, 1),
+
+        # ── Home / away breakdown ──
         "home_yellows": home_yellows,
         "away_yellows": away_yellows,
         "home_reds": home_reds,
         "away_reds": away_reds,
-        "away_card_pct": round(
-            (away_yellows + away_reds) / max(total_cards, 1) * 100, 1
+        "home_staff_yellows": home_staff_yellows,
+        "away_staff_yellows": away_staff_yellows,
+        "home_staff_reds": home_staff_reds,
+        "away_staff_reds": away_staff_reds,
+        # Away bias: pct of all player cards given to away team
+        "away_player_card_pct": round(
+            away_card_total / max(home_card_total + away_card_total, 1) * 100, 1
         ),
+
+        # ── Expulsions ──
         "matches_with_expulsion": matches_with_expulsion,
         "expulsion_pct": round(matches_with_expulsion / total * 100, 1),
+
+        # ── Card timing ──
+        "first_half_cards": first_half_cards,
+        "second_half_cards": second_half_cards,
         "second_half_card_pct": round(
-            second_half_cards / max(total_cards, 1) * 100, 1
+            second_half_cards / max(total_all_cards, 1) * 100, 1
         ),
+        "cards_by_period": period_dist,  # {"0-15": n, "16-30": n, ...}
+
+        # ── Results ──
         "home_wins": home_wins,
         "away_wins": away_wins,
         "draws": draws,
-        "match_history": match_history[-5:],  # last 5
+        "home_win_pct": round(home_wins / total * 100, 1),
+        "away_win_pct": round(away_wins / total * 100, 1),
+
+        # ── Match history ──
+        "match_history": sorted(match_history, key=lambda x: x["jornada"])[-5:],
         "our_history": our_history,
     }
 
     logger.info(
         f"Referee intel for {referee_name}: "
-        f"{total} matches, {total_yellows} yellows, {total_reds} reds"
+        f"{total} matches | "
+        f"player YC:{total_yellows} RC:{total_reds} DY:{total_double_yellows} | "
+        f"staff YC:{total_staff_yellows} RC:{total_staff_reds}"
     )
 
     return report

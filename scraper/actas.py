@@ -24,7 +24,7 @@ from bs4 import BeautifulSoup, Tag
 from .http_client import FCFClient
 from .models import (
     MatchReport, PlayerEntry, GoalEvent, CardEvent,
-    SubstitutionEvent,
+    SubstitutionEvent, TechnicalStaffMember,
 )
 
 logger = logging.getLogger("fcf_scraper")
@@ -108,6 +108,11 @@ def scrape_acta(client: FCFClient, acta_url: str) -> Optional[MatchReport]:
     found_goals = False
     found_referees = False
 
+    # Staff name sets are built when Equip Tècnic tables are parsed (which appear
+    # BEFORE the matching Targetes table in the FCF acta layout), so a single pass suffices.
+    home_staff_names: set[str] = set()
+    away_staff_names: set[str] = set()
+
     for table in acta_tables:
         rows = table.find_all("tr")
         if not rows:
@@ -142,7 +147,9 @@ def scrape_acta(client: FCFClient, acta_url: str) -> Optional[MatchReport]:
             report.substitutions.extend(subs)
 
         elif "Targetes" in header:
-            cards = _parse_cards(data_rows, table)
+            # Pass the pre-built staff name set so tech staff cards are flagged correctly
+            staff_names = home_staff_names if current_team == "home" else away_staff_names
+            cards = _parse_cards(data_rows, table, staff_names)
             team_label = current_team
             for card in cards:
                 card.team = team_label
@@ -161,7 +168,7 @@ def scrape_acta(client: FCFClient, acta_url: str) -> Optional[MatchReport]:
                     goal_rows.extend(tbody.find_all("tr"))
             else:
                 goal_rows = data_rows # fallback
-                
+
             goals = _parse_goals(goal_rows, report.home_team, report.away_team, soup)
             report.goals = goals
 
@@ -179,16 +186,31 @@ def scrape_acta(client: FCFClient, acta_url: str) -> Optional[MatchReport]:
             current_team = "away"
 
         elif "Equip Tècnic" in header or "quip" in header.lower():
-            coach = _parse_coach(data_rows)
-            if current_team == "home" and not report.home_coach:
-                report.home_coach = coach
-            else:
-                report.away_coach = coach
+            # Parse full technical staff (replaces the old coach-only _parse_coach).
+            # Staff table MUST be parsed BEFORE Targetes so staff_names are available.
+            staff = _parse_technical_staff(data_rows)
+            if current_team == "home" and not report.home_staff:
+                report.home_staff = staff
+                home_staff_names = {m.name.strip().lower() for m in staff}
+                if not report.home_coach:
+                    report.home_coach = next(
+                        (m.name for m in staff if m.role == "E"), ""
+                    )
+            elif current_team == "away" and not report.away_staff:
+                report.away_staff = staff
+                away_staff_names = {m.name.strip().lower() for m in staff}
+                if not report.away_coach:
+                    report.away_coach = next(
+                        (m.name for m in staff if m.role == "E"), ""
+                    )
 
+    staff_yc = sum(1 for c in report.yellow_cards if c.recipient_type == "technical_staff")
+    staff_rc = sum(1 for c in report.red_cards if c.recipient_type == "technical_staff")
     logger.info(
         f"Acta J{report.jornada}: {report.home_team} {report.home_score}-{report.away_score} {report.away_team} | "
         f"Home XI:{len(report.home_lineup)} Away XI:{len(report.away_lineup)} | "
-        f"Goals:{len(report.goals)} YC:{len(report.yellow_cards)} RC:{len(report.red_cards)}"
+        f"Goals:{len(report.goals)} YC:{len(report.yellow_cards)} RC:{len(report.red_cards)} "
+        f"(staff YC:{staff_yc} RC:{staff_rc})"
     )
 
     return report
@@ -295,7 +317,35 @@ def _parse_goals(rows: list[Tag], home_team: str, away_team: str, soup: Beautifu
     return goals
 
 
-def _parse_cards(rows: list[Tag], table: Tag) -> list[CardEvent]:
+def _parse_technical_staff(rows: list[Tag]) -> list[TechnicalStaffMember]:
+    """Parse the Equip Tècnic (technical staff) table.
+
+    Structure:
+      td[0] class='tc'          → staff member name
+      td[1] class='p-r w-44px'  → role code
+        E = Entrenador (head coach)
+        2 = 2n Entrenador (assistant coach)
+        D = Delegat (team delegate)
+        A = Auxiliar / Ajudant (field assistant)
+        F = Fisioterapeuta / Preparador Físic (physio / fitness)
+        X = Altre (other, or expelled bench occupant)
+    """
+    staff = []
+    for row in rows:
+        cols = row.find_all("td")
+        if len(cols) < 2:
+            continue
+        # Name may have a link or plain text
+        name = ""
+        link = cols[0].find("a")
+        name = link.get_text(strip=True) if link else cols[0].get_text(strip=True)
+        role = cols[1].get_text(strip=True)
+        if name and len(name) >= 3:
+            staff.append(TechnicalStaffMember(name=name, role=role))
+    return staff
+
+
+def _parse_cards(rows: list[Tag], table: Tag, staff_names: set[str] | None = None) -> list[CardEvent]:
     """Parse cards from the Targetes table.
 
     FCF uses a single "Targetes" section for ALL cards (yellow and red).
@@ -308,20 +358,32 @@ def _parse_cards(rows: list[Tag], table: Tag) -> list[CardEvent]:
     so we must read the per-row CSS class, NOT the table header.
 
     Double yellow detection:
-    FCF does NOT add a separate vermella-s entry when a 2nd yellow causes expulsion.
-    Instead the same player appears TWICE with groga-s in the same team section.
-    We detect this by tracking seen groga-s players within this call and marking
-    the 2nd occurrence with is_double_yellow_dismissal=True.
-    Both yellows still count as card_type="yellow" (both accumulate toward suspension).
-    """
-    cards = []
+      FCF does NOT add a separate vermella-s entry when a 2nd yellow causes expulsion.
+      Instead the same player appears TWICE with groga-s in the same team section.
+      We detect this by tracking seen groga-s players within this call and marking
+      the 2nd occurrence with is_double_yellow_dismissal=True.
+      Both yellows keep card_type="yellow" (FCF Art.336: neither counts for accumulation).
 
-    # Track players already seen with a groga-s in this section (for double-yellow detection).
-    # Key = normalised player name; value = True once first yellow seen.
-    seen_yellow: set[str] = set()
+    Technical staff detection (recipient_type):
+      Staff members who receive a card appear in this table with an EMPTY dorsal.
+      They are also listed in the preceding Equip Tècnic table.
+      Strategy:
+        - If staff_names is provided → match by name (most accurate).
+        - If staff_names is empty/None → fall back to empty dorsal heuristic.
+
+    Args:
+        rows:        Data rows of the Targetes table (header row excluded).
+        table:       The full table Tag (unused now, kept for API compat).
+        staff_names: Normalised (lowercase) set of technical staff names for this team.
+    """
+    if staff_names is None:
+        staff_names = set()
+
+    cards: list[CardEvent] = []
+    seen_yellow: set[str] = set()  # for double-yellow detection within this section
 
     for row in rows:
-        # Player name: prefer the link inside .samarreta-acta2, fallback to any <a>
+        # ── Player / staff name ──
         name_el = row.find(class_="samarreta-acta2")
         name = ""
         if name_el:
@@ -335,16 +397,15 @@ def _parse_cards(rows: list[Tag], table: Tag) -> list[CardEvent]:
         if not name or len(name) < 3:
             continue
 
-        # Minute is in .acta-minut-targeta
+        # ── Minute ──
         minute = ""
         min_el = row.find(class_="acta-minut-targeta")
         if min_el:
             minute = min_el.get_text(strip=True).replace("'", "").replace("\u2032", "").strip()
 
-        # ── Determine card type from CSS class inside .acta-stat-box ──
-        # This is the ONLY reliable way; table header is always "Targetes".
-        card_type = "yellow"  # default
-        is_groga = True       # assume yellow until proven otherwise
+        # ── Card type from CSS class inside .acta-stat-box ──
+        card_type = "yellow"
+        is_groga = True
         stat_box = row.find(class_="acta-stat-box")
         if stat_box:
             inner_classes = " ".join(
@@ -356,8 +417,6 @@ def _parse_cards(rows: list[Tag], table: Tag) -> list[CardEvent]:
                 is_groga = False
 
         # ── Double-yellow detection ──
-        # If this is a groga-s and we already saw a groga-s for this player in this section,
-        # then this is the dismissal-causing second yellow.
         is_double_yellow_dismissal = False
         if is_groga:
             name_key = name.strip().lower()
@@ -366,11 +425,25 @@ def _parse_cards(rows: list[Tag], table: Tag) -> list[CardEvent]:
             else:
                 seen_yellow.add(name_key)
 
+        # ── Recipient type: player or technical staff ──
+        name_norm = name.strip().lower()
+        num_el = row.find(class_="num-samarreta-acta2")
+        dorsal_val = num_el.get_text(strip=True) if num_el else ""
+
+        if staff_names:
+            # Primary signal: name appears in the team's Equip Tècnic table
+            recipient_type = "technical_staff" if name_norm in staff_names else "player"
+        else:
+            # Fallback when Equip Tècnic couldn't be parsed:
+            # empty / non-numeric dorsal strongly suggests tech staff
+            recipient_type = "technical_staff" if (not dorsal_val or not dorsal_val.isdigit()) else "player"
+
         cards.append(CardEvent(
             player=name,
             minute=minute,
             card_type=card_type,
             is_double_yellow_dismissal=is_double_yellow_dismissal,
+            recipient_type=recipient_type,
         ))
 
     return cards

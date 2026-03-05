@@ -80,12 +80,30 @@ class GoalEvent:
 
 
 @dataclass
+class TechnicalStaffMember:
+    """A member of the technical staff (Equip Tècnic) listed in the acta."""
+    name: str
+    role: str  # E=Entrenador, 2=2nEntrenador, D=Delegat, A=Auxiliar, F=Fisioterapeuta, X=Altre
+
+    @property
+    def role_description(self) -> str:
+        return {
+            "E": "Entrenador",
+            "2": "2n Entrenador",
+            "D": "Delegat",
+            "A": "Auxiliar",
+            "F": "Fisioterapeuta",
+        }.get(self.role, f"Altre ({self.role})")
+
+
+@dataclass
 class CardEvent:
     player: str
     minute: str
     card_type: str  # "yellow" or "red"
     team: str = ""
     is_double_yellow_dismissal: bool = False  # True on the 2nd groga-s that causes expulsion
+    recipient_type: str = "player"  # "player" or "technical_staff"
 
 
 @dataclass
@@ -111,6 +129,8 @@ class MatchReport:
     away_lineup: list[PlayerEntry] = field(default_factory=list)
     home_bench: list[PlayerEntry] = field(default_factory=list)
     away_bench: list[PlayerEntry] = field(default_factory=list)
+    home_staff: list[TechnicalStaffMember] = field(default_factory=list)
+    away_staff: list[TechnicalStaffMember] = field(default_factory=list)
     goals: list[GoalEvent] = field(default_factory=list)
     yellow_cards: list[CardEvent] = field(default_factory=list)
     red_cards: list[CardEvent] = field(default_factory=list)
@@ -141,8 +161,14 @@ class MatchReport:
 # ─── Referee Global Database ──────────────────────────
 @dataclass
 class RefereeMatchInfo:
-    """Minimized acta data stored for referee intelligence."""
-    id: str  # e.g., "Jornada X - Team A vs Team B"
+    """Minimized acta data stored for referee intelligence.
+
+    Cards are stored flat (yellow_cards / red_cards) with full CardEvent data:
+      - card.recipient_type  → "player" | "technical_staff"
+      - card.is_double_yellow_dismissal → True for the 2nd yellow that caused expulsion
+      - card.team            → "home" | "away"
+    """
+    id: str  # e.g., "J1-TEAM A-v-TEAM B"
     competition: str
     group: str
     season: str
@@ -172,7 +198,7 @@ class RefereeMatchInfo:
             away_score=acta.away_score,
             referees=acta.referees,
             yellow_cards=acta.yellow_cards,
-            red_cards=acta.red_cards
+            red_cards=acta.red_cards,
         )
 
 
