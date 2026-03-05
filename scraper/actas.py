@@ -43,21 +43,37 @@ def scrape_acta(client: FCFClient, acta_url: str) -> Optional[MatchReport]:
         home_score=0, away_score=0, venue="", acta_url=acta_url,
     )
 
-    # ── Teams ──
-    equip_divs = soup.find_all(class_="acta-equip")
-    if len(equip_divs) >= 2:
-        report.home_team = equip_divs[0].get_text(strip=True)
-        report.away_team = equip_divs[1].get_text(strip=True)
-
-    # ── Score ──
-    marcador = soup.find(class_="acta-marcador")
-    if marcador:
-        score_text = marcador.get_text(strip=True)
-        m = re.match(r"(\d+)\s*[-–]\s*(\d+)", score_text)
-        if m:
-            report.home_score = int(m.group(1))
-            report.away_score = int(m.group(2))
-
+    # ── Header ──
+    # Primary layout: acta-table-header
+    header_table = soup.find("table", class_="acta-table-header")
+    if header_table:
+        header_text = header_table.get_text(separator="|", strip=True)
+        parts = [p.strip() for p in header_text.split("|") if p.strip()]
+        if len(parts) >= 3:
+            report.home_team = parts[0]
+            score_text = parts[1]
+            report.away_team = parts[2]
+            
+            # Use regex to find score from "3 - 0" or "(3 - 0)"
+            m = re.search(r"(\d+)\s*-\s*(\d+)", score_text)
+            if m:
+                report.home_score = int(m.group(1))
+                report.away_score = int(m.group(2))
+    else:
+        # Alternate layout: div class="acta-equip" and "acta-resultat"
+        equips = soup.find_all(class_="acta-equip")
+        if len(equips) >= 2:
+            report.home_team = equips[0].get_text(strip=True)
+            report.away_team = equips[1].get_text(strip=True)
+        
+        resultat = soup.find(class_="acta-resultat")
+        if resultat:
+            score_text = resultat.get_text(strip=True)
+            m = re.search(r"(\d+)\s*[-–]\s*(\d+)", score_text)
+            if m:
+                report.home_score = int(m.group(1))
+                report.away_score = int(m.group(2))
+    
     # ── Status ──
     estat = soup.find(class_="acta-estat")
     if estat:
@@ -137,7 +153,16 @@ def scrape_acta(client: FCFClient, acta_url: str) -> Optional[MatchReport]:
 
         elif "Gols" in header:
             found_goals = True
-            goals = _parse_goals(data_rows, report.home_team, report.away_team, soup)
+            # FCF wraps goals in one or multiple tbody elements
+            goal_rows = []
+            tbodies = table.find_all("tbody")
+            if tbodies:
+                for tbody in tbodies:
+                    goal_rows.extend(tbody.find_all("tr"))
+            else:
+                goal_rows = data_rows # fallback
+                
+            goals = _parse_goals(goal_rows, report.home_team, report.away_team, soup)
             report.goals = goals
 
         elif "rbitr" in header.lower():
@@ -211,82 +236,87 @@ def _parse_players(rows: list[Tag]) -> list[PlayerEntry]:
 
 
 def _parse_goals(rows: list[Tag], home_team: str, away_team: str, soup: BeautifulSoup) -> list[GoalEvent]:
-    """Parse goals from the Gols table."""
+    """Parse goals from the Gols table.
+    
+    Warning: FCF HTML for goals is often malformed (missing </a> tags)
+    and split across multiple <tr> rows for a single goal.
+    Instead of relying on BeautifulSoup's DOM tree which gets corrupted,
+    we extract the raw HTML of all rows and parse it with regex.
+    """
     goals = []
     prev_home_score = 0
     prev_away_score = 0
-
-    for row in rows:
-        cols = row.find_all("td")
-        if len(cols) < 3:
+    
+    # Concatenate all row HTML into one string so we can find goals
+    # even if they are split across multiple rows (scorer in next tr, etc)
+    tbl_html = "".join(str(row) for row in rows)
+    
+    # We look for the marker "<div class="acta-marcador-gol">" to identify a goal block.
+    # The block ends before the next marker or end of string.
+    blocks = re.split(r'class="acta-marcador-gol"[^>]*>', tbl_html)[1:]
+    
+    for block in blocks:
+        # Extract score: \s* 0 - 1 \s* <
+        score_match = re.search(r'^\s*(\d+)\s*[-–]\s*(\d+)\s*<', block)
+        if not score_match:
             continue
-
-        # Structure: running_score | shield | scorer_name | minute
-        running_score = ""
-        scorer = ""
-        minute = ""
-
-        # Running score is in .acta-marcador-gol
-        score_el = row.find(class_="acta-marcador-gol")
-        if score_el:
-            running_score = score_el.get_text(strip=True)
-
-        # Scorer name
-        link = row.find("a")
-        if link:
-            scorer = link.get_text(strip=True)
-        else:
-            for col in cols:
-                text = col.get_text(strip=True)
-                if text and not re.match(r"^\d+\s*[-–]\s*\d+$", text) and not re.match(r"^\d+['\u2032]?$", text) and len(text) > 3:
-                    scorer = text
-                    break
-
-        # Minute - last col or find with apostrophe
-        for col in reversed(cols):
-            text = col.get_text(strip=True)
-            if re.match(r"^\d+['\u2032]?$", text):
-                minute = text.replace("'", "").replace("\u2032", "").strip()
-                break
-
-        if not scorer:
-            continue
-
+            
+        new_home = int(score_match.group(1))
+        new_away = int(score_match.group(2))
+        
         # Determine team from running score change
         team = ""
-        if running_score:
-            m = re.match(r"(\d+)\s*[-–]\s*(\d+)", running_score)
-            if m:
-                new_home = int(m.group(1))
-                new_away = int(m.group(2))
-                if new_home > prev_home_score:
-                    team = "home"
-                elif new_away > prev_away_score:
-                    team = "away"
-                prev_home_score = new_home
-                prev_away_score = new_away
-
-        goals.append(GoalEvent(
-            player=scorer,
-            minute=minute,
-            team=team,
-        ))
+        if new_home > prev_home_score:
+            team = "home"
+        elif new_away > prev_away_score:
+            team = "away"
+        prev_home_score = new_home
+        prev_away_score = new_away
+        
+        # Extract scorer name: <a href="...jugador...">PLAYER NAME ... <
+        scorer = ""
+        name_match = re.search(r'<a href="[^"]*jugador[^"]*">([^<]+)', block)
+        if name_match:
+            scorer = name_match.group(1).strip()
+            
+        # Extract minute: <td>12'</td> or <td> 12' </td>
+        minute = ""
+        min_match = re.search(r'<td>\s*(\d+)[\'\u2032]?\s*</td>', block)
+        if min_match:
+            minute = min_match.group(1).strip()
+            
+        if scorer:
+            goals.append(GoalEvent(
+                player=scorer,
+                minute=minute,
+                team=team,
+            ))
 
     return goals
 
 
 def _parse_cards(rows: list[Tag], table: Tag) -> list[CardEvent]:
-    """Parse cards from the Targetes table."""
+    """Parse cards from the Targetes table.
+
+    FCF uses a single "Targetes" section for ALL cards (yellow and red).
+    The card type is indicated by a CSS class inside .acta-stat-box:
+      - div.groga-s    → yellow card (groga = yellow in Catalan)
+      - div.vermella-s → red card (direct or second yellow)
+      - div.doble-groga-s → double yellow (also a dismissal, treated as red)
+
+    The table header is ALWAYS "Targetes" regardless of card colour,
+    so we must read the per-row CSS class, NOT the table header.
+    """
     cards = []
 
     for row in rows:
-        # Player name is in .samarreta-acta2
+        # Player name: prefer the link inside .samarreta-acta2, fallback to any <a>
         name_el = row.find(class_="samarreta-acta2")
-        if not name_el:
-            continue
-        name = name_el.get_text(strip=True)
+        name = ""
+        if name_el:
+            link = name_el.find("a")
+            name = link.get_text(strip=True) if link else name_el.get_text(strip=True)
         if not name:
-            # Try link
             link = row.find("a")
             if link:
                 name = link.get_text(strip=True)
@@ -300,15 +330,17 @@ def _parse_cards(rows: list[Tag], table: Tag) -> list[CardEvent]:
         if min_el:
             minute = min_el.get_text(strip=True).replace("'", "").replace("\u2032", "").strip()
 
-        # Card type: check for red card indicators
-        # Yellow cards have .acta-stat-box, red cards have a different color
-        # We detect by looking at the stat box images/colors
-        # In FCF, yellow cards and red cards are in the same "Targetes" section
-        # But separate Targetes tables exist: "Targetes" = yellow, "Targetes vermelles" = red
-        # Default to yellow unless the header says red
-        header = table.find("tr")
-        header_text = header.get_text(strip=True) if header else ""
-        card_type = "red" if "vermell" in header_text.lower() or "roja" in header_text.lower() else "yellow"
+        # ── Determine card type from CSS class inside .acta-stat-box ──
+        # This is the ONLY reliable way; table header is always "Targetes".
+        card_type = "yellow"  # default
+        stat_box = row.find(class_="acta-stat-box")
+        if stat_box:
+            inner_classes = " ".join(
+                " ".join(d.get("class", []))
+                for d in stat_box.find_all("div")
+            ).lower()
+            if "vermella-s" in inner_classes or "doble-groga-s" in inner_classes:
+                card_type = "red"
 
         cards.append(CardEvent(
             player=name,

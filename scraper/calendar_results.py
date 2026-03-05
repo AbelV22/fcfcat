@@ -99,10 +99,20 @@ def _parse_match_list(soup: BeautifulSoup, source_url: str) -> list[MatchResult]
             home_slug = url_parts[region_indices[0] + 1] if region_indices[0] + 1 < len(url_parts) else ""
             away_slug = url_parts[region_indices[1] + 1] if region_indices[1] + 1 < len(url_parts) else ""
 
-        # Extract score from context
-        score_match = re.search(r'(\d+)\s*[-–]\s*(\d+)', container_text)
-        home_score = int(score_match.group(1)) if score_match else None
-        away_score = int(score_match.group(2)) if score_match else None
+        # Extract score from context — strip dates first to avoid "21-09-2025" matching as score
+        no_dates = re.sub(r'\d{2}[/-]\d{2}[/-]\d{4}', '', container_text)
+        # Also strip times like "19:30" to avoid false positives in other patterns
+        no_dates = re.sub(r'\d{2}:\d{2}', '', no_dates)
+        # Match only small football scores (1-2 digits each side, max 20)
+        score_match = re.search(r'\b(\d{1,2})\s*[-–]\s*(\d{1,2})\b', no_dates)
+        if score_match:
+            s1, s2 = int(score_match.group(1)), int(score_match.group(2))
+            home_score = s1 if s1 <= 20 else None
+            away_score = s2 if s2 <= 20 else None
+            if home_score is None or away_score is None:
+                home_score = away_score = None
+        else:
+            home_score = away_score = None
 
         # Extract date
         date_match = re.search(r'(\d{2}[/-]\d{2}[/-]\d{4})', container_text)

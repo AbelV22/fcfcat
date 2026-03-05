@@ -66,7 +66,10 @@ def build_team_intelligence(
 
     team_keywords = _build_search_keywords(team_name)
 
-    for acta in actas:
+    # Sort by jornada so form list is always chronological
+    sorted_actas = sorted(actas, key=lambda a: (a.jornada, a.date))
+
+    for acta in sorted_actas:
         is_home = _team_matches(acta.home_team, team_keywords)
         is_away = _team_matches(acta.away_team, team_keywords)
 
@@ -338,6 +341,348 @@ def compute_conditional_insights(intel: TeamIntelligence) -> list[dict]:
         })
 
     return insights
+
+
+# ─── Rival Report ─────────────────────────────────────
+
+def build_rival_report(
+    our_team: str,
+    rival_team: str,
+    rival_intel: TeamIntelligence,
+    actas: list[MatchReport],
+    standings: Optional[list[TeamStanding]] = None,
+    sanctions: Optional[list] = None,
+) -> dict:
+    """
+    Build a comprehensive rival scouting report.
+    Only uses data we CAN realistically extract from FCF actas.
+    """
+    report: dict = {}
+    our_kw = _build_search_keywords(our_team)
+    rival_kw = _build_search_keywords(rival_team)
+
+    # ── Rival standing ──
+    rival_standing = None
+    our_standing = None
+    if standings:
+        for s in standings:
+            if _team_matches(s.name, rival_kw):
+                rival_standing = s
+            if _team_matches(s.name, our_kw):
+                our_standing = s
+
+    if rival_standing:
+        report["standing"] = {
+            "position": rival_standing.position,
+            "points": rival_standing.points,
+            "played": rival_standing.played,
+            "won": rival_standing.won,
+            "drawn": rival_standing.drawn,
+            "lost": rival_standing.lost,
+            "goals_for": rival_standing.goals_for,
+            "goals_against": rival_standing.goals_against,
+            "goal_difference": rival_standing.goal_difference,
+            "home_record": f"{rival_standing.home_won}V {rival_standing.home_drawn}E {rival_standing.home_lost}D",
+            "away_record": f"{rival_standing.away_won}V {rival_standing.away_drawn}E {rival_standing.away_lost}D",
+        }
+
+    # ── Probable XI (most starts) ──
+    players = list(rival_intel.players.values())
+    total_matches = len(rival_intel.results)
+    starters = sorted(
+        [p for p in players if p.starts > 0],
+        key=lambda p: p.starts,
+        reverse=True
+    )
+    report["probable_xi"] = [
+        {
+            "name": p.name,
+            "dorsal": p.dorsal,
+            "starts": p.starts,
+            "appearances": p.appearances,
+            "pct": round(p.starts / max(total_matches, 1) * 100) if total_matches else 0,
+        }
+        for p in starters[:11]
+    ]
+
+    # ── Top scorers ──
+    scorers = sorted(
+        [p for p in players if p.goals > 0],
+        key=lambda p: p.goals,
+        reverse=True
+    )
+    total_goals = rival_intel.goals_scored
+    report["top_scorers"] = [
+        {
+            "name": p.name,
+            "dorsal": p.dorsal,
+            "goals": p.goals,
+            "appearances": p.appearances,
+            "pct_of_total": round(p.goals / max(total_goals, 1) * 100),
+            "goal_minutes": p.minutes_goals[:5],  # latest 5
+        }
+        for p in scorers[:8]
+    ]
+
+    # ── Cards & warnings (apercibidos) ──
+    carded = sorted(
+        [p for p in players if p.yellow_cards > 0 or p.red_cards > 0],
+        key=lambda p: (p.yellow_cards + p.red_cards * 3),
+        reverse=True
+    )
+    report["cards"] = [
+        {
+            "name": p.name,
+            "dorsal": p.dorsal,
+            "yellows": p.yellow_cards,
+            "reds": p.red_cards,
+            "apercibido": p.yellow_cards >= 4,  # 4 yellows = 1 away from suspension in Cat leagues
+        }
+        for p in carded[:10]
+    ]
+    report["total_yellows"] = rival_intel.total_yellows
+    report["total_reds"] = rival_intel.total_reds
+
+    # ── Sanctioned rival players ──
+    if sanctions:
+        rival_sanctions = [
+            {"player": s.player, "matches": s.matches_suspended, "reason": s.reason}
+            for s in sanctions
+            if _team_matches(s.team, rival_kw)
+        ]
+        report["sanctions"] = rival_sanctions
+    else:
+        report["sanctions"] = []
+
+    # ── Goals by period ──
+    report["goals_by_period"] = rival_intel.goals_by_period
+
+    # ── Form (last 5) ──
+    report["form"] = rival_intel.form[-5:] if rival_intel.form else []
+    report["record"] = {
+        "wins": rival_intel.wins,
+        "draws": rival_intel.draws,
+        "losses": rival_intel.losses,
+        "goals_scored": rival_intel.goals_scored,
+        "goals_conceded": rival_intel.goals_conceded,
+    }
+
+    # ── Last 5 results ──
+    last_results = rival_intel.results[-5:] if rival_intel.results else []
+    report["recent_results"] = []
+    for r in reversed(last_results):
+        is_home = _team_matches(r.home_team, rival_kw)
+        scored = r.home_score if is_home else r.away_score
+        conceded = r.away_score if is_home else r.home_score
+        res = "V" if scored > conceded else ("E" if scored == conceded else "D")
+        report["recent_results"].append({
+            "jornada": r.jornada,
+            "date": r.date,
+            "home_team": r.home_team,
+            "away_team": r.away_team,
+            "home_score": r.home_score,
+            "away_score": r.away_score,
+            "rival_side": "home" if is_home else "away",
+            "result": res,
+        })
+
+    # ── Head-to-head ──
+    h2h_matches = []
+    for acta in actas:
+        home_is_us = _team_matches(acta.home_team, our_kw)
+        away_is_us = _team_matches(acta.away_team, our_kw)
+        home_is_rival = _team_matches(acta.home_team, rival_kw)
+        away_is_rival = _team_matches(acta.away_team, rival_kw)
+
+        if (home_is_us and away_is_rival) or (away_is_us and home_is_rival):
+            h2h_matches.append(acta)
+
+    report["h2h"] = {"matches": [], "our_wins": 0, "draws": 0, "rival_wins": 0}
+    for acta in h2h_matches:
+        home_is_us = _team_matches(acta.home_team, our_kw)
+        our_score = acta.home_score if home_is_us else acta.away_score
+        rival_score = acta.away_score if home_is_us else acta.home_score
+        if our_score > rival_score:
+            report["h2h"]["our_wins"] += 1
+        elif our_score == rival_score:
+            report["h2h"]["draws"] += 1
+        else:
+            report["h2h"]["rival_wins"] += 1
+
+        report["h2h"]["matches"].append({
+            "jornada": acta.jornada,
+            "date": acta.date,
+            "home_team": acta.home_team,
+            "away_team": acta.away_team,
+            "home_score": acta.home_score,
+            "away_score": acta.away_score,
+        })
+
+    # ── Comparativa directa (nuestro equipo vs rival) ──
+    if our_standing and rival_standing:
+        report["comparison"] = {
+            "our_position": our_standing.position,
+            "rival_position": rival_standing.position,
+            "our_points": our_standing.points,
+            "rival_points": rival_standing.points,
+            "our_gf": our_standing.goals_for,
+            "rival_gf": rival_standing.goals_for,
+            "our_gc": our_standing.goals_against,
+            "rival_gc": rival_standing.goals_against,
+            "our_diff": our_standing.goal_difference,
+            "rival_diff": rival_standing.goal_difference,
+        }
+
+    logger.info(
+        f"Rival report for {rival_team}: "
+        f"{len(report.get('probable_xi', []))} probable starters, "
+        f"{len(report.get('top_scorers', []))} scorers, "
+        f"{len(h2h_matches)} H2H matches"
+    )
+
+    return report
+
+
+# ─── Referee Intelligence ─────────────────────────────
+
+def build_referee_intelligence(
+    referee_name: str,
+    global_refs: list[dict],
+    competition: str,
+    our_team: Optional[str] = None,
+) -> dict:
+    """
+    Build intelligence about a specific referee from the global database.
+    Only considers matches from the same competition.
+    """
+    ref_kw = _normalize(referee_name)
+    our_kw = _build_search_keywords(our_team) if our_team else []
+
+    ref_matches = []
+    for acta in global_refs:
+        if acta.get("competition") != competition:
+            continue
+            
+        for ref in acta.get("referees", []):
+            if ref_kw in _normalize(ref):
+                ref_matches.append(acta)
+                break
+
+    if not ref_matches:
+        return {"name": referee_name, "matches": 0}
+
+    total = len(ref_matches)
+    total_yellows = 0
+    total_reds = 0
+    home_yellows = 0
+    away_yellows = 0
+    home_reds = 0
+    away_reds = 0
+    matches_with_expulsion = 0
+    first_half_cards = 0
+    second_half_cards = 0
+    home_wins = 0
+    away_wins = 0
+    draws = 0
+    our_history = []
+
+    match_history = []
+    for acta in ref_matches:
+        home_team = acta.get("home_team", "")
+        away_team = acta.get("away_team", "")
+        home_score = acta.get("home_score", 0)
+        away_score = acta.get("away_score", 0)
+        yellow_cards = acta.get("yellow_cards", [])
+        red_cards = acta.get("red_cards", [])
+        
+        match_yellows_home = sum(1 for c in yellow_cards if c.get("team") == "home")
+        match_yellows_away = sum(1 for c in yellow_cards if c.get("team") == "away")
+        match_reds_home = sum(1 for c in red_cards if c.get("team") == "home")
+        match_reds_away = sum(1 for c in red_cards if c.get("team") == "away")
+
+        total_yellows += match_yellows_home + match_yellows_away
+        total_reds += match_reds_home + match_reds_away
+        home_yellows += match_yellows_home
+        away_yellows += match_yellows_away
+        home_reds += match_reds_home
+        away_reds += match_reds_away
+
+        if match_reds_home + match_reds_away > 0:
+            matches_with_expulsion += 1
+
+        # Card timing
+        for card in yellow_cards + red_cards:
+            m = _parse_minute_value(card.get("minute", "0"))
+            if m <= 45:
+                first_half_cards += 1
+            else:
+                second_half_cards += 1
+
+        # Results
+        if home_score > away_score:
+            home_wins += 1
+        elif home_score < away_score:
+            away_wins += 1
+        else:
+            draws += 1
+
+        match_info = {
+            "jornada": acta.get("jornada", 0),
+            "date": acta.get("date", ""),
+            "home_team": home_team,
+            "away_team": away_team,
+            "home_score": home_score,
+            "away_score": away_score,
+            "yellows": match_yellows_home + match_yellows_away,
+            "reds": match_reds_home + match_reds_away,
+            "yellows_home": match_yellows_home,
+            "yellows_away": match_yellows_away,
+        }
+        match_history.append(match_info)
+
+        # Our history with this ref
+        if our_kw:
+            we_play = _team_matches(home_team, our_kw) or _team_matches(away_team, our_kw)
+            if we_play:
+                our_is_home = _team_matches(home_team, our_kw)
+                our_score = home_score if our_is_home else away_score
+                their_score = away_score if our_is_home else home_score
+                res = "V" if our_score > their_score else ("E" if our_score == their_score else "D")
+                our_history.append({**match_info, "our_result": res})
+
+    total_cards = total_yellows + total_reds
+    report = {
+        "name": referee_name,
+        "matches": total,
+        "yellows_per_match": round(total_yellows / total, 1),
+        "reds_per_match": round(total_reds / total, 1),
+        "total_yellows": total_yellows,
+        "total_reds": total_reds,
+        "home_yellows": home_yellows,
+        "away_yellows": away_yellows,
+        "home_reds": home_reds,
+        "away_reds": away_reds,
+        "away_card_pct": round(
+            (away_yellows + away_reds) / max(total_cards, 1) * 100, 1
+        ),
+        "matches_with_expulsion": matches_with_expulsion,
+        "expulsion_pct": round(matches_with_expulsion / total * 100, 1),
+        "second_half_card_pct": round(
+            second_half_cards / max(total_cards, 1) * 100, 1
+        ),
+        "home_wins": home_wins,
+        "away_wins": away_wins,
+        "draws": draws,
+        "match_history": match_history[-5:],  # last 5
+        "our_history": our_history,
+    }
+
+    logger.info(
+        f"Referee intel for {referee_name}: "
+        f"{total} matches, {total_yellows} yellows, {total_reds} reds"
+    )
+
+    return report
 
 
 # ─── Fuzzy Team Matching Helpers ──────────────────────

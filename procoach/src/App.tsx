@@ -11,6 +11,8 @@ import TrainingPlanner from './TrainingPlanner';
 import TeamManagement from './TeamManagement';
 import FCFSetup, { type FCFTeamData } from './FCFSetup';
 import IntelligenceView from './IntelligenceView';
+import RivalReport from './RivalReport';
+import RefereeReport from './RefereeReport';
 
 // ─── TYPES ────────────────────────────────────────────
 interface NavItemProps { icon: React.ReactNode; label: string; active: boolean; onClick: () => void; badge?: string; isSidebarOpen?: boolean }
@@ -26,6 +28,27 @@ function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [fcfTeamData, setFcfTeamData] = useState<FCFTeamData | null>(null);
+
+  if (!fcfTeamData) {
+    return (
+      <div className="app-container" style={{ backgroundColor: '#090f1a' }}>
+        <FCFSetup onComplete={(data) => setFcfTeamData(data)} />
+      </div>
+    );
+  }
+
+  const standings = fcfTeamData.data?.standings ?? [];
+  const intelligence = fcfTeamData.data?.team_intelligence ?? {};
+  const ourStanding = standings.find((s: any) => s.name === fcfTeamData.teamName) || {};
+  const played = ourStanding.played || 0;
+  const pts = ourStanding.points || 0;
+  const gf = ourStanding.goals_for || 0;
+  const gc = ourStanding.goals_against || 0;
+  const diff = gf - gc;
+  const form: string[] = intelligence.form || [];
+  const recentForm = form.slice(-5).join('-');
+  const ptsPossible = form.slice(-5).length * 3;
+  const ptsWon = form.slice(-5).reduce((acc: number, r: string) => acc + (r === 'W' ? 3 : r === 'D' ? 1 : 0), 0);
 
   return (
     <div className="app-container" style={{ flexDirection: 'row', backgroundColor: '#090f1a' }}>
@@ -77,7 +100,7 @@ function App() {
         <header style={{ padding: '1.25rem 3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(255,255,255,0.05)', position: 'sticky', top: 0, zIndex: 40 }}>
           <div>
             <h2 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Hola, Míster 👋</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Fundació Acadèmia F. L'Hospitalet A — Segona Catalana · Grup 3</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{fcfTeamData.teamName} — {fcfTeamData.competitionName} · {fcfTeamData.group.replace('grup-', 'Grup ').replace('grup-unic', 'Únic')}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center', background: 'rgba(0,0,0,0.3)', borderRadius: '2rem', padding: '0.5rem 1rem', border: '1px solid rgba(255,255,255,0.1)' }}>
@@ -94,27 +117,27 @@ function App() {
 
         {/* ── Dynamic Content ── */}
         {activeTab === 'fcf' ? (
-          fcfTeamData ? (
-            <IntelligenceView
-              teamData={fcfTeamData}
-              onReset={() => setFcfTeamData(null)}
-            />
-          ) : (
-            <FCFSetup onComplete={(data) => { setFcfTeamData(data); }} />
-          )
+          <IntelligenceView
+            teamData={fcfTeamData}
+            onReset={() => setFcfTeamData(null)}
+          />
+        ) : activeTab === 'scouting' ? (
+          <RivalReport teamData={fcfTeamData} />
+        ) : activeTab === 'referee' ? (
+          <RefereeReport teamData={fcfTeamData} />
         ) : activeTab === 'training' ? (
           <TrainingPlanner />
         ) : activeTab === 'team' ? (
-          <TeamManagement />
+          <TeamManagement fcfPlayers={fcfTeamData.data?.team_intelligence?.players || {}} />
         ) : (
           <div style={{ padding: '2rem 3rem', maxWidth: '1400px', margin: '0 auto' }}>
 
             {/* ── Row 1: Key Numbers ── */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem', marginBottom: '1.5rem' }}>
-              <StatCard title="Tu Posición en Liga" value="6º" subtitle="29 pts · 20 PJ" trend="+1 desde la última jornada" positive />
-              <StatCard title="Tus Goles F / C" value="48 / 31" subtitle="+17 diferencia" trend="2.4 GF / partido" positive />
-              <StatCard title="Tu Racha (Últ. 5)" value="D-V-D-E-V" subtitle="7 de 15 pts posibles" trend="Recuperando puntos" positive />
-              <StatCard title="Tu Fair Play (Joc Net)" value="50 pts" subtitle="5ª posición del grupo" trend="3 Rojas · 41 Amarillas" positive={false} />
+              <StatCard title="Tu Posición en Liga" value={`${ourStanding.position || '-'}º`} subtitle={`${pts} pts · ${played} PJ`} trend="Posición actual" positive />
+              <StatCard title="Tus Goles F / C" value={`${gf} / ${gc}`} subtitle={`${diff > 0 ? '+' : ''}${diff} diferencia`} trend={`${played ? (gf / played).toFixed(1) : 0} GF / partido`} positive={diff >= 0} />
+              <StatCard title="Tu Racha (Últ. 5)" value={recentForm || "-"} subtitle={`${ptsWon} de ${ptsPossible} pts posibles`} trend="Últimos 5 partidos" positive={ptsWon >= (ptsPossible / 2)} />
+              <StatCard title="Tarjetas" value={`🟨 ${intelligence.total_yellows ?? 0} · 🟥 ${intelligence.total_reds ?? 0}`} subtitle="Tarjetas acumuladas" trend={`${played ? ((intelligence.total_yellows ?? 0) / played).toFixed(1) : 0} amarillas/partido`} positive={(intelligence.total_reds ?? 0) < 2} />
             </div>
 
             {/* ── Row 2: Main Scouting + Sidebar ── */}
@@ -206,16 +229,9 @@ function App() {
                     <th style={{ paddingBottom: '0.5rem', fontWeight: 500, textAlign: 'right' }}>GC</th>
                   </tr></thead>
                   <tbody>
-                    <MiniTableRow pos={1} name="Racing Vallbona" pts={45} gf={60} gc={18} />
-                    <MiniTableRow pos={2} name="Sp. Gavà 2013" pts={42} gf={55} gc={22} />
-                    <MiniTableRow pos={3} name="UD Unif. Bellvitge" pts={38} gf={50} gc={25} />
-                    <MiniTableRow pos={4} name="CF Barceloneta" pts={32} gf={44} gc={30} />
-                    <MiniTableRow pos={5} name="S. Montserratina" pts={30} gf={40} gc={33} />
-                    <MiniTableRow pos={6} name="Fund. Acadèmia" pts={29} gf={48} gc={31} highlight />
-                    <MiniTableRow pos={7} name="CP Sarrià" pts={28} gf={36} gc={30} />
-                    <MiniTableRow pos={8} name="FC Santboià B" pts={26} gf={35} gc={42} />
-                    <MiniTableRow pos={9} name="AE Prat B" pts={24} gf={32} gc={38} isOpponent />
-                    <MiniTableRow pos={10} name="EE Guineueta" pts={22} gf={28} gc={40} />
+                    {standings.slice(0, 10).map((s: any) => (
+                      <MiniTableRow key={s.position} pos={s.position} name={s.name} pts={s.points} gf={s.goals_for} gc={s.goals_against} highlight={s.name === fcfTeamData.teamName} />
+                    ))}
                   </tbody>
                 </table>
               </div>
