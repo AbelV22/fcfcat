@@ -12,7 +12,11 @@ import TeamManagement from './TeamManagement';
 import FCFSetup, { type FCFTeamData } from './FCFSetup';
 import IntelligenceView from './IntelligenceView';
 import RivalReport from './RivalReport';
+import RivalPlayersTable from './RivalPlayersTable';
 import RefereeReport from './RefereeReport';
+import ScorersReport from './ScorersReport';
+import CalendarView from './CalendarView';
+import FieldsManager from './FieldsManager';
 
 // ─── TYPES ────────────────────────────────────────────
 interface NavItemProps { icon: React.ReactNode; label: string; active: boolean; onClick: () => void; badge?: string; isSidebarOpen?: boolean }
@@ -28,6 +32,8 @@ function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [fcfTeamData, setFcfTeamData] = useState<FCFTeamData | null>(null);
+  const [showRivalPlayersModal, setShowRivalPlayersModal] = useState(false);
+  const [selectedReferee, setSelectedReferee] = useState<string | null>(null);
 
   if (!fcfTeamData) {
     return (
@@ -49,6 +55,12 @@ function App() {
   const recentForm = form.slice(-5).join('-');
   const ptsPossible = form.slice(-5).length * 3;
   const ptsWon = form.slice(-5).reduce((acc: number, r: string) => acc + (r === 'W' ? 3 : r === 'D' ? 1 : 0), 0);
+
+  // Rival data
+  const nextMatch = fcfTeamData.data?.next_match ?? null;
+  const matchRival = nextMatch?.rival_name || fcfTeamData.data?.meta?.rival || "Próximo Rival";
+  const rivalIntelligence = fcfTeamData.data?.rival_report ?? fcfTeamData.data?.rival_intelligence ?? {};
+  const rivalPlayers = rivalIntelligence.players ?? {};
 
   return (
     <div className="app-container" style={{ flexDirection: 'row', backgroundColor: '#090f1a' }}>
@@ -90,7 +102,7 @@ function App() {
           <NavItem icon={<Database size={20} />} label="FCF Intelligence" active={activeTab === 'fcf'} onClick={() => setActiveTab('fcf')} badge={fcfTeamData ? '✓' : 'NEW'} isSidebarOpen={isSidebarOpen} />
         </div>
         <div style={{ padding: isSidebarOpen ? '1.5rem' : '1.5rem 0', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'center' }}>
-          <NavItem icon={<Settings size={20} />} label="Configuración" active={false} onClick={() => { }} isSidebarOpen={isSidebarOpen} />
+          <NavItem icon={<Settings size={20} />} label="Configuración" active={activeTab === 'fields'} onClick={() => setActiveTab('fields')} isSidebarOpen={isSidebarOpen} />
         </div>
       </aside>
 
@@ -123,12 +135,36 @@ function App() {
           />
         ) : activeTab === 'scouting' ? (
           <RivalReport teamData={fcfTeamData} />
+        ) : activeTab === 'scorers' ? (
+          <ScorersReport teamData={fcfTeamData} />
+        ) : activeTab === 'calendar' ? (
+          <CalendarView teamData={fcfTeamData} />
         ) : activeTab === 'referee' ? (
-          <RefereeReport teamData={fcfTeamData} />
+          <RefereeReport teamData={fcfTeamData} selectedReferee={selectedReferee} onClearSelectedRef={() => setSelectedReferee(null)} />
         ) : activeTab === 'training' ? (
           <TrainingPlanner />
+        ) : activeTab === 'video' ? (
+          <div style={{ padding: '3rem', maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
+            <div style={{ marginBottom: '1rem' }}>
+              <Video size={48} color="#8b5cf6" style={{ margin: '0 auto' }} />
+            </div>
+            <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Video Análisis</h2>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
+              Análisis visual de partidos y tácticas.
+            </p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+              Coming soon...
+            </p>
+          </div>
+        ) : activeTab === 'fields' ? (
+          <FieldsManager />
         ) : activeTab === 'team' ? (
-          <TeamManagement fcfPlayers={fcfTeamData.data?.team_intelligence?.players || {}} />
+          <TeamManagement
+            fcfPlayers={fcfTeamData.data?.team_intelligence?.players || {}}
+            results={fcfTeamData.data?.matches || []}
+            actas={fcfTeamData.data?.actas || []}
+            teamName={fcfTeamData.data?.team_intelligence?.team_name || fcfTeamData.data?.meta?.team || ''}
+          />
         ) : (
           <div style={{ padding: '2rem 3rem', maxWidth: '1400px', margin: '0 auto' }}>
 
@@ -143,19 +179,41 @@ function App() {
             {/* ── Row 2: Main Scouting + Sidebar ── */}
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
               {/* ── MAIN: Next match scouting ── */}
-              <div className="glass" style={{ borderRadius: '1rem', overflow: 'hidden', border: '1px solid rgba(6,182,212,0.3)' }}>
+              <div
+                className="glass"
+                style={{
+                  borderRadius: '1rem',
+                  overflow: 'hidden',
+                  border: '1px solid rgba(6,182,212,0.3)',
+                  cursor: Object.keys(rivalPlayers).length > 0 ? 'pointer' : 'default',
+                  transition: 'all 0.2s ease',
+                }}
+                onClick={() => Object.keys(rivalPlayers).length > 0 && setShowRivalPlayersModal(true)}
+                onMouseEnter={e => {
+                  if (Object.keys(rivalPlayers).length > 0) {
+                    e.currentTarget.style.borderColor = 'rgba(6,182,212,0.6)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                  }
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = 'rgba(6,182,212,0.3)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
                 {/* Header bar */}
                 <div style={{ background: 'linear-gradient(90deg, rgba(6,182,212,0.1), transparent)', padding: '1.25rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '1px', marginBottom: '0.25rem', display: 'block' }}>PRÓXIMO RIVAL · SCOUTING FCF</span>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '1px', marginBottom: '0.25rem', display: 'block' }}>
+                      PRÓXIMO RIVAL · SCOUTING FCF {Object.keys(rivalPlayers).length > 0 && <span style={{ color: 'var(--accent-cyan)' }}>· Clic para ver plantilla</span>}
+                    </span>
                     <h3 style={{ fontSize: '1.4rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      AE Prat B (9º)
-                      <span style={{ fontSize: '0.8rem', background: 'rgba(239,68,68,0.15)', color: '#ef4444', padding: '0.15rem 0.5rem', borderRadius: '1rem', fontWeight: 600 }}>⚠ Necesita Puntos</span>
+                      {matchRival} {rivalIntelligence.standing?.position ? `(${rivalIntelligence.standing.position}º)` : ''}
+                      {rivalIntelligence.standing?.position > 12 && <span style={{ fontSize: '0.8rem', background: 'rgba(239,68,68,0.15)', color: '#ef4444', padding: '0.15rem 0.5rem', borderRadius: '1rem', fontWeight: 600 }}>⚠ Necesita Puntos</span>}
                     </h3>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <p style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>Domingo 12:00h</p>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>Julio Méndez</p>
+                    <p style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>{nextMatch?.date && nextMatch?.time ? `${nextMatch.date} ${nextMatch.time}` : 'Próximo Partido'}</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{nextMatch?.referee || 'Árbitro por asignar'}</p>
                   </div>
                 </div>
 
@@ -195,20 +253,20 @@ function App() {
                       <Zap size={16} /> ALERTAS CLAVE DEL RIVAL
                     </h4>
                     <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', listStyle: 'none', flex: 1 }}>
-                      <InsightItem type="danger" text="Llegan tras una remontada (Prat B 3-1 contra Sarrià)." />
-                      <InsightItem type="warning" text="Suelen encajar pronto: 7 goles en contra en los primeros 15 min." />
-                      <InsightItem type="info" text="H. Gómez (dorsal 4): Vuelve de sanción por roja directa." />
-                      <InsightItem type="success" text="La segunda peor defensa del top 10 (38 GF)." />
-                      <InsightItem type="warning" text="Peligro: A. Ruiz (9 goles, 28% de los goles del equipo)." />
+                      {rivalIntelligence.recent_results?.[0]?.result === 'V' && <InsightItem type="success" text={`Vienen de ganar (${rivalIntelligence.recent_results[0].home_score}-${rivalIntelligence.recent_results[0].away_score} vs ${rivalIntelligence.recent_results[0].home_team === matchRival ? rivalIntelligence.recent_results[0].away_team : rivalIntelligence.recent_results[0].home_team}).`} />}
+                      {rivalIntelligence.goals_by_period?.["0-15"]?.conceded > 3 && <InsightItem type="warning" text={`Suelen encajar pronto: ${rivalIntelligence.goals_by_period["0-15"].conceded} goles en contra en los primeros 15 min.`} />}
+                      {rivalIntelligence.top_scorers?.[0] && <InsightItem type="danger" text={`Peligro: ${rivalIntelligence.top_scorers[0].name} (${rivalIntelligence.top_scorers[0].goals} goles, ${rivalIntelligence.top_scorers[0].pct_of_total}% del equipo).`} />}
+                      {rivalIntelligence.cards?.some((p: any) => p.apercibido) && <InsightItem type="info" text={`${rivalIntelligence.cards.find((p: any) => p.apercibido).name}: Apercibido de sanción.`} />}
+                      {rivalIntelligence.standing?.goals_against > 30 && <InsightItem type="warning" text={`Defensa vulnerable: ${rivalIntelligence.standing.goals_against} goles encajados.`} />}
                     </ul>
 
                     <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '0.5rem', padding: '0.75rem', border: '1px solid rgba(255,255,255,0.05)' }}>
-                      <h4 style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>Comparativa Directa (Tu Acadèmia vs AE Prat B)</h4>
-                      <ProgressBar label="Goles a Favor" leftVal="48" rightVal="32" leftPct={60} rightPct={40} />
+                      <h4 style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>Comparativa Directa (Tu Acadèmia vs {matchRival})</h4>
+                      <ProgressBar label="Goles a Favor" leftVal={`${ourStanding.goals_for || 0}`} rightVal={`${rivalIntelligence.standing?.goals_for || 0}`} leftPct={ourStanding.goals_for > rivalIntelligence.standing?.goals_for ? 60 : 40} rightPct={ourStanding.goals_for > rivalIntelligence.standing?.goals_for ? 40 : 60} />
                       <div style={{ height: '0.5rem' }}></div>
-                      <ProgressBar label="Goles en Contra" leftVal="31" rightVal="38" leftPct={45} rightPct={55} reverseColors />
+                      <ProgressBar label="Goles en Contra" leftVal={`${ourStanding.goals_against || 0}`} rightVal={`${rivalIntelligence.standing?.goals_against || 0}`} leftPct={ourStanding.goals_against < rivalIntelligence.standing?.goals_against ? 45 : 55} rightPct={ourStanding.goals_against < rivalIntelligence.standing?.goals_against ? 55 : 45} reverseColors />
                       <div style={{ height: '0.5rem' }}></div>
-                      <ProgressBar label="Puntos" leftVal="29" rightVal="24" leftPct={55} rightPct={45} />
+                      <ProgressBar label="Puntos" leftVal={`${ourStanding.points || 0}`} rightVal={`${rivalIntelligence.standing?.points || 0}`} leftPct={ourStanding.points > rivalIntelligence.standing?.points ? 55 : 45} rightPct={ourStanding.points > rivalIntelligence.standing?.points ? 45 : 55} />
                     </div>
                   </div>
                 </div>
@@ -241,58 +299,58 @@ function App() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
               {/* ── Top Scorers Rival ── */}
               <div className="glass" style={{ borderRadius: '1rem', padding: '1.25rem' }}>
-                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Target size={18} color="var(--accent-cyan)" /> Goleadores de la AE Prat B</h3>
+                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Target size={18} color="var(--accent-cyan)" /> Goleadores de {matchRival}</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <ScorerRow rank={1} name="A. Ruiz" goals={9} pct={28} matches={19} />
-                  <ScorerRow rank={2} name="C. Gómez" goals={5} pct={16} matches={15} />
-                  <ScorerRow rank={3} name="M. Castro" goals={4} pct={13} matches={20} />
-                  <ScorerRow rank={4} name="P. Silva" goals={4} pct={13} matches={18} />
-                  <ScorerRow rank={5} name="Otros (6 jug.)" goals={10} pct={30} matches={0} />
+                  {(rivalIntelligence.top_scorers || []).slice(0, 5).map((s: any, i: number) => (
+                    <ScorerRow key={i} rank={i + 1} name={s.name} goals={s.goals} pct={s.pct_of_total} matches={s.appearances} />
+                  ))}
+                  {(!rivalIntelligence.top_scorers || rivalIntelligence.top_scorers.length === 0) && <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>No hay datos de goleadores.</p>}
                 </div>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.7rem', marginTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem' }}>Total Goles Favor: 32. Datos extraídos de actas FCF.</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.7rem', marginTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem' }}>Total Goles Favor: {rivalIntelligence.standing?.goals_for || 0}. Datos extraídos de actas FCF.</p>
               </div>
 
               {/* ── Goal Minutes Distribution ── */}
               <div className="glass" style={{ borderRadius: '1rem', padding: '1.25rem' }}>
-                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Clock size={18} color="#f59e0b" /> Goles por Franja (AE Prat B)</h3>
+                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Clock size={18} color="#f59e0b" /> Goles por Franja ({matchRival})</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  <GoalMinuteBar label="0-15'" scored={2} conceded={7} maxVal={10} />
-                  <GoalMinuteBar label="16-30'" scored={5} conceded={5} maxVal={10} />
-                  <GoalMinuteBar label="31-45'" scored={4} conceded={6} maxVal={10} />
-                  <GoalMinuteBar label="46-60'" scored={7} conceded={5} maxVal={10} />
-                  <GoalMinuteBar label="61-75'" scored={6} conceded={9} maxVal={10} />
-                  <GoalMinuteBar label="76-90'" scored={8} conceded={6} maxVal={10} />
+                  {Object.entries(rivalIntelligence.goals_by_period || {}).map(([period, counts]: [string, any]) => (
+                    <GoalMinuteBar key={period} label={period} scored={counts.scored} conceded={counts.conceded} maxVal={10} />
+                  ))}
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', marginTop: '0.75rem', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                  <span><span style={{ display: 'inline-block', width: 8, height: 8, background: 'var(--accent-green)', borderRadius: 2, marginRight: 4 }}></span>Marcados (Total 32)</span>
-                  <span><span style={{ display: 'inline-block', width: 8, height: 8, background: '#ef4444', borderRadius: 2, marginRight: 4 }}></span>Encajados (Total 38)</span>
+                  <span><span style={{ display: 'inline-block', width: 8, height: 8, background: 'var(--accent-green)', borderRadius: 2, marginRight: 4 }}></span>Marcados (Total {rivalIntelligence.record?.goals_scored || 0})</span>
+                  <span><span style={{ display: 'inline-block', width: 8, height: 8, background: '#ef4444', borderRadius: 2, marginRight: 4 }}></span>Encajados (Total {rivalIntelligence.record?.goals_conceded || 0})</span>
                 </div>
-                <p style={{ color: '#f59e0b', fontSize: '0.75rem', fontWeight: 600, marginTop: '0.5rem', textAlign: 'center' }}>⚠ Sufren mucho a balón parado en la reanudación (61-75')</p>
+                {rivalIntelligence.goals_by_period?.["61-75"]?.conceded > 7 && <p style={{ color: '#f59e0b', fontSize: '0.75rem', fontWeight: 600, marginTop: '0.5rem', textAlign: 'center' }}>⚠ Sufren mucho a balón parado en la reanudación (61-75')</p>}
               </div>
 
               {/* ── Referee Report ── */}
               <div className="glass" style={{ borderRadius: '1rem', padding: '1.25rem' }}>
-                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Gavel size={18} color="#a78bfa" /> Informe del Árbitro Asignado</h3>
+                <h3 onClick={() => nextMatch?.referee && setSelectedReferee(nextMatch.referee) || setActiveTab('referee')} style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                  <Gavel size={18} color="#a78bfa" /> Informe del Árbitro Asignado
+                </h3>
                 <div style={{ background: 'rgba(167,139,250,0.08)', borderRadius: '0.5rem', padding: '1rem', marginBottom: '0.75rem', border: '1px solid rgba(167,139,250,0.2)' }}>
-                  <p style={{ fontWeight: 700, fontSize: '1.1rem' }}>M. Rodríguez Silva</p>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>Delegació: Baix Llobregat</p>
+                  <p style={{ fontWeight: 700, fontSize: '1.1rem' }}>{nextMatch?.referee || 'Por asignar'}</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{fcfTeamData.data?.referee_reports?.[nextMatch?.referee] ? `${fcfTeamData.data.referee_reports[nextMatch.referee].matches} partidos dirigidos` : 'Sin historial disponible'}</p>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                  <RefStat label="Partidos Temp." value="14" />
-                  <RefStat label="Amarillas/Part." value="5.1" warning />
-                  <RefStat label="Rojas/Part." value="0.4" />
-                  <RefStat label="Penaltis/Part." value="0.6" warning />
-                </div>
-                <div style={{ fontSize: '0.8rem' }}>
-                  <p style={{ marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#f59e0b', boxShadow: '0 0 6px #f59e0b' }}></span>
-                    <span style={{ color: 'rgba(255,255,255,0.85)' }}>Árbitro casero: Suele pitar más faltas al visitante.</span>
-                  </p>
-                  <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent-cyan)', boxShadow: '0 0 6px var(--accent-cyan)' }}></span>
-                    <span style={{ color: 'rgba(255,255,255,0.85)' }}>Último Acta: Prat B 2-2 Guineueta</span>
-                  </p>
-                </div>
+                {fcfTeamData.data?.referee_reports?.[nextMatch?.referee] ? (
+                  <>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                      <RefStat label="Partidos Temp." value={`${fcfTeamData.data.referee_reports[nextMatch.referee].matches}`} />
+                      <RefStat label="Amarillas/Part." value={`${fcfTeamData.data.referee_reports[nextMatch.referee].yellows_per_match}`} warning={fcfTeamData.data.referee_reports[nextMatch.referee].yellows_per_match >= 5} />
+                      <RefStat label="Rojas/Part." value={`${fcfTeamData.data.referee_reports[nextMatch.referee].reds_per_match}`} />
+                      <RefStat label="Penaltis/Part." value="-" />
+                    </div>
+                    <div style={{ fontSize: '0.8rem' }}>
+                      <p style={{ marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: fcfTeamData.data.referee_reports[nextMatch.referee].away_player_card_pct > 50 ? '#f59e0b' : 'var(--accent-cyan)', boxShadow: `0 0 6px ${fcfTeamData.data.referee_reports[nextMatch.referee].away_player_card_pct > 50 ? '#f59e0b' : 'var(--accent-cyan)'}` }}></span>
+                        <span style={{ color: 'rgba(255,255,255,0.85)' }}>{fcfTeamData.data.referee_reports[nextMatch.referee].away_player_card_pct > 50 ? 'Árbitro casero: Suele pitar más al visitante.' : 'Árbitro neutral/visitante.'}</span>
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Sin datos históricos de este árbitro.</p>
+                )}
               </div>
             </div>
 
@@ -300,42 +358,89 @@ function App() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.5rem' }}>
               {/* ── Rival Yellow Cards ── */}
               <div className="glass" style={{ borderRadius: '1rem', padding: '1.25rem' }}>
-                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><AlertTriangle size={18} color="#f59e0b" /> Tarjetas de la AE Prat B</h3>
+                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><AlertTriangle size={18} color="#f59e0b" /> Tarjetas de {matchRival}</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                  <CardRow name="J. Fernández (5)" yellows={4} reds={1} apercibido />
-                  <CardRow name="D. Blanco (8)" yellows={4} reds={0} apercibido />
-                  <CardRow name="A. Ruiz (9)" yellows={3} reds={0} />
-                  <CardRow name="M. Castro (11)" yellows={2} reds={0} />
-                  <CardRow name="S. Martín (3)" yellows={2} reds={1} />
-                  <CardRow name="L. Torres (2)" yellows={1} reds={0} />
+                  {(rivalIntelligence.cards || []).slice(0, 6).map((p: any, i: number) => (
+                    <CardRow key={i} name={`${p.name}${p.dorsal ? ` (${p.dorsal})` : ''}`} yellows={p.yellows} reds={(p.reds || 0) + (p.double_yellows || 0)} apercibido={p.apercibido} />
+                  ))}
+                  {(!rivalIntelligence.cards || rivalIntelligence.cards.length === 0) && <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Sin datos de tarjetas.</p>}
                 </div>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.7rem', marginTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem' }}>Suman 41 amarillas · 4 rojas directas en toda la liga</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.7rem', marginTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem' }}>
+                  Total: {(rivalIntelligence.cards || []).reduce((s: number, p: any) => s + (p.yellows || 0), 0)} amarillas · {(rivalIntelligence.cards || []).reduce((s: number, p: any) => s + (p.reds || 0) + (p.double_yellows || 0), 0)} rojas
+                </p>
               </div>
 
               {/* ── My Squad Alerts ── */}
-              <div className="glass" style={{ borderRadius: '1rem', padding: '1.25rem' }}>
-                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Users size={18} color="var(--accent-green)" /> Alertas (Tu Plantilla)</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <AlertItem name="Marc Garcia (8)" issue="4 Tarjetas Amarillas" time="Apercibido" isYellow />
-                  <AlertItem name="Alex Fernández (5)" issue="Sancionado 1 partido (resolución FCF)" time="NO PUEDE JUGAR" isRed />
-                  <AlertItem name="David López (11)" issue="3 Tarjetas Amarillas" time="A 2 de sanción" isYellow />
-                  <AlertItem name="Sergio Ruiz (2)" issue="Sancionado 2 partidos" time="Falta 1 partido" isRed />
-                </div>
-              </div>
+              {(() => {
+                // Build set of jornadas our team has actually played (from actas)
+                const ourTeamName = fcfTeamData.teamName;
+                const playedJornadas: number[] = (fcfTeamData.data?.actas || [])
+                  .filter((a: any) => a.home_team === ourTeamName || a.away_team === ourTeamName)
+                  .map((a: any) => a.jornada as number);
+
+                // A sanction is active if:
+                // - matches_suspended === 0: pending/not yet assigned → active for next match
+                // - matches_suspended > 0: count our team's played matches AFTER that jornada;
+                //   if fewer than suspension_length have passed → still active
+                const activeSanctionNames = new Set(
+                  (fcfTeamData.data?.sanctions || [])
+                    .filter((s: any) => {
+                      if (s.matches_suspended === 0) return true;
+                      const matchesAfter = playedJornadas.filter(j => j > s.matches_suspended).length;
+                      const reasonText = `${s.reason || ''} ${s.notes || ''}`;
+                      const suspLenMatch = reasonText.match(/(\d+) part/i);
+                      const suspLen = suspLenMatch ? parseInt(suspLenMatch[1]) : 1;
+                      return matchesAfter < suspLen;
+                    })
+                    .map((s: any) => (s.player || '').toUpperCase().trim())
+                );
+                const myPlayers = Object.values(fcfTeamData.data?.team_intelligence?.players || {}) as any[];
+                // In FCF, yellow card ban cycle is every 5 yellows. yellows_in_cycle = yellow_cards % 5
+                // (0 means just served/reset, 4 means apercibido)
+                const alerts = myPlayers
+                  .filter((p: any) => {
+                    const isSanctioned = activeSanctionNames.has((p.name || '').toUpperCase().trim());
+                    const cycleYellows = (p.yellow_cards || 0) % 5;
+                    const isApercibido = cycleYellows >= 4 && p.yellow_cards > 0;
+                    return isSanctioned || isApercibido;
+                  })
+                  .sort((a: any, b: any) => {
+                    const aS = activeSanctionNames.has((a.name || '').toUpperCase().trim()) ? 10 : 0;
+                    const bS = activeSanctionNames.has((b.name || '').toUpperCase().trim()) ? 10 : 0;
+                    return (bS + b.yellow_cards) - (aS + a.yellow_cards);
+                  })
+                  .slice(0, 5);
+                return (
+                  <div className="glass" style={{ borderRadius: '1rem', padding: '1.25rem' }}>
+                    <h3 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Users size={18} color="var(--accent-green)" /> Alertas (Tu Plantilla)</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                      {alerts.map((p: any, i: number) => {
+                        const isSanctioned = activeSanctionNames.has((p.name || '').toUpperCase().trim());
+                        const cycleYellows = (p.yellow_cards || 0) % 5;
+                        const issue = isSanctioned
+                          ? `Sancionado (FCF) · ${p.yellow_cards} amarillas acum.`
+                          : `${p.yellow_cards} Tarjetas Amarillas (${cycleYellows}/5 en ciclo)`;
+                        const toNext = 5 - cycleYellows;
+                        const time = isSanctioned ? 'NO PUEDE JUGAR' : cycleYellows >= 4 ? 'Apercibido' : `A ${toNext} de sanción`;
+                        return <AlertItem key={i} name={`${p.name}${p.dorsal ? ` (${p.dorsal})` : ''}`} issue={issue} time={time} isRed={isSanctioned} isYellow={!isSanctioned} />;
+                      })}
+                      {alerts.length === 0 && <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Sin alertas de disciplina.</p>}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* ── Rival Recent Results ── */}
               <div className="glass" style={{ borderRadius: '1rem', padding: '1.25rem' }}>
-                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><TrendingUp size={18} color="var(--accent-cyan)" /> Últimos Resultados AE Prat B</h3>
+                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><TrendingUp size={18} color="var(--accent-cyan)" /> Últimos Resultados {matchRival}</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                  <ResultRow jornada="J20" home="Bellvitge" away="Prat B" scoreH={2} scoreA={0} rivalSide="away" />
-                  <ResultRow jornada="J19" home="Prat B" away="Racing Vallb." scoreH={1} scoreA={1} rivalSide="home" />
-                  <ResultRow jornada="J18" home="Barceloneta" away="Prat B" scoreH={3} scoreA={2} rivalSide="away" />
-                  <ResultRow jornada="J17" home="Prat B" away="Montserratina" scoreH={1} scoreA={0} rivalSide="home" />
-                  <ResultRow jornada="J16" home="Prat B" away="Gavà 2013" scoreH={2} scoreA={4} rivalSide="home" />
+                  {(rivalIntelligence.recent_results || []).map((r: any, i: number) => (
+                    <ResultRow key={i} jornada={`J${r.jornada}`} home={r.home_team} away={r.away_team} scoreH={r.home_score} scoreA={r.away_score} rivalSide={r.rival_side} />
+                  ))}
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem' }}>
-                  <MiniStat label="Casa (Liga)" value="4V 4E 2D" />
-                  <MiniStat label="Fuera (Liga)" value="2V 2E 6D" />
+                  <MiniStat label="Casa (Liga)" value={rivalIntelligence.standing?.home_record || '-'} />
+                  <MiniStat label="Fuera (Liga)" value={rivalIntelligence.standing?.away_record || '-'} />
                 </div>
               </div>
             </div>
@@ -345,49 +450,62 @@ function App() {
 
               {/* ── Titulares Más Habituales ── */}
               <div className="glass" style={{ borderRadius: '1rem', padding: '1.25rem' }}>
-                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Eye size={18} color="var(--accent-cyan)" /> Titulares Habituales (AE Prat B)</h3>
+                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Eye size={18} color="var(--accent-cyan)" /> Titulares Habituales ({matchRival})</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                  <AppearanceRow name="A. Ruiz" dorsal={9} apps={19} total={20} />
-                  <AppearanceRow name="J. Fernández" dorsal={5} apps={18} total={20} />
-                  <AppearanceRow name="M. Castro" dorsal={11} apps={17} total={20} />
-                  <AppearanceRow name="D. Blanco" dorsal={8} apps={17} total={20} />
-                  <AppearanceRow name="C. Gómez" dorsal={7} apps={15} total={20} />
-                  <AppearanceRow name="S. Martín" dorsal={3} apps={14} total={20} />
-                  <AppearanceRow name="L. Torres" dorsal={2} apps={13} total={20} />
-                  <AppearanceRow name="P. Silva" dorsal={10} apps={12} total={20} />
+                  {(() => {
+                    const rec = rivalIntelligence.record || {};
+                    const totalMatches = (rec.wins || 0) + (rec.draws || 0) + (rec.losses || 0) || 20;
+                    return (rivalIntelligence.probable_xi || []).slice(0, 8).map((p: any, i: number) => (
+                      <AppearanceRow key={i} name={p.name} dorsal={p.dorsal || 0} apps={p.starts} total={totalMatches} />
+                    ));
+                  })()}
+                  {(!rivalIntelligence.probable_xi || rivalIntelligence.probable_xi.length === 0) && <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Sin datos de titulares.</p>}
                 </div>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.7rem', marginTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem' }}>Datos: titularidades en actas FCF (20 jornadas).</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.7rem', marginTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem' }}>
+                  Datos: titularidades en actas FCF ({((rivalIntelligence.record?.wins || 0) + (rivalIntelligence.record?.draws || 0) + (rivalIntelligence.record?.losses || 0)) || '?'} jornadas).
+                </p>
               </div>
 
               {/* ── Informe Completo del Árbitro ── */}
-              <div className="glass" style={{ borderRadius: '1rem', padding: '1.25rem' }}>
-                <h3 style={{ fontSize: '1rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Gavel size={18} color="#a78bfa" /> Historial del Árbitro</h3>
-                <div style={{ background: 'rgba(167,139,250,0.08)', borderRadius: '0.5rem', padding: '0.75rem', marginBottom: '0.75rem', border: '1px solid rgba(167,139,250,0.15)' }}>
-                  <p style={{ fontWeight: 700, fontSize: '1rem' }}>M. Rodríguez Silva</p>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Delegació Baix Llobregat · 14 partidos esta temporada</p>
-                </div>
-                {/* Last 5 matches */}
-                <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.5px', marginBottom: '0.5rem' }}>ÚLTIMOS 5 PARTIDOS DIRIGIDOS</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', marginBottom: '0.75rem' }}>
-                  <RefMatchRow teams="Prat B 2-2 Guineueta" yellows={6} reds={0} />
-                  <RefMatchRow teams="Sarrià 1-0 Bellvitge" yellows={7} reds={1} />
-                  <RefMatchRow teams="Gavà 3-1 Barceloneta" yellows={4} reds={0} />
-                  <RefMatchRow teams="Montserratina 0-0 Racing" yellows={8} reds={1} />
-                  <RefMatchRow teams="Guineueta 2-3 Gavà" yellows={5} reds={0} />
-                </div>
-                {/* Bias stats */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                  <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '0.4rem', padding: '0.5rem', textAlign: 'center' }}>
-                    <p style={{ fontSize: '1rem', fontWeight: 700, color: '#f59e0b' }}>62%</p>
-                    <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Tarjetas al visitante</p>
+              {(() => {
+                const refName = nextMatch?.referee;
+                const refData = refName ? fcfTeamData.data?.referee_reports?.[refName] : null;
+                return (
+                  <div className="glass" style={{ borderRadius: '1rem', padding: '1.25rem' }}>
+                    <h3 style={{ fontSize: '1rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Gavel size={18} color="#a78bfa" /> Historial del Árbitro</h3>
+                    <div style={{ background: 'rgba(167,139,250,0.08)', borderRadius: '0.5rem', padding: '0.75rem', marginBottom: '0.75rem', border: '1px solid rgba(167,139,250,0.15)' }}>
+                      <p style={{ fontWeight: 700, fontSize: '1rem' }}>{refName || 'Por asignar'}</p>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>{refData ? `${refData.matches} partidos dirigidos esta temporada` : 'Sin datos históricos en FCF Grup 3'}</p>
+                    </div>
+                    {refData ? (
+                      <>
+                        <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.5px', marginBottom: '0.5rem' }}>ÚLTIMOS 5 PARTIDOS DIRIGIDOS</p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', marginBottom: '0.75rem' }}>
+                          {(refData.match_history || []).slice(-5).reverse().map((m: any, i: number) => (
+                            <RefMatchRow key={i} teams={`${m.home_team.split(',')[0]} ${m.home_score}-${m.away_score} ${m.away_team.split(',')[0]}`} yellows={m.yellows} reds={m.reds} />
+                          ))}
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                          <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '0.4rem', padding: '0.5rem', textAlign: 'center' }}>
+                            <p style={{ fontSize: '1rem', fontWeight: 700, color: refData.away_player_card_pct > 50 ? '#f59e0b' : 'var(--accent-cyan)' }}>{refData.away_player_card_pct}%</p>
+                            <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Tarjetas al visitante</p>
+                          </div>
+                          <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '0.4rem', padding: '0.5rem', textAlign: 'center' }}>
+                            <p style={{ fontSize: '1rem', fontWeight: 700, color: '#ef4444' }}>{refData.matches_with_expulsion} / {refData.matches}</p>
+                            <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Partidos con expulsión</p>
+                          </div>
+                        </div>
+                        {refData.second_half_card_pct > 60 && <p style={{ fontSize: '0.75rem', color: '#a78bfa', fontWeight: 600 }}>⚠ Pita más en 2ª parte: {refData.second_half_card_pct}% de las tarjetas van después del min. 45.</p>}
+                      </>
+                    ) : (
+                      <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                        No hay datos de este árbitro en las actas scrapeadas del Grup 3.
+                        {refName && <span style={{ display: 'block', marginTop: '0.25rem', cursor: 'pointer', color: '#a78bfa' }} onClick={() => { setSelectedReferee(refName); setActiveTab('referee'); }}>Ver informe completo →</span>}
+                      </p>
+                    )}
                   </div>
-                  <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '0.4rem', padding: '0.5rem', textAlign: 'center' }}>
-                    <p style={{ fontSize: '1rem', fontWeight: 700, color: '#ef4444' }}>3 / 14</p>
-                    <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Partidos con expulsión</p>
-                  </div>
-                </div>
-                <p style={{ fontSize: '0.75rem', color: '#a78bfa', fontWeight: 600 }}>⚠ Pita más en 2ª parte: 65% de las tarjetas van después del min. 45.</p>
-              </div>
+                );
+              })()}
 
               {/* ── Insights Avanzados del Rival ── */}
               <div className="glass" style={{ borderRadius: '1rem', padding: '1.25rem' }}>
@@ -428,6 +546,14 @@ function App() {
               </div>
             </div>
           </div>
+        )}
+        {/* ── Rival Players Modal ── */}
+        {showRivalPlayersModal && Object.keys(rivalPlayers).length > 0 && (
+          <RivalPlayersTable
+            players={rivalPlayers}
+            rivalName={matchRival}
+            onClose={() => setShowRivalPlayersModal(false)}
+          />
         )}
       </main>
     </div>

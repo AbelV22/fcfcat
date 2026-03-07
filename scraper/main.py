@@ -16,8 +16,10 @@ import json
 import logging
 import sys
 import time
+import threading
 from dataclasses import asdict
 from pathlib import Path
+from typing import Optional
 
 # Fix Windows console encoding for Unicode output
 if sys.platform == "win32":
@@ -29,11 +31,11 @@ from .models import DataEncoder, ValidationReport
 from .standings import scrape_standings
 from .scorers import scrape_scorers, compute_scorers_from_actas
 from .sanctions import scrape_sanctions
-from .calendar_results import scrape_calendar, get_acta_urls_from_calendar
-from .fair_play import scrape_fair_play
+from .calendar_results import scrape_calendar, get_acta_urls_from_calendar, find_next_match, get_acta_url_for_team_in_jornada, extract_referee_from_upcoming_acta
 from .actas import scrape_all_actas
 from .validator import validate_all
-from .intelligence import build_team_intelligence, compute_conditional_insights
+from .intelligence import build_team_intelligence, compute_conditional_insights, build_referee_intelligence
+from .models import RefereeMatchInfo
 
 logger = logging.getLogger("fcf_scraper")
 
@@ -88,7 +90,7 @@ def progress_callback(current: int, total: int, url: str):
 
 def run_scraper(
     team: str = "Fundació Acadèmia",
-    rival: str | None = None,
+    rival: Optional[str] = None,
     full_actas: bool = False,
     use_cache: bool = True,
     max_actas: int = 0,
@@ -96,7 +98,7 @@ def run_scraper(
     season: str = DEFAULT_SEASON,
     competition: str = DEFAULT_COMPETITION,
     group: str = DEFAULT_GROUP,
-    output_file: str | None = None,
+    output_file: Optional[str] = None,
 ) -> dict:
     """
     Main scraping orchestration.
@@ -127,7 +129,7 @@ def run_scraper(
     all_data = {}
 
     # ── Step 1: Standings ──
-    print("📊 [1/7] Scraping standings (classificació)...")
+    print("📊 [1/6] Scraping standings (classificació)...")
     try:
         standings = scrape_standings(client, URLS["standings"])
         all_data["standings"] = [asdict(s) for s in standings]
@@ -138,7 +140,7 @@ def run_scraper(
         print(f"   ✗ Error: {e}")
 
     # ── Step 2: Scorers ──
-    print("⚽ [2/7] Scraping top scorers (golejadors)...")
+    print("⚽ [2/6] Scraping top scorers (golejadors)...")
     try:
         scorers = scrape_scorers(client, URLS["scorers"])
         all_data["scorers"] = [asdict(s) for s in scorers]
@@ -149,7 +151,7 @@ def run_scraper(
         print(f"   ✗ Error: {e}")
 
     # ── Step 3: Sanctions ──
-    print("🟨 [3/7] Scraping sanctions (sancions)...")
+    print("🟨 [3/6] Scraping sanctions (sancions)...")
     try:
         sanctions = scrape_sanctions(client, URLS["sanctions"])
         all_data["sanctions"] = [asdict(s) for s in sanctions]
@@ -159,19 +161,8 @@ def run_scraper(
         sanctions = []
         print(f"   ✗ Error: {e}")
 
-    # ── Step 4: Fair Play ──
-    print("🤝 [4/7] Scraping fair play (joc net)...")
-    try:
-        fair_play = scrape_fair_play(client, URLS["fair_play"])
-        all_data["fair_play"] = [asdict(f) for f in fair_play]
-        print(f"   ✓ {len(fair_play)} entries found")
-    except Exception as e:
-        logger.error(f"Failed to scrape fair play: {e}")
-        fair_play = []
-        print(f"   ✗ Error: {e}")
-
-    # ── Step 5: Calendar & Results ──
-    print("📅 [5/7] Scraping calendar & results...")
+    # ── Step 4: Calendar & Results ──
+    print("📅 [4/6] Scraping calendar & results...")
     try:
         matches = scrape_calendar(client, URLS["calendar"])
         all_data["matches"] = [asdict(m) for m in matches]
@@ -181,8 +172,45 @@ def run_scraper(
         matches = []
         print(f"   ✗ Error: {e}")
 
-    # ── Step 6: Actas (Match Reports) ──
-    print("📋 [6/7] Scraping match reports (actas)...")
+    # ── Step 4b: Next Match Detection ──
+    if matches and team:
+        print("🔭 [4b] Detecting next match...")
+        try:
+            next_match = find_next_match(matches, team)
+            if next_match:
+                print(f"   ✓ J{next_match.jornada} vs {next_match.rival_name} ({'Home' if next_match.is_home else 'Away'}) | {next_match.date} {next_match.time}")
+                # Fetch acta URL + date/time/venue from resultats page
+                # (calendar has no acta links for future matches)
+                match_info = get_acta_url_for_team_in_jornada(client, URLS["results"], next_match.jornada, team)
+                if match_info["acta_url"]:
+                    next_match.acta_url = match_info["acta_url"]
+                    if match_info["date"]:
+                        next_match.date = match_info["date"]
+                    if match_info["time"]:
+                        next_match.time = match_info["time"]
+                    if match_info["venue"]:
+                        next_match.venue = match_info["venue"]
+                    refs = extract_referee_from_upcoming_acta(client, next_match.acta_url)
+                    if refs:
+                        next_match.referees = refs
+                        next_match.referee = refs[0]
+                        print(f"   ✓ Referee: {refs[0]}")
+                    else:
+                        print(f"   ⚠ No referee assigned yet")
+                else:
+                    print(f"   ⚠ No acta found in resultats J{next_match.jornada}")
+                all_data["next_match"] = asdict(next_match)
+                # Auto-set rival if not provided
+                if not rival:
+                    rival = next_match.rival_name
+            else:
+                print("   ⚠ No upcoming match found (season complete?)")
+        except Exception as e:
+            logger.warning(f"Next match detection failed: {e}")
+            print(f"   ✗ Error: {e}")
+
+    # ── Step 5: Actas (Match Reports) ──
+    print("📋 [5/6] Scraping match reports (actas)...")
     acta_urls = get_acta_urls_from_calendar(client, URLS["calendar"])
     print(f"   Found {len(acta_urls)} acta URLs")
 
@@ -220,15 +248,14 @@ def run_scraper(
         if not scorers:
             scorers = computed_scorers
 
-    # ── Step 7: Cross-Validation ──
-    print("\n🔍 [7/7] Running cross-validation...")
+    # ── Step 6: Cross-Validation ──
+    print("\n🔍 [6/6] Running cross-validation...")
     validation = validate_all(
         standings=standings,
         matches=matches,
         actas=actas,
         scorers=scorers,
         sanctions=sanctions,
-        fair_play=fair_play,
     )
     print(validation.summary())
 
@@ -251,6 +278,57 @@ def run_scraper(
         all_data["rival_intelligence"] = asdict(rival_intel)
         all_data["rival_insights"] = rival_insights
         print(f"   ✓ {rival}: {len(rival_intel.players)} players, {len(rival_intel.results)} matches analyzed")
+
+    # ── Referee Database & Reports ──
+    if actas:
+        print("👨‍⚖️ Building referee reports...")
+        # Load existing global referee DB
+        global_ref_path = OUTPUT_DIR / "global_referees.json"
+        global_refs: dict = {}
+        if global_ref_path.exists():
+            try:
+                with open(global_ref_path, "r", encoding="utf-8") as f:
+                    global_refs = json.load(f)
+            except Exception as e:
+                logger.warning(f"Could not load global_referees.json: {e}")
+
+        # Update global DB with actas from this scrape
+        new_refs_count = 0
+        for acta in actas:
+            ref_info = RefereeMatchInfo.from_acta(acta, competition, group, season)
+            if ref_info.id not in global_refs:
+                global_refs[ref_info.id] = asdict(ref_info)
+                new_refs_count += 1
+
+        with open(global_ref_path, "w", encoding="utf-8") as f:
+            json.dump(global_refs, f, cls=DataEncoder, ensure_ascii=False, indent=2)
+        if new_refs_count > 0:
+            print(f"   ✓ Added {new_refs_count} new matches to global referee DB ({len(global_refs)} total)")
+
+        # Build referee reports for all referees seen in actas + next match's referee
+        all_referee_names: set[str] = set()
+        for acta in actas:
+            for ref in acta.referees:
+                if ref.strip():
+                    all_referee_names.add(ref.strip())
+
+        # Always include next match's assigned referee even if not yet in actas
+        next_match_data = all_data.get("next_match", {})
+        for ref in next_match_data.get("referees", []):
+            if ref.strip():
+                all_referee_names.add(ref.strip())
+
+        all_historic_refs = list(global_refs.values())
+        referee_reports = {}
+        for ref_name in all_referee_names:
+            referee_reports[ref_name] = build_referee_intelligence(
+                referee_name=ref_name,
+                global_refs=all_historic_refs,
+                competition=competition,
+                our_team=team,
+            )
+        all_data["referee_reports"] = referee_reports
+        print(f"   ✓ Referee reports built for {len(referee_reports)} referees")
 
     # Store metadata
     all_data["meta"] = {

@@ -11,6 +11,7 @@ Ensures 100% data accuracy by cross-referencing multiple data sources:
 """
 import logging
 from collections import defaultdict
+from typing import Optional
 
 from .models import (
     TeamStanding, MatchResult, MatchReport, Scorer,
@@ -26,7 +27,6 @@ def validate_all(
     actas: list[MatchReport],
     scorers: list[Scorer],
     sanctions: list[Sanction],
-    fair_play: list[FairPlayEntry],
 ) -> ValidationReport:
     """
     Run all validation checks and return a comprehensive report.
@@ -39,7 +39,6 @@ def validate_all(
     _validate_standings_vs_results(standings, matches, actas, report)
     _validate_scorers_vs_actas(scorers, actas, report)
     _validate_cards_vs_sanctions(actas, sanctions, report)
-    _validate_fair_play_vs_actas(fair_play, actas, report)
 
     return report
 
@@ -354,7 +353,7 @@ def _normalize_match_key(home: str, away: str) -> str:
     return f"{_normalize_team_name(home)}__vs__{_normalize_team_name(away)}"
 
 
-def _find_team_stats(name: str, team_stats: dict) -> dict | None:
+def _find_team_stats(name: str, team_stats: dict) -> Optional[dict]:
     """Fuzzy find a team in computed stats."""
     if name in team_stats:
         return team_stats[name]
@@ -365,7 +364,7 @@ def _find_team_stats(name: str, team_stats: dict) -> dict | None:
     return None
 
 
-def _find_player_goals(name: str, goal_counts: dict) -> int | None:
+def _find_player_goals(name: str, goal_counts: dict) -> Optional[int]:
     """Fuzzy find a player in goal counts."""
     if name in goal_counts:
         return goal_counts[name]
@@ -375,7 +374,7 @@ def _find_player_goals(name: str, goal_counts: dict) -> int | None:
     return None
 
 
-def _find_player_card_count(name: str, card_counts: dict) -> int | None:
+def _find_player_card_count(name: str, card_counts: dict) -> Optional[int]:
     """Fuzzy find a player in card counts."""
     if name in card_counts:
         return card_counts[name]

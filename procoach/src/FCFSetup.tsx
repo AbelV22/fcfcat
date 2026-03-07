@@ -21,7 +21,7 @@ interface FCFSetupProps {
   onComplete: (data: FCFTeamData) => void;
 }
 
-type Step = 'welcome' | 'search' | 'searching' | 'confirm' | 'scraping' | 'done' | 'error';
+type Step = 'welcome' | 'search' | 'searching' | 'confirm' | 'scraping' | 'done' | 'error' | 'loading-saved';
 
 interface SearchResult {
   found: boolean;
@@ -234,12 +234,16 @@ export default function FCFSetup({ onComplete }: FCFSetupProps) {
   const [compIndex, setCompIndex] = useState(0);
   const [errorMsg, setErrorMsg] = useState('');
   const [doneMetrics, setDoneMetrics] = useState({ actas: 0, players: 0, accuracy: 0 });
+  const [savedInfo, setSavedInfo] = useState<{
+    team_name: string; competition_name: string; group: string;
+    season: string; competition: string; tier: number; scraped_at: string;
+  } | null>(null);
 
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Inject styles once
+  // Inject styles once + check for saved data
   useEffect(() => {
     if (!document.getElementById('fcf-styles')) {
       const tag = document.createElement('style');
@@ -247,6 +251,11 @@ export default function FCFSetup({ onComplete }: FCFSetupProps) {
       tag.textContent = STYLES;
       document.head.appendChild(tag);
     }
+    // Check if there's already saved data from a previous scrape
+    fetch('/api/saved')
+      .then(r => r.json())
+      .then(d => { if (d.found) setSavedInfo(d); })
+      .catch(() => {});
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
       if (timerRef.current) clearInterval(timerRef.current);
@@ -321,6 +330,36 @@ export default function FCFSetup({ onComplete }: FCFSetupProps) {
   }, [teamInput, searchResult, season, onComplete]);
 
   // ── Handlers ──
+  const handleLoadSaved = async () => {
+    if (!savedInfo) return;
+    setStep('loading-saved');
+    try {
+      const res = await fetch('/api/team/saved');
+      const fullData = await res.json();
+      const actas = fullData.actas?.length ?? 0;
+      const players = Object.keys(fullData.team_intelligence?.players ?? {}).length;
+      const accuracy = fullData.validation?.accuracy_pct ?? 0;
+      setDoneMetrics({ actas, players, accuracy });
+      setStep('done');
+      setTimeout(() => {
+        onComplete({
+          team: savedInfo.team_name,
+          teamName: savedInfo.team_name,
+          season: savedInfo.season,
+          competition: savedInfo.competition,
+          competitionName: savedInfo.competition_name,
+          group: savedInfo.group,
+          tier: savedInfo.tier,
+          jobId: 'saved',
+          data: fullData,
+        });
+      }, 1200);
+    } catch {
+      setErrorMsg('No se pudo cargar los datos guardados.');
+      setStep('error');
+    }
+  };
+
   const handleSearch = async () => {
     if (!teamInput.trim()) return;
     setStep('searching');
@@ -447,6 +486,38 @@ export default function FCFSetup({ onComplete }: FCFSetupProps) {
               ))}
             </div>
           </div>
+
+          {/* Saved data shortcut */}
+          {savedInfo && (
+            <div style={{ marginBottom: '0.75rem' }}>
+              <button
+                onClick={handleLoadSaved}
+                style={{
+                  width: '100%', padding: '0.75rem 1.25rem', borderRadius: '0.75rem',
+                  border: '1px solid rgba(16,185,129,0.4)',
+                  background: 'rgba(16,185,129,0.08)',
+                  color: 'white', fontSize: '0.875rem', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.14)'; e.currentTarget.style.borderColor = 'rgba(16,185,129,0.7)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.08)'; e.currentTarget.style.borderColor = 'rgba(16,185,129,0.4)'; }}
+              >
+                <div style={{ textAlign: 'left' }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#10b981' }}>⚡ Cargar datos guardados</div>
+                  <div style={{ fontSize: '0.75rem', color: 'rgba(148,163,184,0.7)', marginTop: '0.1rem' }}>
+                    {savedInfo.team_name} · {savedInfo.competition_name}
+                  </div>
+                </div>
+                <div style={{ fontSize: '0.7rem', color: 'rgba(148,163,184,0.5)', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                  {savedInfo.scraped_at ? new Date(savedInfo.scraped_at).toLocaleDateString('es-ES') : ''}
+                </div>
+              </button>
+              <p style={{ textAlign: 'center', color: 'rgba(148,163,184,0.35)', fontSize: '0.7rem', marginTop: '0.4rem' }}>
+                — o busca otro equipo —
+              </p>
+            </div>
+          )}
 
           <GradientButton onClick={() => setStep('search')}>
             <Search size={18} /> Buscar mi equipo
@@ -808,6 +879,19 @@ export default function FCFSetup({ onComplete }: FCFSetupProps) {
               </div>
             ))}
           </div>
+        </GlowCard>
+      )}
+
+      {/* ═══ LOADING SAVED ════════════════════════════════════════════════ */}
+      {step === 'loading-saved' && (
+        <GlowCard style={{ textAlign: 'center' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 64, height: 64, borderRadius: '50%', background: 'rgba(16,185,129,0.1)', marginBottom: '1.5rem', animation: 'fcf-pulse-glow 2s ease-in-out infinite' }}>
+            <Loader2 size={32} color="#10b981" className="fcf-spin" />
+          </div>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '0.5rem' }}>Cargando datos guardados...</h2>
+          <p style={{ color: 'rgba(148,163,184,0.6)', fontSize: '0.85rem' }}>
+            {savedInfo?.team_name}
+          </p>
         </GlowCard>
       )}
 

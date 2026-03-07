@@ -15,6 +15,7 @@ HTML structure uses these CSS classes:
   .acta-marcador-gol -> running score before each goal
   .acta-estat-gol  -> goal scorer shield (indicates which team scored)
 """
+from __future__ import annotations
 import logging
 import re
 from typing import Optional

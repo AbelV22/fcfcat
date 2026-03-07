@@ -62,3 +62,11 @@ reports/
 .coverage
 htmlcov/
 .venv_packages/
+
+# Windows reserved device names (should never be committed)
+nul
+CON
+PRN
+AUX
+COM[0-9]
+LPT[0-9]

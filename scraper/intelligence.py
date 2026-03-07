@@ -190,6 +190,7 @@ def build_team_intelligence(
                 if scorer_name:
                     intel.players[scorer_name].goals += 1
                     intel.players[scorer_name].minutes_goals.append(goal.minute)
+                    intel.players[scorer_name].goal_jornadas.append(acta.jornada)
             else:
                 intel.goals_by_period[period]["conceded"] += 1
 

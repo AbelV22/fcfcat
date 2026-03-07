@@ -15,6 +15,7 @@ import json
 import sys
 import time
 import unicodedata
+import re
 from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Optional
@@ -82,11 +83,19 @@ class TeamLocation:
 
 
 def _normalize(text: str) -> str:
-    """Remove accents and lowercase for fuzzy matching."""
-    return "".join(
+    """Remove accents, punctuation, and lowercase for fuzzy matching."""
+    text = "".join(
         c for c in unicodedata.normalize("NFD", text.lower())
         if unicodedata.category(c) != "Mn"
-    ).replace("-", " ").replace("_", " ").strip()
+    )
+    # Strip punctuation: apostrophes, dots, commas, etc.
+    text = re.sub(r"['\.\-,()\"]+", '', text)
+    return text.strip()
+
+
+def _slugify(text: str) -> str:
+    """Convert to a slug-like form for comparison."""
+    return re.sub(r'\s+', '', _normalize(text))
 
 
 def _keywords_from(text: str) -> list[str]:
@@ -94,7 +103,7 @@ def _keywords_from(text: str) -> list[str]:
     norm = _normalize(text)
     words = norm.split()
     # Filter common noise words
-    stopwords = {"fc", "cf", "ce", "ud", "sd", "ad", "ae", "cd", "at", "de", "la", "el", "les", "els", "a", "s.d.", "sd"}
+    stopwords = {"fc", "cf", "ce", "ud", "sd", "ad", "ae", "cd", "at", "de", "la", "el", "les", "els", "a", "s.d.", "sd", "fundacio", "academia"}
     meaningful = [w for w in words if w not in stopwords and len(w) > 2]
     return [norm] + meaningful
 
@@ -126,12 +135,23 @@ def _find_best_match(team_names: list[str], keywords: list[str]) -> Optional[str
     """Find the best matching team name from a list."""
     best = None
     best_score = 0
+    full_search_kw = keywords[0] # The first keyword is the fully normalized search string
+    search_slug = _slugify(full_search_kw)
+    
     for name in team_names:
         norm = _normalize(name)
-        score = sum(1 for kw in keywords if kw in norm)
-        if score > best_score:
+        slug = _slugify(name)
+        
+        # Perfect direct match or slug match
+        if search_slug in slug or slug in search_slug:
+            return name
+            
+        score = sum(1 for kw in keywords[1:] if kw in norm)
+        # Require more than just one common word to match if the string is long
+        if score > best_score and score >= len(keywords[1:]) * 0.5:
             best_score = score
             best = name
+            
     return best if best_score > 0 else None
 
 

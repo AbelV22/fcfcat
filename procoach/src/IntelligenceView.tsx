@@ -2,9 +2,150 @@ import { useState } from 'react';
 import {
   Trophy, Users, Target, AlertTriangle, TrendingUp,
   CheckCircle2, Zap, Clock, RotateCcw, ChevronDown, ChevronUp,
-  Award
+  Award, Ruler
 } from 'lucide-react';
 import type { FCFTeamData } from './FCFSetup';
+import fieldsData from './data/fields.json';
+import FieldComparison from './FieldComparison';
+
+// ─── Field lookup helpers ────────────────────────────────────────────────────
+function normalizeTeamName(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getTeamField(teamName: string): { field_name: string | null; fcf_venue: string | null; city: string | null; length_m: number | null; width_m: number | null } | null {
+  const venues = (fieldsData as any).team_venues as Record<string, any>;
+  // Try exact match first
+  if (venues[teamName]) return venues[teamName];
+  // Try normalized match
+  const norm = normalizeTeamName(teamName);
+  for (const [key, val] of Object.entries(venues)) {
+    if (normalizeTeamName(key) === norm) return val as any;
+  }
+  // Partial match on key words
+  for (const [key, val] of Object.entries(venues)) {
+    const kn = normalizeTeamName(key);
+    const words = norm.split(' ').filter(w => w.length > 4);
+    if (words.length > 0 && words.every(w => kn.includes(w))) return val as any;
+  }
+  return null;
+}
+
+// ─── Field Dimensions Card ───────────────────────────────────────────────────
+function FieldCard({ teamName }: { teamName: string }) {
+  const field = getTeamField(teamName);
+  const UEFA_L = 105, UEFA_W = 68;
+  const hasData = field && field.length_m !== null && field.width_m !== null;
+  const area = hasData ? (field!.length_m! * field!.width_m!) : null;
+  const uefaArea = UEFA_L * UEFA_W;
+
+  return (
+    <div style={{
+      background: 'rgba(15,23,42,0.8)',
+      border: '1px solid rgba(16,185,129,0.15)',
+      borderRadius: '1rem',
+      padding: '0.875rem 1.25rem',
+      marginBottom: '1rem',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '1.25rem',
+      flexWrap: 'wrap',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981' }}>
+        <Ruler size={15} />
+        <span style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          Camp Local
+        </span>
+      </div>
+
+      {hasData ? (
+        <>
+          {/* Mini pitch visual */}
+          <div style={{ position: 'relative', flexShrink: 0 }}>
+            {(() => {
+              const scale = 0.55;
+              const pw = field!.width_m! * scale;
+              const pl = field!.length_m! * scale;
+              return (
+                <div style={{
+                  width: pw, height: pl * 0.5,
+                  border: '1.5px solid rgba(16,185,129,0.5)',
+                  borderRadius: 2,
+                  background: 'rgba(16,185,129,0.06)',
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <div style={{
+                    position: 'absolute', top: 0, bottom: 0, left: '50%',
+                    width: 1, background: 'rgba(16,185,129,0.3)',
+                  }} />
+                  <div style={{
+                    width: pw * 0.35, height: pl * 0.25,
+                    border: '1px solid rgba(16,185,129,0.3)',
+                    borderRadius: 1, background: 'transparent',
+                  }} />
+                </div>
+              );
+            })()}
+          </div>
+
+          {/* Dimensions */}
+          <div>
+            <div style={{ fontSize: '1.3rem', fontWeight: 800, color: 'white', lineHeight: 1.1 }}>
+              {field!.length_m} × {field!.width_m} <span style={{ fontSize: '0.85rem', fontWeight: 500, color: 'rgba(148,163,184,0.6)' }}>m</span>
+            </div>
+            <div style={{ fontSize: '0.72rem', color: 'rgba(148,163,184,0.5)', marginTop: '0.1rem' }}>
+              {area?.toLocaleString()} m²
+            </div>
+          </div>
+
+          {/* Comparison vs UEFA */}
+          <div style={{ fontSize: '0.75rem', color: 'rgba(148,163,184,0.5)' }}>
+            <div>vs UEFA estàndard ({UEFA_L}×{UEFA_W})</div>
+            <div style={{ marginTop: '0.2rem' }}>
+              <span style={{ color: area! < uefaArea ? '#f59e0b' : '#10b981', fontWeight: 700 }}>
+                {area! < uefaArea ? '▼' : '▲'} {Math.abs(Math.round((area! / uefaArea - 1) * 100))}%
+              </span>
+              {' '}{area! < uefaArea ? 'més petit' : 'més gran'}
+            </div>
+          </div>
+
+          {/* Field name */}
+          <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+            <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>
+              {field!.field_name || field!.fcf_venue}
+            </div>
+            {field!.city && (
+              <div style={{ fontSize: '0.68rem', color: 'rgba(148,163,184,0.4)', marginTop: '0.1rem' }}>
+                {field!.city}
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        <div style={{ fontSize: '0.8rem', color: 'rgba(148,163,184,0.4)' }}>
+          {field ? (
+            <>
+              <span style={{ color: 'rgba(255,255,255,0.6)', fontWeight: 600 }}>{field.fcf_venue}</span>
+              {' · '}
+              <span>{field.city}</span>
+              {' · '}
+              <span style={{ color: '#f59e0b' }}>Dimensions no disponibles</span>
+            </>
+          ) : (
+            'Informació del camp no disponible'
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 interface IntelligenceViewProps {
   teamData: FCFTeamData;
@@ -213,6 +354,14 @@ export default function IntelligenceView({ teamData, onReset }: IntelligenceView
         </div>
       )}
 
+      {/* ── Camp local ───────────────────────────────────────────────────── */}
+      <FieldCard teamName={teamData.teamName} />
+
+      {/* ── Comparativa de camps (si hi ha rival) ────────────────────────── */}
+      {rivalIntel?.team_name && (
+        <FieldComparison ourTeamName={teamData.teamName} rivalTeamName={rivalIntel.team_name} />
+      )}
+
       {/* ── 2-col layout ─────────────────────────────────────────────────── */}
       <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: '1rem' }}>
 
@@ -227,7 +376,7 @@ export default function IntelligenceView({ teamData, onReset }: IntelligenceView
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
                   <thead>
                     <tr style={{ color: 'rgba(148,163,184,0.5)', fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      {['#', 'Equip', 'PJ', 'PG', 'PE', 'PP', 'GF', 'GC', 'Pts'].map(h => (
+                      {['#', 'Equip', 'PTS', 'PJ', 'PG', 'PE', 'PP', 'GF', 'GC'].map(h => (
                         <th key={h} style={{ padding: '0.35rem 0.5rem', textAlign: h === 'Equip' ? 'left' : 'center', fontWeight: 600 }}>{h}</th>
                       ))}
                     </tr>
@@ -244,7 +393,7 @@ export default function IntelligenceView({ teamData, onReset }: IntelligenceView
                           <td style={{ padding: '0.45rem 0.5rem', fontWeight: isOurs ? 700 : 400, color: isOurs ? '#10b981' : 'white', whiteSpace: 'nowrap', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {isOurs ? '⭐ ' : ''}{s.name}
                           </td>
-                          {['played', 'won', 'drawn', 'lost', 'goals_for', 'goals_against', 'points'].map(k => (
+                          {['points', 'played', 'won', 'drawn', 'lost', 'goals_for', 'goals_against'].map(k => (
                             <td key={k} style={{ padding: '0.45rem 0.5rem', textAlign: 'center', fontWeight: k === 'points' && isOurs ? 800 : k === 'points' ? 700 : 400, color: k === 'points' ? (isOurs ? '#10b981' : 'rgba(255,255,255,0.9)') : 'rgba(255,255,255,0.7)' }}>
                               {s[k] ?? 0}
                             </td>
@@ -266,7 +415,7 @@ export default function IntelligenceView({ teamData, onReset }: IntelligenceView
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
                   <thead>
                     <tr style={{ color: 'rgba(148,163,184,0.5)', fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      {['#', 'Jugador', 'PJ', 'Min', 'Gols', 'Cards'].map(h => (
+                      {['#', 'Jugador', 'PJ', 'Min', 'Gols', 'Targetes'].map(h => (
                         <th key={h} style={{ padding: '0.35rem 0.5rem', textAlign: h === 'Jugador' ? 'left' : 'center', fontWeight: 600 }}>{h}</th>
                       ))}
                     </tr>
@@ -286,14 +435,27 @@ export default function IntelligenceView({ teamData, onReset }: IntelligenceView
                             {stats.goals ?? 0}
                           </td>
                           <td style={{ padding: '0.4rem 0.5rem', textAlign: 'center' }}>
-                            {(stats.yellow_cards ?? 0) > 0 && (
-                              <span style={{ display: 'inline-block', width: 8, height: 11, background: '#f59e0b', borderRadius: 1, marginRight: 2 }} />
-                            )}
-                            {(stats.red_cards ?? 0) > 0 && (
-                              <span style={{ display: 'inline-block', width: 8, height: 11, background: '#ef4444', borderRadius: 1 }} />
-                            )}
-                            {(stats.yellow_cards ?? 0) === 0 && (stats.red_cards ?? 0) === 0 && (
-                              <span style={{ color: 'rgba(148,163,184,0.3)', fontSize: '0.7rem' }}>—</span>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                              {(stats.yellow_cards ?? 0) > 0 && (
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '2px', fontSize: '0.8rem', color: '#f59e0b', fontWeight: 600 }}>
+                                  <div style={{ width: 8, height: 11, background: '#f59e0b', borderRadius: 1 }} />
+                                  {stats.yellow_cards}
+                                </span>
+                              )}
+                              {(stats.red_cards ?? 0) > 0 && (
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '2px', fontSize: '0.8rem', color: '#ef4444', fontWeight: 600 }}>
+                                  <div style={{ width: 8, height: 11, background: '#ef4444', borderRadius: 1 }} />
+                                  {stats.red_cards}
+                                </span>
+                              )}
+                              {(stats.yellow_cards ?? 0) === 0 && (stats.red_cards ?? 0) === 0 && (
+                                <span style={{ color: 'rgba(148,163,184,0.3)', fontSize: '0.7rem' }}>—</span>
+                              )}
+                            </div>
+                            {(stats.yellow_cards ?? 0) === 4 && (
+                              <div style={{ fontSize: '0.65rem', color: '#f59e0b', marginTop: '4px', fontWeight: 700, background: 'rgba(245,158,11,0.1)', padding: '2px 4px', borderRadius: '4px', display: 'inline-block' }}>
+                                APERCIBIT
+                              </div>
                             )}
                           </td>
                         </tr>

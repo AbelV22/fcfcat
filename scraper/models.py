@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 Data models for all FCF data types.
 Every piece of scraped data is strongly typed and serializable to JSON.
@@ -61,6 +62,21 @@ class MatchResult:
     referee: str = ""
     home_slug: str = ""
     away_slug: str = ""
+
+
+# ─── Next Match Info ──────────────────────────────────
+@dataclass
+class NextMatchInfo:
+    """Auto-detected next match for a team."""
+    jornada: int
+    date: str           # "dd-MM-yyyy"
+    time: str           # "HH:MM"
+    rival_name: str
+    is_home: bool
+    venue: str = ""
+    acta_url: str = ""
+    referee: str = ""   # Main referee (first in list)
+    referees: list[str] = field(default_factory=list)
 
 
 # ─── Match Report (Acta) ─────────────────────────────
@@ -254,6 +270,10 @@ class PlayerStats:
     minutes_goals: list[str] = field(default_factory=list)
     minutes_yellows: list[str] = field(default_factory=list)
     minutes_reds: list[str] = field(default_factory=list)
+    goal_jornadas: list[int] = field(default_factory=list)          # jornada of each goal scored
+    yellow_card_jornadas: list[int] = field(default_factory=list)   # jornada of each accumulable yellow
+    red_card_jornadas: list[int] = field(default_factory=list)      # jornada of each direct red
+    double_yellow_jornadas: list[int] = field(default_factory=list) # jornada of each double-yellow dismissal
 
 
 @dataclass

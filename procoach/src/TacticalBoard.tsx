@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Trash2, Triangle, ArrowRight, Minus, Square, User } from 'lucide-react';
 
 type ItemType = 'playerA' | 'playerB' | 'ball' | 'cone' | 'minigoal' | 'pole' | 'mannequin';
@@ -106,15 +106,6 @@ export default function TacticalBoard({ onSaveExercise }: { onSaveExercise?: (da
         playerBCount = 1;
     };
 
-    const resetBoard = () => {
-        setItems([]);
-        setDrawnItems([]);
-        playerACount = 1;
-        playerBCount = 1;
-        setTimeout(() => setItems([]), 0);
-        window.location.reload();
-    };
-
     const handlePointerDownItem = (id: string, e: React.PointerEvent) => {
         if (activeTool !== 'select') return;
         e.stopPropagation();
@@ -148,9 +139,7 @@ export default function TacticalBoard({ onSaveExercise }: { onSaveExercise?: (da
         }
     };
 
-    const removeItem = (id: string) => {
-        setItems(prev => prev.filter(i => i.id !== id));
-    };
+
 
     return (
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative', borderRadius: '1rem', overflow: 'hidden' }}>
@@ -306,7 +295,6 @@ export default function TacticalBoard({ onSaveExercise }: { onSaveExercise?: (da
                             key={item.id}
                             item={item}
                             onPointerDown={(e) => handlePointerDownItem(item.id, e)}
-                            onRemove={() => removeItem(item.id)}
                             dragging={draggingId === item.id}
                         />
                     ))}
