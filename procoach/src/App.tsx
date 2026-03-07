@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   BarChart2, Calendar, Shield, Users, Video,
   Settings, Bell, Search, AlertTriangle,
   TrendingUp, Crosshair, Map, Award, Gavel, Clock, Target,
   UserCheck, Zap, Activity, Eye, ChevronLeft, ChevronRight,
-  Database
+  Database, Layout, Printer, Plus, Tag, ExternalLink, Trash2
 } from 'lucide-react';
 import './App.css';
+import { useAuth } from './AuthContext';
 import TrainingPlanner from './TrainingPlanner';
 import TeamManagement from './TeamManagement';
 import FCFSetup, { type FCFTeamData } from './FCFSetup';
@@ -17,6 +18,8 @@ import RefereeReport from './RefereeReport';
 import ScorersReport from './ScorersReport';
 import CalendarView from './CalendarView';
 import FieldsManager from './FieldsManager';
+import TacticalBoard from './TacticalBoard';
+import PrintReport from './PrintReport';
 
 // ─── TYPES ────────────────────────────────────────────
 interface NavItemProps { icon: React.ReactNode; label: string; active: boolean; onClick: () => void; badge?: string; isSidebarOpen?: boolean }
@@ -28,12 +31,29 @@ interface MiniTableRowProps { pos: number; name: string; pts: number; gf: number
 interface PlayerDotProps { x: string; y: string; num: string; color: string }
 
 // ─── APP ──────────────────────────────────────────────
+// ─── VIDEO STORAGE ────────────────────────────────────
+interface VideoEntry { id: string; url: string; title: string; rival: string; jornada: string; tags: string[]; createdAt: string; }
+
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [fcfTeamData, setFcfTeamData] = useState<FCFTeamData | null>(null);
   const [showRivalPlayersModal, setShowRivalPlayersModal] = useState(false);
   const [selectedReferee, setSelectedReferee] = useState<string | null>(null);
+  const [showPrintReport, setShowPrintReport] = useState(false);
+  const { signOut, user } = useAuth();
+  const [videos, setVideos] = useState<VideoEntry[]>(() => {
+    try { return JSON.parse(localStorage.getItem('procoach_videos') || '[]'); } catch { return []; }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('procoach_videos', JSON.stringify(videos));
+  }, [videos]);
+
+  const addVideo = (v: Omit<VideoEntry, 'id' | 'createdAt'>) => {
+    setVideos(prev => [{ ...v, id: Date.now().toString(), createdAt: new Date().toISOString() }, ...prev]);
+  };
+  const removeVideo = (id: string) => setVideos(prev => prev.filter(v => v.id !== id));
 
   if (!fcfTeamData) {
     return (
@@ -94,8 +114,9 @@ function App() {
           <NavItem icon={<Crosshair size={20} />} label="Scouting Rival" active={activeTab === 'scouting'} onClick={() => setActiveTab('scouting')} badge="FCF" isSidebarOpen={isSidebarOpen} />
           <NavItem icon={<Users size={20} />} label="Mi Plantilla" active={activeTab === 'team'} onClick={() => setActiveTab('team')} isSidebarOpen={isSidebarOpen} />
           <NavItem icon={<Award size={20} />} label="Golejadors" active={activeTab === 'scorers'} onClick={() => setActiveTab('scorers')} isSidebarOpen={isSidebarOpen} />
-          <NavItem icon={<Gavel size={20} />} label="Árbitro" active={activeTab === 'referee'} onClick={() => setActiveTab('referee')} badge="Nuevo" isSidebarOpen={isSidebarOpen} />
-          <NavItem icon={<Map size={20} />} label="Entrenamientos" active={activeTab === 'training'} onClick={() => setActiveTab('training')} badge="Nuevo" isSidebarOpen={isSidebarOpen} />
+          <NavItem icon={<Gavel size={20} />} label="Árbitro" active={activeTab === 'referee'} onClick={() => setActiveTab('referee')} badge="FCF" isSidebarOpen={isSidebarOpen} />
+          <NavItem icon={<Layout size={20} />} label="Pizarra Táctica" active={activeTab === 'tactical'} onClick={() => setActiveTab('tactical')} isSidebarOpen={isSidebarOpen} />
+          <NavItem icon={<Map size={20} />} label="Entrenamientos" active={activeTab === 'training'} onClick={() => setActiveTab('training')} isSidebarOpen={isSidebarOpen} />
           <NavItem icon={<Video size={20} />} label="Video Análisis" active={activeTab === 'video'} onClick={() => setActiveTab('video')} isSidebarOpen={isSidebarOpen} />
           <NavItem icon={<Calendar size={20} />} label="Calendario" active={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} isSidebarOpen={isSidebarOpen} />
           <div style={{ height: '1px', background: 'rgba(255,255,255,0.05)', margin: '0.5rem 0' }} />
@@ -114,7 +135,17 @@ function App() {
             <h2 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Hola, Míster 👋</h2>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{fcfTeamData.teamName} — {fcfTeamData.competitionName} · {fcfTeamData.group.replace('grup-', 'Grup ').replace('grup-unic', 'Únic')}</p>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            {activeTab === 'dashboard' && (
+              <button
+                onClick={() => setShowPrintReport(true)}
+                style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(16,185,129,0.15)', color: 'var(--accent-green)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: '0.5rem', padding: '0.5rem 0.9rem', fontWeight: 600, cursor: 'pointer', fontSize: '0.85rem', transition: 'all 0.2s' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.25)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.15)'; }}
+              >
+                <Printer size={16} /> Informe Pre-Partido
+              </button>
+            )}
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center', background: 'rgba(0,0,0,0.3)', borderRadius: '2rem', padding: '0.5rem 1rem', border: '1px solid rgba(255,255,255,0.1)' }}>
               <Search size={18} color="var(--text-muted)" />
               <input placeholder="Buscar jugador, rival..." style={{ background: 'transparent', border: 'none', color: 'white', outline: 'none', marginLeft: '0.5rem', fontSize: '0.85rem', width: '180px' }} />
@@ -123,7 +154,17 @@ function App() {
               <Bell size={22} color="var(--text-muted)" />
               <span style={{ position: 'absolute', top: '-2px', right: '-2px', background: '#ef4444', width: '9px', height: '9px', borderRadius: '50%', border: '2px solid #0f172a' }}></span>
             </div>
-            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--gradient-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1rem', boxShadow: '0 4px 10px rgba(16,185,129,0.3)', cursor: 'pointer' }}>M</div>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--gradient-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1rem', boxShadow: '0 4px 10px rgba(16,185,129,0.3)', cursor: 'pointer' }}>
+              {user?.email?.[0]?.toUpperCase() || 'M'}
+            </div>
+            <button
+              onClick={signOut}
+              style={{ background: 'transparent', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#ef4444', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, marginLeft: '0.5rem', transition: 'all 0.2s' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+            >
+              Salir
+            </button>
           </div>
         </header>
 
@@ -141,21 +182,12 @@ function App() {
           <CalendarView teamData={fcfTeamData} />
         ) : activeTab === 'referee' ? (
           <RefereeReport teamData={fcfTeamData} selectedReferee={selectedReferee} onClearSelectedRef={() => setSelectedReferee(null)} />
+        ) : activeTab === 'tactical' ? (
+          <TacticalBoard />
         ) : activeTab === 'training' ? (
           <TrainingPlanner />
         ) : activeTab === 'video' ? (
-          <div style={{ padding: '3rem', maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
-            <div style={{ marginBottom: '1rem' }}>
-              <Video size={48} color="#8b5cf6" style={{ margin: '0 auto' }} />
-            </div>
-            <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Video Análisis</h2>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
-              Análisis visual de partidos y tácticas.
-            </p>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-              Coming soon...
-            </p>
-          </div>
+          <VideoAnalysis videos={videos} onAdd={addVideo} onRemove={removeVideo} teamData={fcfTeamData} />
         ) : activeTab === 'fields' ? (
           <FieldsManager />
         ) : activeTab === 'team' ? (
@@ -275,7 +307,7 @@ function App() {
               {/* ── SIDEBAR: Clasificación ── */}
               <div className="glass" style={{ borderRadius: '1rem', padding: '1.25rem', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                  <h3 style={{ fontSize: '1rem' }}>Clasificación Grup 3</h3>
+                  <h3 style={{ fontSize: '1rem' }}>Clasificación {fcfTeamData.group.replace('grup-', 'Grup ').replace('grup-unic', 'Únic')}</h3>
                   <span style={{ fontSize: '0.75rem', color: 'var(--accent-cyan)', cursor: 'pointer' }}>Ver toda</span>
                 </div>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem', flex: 1 }}>
@@ -507,42 +539,36 @@ function App() {
                 );
               })()}
 
-              {/* ── Insights Avanzados del Rival ── */}
+              {/* ── Insights Avanzados del Rival (datos reales) ── */}
               <div className="glass" style={{ borderRadius: '1rem', padding: '1.25rem' }}>
-                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Activity size={18} color="var(--accent-green)" /> Insights Avanzados (AE Prat B)</h3>
+                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Activity size={18} color="var(--accent-green)" /> Insights Avanzados ({matchRival})</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <ConditionalInsight
-                    condition="Cuando encajan en los primeros 30 min..."
-                    result="Pierden el 75% de esos partidos"
-                    detail="6 de 8 partidos → Derrota"
-                    color="var(--accent-green)"
-                  />
-                  <ConditionalInsight
-                    condition="Cuando van perdiendo al descanso..."
-                    result="Solo han remontado 1 de 7 veces"
-                    detail="14% de remontadas"
-                    color="var(--accent-green)"
-                  />
-                  <ConditionalInsight
-                    condition="Puntos ganados con goles en los últ. 15 min"
-                    result="+6 puntos extra"
-                    detail="3 empates convertidos en victoria"
-                    color="var(--accent-cyan)"
-                  />
-                  <ConditionalInsight
-                    condition="Puntos perdidos por goles encajados en últ. 15 min"
-                    result="−4 puntos perdidos"
-                    detail="2 victorias → empate, 1 empate → derrota"
-                    color="#ef4444"
-                  />
-                  <ConditionalInsight
-                    condition="Cuando marcan primero..."
-                    result="Ganan el 80% de las veces"
-                    detail="8 de 10 partidos"
-                    color="#f59e0b"
-                  />
+                  {(() => {
+                    const insights = rivalIntelligence.conditional_insights || [];
+                    if (insights.length > 0) {
+                      return insights.slice(0, 5).map((ins: any, i: number) => {
+                        const color = ins.pct >= 70 ? 'var(--accent-green)' : ins.pct >= 50 ? '#f59e0b' : '#ef4444';
+                        return <ConditionalInsight key={i} condition={ins.condition} result={ins.result} detail={ins.detail || `${ins.sample} partidos analizados`} color={color} />;
+                      });
+                    }
+                    // Fallback: inferir desde datos disponibles
+                    const fallbacks: React.ReactNode[] = [];
+                    if (rivalIntelligence.goals_by_period?.['0-15']?.conceded > 2)
+                      fallbacks.push(<ConditionalInsight key="a" condition="Vulnerables al inicio" result={`${rivalIntelligence.goals_by_period['0-15'].conceded} goles concedidos en los primeros 15 min.`} detail="Presionar muy arriba desde el pitido inicial" color="var(--accent-green)" />);
+                    if (rivalIntelligence.top_scorers?.[0])
+                      fallbacks.push(<ConditionalInsight key="b" condition="Amenaza principal" result={`${rivalIntelligence.top_scorers[0].name}: ${rivalIntelligence.top_scorers[0].goals} goles (${rivalIntelligence.top_scorers[0].pct_of_total}% del equipo)`} detail="Control estrecho sobre este jugador" color="#ef4444" />);
+                    if (rivalIntelligence.standing?.goals_against > 25)
+                      fallbacks.push(<ConditionalInsight key="c" condition="Defensa permeable" result={`${rivalIntelligence.standing.goals_against} goles encajados en total`} detail="Transiciones rápidas para explotar su defensa" color="var(--accent-green)" />);
+                    if (rivalIntelligence.cards?.some((p: any) => p.apercibido))
+                      fallbacks.push(<ConditionalInsight key="d" condition="Jugadores al límite de sanción" result={`${rivalIntelligence.cards.filter((p: any) => p.apercibido).length} jugador(es) apercibido(s)`} detail="Provocar situaciones de presión sobre ellos" color="#f59e0b" />);
+                    if (rivalIntelligence.goals_by_period?.['76-90']?.scored > 3)
+                      fallbacks.push(<ConditionalInsight key="e" condition="Peligrosos al final" result={`${rivalIntelligence.goals_by_period['76-90'].scored} goles marcados entre min. 76-90`} detail="No bajar la guardia en el tramo final" color="#f59e0b" />);
+                    if (fallbacks.length === 0)
+                      return <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Selecciona un rival en "Scouting Rival" para ver insights automáticos.</p>;
+                    return fallbacks;
+                  })()}
                 </div>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.7rem', marginTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem' }}>Análisis: basado en las 20 actas registradas de esta temporada.</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.7rem', marginTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem' }}>Análisis basado en las actas FCF de esta temporada.</p>
               </div>
             </div>
           </div>
@@ -554,6 +580,10 @@ function App() {
             rivalName={matchRival}
             onClose={() => setShowRivalPlayersModal(false)}
           />
+        )}
+        {/* ── Print Report Modal ── */}
+        {showPrintReport && (
+          <PrintReport teamData={fcfTeamData} onClose={() => setShowPrintReport(false)} />
         )}
       </main>
     </div>
@@ -758,6 +788,213 @@ function ConditionalInsight({ condition, result, detail, color }: { condition: s
       <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.2rem' }}>{condition}</p>
       <p style={{ fontSize: '0.9rem', fontWeight: 700, color }}>{result}</p>
       <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>{detail}</p>
+    </div>
+  );
+}
+
+// ─── VIDEO ANALYSIS COMPONENT ──────────────────────────
+const VIDEO_TAGS = ['Defensa', 'Ataque', 'Balón Parado', 'Contraataque', 'Presión', 'Gol', 'Táctica', 'Error Rival'] as const;
+
+function VideoAnalysis({ videos, onAdd, onRemove, teamData }: {
+  videos: VideoEntry[];
+  onAdd: (v: Omit<VideoEntry, 'id' | 'createdAt'>) => void;
+  onRemove: (id: string) => void;
+  teamData: FCFTeamData | null;
+}) {
+  const [showForm, setShowForm] = useState(false);
+  const [filterTag, setFilterTag] = useState<string | null>(null);
+  const [form, setForm] = useState({ url: '', title: '', rival: '', jornada: '', tags: [] as string[] });
+
+  const rivals = teamData?.data?.standings?.map((s: any) => s.name).filter((n: string) => n !== teamData?.teamName) || [];
+
+  const getYouTubeId = (url: string) => {
+    const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]{11})/);
+    return match ? match[1] : null;
+  };
+
+  const handleSubmit = () => {
+    if (!form.url.trim() || !form.title.trim()) return;
+    onAdd({ url: form.url, title: form.title, rival: form.rival, jornada: form.jornada, tags: form.tags });
+    setForm({ url: '', title: '', rival: '', jornada: '', tags: [] });
+    setShowForm(false);
+  };
+
+  const toggleTag = (tag: string) => {
+    setForm(f => ({ ...f, tags: f.tags.includes(tag) ? f.tags.filter(t => t !== tag) : [...f.tags, tag] }));
+  };
+
+  const filtered = filterTag ? videos.filter(v => v.tags.includes(filterTag)) : videos;
+
+  return (
+    <div style={{ padding: '2rem 3rem', maxWidth: '1100px', margin: '0 auto' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <div>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Video size={24} color="#8b5cf6" /> Video Análisis
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Gestiona tus vídeos de partidos y tácticas. Se guardan en el navegador.</p>
+        </div>
+        <button
+          onClick={() => setShowForm(!showForm)}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: '#8b5cf6', color: 'white', border: 'none', borderRadius: '0.5rem', padding: '0.6rem 1.25rem', fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem' }}
+        >
+          <Plus size={18} /> Añadir vídeo
+        </button>
+      </div>
+
+      {/* Form */}
+      {showForm && (
+        <div className="glass" style={{ borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem', border: '1px solid rgba(139,92,246,0.3)' }}>
+          <h3 style={{ fontSize: '1rem', marginBottom: '1rem', color: '#8b5cf6' }}>➕ Nuevo Vídeo</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <div>
+              <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>URL del vídeo (YouTube, etc.)</label>
+              <input
+                value={form.url}
+                onChange={e => setForm(f => ({ ...f, url: e.target.value }))}
+                placeholder="https://youtube.com/watch?v=..."
+                style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.4rem', padding: '0.5rem 0.75rem', color: 'white', fontSize: '0.85rem', outline: 'none' }}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>Rival</label>
+              <select
+                value={form.rival}
+                onChange={e => setForm(f => ({ ...f, rival: e.target.value }))}
+                style={{ width: '100%', background: 'rgba(15,23,42,0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.4rem', padding: '0.5rem 0.75rem', color: 'white', fontSize: '0.85rem', outline: 'none' }}
+              >
+                <option value="">Sin rival</option>
+                {rivals.map((r: string) => <option key={r} value={r}>{r}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>Jornada</label>
+              <input
+                value={form.jornada}
+                onChange={e => setForm(f => ({ ...f, jornada: e.target.value }))}
+                placeholder="J12"
+                style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.4rem', padding: '0.5rem 0.75rem', color: 'white', fontSize: '0.85rem', outline: 'none' }}
+              />
+            </div>
+          </div>
+          <div style={{ marginBottom: '1rem' }}>
+            <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>Título</label>
+            <input
+              value={form.title}
+              onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
+              placeholder="Ej: Análisis defensivo Jornada 12 vs AE Prat"
+              style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.4rem', padding: '0.5rem 0.75rem', color: 'white', fontSize: '0.85rem', outline: 'none' }}
+            />
+          </div>
+          <div style={{ marginBottom: '1.25rem' }}>
+            <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}><Tag size={12} /> Tags</label>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+              {VIDEO_TAGS.map(tag => (
+                <button
+                  key={tag}
+                  onClick={() => toggleTag(tag)}
+                  style={{ padding: '0.25rem 0.6rem', borderRadius: '1rem', border: `1px solid ${form.tags.includes(tag) ? '#8b5cf6' : 'rgba(255,255,255,0.1)'}`, background: form.tags.includes(tag) ? 'rgba(139,92,246,0.25)' : 'transparent', color: form.tags.includes(tag) ? '#a78bfa' : 'var(--text-muted)', fontSize: '0.75rem', cursor: 'pointer', transition: 'all 0.15s' }}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <button onClick={handleSubmit} style={{ background: '#8b5cf6', color: 'white', border: 'none', borderRadius: '0.4rem', padding: '0.5rem 1.25rem', fontWeight: 700, cursor: 'pointer', fontSize: '0.85rem' }}>Guardar</button>
+            <button onClick={() => setShowForm(false)} style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.4rem', padding: '0.5rem 1rem', cursor: 'pointer', fontSize: '0.85rem' }}>Cancelar</button>
+          </div>
+        </div>
+      )}
+
+      {/* Filter Tags */}
+      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+        <button
+          onClick={() => setFilterTag(null)}
+          style={{ padding: '0.25rem 0.75rem', borderRadius: '1rem', border: `1px solid ${!filterTag ? '#8b5cf6' : 'rgba(255,255,255,0.1)'}`, background: !filterTag ? 'rgba(139,92,246,0.2)' : 'transparent', color: !filterTag ? '#a78bfa' : 'var(--text-muted)', fontSize: '0.75rem', cursor: 'pointer' }}
+        >Todos ({videos.length})</button>
+        {VIDEO_TAGS.map(tag => {
+          const count = videos.filter(v => v.tags.includes(tag)).length;
+          if (count === 0) return null;
+          return (
+            <button
+              key={tag}
+              onClick={() => setFilterTag(filterTag === tag ? null : tag)}
+              style={{ padding: '0.25rem 0.75rem', borderRadius: '1rem', border: `1px solid ${filterTag === tag ? '#8b5cf6' : 'rgba(255,255,255,0.1)'}`, background: filterTag === tag ? 'rgba(139,92,246,0.2)' : 'transparent', color: filterTag === tag ? '#a78bfa' : 'var(--text-muted)', fontSize: '0.75rem', cursor: 'pointer' }}
+            >{tag} ({count})</button>
+          );
+        })}
+      </div>
+
+      {/* Video Grid */}
+      {filtered.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-muted)' }}>
+          <Video size={48} color="rgba(139,92,246,0.3)" style={{ margin: '0 auto 1rem' }} />
+          <p style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>No hay vídeos guardados</p>
+          <p style={{ fontSize: '0.85rem' }}>Añade tu primer vídeo pulsando el botón de arriba.</p>
+        </div>
+      )}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.25rem' }}>
+        {filtered.map(video => {
+          const ytId = getYouTubeId(video.url);
+          return (
+            <div key={video.id} className="glass" style={{ borderRadius: '1rem', overflow: 'hidden', border: '1px solid rgba(139,92,246,0.15)', transition: 'all 0.2s' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(139,92,246,0.35)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(139,92,246,0.15)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            >
+              {/* Thumbnail */}
+              <div style={{ position: 'relative', paddingTop: '56.25%', background: 'rgba(0,0,0,0.4)', overflow: 'hidden' }}>
+                {ytId ? (
+                  <img
+                    src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`}
+                    alt={video.title}
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }}
+                  />
+                ) : (
+                  <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Video size={40} color="rgba(139,92,246,0.5)" />
+                  </div>
+                )}
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%)' }} />
+                {/* Open link button */}
+                <a
+                  href={video.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '0.4rem', padding: '0.3rem 0.5rem', display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'white', textDecoration: 'none', fontSize: '0.7rem', cursor: 'pointer' }}
+                >
+                  <ExternalLink size={12} /> Ver
+                </a>
+              </div>
+              {/* Info */}
+              <div style={{ padding: '0.9rem' }}>
+                <p style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.4rem', lineHeight: 1.3 }}>{video.title}</p>
+                <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
+                  {video.rival && <span>⚔️ {video.rival}</span>}
+                  {video.jornada && <span>📅 {video.jornada}</span>}
+                  <span style={{ marginLeft: 'auto' }}>{new Date(video.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                    {video.tags.map(tag => (
+                      <span key={tag} style={{ fontSize: '0.65rem', background: 'rgba(139,92,246,0.2)', color: '#a78bfa', padding: '0.1rem 0.4rem', borderRadius: '1rem' }}>{tag}</span>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => onRemove(video.id)}
+                    style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', padding: '0.25rem', borderRadius: '0.25rem', transition: 'color 0.15s' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = '#ef4444'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-muted)'; }}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

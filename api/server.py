@@ -41,6 +41,8 @@ from scraper.actas import scrape_all_actas
 from scraper.validator import validate_all
 from scraper.intelligence import build_team_intelligence, compute_conditional_insights, build_rival_report, build_referee_intelligence
 from scraper.models import DataEncoder, Sanction, RefereeMatchInfo
+from scraper.updater import run_weekly_update
+from scraper.database import Database, DEFAULT_DB_PATH
 
 app = FastAPI(title="ProCoach FCF API", version="1.0.0")
 
@@ -550,6 +552,91 @@ def get_saved():
         }
     except Exception:
         return {"found": False}
+
+
+@app.post("/api/update")
+def start_update(req: ScrapeRequest):
+    """Start an incremental weekly update job. Only scrapes new actas."""
+    job_id = str(uuid.uuid4())
+    jobs[job_id] = {
+        "status": "running",
+        "step": "Inicialitzant actualització...",
+        "progress": 0,
+        "data": None,
+        "error": None,
+        "actas_done": 0,
+        "actas_total": 0,
+    }
+
+    def _run_update(job_id: str, req: ScrapeRequest):
+        job = jobs[job_id]
+        job["start_time"] = time.time()
+        try:
+            def _progress(step: str, pct: int):
+                jobs[job_id].update(step=step, progress=pct)
+
+            # Resolve team_id for saving
+            team_id = req.team_id or req.team.lower().replace(" ", "-")[:30]
+
+            all_data = run_weekly_update(
+                team=req.team,
+                season=req.season,
+                competition=req.competition,
+                group=req.group,
+                rival=req.rival,
+                full=req.full,
+                db_path=DEFAULT_DB_PATH,
+                progress_cb=_progress,
+            )
+
+            # Save team JSON file (same as scrape does)
+            out_path = DATA_DIR / "teams" / f"{team_id}.json"
+            with open(out_path, "w", encoding="utf-8") as f:
+                json.dump(all_data, f, cls=DataEncoder, ensure_ascii=False, indent=2)
+            main_path = DATA_DIR / "fcf_data.json"
+            with open(main_path, "w", encoding="utf-8") as f:
+                json.dump(all_data, f, cls=DataEncoder, ensure_ascii=False, indent=2)
+
+            jobs[job_id].update(
+                status="done",
+                progress=100,
+                step="Fet!",
+                data=all_data,
+                team_id=team_id,
+                elapsed=round(time.time() - job["start_time"], 1),
+            )
+        except Exception as e:
+            import traceback
+            jobs[job_id].update(
+                status="error",
+                step=f"Error: {e}",
+                error=str(e),
+                traceback=traceback.format_exc(),
+            )
+
+    t = threading.Thread(target=_run_update, args=(job_id, req), daemon=True)
+    t.start()
+    return {"job_id": job_id}
+
+
+@app.get("/api/db/stats")
+def db_stats():
+    """Return statistics about the persistent SQLite database."""
+    try:
+        db = Database(DEFAULT_DB_PATH)
+        return db.stats()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/db/actas")
+def db_actas(season: str = "2526", competition: str = "segona-catalana", group: str = "grup-3"):
+    """Return a lightweight list of actas stored for a given season/competition/group."""
+    try:
+        db = Database(DEFAULT_DB_PATH)
+        return {"actas": db.actas_list(season, competition, group)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/api/health")

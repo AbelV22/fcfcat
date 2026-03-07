@@ -36,6 +36,8 @@ from .actas import scrape_all_actas
 from .validator import validate_all
 from .intelligence import build_team_intelligence, compute_conditional_insights, build_referee_intelligence
 from .models import RefereeMatchInfo
+from .updater import run_weekly_update
+from .database import DEFAULT_DB_PATH
 
 logger = logging.getLogger("fcf_scraper")
 
@@ -442,6 +444,17 @@ Examples:
         "--output", default=None,
         help="Output JSON file path (default: data/fcf_data.json)",
     )
+    parser.add_argument(
+        "--update", action="store_true",
+        help=(
+            "Incremental weekly update: only scrape actas not yet in the local DB. "
+            "Much faster than a full scrape after the first run."
+        ),
+    )
+    parser.add_argument(
+        "--db", default=None,
+        help="Path to the SQLite database file (default: data/fcf.db)",
+    )
 
     args = parser.parse_args()
 
@@ -451,18 +464,50 @@ Examples:
         print("Cache cleared.")
         return
 
-    run_scraper(
-        team=args.team,
-        rival=args.rival,
-        full_actas=args.full,
-        use_cache=not args.no_cache,
-        max_actas=args.max_actas,
-        verbose=args.verbose,
-        season=args.season,
-        competition=args.competition,
-        group=args.group,
-        output_file=args.output,
-    )
+    if args.update:
+        # ── Incremental mode ──────────────────────────────────────────────────
+        db_path = args.db or DEFAULT_DB_PATH
+        print("\n🔄 Incremental update mode — only new actas will be downloaded.")
+        print(f"   DB: {db_path}\n")
+
+        def _cli_progress(step: str, pct: int):
+            bar_len = 30
+            filled = int(bar_len * pct / 100)
+            bar = "█" * filled + "░" * (bar_len - filled)
+            print(f"\r  [{bar}] {pct:3d}%  {step:<45}", end="", flush=True)
+
+        result = run_weekly_update(
+            team=args.team,
+            season=args.season,
+            competition=args.competition,
+            group=args.group,
+            rival=args.rival or "",
+            full=args.full,
+            db_path=db_path,
+            progress_cb=_cli_progress,
+            use_cache=not args.no_cache,
+        )
+        print()  # newline after progress bar
+        meta = result.get("meta", {})
+        print(f"\n{'='*50}")
+        print(f"  Equip:     {meta.get('team', '')}")
+        print(f"  Actes BD:  {meta.get('actas_in_db', 0)}")
+        print(f"  Noves:     {meta.get('new_actas_scraped', 0)}")
+        print(f"  Temps:     {meta.get('elapsed_seconds', 0):.1f}s")
+        print(f"{'='*50}\n")
+    else:
+        run_scraper(
+            team=args.team,
+            rival=args.rival,
+            full_actas=args.full,
+            use_cache=not args.no_cache,
+            max_actas=args.max_actas,
+            verbose=args.verbose,
+            season=args.season,
+            competition=args.competition,
+            group=args.group,
+            output_file=args.output,
+        )
 
 
 if __name__ == "__main__":
