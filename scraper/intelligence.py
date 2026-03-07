@@ -241,6 +241,7 @@ def build_team_intelligence(
                     card_name = _find_best_player_match(card.player, list(intel.players.keys()))
                     if card_name:
                         intel.players[card_name].double_yellows += 1
+                        intel.players[card_name].double_yellow_jornadas.append(acta.jornada)
                 # Skip accumulation for BOTH yellows (don't touch yellow_cards counter)
             else:
                 # Regular yellow (or 1st yellow before a direct red) → accumulates normally.
@@ -249,6 +250,7 @@ def build_team_intelligence(
                 if card_name:
                     intel.players[card_name].yellow_cards += 1
                     intel.players[card_name].minutes_yellows.append(card.minute)
+                    intel.players[card_name].yellow_card_jornadas.append(acta.jornada)
 
         for card in acta.red_cards:
             is_ours = False
@@ -265,6 +267,7 @@ def build_team_intelligence(
                 if card_name:
                     intel.players[card_name].red_cards += 1
                     intel.players[card_name].minutes_reds.append(card.minute)
+                    intel.players[card_name].red_card_jornadas.append(acta.jornada)
 
     logger.info(
         f"Intelligence for {team_name}: "
@@ -620,11 +623,19 @@ def build_referee_intelligence(
     for acta in global_refs:
         if acta.get("competition") != competition:
             continue
+        # Only referees[0] is the main referee — assistants (linesmen) don't give cards
+        refs = acta.get("referees") or []
+        main_ref = refs[0] if refs else None
+        if main_ref and ref_kw in _normalize(main_ref):
+            ref_matches.append(acta)
 
-        for ref in acta.get("referees", []):
-            if ref_kw in _normalize(ref):
+    # Fallback: if not found in the specific competition, search all competitions
+    if not ref_matches:
+        for acta in global_refs:
+            refs = acta.get("referees") or []
+            main_ref = refs[0] if refs else None
+            if main_ref and ref_kw in _normalize(main_ref):
                 ref_matches.append(acta)
-                break
 
     if not ref_matches:
         return {"name": referee_name, "matches": 0}

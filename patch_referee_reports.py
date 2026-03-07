@@ -30,13 +30,14 @@ def compute_population_stats(global_refs: list[dict], min_matches: int = 3) -> d
     """
     from collections import defaultdict
 
-    # Group matches by main referee name
+    # Group matches by MAIN referee only (referees[0]) — assistants don't give cards
     ref_matches: dict[str, list[dict]] = defaultdict(list)
     for acta in global_refs:
-        for r in acta.get("referees", []):
-            r = r.strip()
-            if r:
-                ref_matches[r].append(acta)
+        refs = acta.get("referees", [])
+        if refs:
+            main_ref = refs[0].strip()
+            if main_ref:
+                ref_matches[main_ref].append(acta)
 
     metrics = {
         "yellows_per_match": [],
