@@ -13,9 +13,18 @@ import re
 import unicodedata
 import logging
 from dataclasses import asdict
+from pathlib import Path
 from typing import Any
 
 from supabase import create_client, Client
+
+# Load .env from repo root automatically in local dev
+try:
+    from dotenv import load_dotenv
+    _repo_root = Path(__file__).parent.parent
+    load_dotenv(_repo_root / ".env", override=False)
+except ImportError:
+    pass
 
 logger = logging.getLogger("fcf_uploader")
 
