@@ -1,0 +1,74 @@
+name: 🗄️ Populate Supabase — Full Initial Load
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Run ONCE (or whenever you want a full re-population).
+# Scrapes ALL FCF competitions and pushes to Supabase.
+# Also pushes the existing global_referees.json as referee match history.
+#
+# Trigger manually: GitHub → Actions → "Populate Supabase" → Run workflow
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  workflow_dispatch:
+    inputs:
+      season:
+        description: 'Season code'
+        required: false
+        default: '2526'
+      push_refs:
+        description: 'Also push global_referees.json to Supabase'
+        required: false
+        default: 'true'
+        type: choice
+        options: ['true', 'false']
+      categories:
+        description: 'Limit to specific slugs (space-separated), empty = all'
+        required: false
+        default: ''
+
+jobs:
+  populate:
+    name: Populate Supabase
+    runs-on: ubuntu-latest
+    timeout-minutes: 90   # Light scraping ~100 groups ≈ 30-40 min
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt supabase
+
+      - name: Build public database
+        env:
+          PYTHONIOENCODING: utf-8
+          SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          SEASON="${{ inputs.season || '2526' }}"
+          PUSH_REFS="${{ inputs.push_refs || 'true' }}"
+          CATEGORIES="${{ inputs.categories }}"
+
+          CMD="python -m scraper.build_public_db --season $SEASON"
+
+          if [ -n "$CATEGORIES" ]; then
+            CMD="$CMD --categories $CATEGORIES"
+          fi
+
+          if [ "$PUSH_REFS" = "true" ]; then
+            CMD="$CMD --push-refs"
+          fi
+
+          echo "Running: $CMD"
+          eval $CMD
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 🗄️ Supabase Population Complete" >> $GITHUB_STEP_SUMMARY
+          echo "Season: ${{ inputs.season || '2526' }}" >> $GITHUB_STEP_SUMMARY
+          echo "Referee matches pushed: ${{ inputs.push_refs }}" >> $GITHUB_STEP_SUMMARY

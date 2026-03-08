@@ -114,6 +114,38 @@ jobs:
               sys.exit(1)
           "
 
+      - name: Push player stats to Supabase
+        if: env.SUPABASE_URL != '' && env.SUPABASE_SERVICE_KEY != ''
+        env:
+          PYTHONIOENCODING: utf-8
+          SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          pip install supabase -q
+          COMPETITION='${{ matrix.team.competition }}'
+          GROUP='${{ matrix.team.group }}'
+          SEASON='${{ matrix.team.season }}'
+          python -c "
+          import json, os, sys
+          from pathlib import Path
+          from scraper.supabase_uploader import push_player_stats, push_standings, push_matches, push_scorers
+
+          data = json.loads(Path('data/fcf_data.json').read_text(encoding='utf-8'))
+          comp   = os.environ.get('COMPETITION', '$COMPETITION')
+          group  = os.environ.get('GROUP', '$GROUP')
+          season = os.environ.get('SEASON', '$SEASON')
+
+          if data.get('standings'):
+              push_standings(data['standings'], comp, group, season)
+          if data.get('matches'):
+              push_matches(data['matches'], comp, group, season)
+          if data.get('team_intelligence'):
+              push_player_stats(data['team_intelligence'], comp, group, season)
+          if data.get('rival_intelligence'):
+              push_player_stats(data['rival_intelligence'], comp, group, season)
+          print('Supabase push complete')
+          " || echo "Supabase push skipped (check secrets)"
+
       - name: Generate HTML report
         env:
           PYTHONIOENCODING: utf-8

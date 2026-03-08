@@ -1,0 +1,262 @@
+import fs from 'fs'
+import path from 'path'
+
+const DATA_DIR = path.join(process.cwd(), '..', 'data')
+const TEAMS_DIR = path.join(DATA_DIR, 'teams')
+
+/** Load global_referees.json — returns parsed object or empty dict */
+export function loadGlobalReferees(): Record<string, any> {
+  try {
+    const filePath = path.join(DATA_DIR, 'global_referees.json')
+    const raw = fs.readFileSync(filePath, 'utf-8')
+    return JSON.parse(raw)
+  } catch {
+    return {}
+  }
+}
+
+/** Count unique referees and total matches */
+export async function getRefereeStats() {
+  const refs = loadGlobalReferees()
+  const matchCount = Object.keys(refs).length
+
+  const refereeNames = new Set<string>()
+  for (const match of Object.values(refs)) {
+    const m = match as any
+    if (Array.isArray(m.referees) && m.referees.length > 0) {
+      refereeNames.add(m.referees[0]) // Only main referee
+    }
+  }
+
+  return {
+    refereeCount: refereeNames.size,
+    matchCount,
+  }
+}
+
+/** Count registered teams */
+export async function getTeamCount() {
+  try {
+    const files = fs.readdirSync(TEAMS_DIR).filter(f => f.endsWith('.json'))
+    return files.length
+  } catch {
+    return 9 // Fallback
+  }
+}
+
+/** Get all unique referees with aggregated stats */
+export function getAllReferees() {
+  const refs = loadGlobalReferees()
+  const refMap: Record<string, {
+    name: string
+    slug: string
+    matches: number
+    yellows: number
+    reds: number
+    competitions: Set<string>
+    lastMatch: string
+  }> = {}
+
+  for (const match of Object.values(refs)) {
+    const m = match as any
+    if (!Array.isArray(m.referees) || m.referees.length === 0) continue
+    const mainRef = m.referees[0]
+    const slug = slugify(mainRef)
+
+    if (!refMap[slug]) {
+      refMap[slug] = {
+        name: mainRef,
+        slug,
+        matches: 0,
+        yellows: 0,
+        reds: 0,
+        competitions: new Set(),
+        lastMatch: m.date || '',
+      }
+    }
+
+    const r = refMap[slug]
+    r.matches++
+    r.yellows += (m.yellow_cards || []).filter((c: any) => c.recipient_type === 'player').length
+    r.reds += (m.red_cards || []).filter((c: any) => c.recipient_type === 'player').length
+    r.competitions.add(m.competition)
+    if ((m.date || '') > r.lastMatch) r.lastMatch = m.date
+  }
+
+  return Object.values(refMap).map(r => ({
+    ...r,
+    competitions: Array.from(r.competitions),
+    yellows_per_match: r.matches > 0 ? +(r.yellows / r.matches).toFixed(2) : 0,
+    reds_per_match: r.matches > 0 ? +(r.reds / r.matches).toFixed(2) : 0,
+  })).sort((a, b) => b.matches - a.matches)
+}
+
+/** Get single referee by slug */
+export function getRefereeBySlug(slug: string) {
+  const refs = loadGlobalReferees()
+  const matches: any[] = []
+
+  for (const match of Object.values(refs)) {
+    const m = match as any
+    if (!Array.isArray(m.referees) || m.referees.length === 0) continue
+    if (slugify(m.referees[0]) === slug) {
+      matches.push(m)
+    }
+  }
+
+  if (matches.length === 0) return null
+
+  const refName = matches[0].referees[0]
+  const yellows = matches.flatMap((m: any) =>
+    (m.yellow_cards || []).filter((c: any) => c.recipient_type === 'player')
+  )
+  const reds = matches.flatMap((m: any) =>
+    (m.red_cards || []).filter((c: any) => c.recipient_type === 'player')
+  )
+  const staffCards = matches.flatMap((m: any) =>
+    [...(m.yellow_cards || []), ...(m.red_cards || [])].filter((c: any) => c.recipient_type === 'technical_staff')
+  )
+
+  const matchesSorted = [...matches].sort((a, b) =>
+    (b.date || '').localeCompare(a.date || '')
+  )
+
+  return {
+    name: refName,
+    slug,
+    matches: matches.length,
+    yellows: yellows.length,
+    reds: reds.length,
+    staffCards: staffCards.length,
+    yellows_per_match: matches.length > 0 ? +(yellows.length / matches.length).toFixed(2) : 0,
+    reds_per_match: matches.length > 0 ? +(reds.length / matches.length).toFixed(2) : 0,
+    competitions: [...new Set(matches.map(m => m.competition))],
+    recentMatches: matchesSorted.slice(0, 10).map(m => ({
+      date: m.date,
+      home_team: m.home_team,
+      away_team: m.away_team,
+      home_score: m.home_score,
+      away_score: m.away_score,
+      yellows: (m.yellow_cards || []).filter((c: any) => c.recipient_type === 'player').length,
+      reds: (m.red_cards || []).filter((c: any) => c.recipient_type === 'player').length,
+      competition: m.competition,
+      group: m.group,
+      jornada: m.jornada,
+    })),
+  }
+}
+
+/** Load a team JSON file */
+export function loadTeamData(slug: string): any | null {
+  try {
+    const filePath = path.join(TEAMS_DIR, `${slug}.json`)
+    const raw = fs.readFileSync(filePath, 'utf-8')
+    return JSON.parse(raw)
+  } catch {
+    return null
+  }
+}
+
+/** Get all teams list */
+export function getAllTeams() {
+  try {
+    return fs.readdirSync(TEAMS_DIR)
+      .filter(f => f.endsWith('.json'))
+      .map(f => {
+        const slug = f.replace('.json', '')
+        try {
+          const raw = fs.readFileSync(path.join(TEAMS_DIR, f), 'utf-8')
+          const data = JSON.parse(raw)
+          return {
+            slug,
+            name: data.meta?.team || slug,
+            competition: data.meta?.competition || '',
+            competitionName: data.meta?.competition_name || '',
+            group: data.meta?.group || '',
+            season: data.meta?.season || '2526',
+          }
+        } catch {
+          return { slug, name: slug, competition: '', competitionName: '', group: '', season: '2526' }
+        }
+      })
+  } catch {
+    return []
+  }
+}
+
+/** Get recent results from all global_referees matches */
+export function getRecentResults(limit = 20) {
+  const refs = loadGlobalReferees()
+  return Object.values(refs)
+    .sort((a: any, b: any) => (b.date || '').localeCompare(a.date || ''))
+    .slice(0, limit)
+    .map((m: any) => ({
+      id: m.id,
+      date: m.date,
+      jornada: m.jornada,
+      home_team: m.home_team,
+      away_team: m.away_team,
+      home_score: m.home_score,
+      away_score: m.away_score,
+      competition: m.competition,
+      group: m.group,
+    }))
+}
+
+/** Extract all players from team intelligence */
+export function getAllPlayers() {
+  const teams = getAllTeams()
+  const players: any[] = []
+
+  for (const team of teams) {
+    const data = loadTeamData(team.slug)
+    if (!data?.data?.team_intelligence?.players) continue
+
+    for (const [name, stats] of Object.entries(data.data.team_intelligence.players as Record<string, any>)) {
+      players.push({
+        slug: slugify(name),
+        name,
+        team: team.name,
+        teamSlug: team.slug,
+        competition: team.competition,
+        appearances: stats.appearances || 0,
+        goals: stats.goals || 0,
+        yellow_cards: stats.yellow_cards || 0,
+        red_cards: stats.red_cards || 0,
+        minutes_played: stats.minutes_played || 0,
+      })
+    }
+  }
+
+  return players.sort((a, b) => b.appearances - a.appearances)
+}
+
+/** Simple slug generator */
+export function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+}
+
+/** Competition display names */
+export const COMPETITION_NAMES: Record<string, string> = {
+  'divisio-honor': "Divisió d'Honor",
+  'superior-catalana': 'Superior Catalana',
+  'premier-catalana': 'Premier Catalana',
+  'preferent-catalana': 'Preferent Catalana',
+  'primera-catalana': 'Primera Catalana',
+  'segona-catalana': 'Segona Catalana',
+  'tercera-catalana': 'Tercera Catalana',
+  'quarta-catalana': 'Quarta Catalana',
+  'regional': 'Regional',
+  'superior-regional': 'Superior Regional',
+  'primera-regional': 'Primera Regional',
+  'segunda-regional': 'Segunda Regional',
+  'tercera-regional': 'Tercera Regional',
+  'quarta-regional': 'Quarta Regional',
+}

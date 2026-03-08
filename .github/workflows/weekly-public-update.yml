@@ -1,0 +1,161 @@
+name: 📅 Weekly Public Update — All FCF
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Runs every Monday at 06:00 UTC (8:00 CET).
+# After the weekend all matches are played → fresh standings + results.
+#
+# What it does:
+#   1. Re-scrapes ALL competitions (standings + results + scorers) → Supabase
+#   2. Runs build_referee_db for primera + segona catalana → new actas
+#   3. Pushes updated global_referees.json to Supabase
+#
+# Required GitHub Secrets:
+#   SUPABASE_URL          — https://xxxx.supabase.co
+#   SUPABASE_SERVICE_KEY  — service_role key
+# ─────────────────────────────────────────────────────────────────────────────
+
+permissions:
+  contents: write
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'   # Every Monday at 06:00 UTC
+
+  workflow_dispatch:
+    inputs:
+      update_referee_db:
+        description: 'Re-scrape referee DB (primera + segona catalana)?'
+        required: false
+        default: 'true'
+        type: choice
+        options: ['true', 'false']
+      season:
+        description: 'Season code'
+        required: false
+        default: '2526'
+
+jobs:
+
+  # ── Job 1: Update public standings + results ──────────────────────────────
+  update-public-data:
+    name: Update standings + results + scorers
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt supabase
+
+      - name: Scrape all competitions → Supabase
+        env:
+          PYTHONIOENCODING: utf-8
+          SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          SEASON="${{ inputs.season || '2526' }}"
+          python -m scraper.build_public_db --season $SEASON
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 📅 Weekly Public Update — $(date -u '+%Y-%m-%d')" >> $GITHUB_STEP_SUMMARY
+          echo "All FCF competitions updated in Supabase." >> $GITHUB_STEP_SUMMARY
+
+  # ── Job 2: Update referee DB (primera + segona) ───────────────────────────
+  update-referee-db:
+    name: Update referee DB
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    if: ${{ inputs.update_referee_db != 'false' }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt supabase
+
+      - name: Update referee DB — primera-catalana
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          python -m scraper.build_referee_db \
+            --competition primera-catalana \
+            --season ${{ inputs.season || '2526' }} \
+            --rate-limit 1.5
+
+      - name: Update referee DB — segona-catalana
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          python -m scraper.build_referee_db \
+            --competition segona-catalana \
+            --season ${{ inputs.season || '2526' }} \
+            --rate-limit 1.5
+
+      - name: Push updated global_referees.json → Supabase
+        env:
+          PYTHONIOENCODING: utf-8
+          SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          python -c "
+          import json
+          from pathlib import Path
+          from scraper.supabase_uploader import push_referee_matches
+          refs = json.loads(Path('data/global_referees.json').read_text(encoding='utf-8'))
+          n = push_referee_matches(refs)
+          print(f'Pushed {n} referee matches to Supabase')
+          "
+
+      - name: Commit updated global_referees.json
+        run: |
+          git config user.name  "FCF Bot"
+          git config user.email "bot@fcfcat.github.io"
+          git add data/global_referees.json
+          git diff --staged --quiet && echo "No changes to referees" || \
+            git commit -m "data: weekly referee DB update $(date -u '+%Y-%m-%d')" && \
+            git push origin HEAD
+
+      - name: Referee summary
+        if: always()
+        run: |
+          COUNT=$(python -c "import json; d=json.load(open('data/global_referees.json')); print(len(d))" 2>/dev/null || echo "?")
+          echo "## 🕵️ Referee DB Updated" >> $GITHUB_STEP_SUMMARY
+          echo "Total matches in referee DB: **$COUNT**" >> $GITHUB_STEP_SUMMARY
+
+  # ── Job 3: Update registered teams (existing behaviour) ───────────────────
+  update-registered-teams:
+    name: Update registered teams
+    runs-on: ubuntu-latest
+    needs: update-public-data
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check if there are registered teams
+        id: check
+        run: |
+          COUNT=$(python -c "import json; r=json.load(open('data/teams_registry.json')); print(len(r.get('teams', [])))" 2>/dev/null || echo "0")
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+          echo "Registered teams: $COUNT"
+
+      - name: Trigger daily scrape for registered teams
+        if: steps.check.outputs.count != '0'
+        run: |
+          echo "Registered teams will be updated by the daily scrape workflow."
+          echo "Run: workflow_dispatch on scrape-scheduled.yml if needed immediately."
