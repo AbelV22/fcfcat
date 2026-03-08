@@ -55,8 +55,10 @@ def scrape_acta(client: FCFClient, acta_url: str) -> Optional[MatchReport]:
             score_text = parts[1]
             report.away_team = parts[2]
             
-            # Use regex to find score from "3 - 0" or "(3 - 0)"
-            m = re.search(r"(\d+)\s*-\s*(\d+)", score_text)
+            # Use regex to find score from "3 - 0" or "(3 - 0)".
+            # Strip dates (dd-mm-yyyy) first to avoid matching "24-01-2026" as score 24-1.
+            score_clean = re.sub(r'\d{2}-\d{2}-\d{4}', '', score_text)
+            m = re.search(r"(?<!\d)(\d{1,2})\s*-\s*(\d{1,2})(?![\d-])", score_clean)
             if m:
                 report.home_score = int(m.group(1))
                 report.away_score = int(m.group(2))
@@ -66,11 +68,12 @@ def scrape_acta(client: FCFClient, acta_url: str) -> Optional[MatchReport]:
         if len(equips) >= 2:
             report.home_team = equips[0].get_text(strip=True)
             report.away_team = equips[1].get_text(strip=True)
-        
+
         resultat = soup.find(class_="acta-resultat")
         if resultat:
             score_text = resultat.get_text(strip=True)
-            m = re.search(r"(\d+)\s*[-–]\s*(\d+)", score_text)
+            score_clean = re.sub(r'\d{2}-\d{2}-\d{4}', '', score_text)
+            m = re.search(r"(?<!\d)(\d{1,2})\s*[-–]\s*(\d{1,2})(?![\d-])", score_clean)
             if m:
                 report.home_score = int(m.group(1))
                 report.away_score = int(m.group(2))

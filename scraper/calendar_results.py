@@ -346,7 +346,7 @@ def _parse_match_list(soup: BeautifulSoup, source_url: str) -> list[MatchResult]
             # Extract scores: look for "N - M" or "N – M". 
             # We must be careful not to match dates (21-09-2025).
             # We look for scores that are NOT preceded or followed by more digits or dashes.
-            score_match = re.search(r'(?<![\d\-/])\b(\d{1,2})\s*(?:[-–])\s*(\d{1,2})\b(?![\d\-/])', tr_text)
+            score_match = re.search(r'(?<![\d\-/])\b(\d{1,2})\s*(?:[-–])\s*(\d{1,2})\b(?![\d\-/])', no_dates)
             if score_match:
                 s1, s2 = int(score_match.group(1)), int(score_match.group(2))
                 # FCF matches rarely exceed 25 goals per side.

@@ -59407,21 +59407,6 @@
     ],
     "red_cards": []
   },
-  "J16-TORELLO, C.F. A-v-VILANOVA VALLES,C.F. A": {
-    "id": "J16-TORELLO, C.F. A-v-VILANOVA VALLES,C.F. A",
-    "competition": "segona-catalana",
-    "group": "grup-2",
-    "season": "2526",
-    "jornada": 16,
-    "date": "24-01-2026",
-    "home_team": "TORELLO, C.F. A",
-    "away_team": "VILANOVA VALLES,C.F. A",
-    "home_score": 24,
-    "away_score": 1,
-    "referees": [],
-    "yellow_cards": [],
-    "red_cards": []
-  },
   "J16-VILAMAJOR, C.F. A-v-ESCOLA FUTBOL MATARO C.E A": {
     "id": "J16-VILAMAJOR, C.F. A-v-ESCOLA FUTBOL MATARO C.E A",
     "competition": "segona-catalana",
@@ -110086,36 +110071,6 @@
         "recipient_type": "player"
       }
     ],
-    "red_cards": []
-  },
-  "J16-CAMBRILS UNIÓ C.E. A-v-ESCUELA F.SAN PEDRO SAN PABLO A": {
-    "id": "J16-CAMBRILS UNIÓ C.E. A-v-ESCUELA F.SAN PEDRO SAN PABLO A",
-    "competition": "segona-catalana",
-    "group": "grup-6",
-    "season": "2526",
-    "jornada": 16,
-    "date": "24-01-2026",
-    "home_team": "CAMBRILS UNIÓ C.E. A",
-    "away_team": "ESCUELA F.SAN PEDRO SAN PABLO A",
-    "home_score": 24,
-    "away_score": 1,
-    "referees": [],
-    "yellow_cards": [],
-    "red_cards": []
-  },
-  "J17-ESCUELA F.SAN PEDRO SAN PABLO A-v-ALDEANA, U.E. A": {
-    "id": "J17-ESCUELA F.SAN PEDRO SAN PABLO A-v-ALDEANA, U.E. A",
-    "competition": "segona-catalana",
-    "group": "grup-6",
-    "season": "2526",
-    "jornada": 17,
-    "date": "31-01-2026",
-    "home_team": "ESCUELA F.SAN PEDRO SAN PABLO A",
-    "away_team": "ALDEANA, U.E. A",
-    "home_score": 31,
-    "away_score": 1,
-    "referees": [],
-    "yellow_cards": [],
     "red_cards": []
   },
   "J17-AMPOSTA, C.F. A-v-CANONJA, C.F. A": {
