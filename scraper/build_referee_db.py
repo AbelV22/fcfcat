@@ -38,7 +38,7 @@ from .http_client import FCFClient
 from .calendar_results import get_acta_urls_from_calendar
 from .actas import scrape_acta
 from .models import RefereeMatchInfo, DataEncoder
-from .discover import COMPETITIONS, KNOWN_GROUPS
+from .discover import COMPETITIONS, KNOWN_GROUPS, REFEREE_COMPETITIONS
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 DATA_DIR.mkdir(exist_ok=True)
@@ -202,6 +202,22 @@ def build_referee_db(
     }
 
 
+def build_all_referee_comps(season: str = "2526", rate_limit: float = 1.0):
+    """Run build_referee_db for every competition in REFEREE_COMPETITIONS."""
+    comps = [c for c in COMPETITIONS if c["slug"] in REFEREE_COMPETITIONS]
+    print(f"\n Running referee scrape for {len(comps)} competitions\n")
+    totals = {"scraped": 0, "new": 0, "skipped": 0, "errors": 0}
+    for comp in comps:
+        result = build_referee_db(comp["slug"], season=season, rate_limit=rate_limit)
+        for k in totals:
+            totals[k] += result.get(k, 0)
+    print(f"\n{'='*60}")
+    print(f"  ALL REFEREE COMPS DONE")
+    for k, v in totals.items():
+        print(f"  {k}: {v}")
+    print(f"{'='*60}\n")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Build global referee database by scraping all actas in a competition",
@@ -210,10 +226,13 @@ def main():
 Examples:
   python -m scraper.build_referee_db --competition primera-catalana
   python -m scraper.build_referee_db --competition segona-catalana --groups grup-1 grup-2
+  python -m scraper.build_referee_db --all-referee-comps
   python -m scraper.build_referee_db --list-competitions
         """,
     )
     parser.add_argument("--competition", "-c", help="Competition slug to scrape")
+    parser.add_argument("--all-referee-comps", action="store_true",
+                        help="Scrape ALL competitions in REFEREE_COMPETITIONS set")
     parser.add_argument("--season", "-s", default="2526", help="Season code (default: 2526)")
     parser.add_argument("--groups", "-g", nargs="+", help="Specific groups (default: all)")
     parser.add_argument("--rate-limit", type=float, default=1.0, help="Seconds between requests (default: 1.0)")
@@ -222,12 +241,17 @@ Examples:
 
     if args.list_competitions:
         print("\n📋 FCF Futbol 11 Competitions\n")
-        print(f"{'Slug':<25} {'Name':<30} {'Groups'}")
-        print("-" * 70)
+        print(f"{'Tier':<5} {'Slug':<40} {'Name':<35} {'Groups':<8} {'Refs'}")
+        print("-" * 100)
         for comp in COMPETITIONS:
             groups = KNOWN_GROUPS.get(comp["slug"], [])
-            print(f"{comp['slug']:<25} {comp['name']:<30} {len(groups)} groups")
+            is_ref = "✓" if comp["slug"] in REFEREE_COMPETITIONS else ""
+            print(f"{comp['tier']:<5} {comp['slug']:<40} {comp['name']:<35} {len(groups):<8} {is_ref}")
         print()
+        return
+
+    if args.all_referee_comps:
+        build_all_referee_comps(season=args.season, rate_limit=args.rate_limit)
         return
 
     if not args.competition:

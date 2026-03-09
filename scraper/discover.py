@@ -28,41 +28,106 @@ if sys.platform == "win32":
 from .http_client import FCFClient
 
 # ─── All known FCF Futbol 11 competitions ─────────────────────────────────────
-# Ordered from highest to lowest tier
+# Ordered from highest to lowest tier. Slugs verified against fcf.cat/classificacio.
+# Cups, promotions and recreational competitions are excluded.
 COMPETITIONS = [
-    {"slug": "divisio-honor",       "name": "Divisió d'Honor",          "tier": 1},
-    {"slug": "superior-catalana",   "name": "Superior Catalana",         "tier": 2},
-    {"slug": "premier-catalana",    "name": "Premier Catalana",          "tier": 3},
-    {"slug": "preferent-catalana",  "name": "Preferent Catalana",        "tier": 4},
-    {"slug": "primera-catalana",    "name": "Primera Catalana",          "tier": 5},
-    {"slug": "segona-catalana",     "name": "Segona Catalana",           "tier": 6},
-    {"slug": "tercera-catalana",    "name": "Tercera Catalana",          "tier": 7},
-    {"slug": "quarta-catalana",     "name": "Quarta Catalana",           "tier": 8},
-    {"slug": "regional",            "name": "Regional",                  "tier": 9},
-    {"slug": "superior-regional",   "name": "Superior Regional",         "tier": 10},
-    {"slug": "primera-regional",    "name": "Primera Regional",          "tier": 11},
-    {"slug": "segunda-regional",    "name": "Segona Regional",           "tier": 12},
-    {"slug": "tercera-regional",    "name": "Tercera Regional",          "tier": 13},
-    {"slug": "quarta-regional",     "name": "Quarta Regional",           "tier": 14},
+    # ── Adult / Amateur ──────────────────────────────────────────────────────
+    {"slug": "tercera-federacio",          "name": "Tercera Federació",           "tier": 1,  "category": "adult"},
+    {"slug": "lliga-elit",                 "name": "Lliga Elit",                  "tier": 2,  "category": "adult"},
+    {"slug": "primera-catalana",           "name": "Primera Catalana",            "tier": 3,  "category": "adult"},
+    {"slug": "segona-catalana",            "name": "Segona Catalana",             "tier": 4,  "category": "adult"},
+    {"slug": "tercera-catalana",           "name": "Tercera Catalana",            "tier": 5,  "category": "adult"},
+    {"slug": "quarta-catalana",            "name": "Quarta Catalana",             "tier": 6,  "category": "adult"},
+    # ── Juvenil ──────────────────────────────────────────────────────────────
+    {"slug": "divisio-honor-juvenil",      "name": "Divisió d'Honor Juvenil",     "tier": 10, "category": "juvenil"},
+    {"slug": "lliga-nacional-juvenil",     "name": "Lliga Nacional Juvenil",      "tier": 11, "category": "juvenil"},
+    {"slug": "preferent-juvenil",          "name": "Preferent Juvenil",           "tier": 12, "category": "juvenil"},
+    {"slug": "primera-divisio-juvenil",    "name": "Juvenil Primera Divisió",     "tier": 13, "category": "juvenil"},
+    {"slug": "segona-catalana-juvenil",    "name": "Juvenil Segona Divisió",      "tier": 14, "category": "juvenil"},
+    {"slug": "tercera-catalana-juvenil",   "name": "Juvenil Tercera Divisió",     "tier": 15, "category": "juvenil"},
+    # ── Cadet S16 ────────────────────────────────────────────────────────────
+    {"slug": "divisio-honor-cadet-s16",    "name": "Divisió d'Honor Cadet S16",   "tier": 20, "category": "cadet-s16"},
+    {"slug": "preferent-cadet-s16",        "name": "Preferent Cadet S16",         "tier": 21, "category": "cadet-s16"},
+    {"slug": "cadet-primera-divisio-s16",  "name": "Cadet Primera Divisió S16",   "tier": 22, "category": "cadet-s16"},
+    {"slug": "cadet-segona-divisio-s16",   "name": "Cadet Segona Divisió S16",    "tier": 23, "category": "cadet-s16"},
+    # ── Cadet S15 ────────────────────────────────────────────────────────────
+    {"slug": "divisio-honor-cadet-s15",    "name": "Divisió d'Honor Cadet S15",   "tier": 25, "category": "cadet-s15"},
+    {"slug": "preferent-cadet-s15",        "name": "Preferent Cadet S15",         "tier": 26, "category": "cadet-s15"},
+    {"slug": "cadet-primera-divisio-s15",  "name": "Cadet Primera Divisió S15",   "tier": 27, "category": "cadet-s15"},
+    {"slug": "cadet-segona-divisio-s15",   "name": "Cadet Segona Divisió S15",    "tier": 28, "category": "cadet-s15"},
+    # ── Infantil S14 ─────────────────────────────────────────────────────────
+    {"slug": "divisio-honor-infantil-s14", "name": "Divisió d'Honor Infantil S14","tier": 30, "category": "infantil-s14"},
+    {"slug": "preferent-infantil-s14",     "name": "Preferent Infantil S14",      "tier": 31, "category": "infantil-s14"},
+    {"slug": "primera-divisio-infantil-s14","name": "Infantil Primera Divisió S14","tier": 32, "category": "infantil-s14"},
+    # ── Infantil S13 ─────────────────────────────────────────────────────────
+    {"slug": "divisio-honor-infantil-s13", "name": "Divisió d'Honor Infantil S13","tier": 35, "category": "infantil-s13"},
+    {"slug": "preferent-infantil-s13",     "name": "Preferent Infantil S13",      "tier": 36, "category": "infantil-s13"},
+    {"slug": "infantil-primera-divisio-s13","name": "Infantil Primera Divisió S13","tier": 37, "category": "infantil-s13"},
 ]
 
-# Known groups per competition (discovered dynamically if not cached)
-# Most competitions have grup-1 through grup-N; some are single group.
+# ─── Competitions where referee data is scraped from actas ────────────────────
+# Adult: Primera Catalana and above.
+# Juvenil: Preferent and above.
+# Cadet/Infantil: Preferent and Divisió d'Honor only.
+REFEREE_COMPETITIONS = {
+    "tercera-federacio",
+    "lliga-elit",
+    "primera-catalana",
+    "segona-catalana",
+    # Juvenil
+    "divisio-honor-juvenil",
+    "lliga-nacional-juvenil",
+    "preferent-juvenil",
+    # Cadet S16
+    "divisio-honor-cadet-s16",
+    "preferent-cadet-s16",
+    # Cadet S15
+    "divisio-honor-cadet-s15",
+    "preferent-cadet-s15",
+    # Infantil S14
+    "divisio-honor-infantil-s14",
+    "preferent-infantil-s14",
+    # Infantil S13
+    "divisio-honor-infantil-s13",
+    "preferent-infantil-s13",
+}
+
+# ─── Known groups per competition ─────────────────────────────────────────────
+# DH / Lliga / Nacional competitions → single group (grup-unic).
+# Other competitions → multiple groups; scrapers skip gracefully if empty.
 KNOWN_GROUPS = {
-    "divisio-honor":      ["grup-unic"],
-    "superior-catalana":  ["grup-unic"],
-    "premier-catalana":   ["grup-unic"],
-    "preferent-catalana": ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5"],
-    "primera-catalana":   ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8"],
-    "segona-catalana":    ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8"],
-    "tercera-catalana":   ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8", "grup-9", "grup-10"],
-    "quarta-catalana":    ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8", "grup-9", "grup-10"],
-    "regional":           ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5"],
-    "superior-regional":  ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8"],
-    "primera-regional":   ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8", "grup-9", "grup-10"],
-    "segunda-regional":   ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8", "grup-9", "grup-10"],
-    "tercera-regional":   ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8", "grup-9", "grup-10"],
-    "quarta-regional":    ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8", "grup-9", "grup-10"],
+    # Adult
+    "tercera-federacio":           ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7"],
+    "lliga-elit":                  ["grup-unic"],
+    "primera-catalana":            ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8"],
+    "segona-catalana":             ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8"],
+    "tercera-catalana":            ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8", "grup-9", "grup-10"],
+    "quarta-catalana":             ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8", "grup-9", "grup-10"],
+    # Juvenil
+    "divisio-honor-juvenil":       ["grup-unic"],
+    "lliga-nacional-juvenil":      ["grup-unic"],
+    "preferent-juvenil":           ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6"],
+    "primera-divisio-juvenil":     ["grup-1", "grup-2"],
+    "segona-catalana-juvenil":     ["grup-1"],
+    "tercera-catalana-juvenil":    ["grup-1"],
+    # Cadet S16
+    "divisio-honor-cadet-s16":     ["grup-unic"],
+    "preferent-cadet-s16":         ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6"],
+    "cadet-primera-divisio-s16":   ["grup-1"],
+    "cadet-segona-divisio-s16":    ["grup-1"],
+    # Cadet S15
+    "divisio-honor-cadet-s15":     ["grup-unic"],
+    "preferent-cadet-s15":         ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5"],
+    "cadet-primera-divisio-s15":   ["grup-1"],
+    "cadet-segona-divisio-s15":    ["grup-1"],
+    # Infantil S14
+    "divisio-honor-infantil-s14":  ["grup-unic"],
+    "preferent-infantil-s14":      ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5"],
+    "primera-divisio-infantil-s14":["grup-1"],
+    # Infantil S13
+    "divisio-honor-infantil-s13":  ["grup-unic"],
+    "preferent-infantil-s13":      ["grup-1", "grup-2", "grup-3"],
+    "infantil-primera-divisio-s13":["grup-1"],
 }
 
 BASE = "https://www.fcf.cat"

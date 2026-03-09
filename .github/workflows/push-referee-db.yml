@@ -1,0 +1,47 @@
+name: 📤 Push Referee DB → Supabase
+
+# Manual trigger to push existing global_referees.json to Supabase.
+# Run this after the initial population or whenever you want to sync.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  push:
+    name: Push global_referees.json → Supabase
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Push to Supabase
+        env:
+          PYTHONIOENCODING: utf-8
+          SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          python -c "
+          import json
+          from pathlib import Path
+          from scraper.supabase_uploader import push_referee_matches
+          refs = json.loads(Path('data/global_referees.json').read_text(encoding='utf-8'))
+          print(f'Pushing {len(refs)} referee matches...')
+          n = push_referee_matches(refs)
+          print(f'Done: {n} rows pushed')
+          "
+
+      - name: Summary
+        if: always()
+        run: |
+          COUNT=$(python -c "import json; d=json.load(open('data/global_referees.json')); print(len(d))" 2>/dev/null || echo "?")
+          echo "## 📤 Referee DB Push" >> $GITHUB_STEP_SUMMARY
+          echo "Pushed **$COUNT** referee matches to Supabase." >> $GITHUB_STEP_SUMMARY

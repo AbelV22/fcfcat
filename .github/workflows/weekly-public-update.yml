@@ -4,10 +4,10 @@ name: 📅 Weekly Public Update — All FCF
 # Runs every Monday at 06:00 UTC (8:00 CET).
 # After the weekend all matches are played → fresh standings + results.
 #
-# What it does:
-#   1. Re-scrapes ALL competitions (standings + results + scorers) → Supabase
-#   2. Runs build_referee_db for primera + segona catalana → new actas
-#   3. Pushes updated global_referees.json to Supabase
+# Jobs:
+#   1. update-public-data  — scrapes ALL competitions → Supabase
+#   2. update-referee-db   — matrix: one job per referee competition
+#   3. push-referee-db     — pushes merged global_referees.json → Supabase
 #
 # Required GitHub Secrets:
 #   SUPABASE_URL          — https://xxxx.supabase.co
@@ -24,7 +24,7 @@ on:
   workflow_dispatch:
     inputs:
       update_referee_db:
-        description: 'Re-scrape referee DB (primera + segona catalana)?'
+        description: 'Re-scrape referee DB?'
         required: false
         default: 'true'
         type: choice
@@ -40,7 +40,7 @@ jobs:
   update-public-data:
     name: Update standings + results + scorers
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
 
     steps:
       - uses: actions/checkout@v4
@@ -51,7 +51,7 @@ jobs:
           cache: 'pip'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt supabase
+        run: pip install -r requirements.txt
 
       - name: Scrape all competitions → Supabase
         env:
@@ -59,8 +59,7 @@ jobs:
           SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: |
-          SEASON="${{ inputs.season || '2526' }}"
-          python -m scraper.build_public_db --season $SEASON
+          python -m scraper.build_public_db --season ${{ inputs.season || '2526' }}
 
       - name: Summary
         if: always()
@@ -68,12 +67,38 @@ jobs:
           echo "## 📅 Weekly Public Update — $(date -u '+%Y-%m-%d')" >> $GITHUB_STEP_SUMMARY
           echo "All FCF competitions updated in Supabase." >> $GITHUB_STEP_SUMMARY
 
-  # ── Job 2: Update referee DB (primera + segona) ───────────────────────────
+  # ── Job 2: Referee DB — one job per competition (matrix) ──────────────────
   update-referee-db:
-    name: Update referee DB
+    name: Referee DB — ${{ matrix.competition }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     if: ${{ inputs.update_referee_db != 'false' }}
+
+    strategy:
+      fail-fast: false   # Keep going even if one competition fails
+      matrix:
+        competition:
+          # Adult (Primera Catalana and above)
+          - primera-catalana
+          - segona-catalana
+          - lliga-elit
+          - tercera-federacio
+          # Juvenil (Preferent and above)
+          - divisio-honor-juvenil
+          - lliga-nacional-juvenil
+          - preferent-juvenil
+          # Cadet S16 (DH + Preferent)
+          - divisio-honor-cadet-s16
+          - preferent-cadet-s16
+          # Cadet S15 (DH + Preferent)
+          - divisio-honor-cadet-s15
+          - preferent-cadet-s15
+          # Infantil S14 (DH + Preferent)
+          - divisio-honor-infantil-s14
+          - preferent-infantil-s14
+          # Infantil S13 (DH + Preferent)
+          - divisio-honor-infantil-s13
+          - preferent-infantil-s13
 
     steps:
       - uses: actions/checkout@v4
@@ -86,27 +111,78 @@ jobs:
           cache: 'pip'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt supabase
+        run: pip install -r requirements.txt
 
-      - name: Update referee DB — primera-catalana
+      - name: Scrape referee actas — ${{ matrix.competition }}
         env:
           PYTHONIOENCODING: utf-8
         run: |
           python -m scraper.build_referee_db \
-            --competition primera-catalana \
+            --competition ${{ matrix.competition }} \
             --season ${{ inputs.season || '2526' }} \
             --rate-limit 1.5
 
-      - name: Update referee DB — segona-catalana
-        env:
-          PYTHONIOENCODING: utf-8
+      - name: Upload referee data artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: referees-${{ matrix.competition }}
+          path: data/global_referees.json
+          retention-days: 1
+
+  # ── Job 3: Merge + push global_referees.json → Supabase ──────────────────
+  push-referee-db:
+    name: Push referee DB → Supabase
+    runs-on: ubuntu-latest
+    needs: update-referee-db
+    if: ${{ inputs.update_referee_db != 'false' }}
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download all referee artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: referees-*
+          path: /tmp/referee-artifacts/
+          merge-multiple: false
+
+      - name: Merge all artifacts into global_referees.json
         run: |
-          python -m scraper.build_referee_db \
-            --competition segona-catalana \
-            --season ${{ inputs.season || '2526' }} \
-            --rate-limit 1.5
+          python - << 'EOF'
+          import json, os
+          from pathlib import Path
 
-      - name: Push updated global_referees.json → Supabase
+          base = Path("data/global_referees.json")
+          merged = json.loads(base.read_text(encoding="utf-8")) if base.exists() else {}
+          print(f"Base: {len(merged)} entries")
+
+          artifacts_dir = Path("/tmp/referee-artifacts")
+          for artifact_file in sorted(artifacts_dir.rglob("global_referees.json")):
+              try:
+                  data = json.loads(artifact_file.read_text(encoding="utf-8"))
+                  before = len(merged)
+                  merged.update(data)
+                  print(f"  {artifact_file.parent.name}: +{len(merged)-before} new entries")
+              except Exception as e:
+                  print(f"  WARN: {artifact_file}: {e}")
+
+          base.parent.mkdir(exist_ok=True)
+          base.write_text(json.dumps(merged, ensure_ascii=False, indent=2), encoding="utf-8")
+          print(f"Merged total: {len(merged)} entries")
+          EOF
+
+      - name: Push merged global_referees.json → Supabase
         env:
           PYTHONIOENCODING: utf-8
           SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
@@ -137,25 +213,18 @@ jobs:
           echo "## 🕵️ Referee DB Updated" >> $GITHUB_STEP_SUMMARY
           echo "Total matches in referee DB: **$COUNT**" >> $GITHUB_STEP_SUMMARY
 
-  # ── Job 3: Update registered teams (existing behaviour) ───────────────────
+  # ── Job 4: Reminder for registered teams ──────────────────────────────────
   update-registered-teams:
     name: Update registered teams
     runs-on: ubuntu-latest
     needs: update-public-data
-    timeout-minutes: 30
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check if there are registered teams
-        id: check
+      - name: Check registered teams count
         run: |
           COUNT=$(python -c "import json; r=json.load(open('data/teams_registry.json')); print(len(r.get('teams', [])))" 2>/dev/null || echo "0")
-          echo "count=$COUNT" >> $GITHUB_OUTPUT
           echo "Registered teams: $COUNT"
-
-      - name: Trigger daily scrape for registered teams
-        if: steps.check.outputs.count != '0'
-        run: |
-          echo "Registered teams will be updated by the daily scrape workflow."
-          echo "Run: workflow_dispatch on scrape-scheduled.yml if needed immediately."
+          echo "Registered teams are updated by the daily scrape workflow (scrape-scheduled.yml)."
