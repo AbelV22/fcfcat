@@ -53,6 +53,19 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Check Supabase connectivity
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        run: |
+          HOST=$(echo "$SUPABASE_URL" | sed 's|https://||' | sed 's|/.*||')
+          echo "Testing DNS for: $HOST"
+          if ! nslookup "$HOST" > /dev/null 2>&1; then
+            echo "ERROR: Cannot resolve $HOST — project may be PAUSED"
+            echo "Go to https://supabase.com/dashboard and click 'Resume'"
+            exit 1
+          fi
+          echo "DNS OK"
+
       - name: Scrape all competitions → Supabase
         env:
           PYTHONIOENCODING: utf-8

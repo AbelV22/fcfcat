@@ -10,6 +10,8 @@ Install: pip install supabase
 """
 import os
 import re
+import time
+import socket
 import unicodedata
 import logging
 from dataclasses import asdict
@@ -32,15 +34,41 @@ logger = logging.getLogger("fcf_uploader")
 
 _client: Client | None = None
 
+
+def _check_connectivity(url: str) -> None:
+    """Verify DNS + TCP reachability before attempting Supabase calls.
+    Raises RuntimeError with a clear message if the host can't be reached.
+    """
+    try:
+        from urllib.parse import urlparse
+        host = urlparse(url).hostname or url
+        socket.getaddrinfo(host, 443, proto=socket.IPPROTO_TCP)
+    except socket.gaierror as e:
+        raise RuntimeError(
+            f"\n\n{'='*60}\n"
+            f"  Cannot reach Supabase: {e}\n\n"
+            f"  Possible causes:\n"
+            f"  1. Project is PAUSED — go to https://supabase.com/dashboard\n"
+            f"     and click 'Resume' on your project.\n"
+            f"  2. SUPABASE_URL secret is wrong or has extra whitespace.\n"
+            f"     Expected format: https://xxxx.supabase.co\n"
+            f"  3. SQL migration not yet run — execute\n"
+            f"     supabase/migrations/001_initial.sql in the SQL Editor.\n"
+            f"{'='*60}\n"
+        ) from e
+
+
 def get_client() -> Client:
     global _client
     if _client is None:
-        url = os.environ.get("SUPABASE_URL", "")
-        key = os.environ.get("SUPABASE_SERVICE_KEY", "")
+        url = os.environ.get("SUPABASE_URL", "").strip()
+        key = os.environ.get("SUPABASE_SERVICE_KEY", "").strip()
         if not url or not key:
             raise EnvironmentError(
-                "SUPABASE_URL and SUPABASE_SERVICE_KEY must be set"
+                "SUPABASE_URL and SUPABASE_SERVICE_KEY must be set.\n"
+                "Add them as GitHub Secrets or in your local .env file."
             )
+        _check_connectivity(url)
         _client = create_client(url, key)
     return _client
 
@@ -55,15 +83,23 @@ def slugify(text: str) -> str:
 
 
 def _batch_upsert(table: str, rows: list[dict], chunk: int = 500) -> int:
-    """Upsert rows in chunks. Returns total upserted."""
+    """Upsert rows in chunks with retry on transient errors. Returns total upserted."""
     if not rows:
         return 0
     client = get_client()
     total = 0
     for i in range(0, len(rows), chunk):
         batch = rows[i : i + chunk]
-        client.table(table).upsert(batch, on_conflict="id").execute()
-        total += len(batch)
+        for attempt in range(3):
+            try:
+                client.table(table).upsert(batch, on_conflict="id").execute()
+                total += len(batch)
+                break
+            except Exception as e:
+                if attempt == 2:
+                    raise
+                logger.warning(f"Batch upsert attempt {attempt+1} failed: {e} — retrying in 5s")
+                time.sleep(5)
     return total
 
 

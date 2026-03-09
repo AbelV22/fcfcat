@@ -23,6 +23,24 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Check Supabase connectivity
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        run: |
+          HOST=$(echo "$SUPABASE_URL" | sed 's|https://||' | sed 's|/.*||')
+          echo "Testing DNS for: $HOST"
+          if ! nslookup "$HOST" > /dev/null 2>&1; then
+            echo ""
+            echo "ERROR: Cannot resolve $HOST"
+            echo ""
+            echo "Most likely causes:"
+            echo "  1. Supabase project is PAUSED — go to https://supabase.com/dashboard"
+            echo "     and click 'Resume' on your project, then re-run this workflow."
+            echo "  2. SUPABASE_URL secret is wrong or missing."
+            exit 1
+          fi
+          echo "DNS OK — Supabase host is reachable"
+
       - name: Push to Supabase
         env:
           PYTHONIOENCODING: utf-8
