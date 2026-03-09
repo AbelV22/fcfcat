@@ -243,20 +243,129 @@ export function slugify(text: string): string {
     .replace(/-+/g, '-')
 }
 
-/** Competition display names */
+/** Competition display names — slugs verified against fcf.cat */
 export const COMPETITION_NAMES: Record<string, string> = {
-  'divisio-honor': "Divisió d'Honor",
-  'superior-catalana': 'Superior Catalana',
-  'premier-catalana': 'Premier Catalana',
-  'preferent-catalana': 'Preferent Catalana',
-  'primera-catalana': 'Primera Catalana',
-  'segona-catalana': 'Segona Catalana',
-  'tercera-catalana': 'Tercera Catalana',
-  'quarta-catalana': 'Quarta Catalana',
-  'regional': 'Regional',
-  'superior-regional': 'Superior Regional',
-  'primera-regional': 'Primera Regional',
-  'segunda-regional': 'Segunda Regional',
-  'tercera-regional': 'Tercera Regional',
-  'quarta-regional': 'Quarta Regional',
+  // Adult
+  'tercera-federacio':           'Tercera Federació',
+  'lliga-elit':                  'Lliga Elit',
+  'primera-catalana':            'Primera Catalana',
+  'segona-catalana':             'Segona Catalana',
+  'tercera-catalana':            'Tercera Catalana',
+  'quarta-catalana':             'Quarta Catalana',
+  // Juvenil
+  'divisio-honor-juvenil':       "Divisió d'Honor Juvenil",
+  'lliga-nacional-juvenil':      'Lliga Nacional Juvenil',
+  'preferent-juvenil':           'Preferent Juvenil',
+  'primera-divisio-juvenil':     'Juvenil Primera Divisió',
+  'segona-catalana-juvenil':     'Juvenil Segona Divisió',
+  'tercera-catalana-juvenil':    'Juvenil Tercera Divisió',
+  // Cadet S16
+  'divisio-honor-cadet-s16':     "Divisió d'Honor Cadet S16",
+  'preferent-cadet-s16':         'Preferent Cadet S16',
+  'cadet-primera-divisio-s16':   'Cadet Primera Divisió S16',
+  'cadet-segona-divisio-s16':    'Cadet Segona Divisió S16',
+  // Cadet S15
+  'divisio-honor-cadet-s15':     "Divisió d'Honor Cadet S15",
+  'preferent-cadet-s15':         'Preferent Cadet S15',
+  'cadet-primera-divisio-s15':   'Cadet Primera Divisió S15',
+  'cadet-segona-divisio-s15':    'Cadet Segona Divisió S15',
+  // Infantil S14
+  'divisio-honor-infantil-s14':  "Divisió d'Honor Infantil S14",
+  'preferent-infantil-s14':      'Preferent Infantil S14',
+  'primera-divisio-infantil-s14':'Infantil Primera Divisió S14',
+  // Infantil S13
+  'divisio-honor-infantil-s13':  "Divisió d'Honor Infantil S13",
+  'preferent-infantil-s13':      'Preferent Infantil S13',
+  'infantil-primera-divisio-s13':'Infantil Primera Divisió S13',
+}
+
+/** Category labels */
+export const COMPETITION_CATEGORY: Record<string, string> = {
+  'tercera-federacio': 'adult', 'lliga-elit': 'adult',
+  'primera-catalana': 'adult', 'segona-catalana': 'adult',
+  'tercera-catalana': 'adult', 'quarta-catalana': 'adult',
+  'divisio-honor-juvenil': 'juvenil', 'lliga-nacional-juvenil': 'juvenil',
+  'preferent-juvenil': 'juvenil', 'primera-divisio-juvenil': 'juvenil',
+  'segona-catalana-juvenil': 'juvenil', 'tercera-catalana-juvenil': 'juvenil',
+  'divisio-honor-cadet-s16': 'cadet', 'preferent-cadet-s16': 'cadet',
+  'cadet-primera-divisio-s16': 'cadet', 'cadet-segona-divisio-s16': 'cadet',
+  'divisio-honor-cadet-s15': 'cadet', 'preferent-cadet-s15': 'cadet',
+  'cadet-primera-divisio-s15': 'cadet', 'cadet-segona-divisio-s15': 'cadet',
+  'divisio-honor-infantil-s14': 'infantil', 'preferent-infantil-s14': 'infantil',
+  'primera-divisio-infantil-s14': 'infantil',
+  'divisio-honor-infantil-s13': 'infantil', 'preferent-infantil-s13': 'infantil',
+  'infantil-primera-divisio-s13': 'infantil',
+}
+
+/** Get all matches for a competition from global_referees.json */
+export function getCompetitionMatches(slug: string) {
+  const refs = loadGlobalReferees()
+  return Object.values(refs)
+    .filter((m: any) => m.competition === slug)
+    .sort((a: any, b: any) => (b.date || '').localeCompare(a.date || ''))
+    .map((m: any) => ({
+      id: m.id,
+      date: m.date,
+      jornada: m.jornada,
+      group: m.group,
+      home_team: m.home_team,
+      away_team: m.away_team,
+      home_score: m.home_score,
+      away_score: m.away_score,
+      main_referee: Array.isArray(m.referees) ? m.referees[0] : null,
+      yellows: (m.yellow_cards || []).filter((c: any) => c.recipient_type === 'player').length,
+      reds: (m.red_cards || []).filter((c: any) => c.recipient_type === 'player').length,
+    }))
+}
+
+/** Get unique teams in a competition with basic stats */
+export function getCompetitionTeams(slug: string) {
+  const matches = getCompetitionMatches(slug)
+  const teams: Record<string, { name: string; slug: string; played: number; goals_for: number; goals_against: number }> = {}
+
+  for (const m of matches) {
+    if (m.home_score === null || m.away_score === null) continue
+    const hs = m.home_score as number
+    const as_ = m.away_score as number
+
+    if (!teams[m.home_team]) teams[m.home_team] = { name: m.home_team, slug: slugify(m.home_team), played: 0, goals_for: 0, goals_against: 0 }
+    if (!teams[m.away_team]) teams[m.away_team] = { name: m.away_team, slug: slugify(m.away_team), played: 0, goals_for: 0, goals_against: 0 }
+
+    teams[m.home_team].played++
+    teams[m.home_team].goals_for += hs
+    teams[m.home_team].goals_against += as_
+    teams[m.away_team].played++
+    teams[m.away_team].goals_for += as_
+    teams[m.away_team].goals_against += hs
+  }
+
+  return Object.values(teams).sort((a, b) => b.played - a.played)
+}
+
+/** Get a team page by slug — from team JSON files or derived from referee matches */
+export function getTeamBySlug(slug: string) {
+  // Try registered team file first
+  const teamData = loadTeamData(slug)
+  if (teamData) return { type: 'registered' as const, data: teamData }
+
+  // Try to find in global_referees
+  const refs = loadGlobalReferees()
+  const matches: any[] = []
+  for (const m of Object.values(refs) as any[]) {
+    const homeSlug = slugify(m.home_team || '')
+    const awaySlug = slugify(m.away_team || '')
+    if (homeSlug === slug || awaySlug === slug) matches.push(m)
+  }
+  if (matches.length === 0) return null
+
+  const sample = matches[0]
+  const teamName = slugify(sample.home_team) === slug ? sample.home_team : sample.away_team
+  return {
+    type: 'public' as const,
+    data: {
+      name: teamName,
+      competition: sample.competition,
+      matches: matches.sort((a, b) => (b.date || '').localeCompare(a.date || '')),
+    }
+  }
 }

@@ -6,12 +6,18 @@ import { Search, Menu, X, Trophy, LogIn, ChevronDown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 const competitions = [
+  { name: 'Lliga Elit', slug: 'lliga-elit' },
   { name: 'Primera Catalana', slug: 'primera-catalana' },
   { name: 'Segona Catalana', slug: 'segona-catalana' },
   { name: 'Tercera Catalana', slug: 'tercera-catalana' },
   { name: 'Quarta Catalana', slug: 'quarta-catalana' },
-  { name: 'Preferent Catalana', slug: 'preferent-catalana' },
-  { name: 'Divisió d\'Honor', slug: 'divisio-honor' },
+  { name: 'Tercera Federació', slug: 'tercera-federacio' },
+  { name: "Div. Honor Juvenil", slug: 'divisio-honor-juvenil' },
+  { name: 'Preferent Juvenil', slug: 'preferent-juvenil' },
+  { name: "Div. Honor Cadet S16", slug: 'divisio-honor-cadet-s16' },
+  { name: 'Preferent Cadet S16', slug: 'preferent-cadet-s16' },
+  { name: "Div. Honor Infantil S14", slug: 'divisio-honor-infantil-s14' },
+  { name: 'Preferent Infantil S14', slug: 'preferent-infantil-s14' },
 ]
 
 export default function PublicHeader() {
@@ -92,7 +98,7 @@ export default function PublicHeader() {
               />
             </form>
             <Link
-              href="/login"
+              href="/entrenador"
               className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 text-white text-sm font-medium rounded-xl transition-all shadow-lg shadow-green-900/30"
             >
               <LogIn size={14} />
@@ -123,22 +129,36 @@ export default function PublicHeader() {
               className="pl-9 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-green-500/50 w-full"
             />
           </form>
-          {['Competicions', 'Resultats', 'Jugadors', 'Àrbitres'].map(item => (
+          {[
+            { label: 'Resultats', href: '/resultats' },
+            { label: 'Jugadors', href: '/cerca?type=jugador' },
+            { label: 'Àrbitres', href: '/cerca?type=arbitre' },
+          ].map(item => (
             <Link
-              key={item}
-              href={`/${item.toLowerCase()}`}
+              key={item.label}
+              href={item.href}
               className="block py-2 text-slate-300 hover:text-white text-sm transition-colors"
               onClick={() => setMenuOpen(false)}
             >
-              {item}
+              {item.label}
+            </Link>
+          ))}
+          {competitions.map(c => (
+            <Link
+              key={c.slug}
+              href={`/competicio/${c.slug}`}
+              className="block py-1.5 pl-3 text-xs text-slate-400 hover:text-white transition-colors border-l border-white/10"
+              onClick={() => setMenuOpen(false)}
+            >
+              {c.name}
             </Link>
           ))}
           <Link
-            href="/login"
+            href="/entrenador"
             className="block mt-3 text-center py-2 bg-gradient-to-r from-green-600 to-cyan-600 text-white text-sm font-medium rounded-xl"
             onClick={() => setMenuOpen(false)}
           >
-            Per a entrenadors
+            Per a entrenadors — Gratis
           </Link>
         </div>
       )}
