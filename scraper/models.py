@@ -197,6 +197,7 @@ class RefereeMatchInfo:
     referees: list[str] = field(default_factory=list)
     yellow_cards: list[CardEvent] = field(default_factory=list)
     red_cards: list[CardEvent] = field(default_factory=list)
+    goals: list[GoalEvent] = field(default_factory=list)
 
     @classmethod
     def from_acta(cls, acta: MatchReport, comp: str, group: str, season: str) -> 'RefereeMatchInfo':
@@ -215,6 +216,7 @@ class RefereeMatchInfo:
             referees=acta.referees,
             yellow_cards=acta.yellow_cards,
             red_cards=acta.red_cards,
+            goals=acta.goals,
         )
 
 

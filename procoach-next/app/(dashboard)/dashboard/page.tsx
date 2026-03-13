@@ -20,7 +20,7 @@ export default async function DashboardPage() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center">
               <Trophy size={16} className="text-white" />
             </div>
-            <span className="font-bold text-white">FCFCat <span className="text-slate-400 font-normal text-sm">· Pro Dashboard</span></span>
+            <span className="font-bold text-white">FutLab <span className="text-slate-400 font-normal text-sm">· Pro Dashboard</span></span>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-sm text-slate-400 hidden sm:block">{user.email}</span>

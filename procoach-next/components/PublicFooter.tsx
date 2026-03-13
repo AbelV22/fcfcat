@@ -13,7 +13,7 @@ export default function PublicFooter() {
               <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center">
                 <Trophy size={14} className="text-white" />
               </div>
-              <span className="font-bold text-white">FCF<span className="text-green-400">Cat</span></span>
+              <span className="font-bold text-white">Fut<span className="text-green-400">Lab</span></span>
             </Link>
             <p className="text-xs text-slate-500 leading-relaxed">
               La plataforma de referència del futbol regional català. Dades extretes de FCF.cat.
@@ -77,7 +77,7 @@ export default function PublicFooter() {
 
         <div className="pt-8 border-t border-white/8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-slate-600">
-            © 2025 FCFCat · Dades no oficials extretes de fcf.cat
+            © 2025 FutLab · Dades no oficials extretes de fcf.cat
           </p>
           <p className="text-xs text-slate-600">
             Fet amb ❤️ per al futbol català

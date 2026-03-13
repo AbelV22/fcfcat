@@ -2,8 +2,9 @@
 Scraper for FCF sanctions (sancions).
 URL pattern: /sancions/{season}/futbol-11/{competition}/{group}
 
-Note: The sanctions page uses AJAX loading. We scrape the initial HTML
-which may contain the first jornada, and also try the AJAX endpoint.
+FCF renders this page with JavaScript in some browsers, but the initial
+server-rendered HTML contains the full table. We try multiple strategies
+to extract sanctions data.
 """
 import logging
 import re
@@ -13,81 +14,140 @@ from .models import Sanction
 
 logger = logging.getLogger("fcf_scraper")
 
+# Known FCF table class names (may vary by page/version)
+_TABLE_CLASSES = ["fcftable-block", "fcftable-e", "fcf-table", "sancions-table"]
+# Column header patterns that indicate a sanctions table
+_HEADER_KEYWORDS = ["sancionat", "sancion", "jugador", "club", "article", "jornades", "suspens"]
+
 
 def scrape_sanctions(client: FCFClient, url: str) -> list[Sanction]:
     """
     Scrape the sanctions table.
     Returns a list of Sanction objects.
-    """
-    soup = client.fetch_soup(url)
 
-    # The sanctions page uses fcftable-block class
-    table = soup.find("table", class_="fcftable-block")
+    Strategies (in order):
+    1. Known table CSS classes
+    2. Any table whose header row matches sanction keywords
+    3. Row-level heuristic on ALL table rows
+    4. Text-pattern fallback
+    """
+    try:
+        soup = client.fetch_soup(url)
+    except Exception as e:
+        logger.error(f"Failed to fetch sanctions page {url}: {e}")
+        return []
+
+    # ── Strategy 1: known CSS class ──────────────────────────────────────────
+    table = None
+    for cls in _TABLE_CLASSES:
+        table = soup.find("table", class_=cls)
+        if table:
+            logger.debug(f"Found sanctions table with class '{cls}'")
+            break
+
+    # ── Strategy 2: table whose first row looks like a sanctions header ───────
     if not table:
-        # Fallback: try any table with sanctions-like content
         for t in soup.find_all("table"):
-            text = t.get_text(" ", strip=True).lower()
-            if "sancion" in text or "sanció" in text or "article" in text:
+            first_row_text = ""
+            thead = t.find("thead")
+            if thead:
+                first_row_text = thead.get_text(" ", strip=True).lower()
+            else:
+                first_tr = t.find("tr")
+                if first_tr:
+                    first_row_text = first_tr.get_text(" ", strip=True).lower()
+            if any(kw in first_row_text for kw in _HEADER_KEYWORDS):
                 table = t
+                logger.debug("Found sanctions table by header keyword match")
                 break
 
+    # ── Strategy 3: any table with enough rows that look like sanctions ───────
+    if not table:
+        for t in soup.find_all("table"):
+            rows = t.find_all("tr")
+            # Look for rows that have an article number pattern (e.g. 334, 338.1)
+            matched = sum(
+                1 for r in rows
+                if re.search(r'\b3\d{2}[\w\.]*\b', r.get_text())
+            )
+            if matched >= 2:
+                table = t
+                logger.debug("Found sanctions table by article-number heuristic")
+                break
+
+    if table:
+        result = _parse_sanctions_table(table)
+        if result:
+            logger.info(f"Scraped {len(result)} sanctions from {url}")
+            return result
+
+    # ── Strategy 4: text-level fallback (page may be JS-rendered) ────────────
+    return _parse_sanctions_from_text(soup, url)
+
+
+def _parse_sanctions_table(table) -> list[Sanction]:
+    """Parse a BeautifulSoup table tag that contains sanctions rows."""
     sanctions: list[Sanction] = []
 
-    if not table:
-        logger.warning(f"No sanctions table found at {url}")
-        # Try to get data from the page text directly
-        return _parse_sanctions_from_page(soup)
-
+    # Skip the header row(s)
     rows = table.find_all("tr")
 
     for row in rows:
         cols = row.find_all("td")
-        if len(cols) < 4:
-            continue
+        if len(cols) < 3:
+            continue  # Skip header rows and too-short rows
 
         try:
-            # Column structure: shield, player_name, article, matches, reason, notes
-            # Find the team from the shield image
+            # ── Team (from shield image alt or first link) ─────────────────
             team = ""
             shield_img = row.find("img")
             if shield_img:
                 team = shield_img.get("alt", "").strip()
+            if not team:
+                # Try team link with /equip/ href
+                team_link = row.find("a", href=re.compile(r"/equip/"))
+                if team_link:
+                    team = team_link.get_text(strip=True)
 
-            # Player name
-            player_link = row.find("a")
-            player = player_link.get_text(strip=True) if player_link else ""
-            player_url = player_link.get("href", "") if player_link else ""
-
+            # ── Player name ────────────────────────────────────────────────
+            player = ""
+            player_url = ""
+            player_link = row.find("a", href=re.compile(r"/jugador/|/fitxa/"))
+            if player_link:
+                player = player_link.get_text(strip=True)
+                player_url = player_link.get("href", "")
             if not player:
-                # Try to find name in first text column
+                # First non-empty text td that is not a number
                 for col in cols:
                     text = col.get_text(strip=True)
-                    if text and not text.isdigit() and len(text) > 3:
+                    if text and not text.isdigit() and len(text) > 3 and not text.startswith("http"):
                         player = text
                         break
 
             if not player:
                 continue
 
-            # Article reference
+            # ── Parse remaining columns for article / matches / reason ─────
             article = ""
             matches_suspended = 0
             reason = ""
             notes = ""
 
-            for i, col in enumerate(cols):
-                text = col.get_text(strip=True)
-                # Article number patterns: 334, 338.1k, etc.
-                if re.match(r'^\d{3}', text):
+            col_texts = [c.get_text(strip=True) for c in cols]
+            for text in col_texts:
+                if not text:
+                    continue
+                # Article number: 3-digit number possibly followed by alphanumeric
+                if re.match(r'^3\d{2}[\w\.]*$', text):
                     article = text
-                # Match suspension count
-                elif text.isdigit() and int(text) <= 20:
+                # Suspension match count: 1-2 digit integer <= 20
+                elif re.match(r'^\d{1,2}$', text) and int(text) <= 20 and not matches_suspended:
                     matches_suspended = int(text)
-                # Long text = reason
-                elif len(text) > 20:
+                # Long descriptive text → reason or notes
+                elif len(text) > 20 and text != player and text != team:
                     if not reason:
                         reason = text
-                    else:
+                    elif not notes:
                         notes = text
 
             sanctions.append(Sanction(
@@ -100,22 +160,28 @@ def scrape_sanctions(client: FCFClient, url: str) -> list[Sanction]:
                 player_url=player_url,
             ))
 
-        except (ValueError, IndexError) as e:
-            logger.warning(f"Failed to parse sanction row: {e}")
+        except Exception as e:
+            logger.debug(f"Skipping sanction row: {e}")
             continue
 
-    logger.info(f"Scraped {len(sanctions)} sanctions")
     return sanctions
 
 
-def _parse_sanctions_from_page(soup) -> list[Sanction]:
-    """Fallback parser for when the table structure is different."""
-    sanctions = []
-    # Look for any structured data about sanctions
-    all_text = soup.get_text("\n", strip=True)
-    # Try to find sanction entries in the text
-    lines = all_text.split("\n")
-    for line in lines:
-        if re.search(r'art\.\s*\d{3}|article\s*\d{3}|sancion|sanció', line, re.IGNORECASE):
-            logger.debug(f"Potential sanction line: {line}")
-    return sanctions
+def _parse_sanctions_from_text(soup, url: str) -> list[Sanction]:
+    """
+    Last-resort fallback when the table is not found (likely JS-rendered).
+    Tries to detect any structured sanction data in the raw page text.
+    Returns empty list on failure — caller should note this is expected for
+    some FCF pages that use client-side rendering.
+    """
+    # Check if the page body has ANY sanction-related content at all
+    body_text = soup.get_text(" ", strip=True).lower()
+    has_content = any(kw in body_text for kw in ["sancionat", "article", "jornades", "suspensió"])
+    if not has_content:
+        logger.info(f"Sanctions page appears empty or JS-only: {url}")
+    else:
+        logger.warning(
+            f"Sanctions page has content but table not parseable "
+            f"(may require JavaScript rendering): {url}"
+        )
+    return []

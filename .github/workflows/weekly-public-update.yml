@@ -1,15 +1,21 @@
-name: 📅 Weekly Public Update — All FCF
+name: 📅 FCF Weekly Pipeline — Self-Maintaining
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Runs every Monday at 06:00 UTC (8:00 CET).
-# After the weekend all matches are played → fresh standings + results.
+# Full self-maintaining pipeline for FCF data.
+#
+# Runs twice per week:
+#   Monday   08:00 UTC → captures weekend match results + new actas
+#   Wednesday 09:00 UTC → captures referee designations (published Tue/Wed)
 #
 # Jobs:
-#   1. update-public-data  — scrapes ALL competitions → Supabase
-#   2. update-referee-db   — matrix: one job per referee competition
-#   3. push-referee-db     — pushes merged global_referees.json → Supabase
+#   1. update-teams       — weekly_update.py: incremental acta scrape + next_match
+#   2. update-referee-db  — matrix: one job per competition, builds global_referees.json
+#   3. merge-push-commit  — merges all artifacts, rebuilds goals, pushes Supabase, commits
 #
-# Required GitHub Secrets:
+# The SQLite DB (data/fcf.db) is committed back to the repo so each run
+# only downloads NEW actas (not the full history again).
+#
+# Required secrets:
 #   SUPABASE_URL          — https://xxxx.supabase.co
 #   SUPABASE_SERVICE_KEY  — service_role key
 # ─────────────────────────────────────────────────────────────────────────────
@@ -19,99 +25,36 @@ permissions:
 
 on:
   schedule:
-    - cron: '0 6 * * 1'   # Every Monday at 06:00 UTC
-
+    - cron: '0 8 * * 1'   # Monday    08:00 UTC — weekend results are published
+    - cron: '0 9 * * 3'   # Wednesday 09:00 UTC — referee designations are published
   workflow_dispatch:
     inputs:
-      update_referee_db:
-        description: 'Re-scrape referee DB?'
-        required: false
-        default: 'true'
-        type: choice
-        options: ['true', 'false']
-      season:
-        description: 'Season code'
-        required: false
-        default: '2526'
+      skip_groups:
+        description: 'Skip group-level Phase 1 (only update next_match + referee designations)'
+        type: boolean
+        default: false
+      skip_referee_db:
+        description: 'Skip referee DB rebuild'
+        type: boolean
+        default: false
+      force_full:
+        description: 'Force full rescrape of all actas (ignores DB cache)'
+        type: boolean
+        default: false
+
+env:
+  PYTHONIOENCODING: utf-8
+
 
 jobs:
 
-  # ── Job 1: Update public standings + results ──────────────────────────────
-  update-public-data:
-    name: Update standings + results + scorers
+  # ── Job 1: Update all team JSON files (incremental via SQLite DB) ──────────
+  update-teams:
+    name: Update team data (weekly_update.py)
     runs-on: ubuntu-latest
-    timeout-minutes: 90
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: 'pip'
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Check Supabase connectivity
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-        run: |
-          HOST=$(echo "$SUPABASE_URL" | sed 's|https://||' | sed 's|/.*||')
-          echo "Testing DNS for: $HOST"
-          if ! nslookup "$HOST" > /dev/null 2>&1; then
-            echo "ERROR: Cannot resolve $HOST — project may be PAUSED"
-            echo "Go to https://supabase.com/dashboard and click 'Resume'"
-            exit 1
-          fi
-          echo "DNS OK"
-
-      - name: Scrape all competitions → Supabase
-        env:
-          PYTHONIOENCODING: utf-8
-          SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        run: |
-          python -m scraper.build_public_db --season ${{ inputs.season || '2526' }}
-
-      - name: Summary
-        if: always()
-        run: |
-          echo "## 📅 Weekly Public Update — $(date -u '+%Y-%m-%d')" >> $GITHUB_STEP_SUMMARY
-          echo "All FCF competitions updated in Supabase." >> $GITHUB_STEP_SUMMARY
-
-  # ── Job 2: Referee DB — one job per competition (matrix) ──────────────────
-  update-referee-db:
-    name: Referee DB — ${{ matrix.competition }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    if: ${{ inputs.update_referee_db != 'false' }}
-
-    strategy:
-      fail-fast: false   # Keep going even if one competition fails
-      matrix:
-        competition:
-          # Adult (Primera Catalana and above)
-          - primera-catalana
-          - segona-catalana
-          - lliga-elit
-          - tercera-federacio
-          # Juvenil (Preferent and above)
-          - divisio-honor-juvenil
-          - lliga-nacional-juvenil
-          - preferent-juvenil
-          # Cadet S16 (DH + Preferent)
-          - divisio-honor-cadet-s16
-          - preferent-cadet-s16
-          # Cadet S15 (DH + Preferent)
-          - divisio-honor-cadet-s15
-          - preferent-cadet-s15
-          # Infantil S14 (DH + Preferent)
-          - divisio-honor-infantil-s14
-          - preferent-infantil-s14
-          # Infantil S13 (DH + Preferent)
-          - divisio-honor-infantil-s13
-          - preferent-infantil-s13
+    # First cold-start run may take up to 3h (scrapes all historical actas).
+    # Once data/fcf.db is committed, subsequent runs take ~15-30 min.
+    timeout-minutes: 180
 
     steps:
       - uses: actions/checkout@v4
@@ -126,13 +69,93 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Determine update mode
+        id: mode
+        run: |
+          # Wednesday OR manual skip_groups → skip Phase 1 (fast: just standings + referee)
+          DOW=$(date +%u)
+          SKIP_GROUPS="${{ inputs.skip_groups || 'false' }}"
+          if [ "$DOW" = "3" ] || [ "$SKIP_GROUPS" = "true" ]; then
+            echo "skip_groups=true" >> $GITHUB_OUTPUT
+            echo "Mode: FAST (skip group rescrape — Wednesday or manual)"
+          else
+            echo "skip_groups=false" >> $GITHUB_OUTPUT
+            echo "Mode: FULL (Monday — new actas + standings + referee)"
+          fi
+
+      - name: Run weekly update
+        run: |
+          CMD="python weekly_update.py --all"
+          if [ "${{ steps.mode.outputs.skip_groups }}" = "true" ]; then
+            CMD="$CMD --skip-groups"
+          fi
+          if [ "${{ inputs.force_full || 'false' }}" = "true" ]; then
+            CMD="$CMD"   # --all already forces all teams; scraper handles full re-scrape
+            echo "Note: force_full set — DB will be rebuilt from scratch"
+          fi
+          echo "Running: $CMD"
+          eval $CMD
+
+      - name: Upload teams + DB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: teams-and-db
+          path: |
+            data/teams/
+            data/fcf.db
+          if-no-files-found: warn
+          retention-days: 1
+
+
+  # ── Job 2: Rebuild referee DB — one job per competition (parallel) ─────────
+  update-referee-db:
+    name: Referee DB — ${{ matrix.competition }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    if: ${{ inputs.skip_referee_db != true }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        competition:
+          # Adult
+          - primera-catalana
+          - segona-catalana
+          - lliga-elit
+          - tercera-federacio
+          # Juvenil
+          - divisio-honor-juvenil
+          - lliga-nacional-juvenil
+          - preferent-juvenil
+          # Cadet S16
+          - divisio-honor-cadet-s16
+          - preferent-cadet-s16
+          # Cadet S15
+          - divisio-honor-cadet-s15
+          - preferent-cadet-s15
+          # Infantil S14
+          - divisio-honor-infantil-s14
+          - preferent-infantil-s14
+          # Infantil S13
+          - divisio-honor-infantil-s13
+          - preferent-infantil-s13
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
       - name: Scrape referee actas — ${{ matrix.competition }}
-        env:
-          PYTHONIOENCODING: utf-8
         run: |
           python -m scraper.build_referee_db \
             --competition ${{ matrix.competition }} \
-            --season ${{ inputs.season || '2526' }} \
+            --season 2526 \
             --rate-limit 1.5
 
       - name: Upload referee data artifact
@@ -142,12 +165,13 @@ jobs:
           path: data/global_referees.json
           retention-days: 1
 
-  # ── Job 3: Merge + push global_referees.json → Supabase ──────────────────
-  push-referee-db:
-    name: Push referee DB → Supabase
+
+  # ── Job 3: Merge all data + rebuild goals + push Supabase + commit ─────────
+  merge-push-commit:
+    name: Merge + rebuild goals + push + commit
     runs-on: ubuntu-latest
-    needs: update-referee-db
-    if: ${{ inputs.update_referee_db != 'false' }}
+    needs: [update-teams, update-referee-db]
+    if: always() && !cancelled()
     timeout-minutes: 30
 
     steps:
@@ -163,17 +187,45 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      # ── Apply team JSON + DB updates ──────────────────────────────────────
+      - name: Download teams + DB artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: teams-and-db
+          path: /tmp/teams-artifact/
+        continue-on-error: true
+
+      - name: Apply teams + DB to workspace
+        run: |
+          mkdir -p data/teams
+
+          if [ -d /tmp/teams-artifact/data/teams ]; then
+            cp -r /tmp/teams-artifact/data/teams/. data/teams/
+            echo "✓ Copied $(ls data/teams/*.json 2>/dev/null | wc -l) team JSON files"
+          else
+            echo "⚠ No teams artifact found (update-teams may have failed)"
+          fi
+
+          if [ -f /tmp/teams-artifact/data/fcf.db ]; then
+            cp /tmp/teams-artifact/data/fcf.db data/fcf.db
+            echo "✓ Copied fcf.db ($(du -sh data/fcf.db | cut -f1))"
+          else
+            echo "⚠ No fcf.db artifact found"
+          fi
+
+      # ── Merge all referee artifacts ───────────────────────────────────────
       - name: Download all referee artifacts
         uses: actions/download-artifact@v4
         with:
           pattern: referees-*
           path: /tmp/referee-artifacts/
           merge-multiple: false
+        continue-on-error: true
 
-      - name: Merge all artifacts into global_referees.json
+      - name: Merge referee artifacts into global_referees.json
         run: |
           python - << 'EOF'
-          import json, os
+          import json
           from pathlib import Path
 
           base = Path("data/global_referees.json")
@@ -181,26 +233,46 @@ jobs:
           print(f"Base: {len(merged)} entries")
 
           artifacts_dir = Path("/tmp/referee-artifacts")
-          for artifact_file in sorted(artifacts_dir.rglob("global_referees.json")):
-              try:
-                  data = json.loads(artifact_file.read_text(encoding="utf-8"))
-                  before = len(merged)
-                  merged.update(data)
-                  print(f"  {artifact_file.parent.name}: +{len(merged)-before} new entries")
-              except Exception as e:
-                  print(f"  WARN: {artifact_file}: {e}")
+          if artifacts_dir.exists():
+              for artifact_file in sorted(artifacts_dir.rglob("global_referees.json")):
+                  try:
+                      data = json.loads(artifact_file.read_text(encoding="utf-8"))
+                      before = len(merged)
+                      merged.update(data)
+                      added = len(merged) - before
+                      print(f"  {artifact_file.parent.name}: +{added} new ({len(data)} total)")
+                  except Exception as e:
+                      print(f"  WARN {artifact_file}: {e}")
+          else:
+              print("No referee artifacts directory found")
 
           base.parent.mkdir(exist_ok=True)
           base.write_text(json.dumps(merged, ensure_ascii=False, indent=2), encoding="utf-8")
           print(f"Merged total: {len(merged)} entries")
           EOF
 
-      - name: Push merged global_referees.json → Supabase
+      # ── Rebuild goals in global_referees.json from team JSON actas ────────
+      - name: Rebuild goals in global_referees.json
+        run: python rebuild_goals.py --full
+
+      # ── Push public data to Supabase ──────────────────────────────────────
+      - name: Push standings + results + scorers to Supabase
+        if: ${{ env.SUPABASE_URL != '' && env.SUPABASE_SERVICE_KEY != '' }}
         env:
-          PYTHONIOENCODING: utf-8
           SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: |
+          pip install supabase -q
+          python -m scraper.build_public_db --season 2526
+        continue-on-error: true
+
+      - name: Push referee DB to Supabase
+        if: ${{ env.SUPABASE_URL != '' && env.SUPABASE_SERVICE_KEY != '' }}
+        env:
+          SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          pip install supabase -q
           python -c "
           import json
           from pathlib import Path
@@ -209,35 +281,41 @@ jobs:
           n = push_referee_matches(refs)
           print(f'Pushed {n} referee matches to Supabase')
           "
+        continue-on-error: true
 
-      - name: Commit updated global_referees.json
+      # ── Commit everything back to the repo ────────────────────────────────
+      - name: Commit all updated data
         run: |
           git config user.name  "FCF Bot"
           git config user.email "bot@fcfcat.github.io"
-          git add data/global_referees.json
-          git diff --staged --quiet && echo "No changes to referees" || \
-            git commit -m "data: weekly referee DB update $(date -u '+%Y-%m-%d')" && \
-            git push origin HEAD
 
-      - name: Referee summary
+          # Stage team files, referee DB, and SQLite DB
+          git add data/teams/
+          git add data/global_referees.json
+          # Track fcf.db (enables fast incremental updates on next run)
+          git add data/fcf.db 2>/dev/null || true
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit — data is already up to date"
+          else
+            RUN_TYPE=$([ "$(date +%u)" = "3" ] && echo "Wednesday (referee designations)" || echo "Monday (match results)")
+            git commit -m "data: auto-update $(date -u '+%Y-%m-%d %H:%M') UTC — $RUN_TYPE"
+            git push origin HEAD
+            echo "✓ Committed and pushed updated data"
+          fi
+
+      # ── Summary ───────────────────────────────────────────────────────────
+      - name: Job summary
         if: always()
         run: |
-          COUNT=$(python -c "import json; d=json.load(open('data/global_referees.json')); print(len(d))" 2>/dev/null || echo "?")
-          echo "## 🕵️ Referee DB Updated" >> $GITHUB_STEP_SUMMARY
-          echo "Total matches in referee DB: **$COUNT**" >> $GITHUB_STEP_SUMMARY
-
-  # ── Job 4: Reminder for registered teams ──────────────────────────────────
-  update-registered-teams:
-    name: Update registered teams
-    runs-on: ubuntu-latest
-    needs: update-public-data
-    timeout-minutes: 10
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Check registered teams count
-        run: |
-          COUNT=$(python -c "import json; r=json.load(open('data/teams_registry.json')); print(len(r.get('teams', [])))" 2>/dev/null || echo "0")
-          echo "Registered teams: $COUNT"
-          echo "Registered teams are updated by the daily scrape workflow (scrape-scheduled.yml)."
+          TEAMS=$(ls data/teams/*.json 2>/dev/null | wc -l)
+          REFS=$(python -c "import json; print(len(json.load(open('data/global_referees.json'))))" 2>/dev/null || echo "?")
+          DB_SIZE=$(du -sh data/fcf.db 2>/dev/null | cut -f1 || echo "N/A")
+          echo "## 📅 FCF Weekly Update — $(date -u '+%Y-%m-%d')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Team JSON files | $TEAMS |" >> $GITHUB_STEP_SUMMARY
+          echo "| Referee DB entries | $REFS |" >> $GITHUB_STEP_SUMMARY
+          echo "| SQLite DB size | $DB_SIZE |" >> $GITHUB_STEP_SUMMARY
+          echo "| Run type | $([ \"$(date +%u)\" = \"3\" ] && echo 'Wednesday (referee designations)' || echo 'Monday (match results)') |" >> $GITHUB_STEP_SUMMARY

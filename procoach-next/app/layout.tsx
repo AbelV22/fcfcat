@@ -3,17 +3,17 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "FCFCat — Futbol Català en Temps Real",
-    template: "%s | FCFCat",
+    default: "FutLab — Intel·ligència per a Entrenadors de Futbol Català",
+    template: "%s | FutLab",
   },
   description:
-    "La plataforma de referència del futbol regional català. Classificacions, resultats, perfils de jugadors, estadístiques d'àrbitres i molt més. Tota la FCF en un sol lloc.",
+    "La plataforma de referència del futbol regional català. Informes d'equip, anàlisi de rivals, apercibits, timing de gols i molt més. Dades oficials FCF.",
   keywords: [
     "futbol català", "FCF", "classificació", "resultats", "primera catalana",
-    "segona catalana", "tercera catalana", "jugadors", "àrbitres", "scouting",
+    "segona catalana", "tercera catalana", "jugadors", "àrbitres", "entrenadors", "scouting",
   ],
   openGraph: {
-    siteName: "FCFCat",
+    siteName: "FutLab",
     locale: "ca_ES",
     type: "website",
   },

@@ -134,7 +134,7 @@ export default function EntrenadorPage() {
                 Mentrestant, explora la plataforma.
               </p>
               <Link href="/" className="inline-flex items-center gap-2 mt-6 text-green-400 hover:text-green-300 transition-colors">
-                Explorar FCFCat <ChevronRight size={16} />
+                Explorar FutLab <ChevronRight size={16} />
               </Link>
             </div>
           ) : (
@@ -207,7 +207,7 @@ export default function EntrenadorPage() {
       </div>
 
       <footer className="border-t border-white/5 mt-8 py-8 text-center text-sm text-slate-600">
-        <p>FCFCat · Estadístiques del futbol català · Temporada 2025/26</p>
+        <p>FutLab · Estadístiques del futbol català · Temporada 2025/26</p>
       </footer>
     </div>
   )

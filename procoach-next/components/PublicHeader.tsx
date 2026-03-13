@@ -44,8 +44,8 @@ export default function PublicHeader() {
               <Trophy size={16} className="text-white" />
             </div>
             <span className="font-bold text-lg tracking-tight">
-              <span className="text-white">FCF</span>
-              <span className="text-green-400">Cat</span>
+              <span className="text-white">Fut</span>
+              <span className="text-green-400">Lab</span>
             </span>
           </Link>
 

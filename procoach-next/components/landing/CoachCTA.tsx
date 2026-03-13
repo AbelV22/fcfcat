@@ -48,12 +48,12 @@ export default function CoachCTA() {
 
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link
-                  href="/registre"
+                  href="/entrenador"
                   className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-cyan-600
                              hover:from-green-500 hover:to-cyan-500 text-white font-semibold rounded-xl transition-all
                              shadow-lg shadow-green-900/30"
                 >
-                  Crea el teu compte gratuït
+                  Afegeix el teu equip — Gratis
                   <ArrowRight size={16} />
                 </Link>
                 <Link
@@ -61,7 +61,7 @@ export default function CoachCTA() {
                   className="flex items-center justify-center gap-2 px-6 py-3 border border-white/15
                              hover:bg-white/5 text-slate-300 hover:text-white font-medium rounded-xl transition-all"
                 >
-                  Inicia sessió
+                  Accés entrenadors
                 </Link>
               </div>
             </div>
