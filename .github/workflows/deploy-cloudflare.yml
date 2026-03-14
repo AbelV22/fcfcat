@@ -1,0 +1,68 @@
+name: 🚀 Deploy to Cloudflare Pages
+
+# Deploys the Next.js frontend to Cloudflare Pages.
+#
+# Triggers:
+#   - Push to master (manual code changes)
+#   - After the weekly data pipeline completes (auto-redeploy with fresh data)
+#
+# Required GitHub secrets:
+#   CLOUDFLARE_API_TOKEN      — Cloudflare API token with Pages:Edit permission
+#   CLOUDFLARE_ACCOUNT_ID     — Your Cloudflare account ID
+#   NEXT_PUBLIC_SUPABASE_URL  — Supabase project URL
+#   NEXT_PUBLIC_SUPABASE_ANON_KEY — Supabase anon (public) key
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'procoach-next/**'
+      - '.github/workflows/deploy-cloudflare.yml'
+  workflow_run:
+    workflows: ["📅 FCF Weekly Pipeline — Self-Maintaining"]
+    types: [completed]
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    # Only deploy if the triggering workflow succeeded (or it's a direct push/manual)
+    if: >
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: procoach-next/package-lock.json
+
+      - name: Install dependencies
+        working-directory: procoach-next
+        run: npm ci
+
+      - name: Build Next.js
+        working-directory: procoach-next
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          # Silence Next.js telemetry in CI
+          NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Transform for Cloudflare Pages
+        working-directory: procoach-next
+        run: npx @cloudflare/next-on-pages@1
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: procoach-next
+          command: pages deploy .vercel/output/static --project-name=neoscout --commit-dirty=true

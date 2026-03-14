@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import PublicHeader from '@/components/PublicHeader'
 import PublicFooter from '@/components/PublicFooter'
-import { COMPETITION_NAMES, slugify } from '@/lib/data'
+import { COMPETITION_NAMES, slugify, getAllTeams } from '@/lib/data'
 import { buildTeamReport, type TeamReport, type RivalReport, type PlayerStat, type GoalBucket, type MatchResult, type StandingRow, type Sanction } from '@/lib/team-report'
 import { RivalScoutCard } from '@/components/RivalScoutCard'
 import {
@@ -11,12 +11,16 @@ import {
   ArrowRight, Crosshair, Ban,
 } from 'lucide-react'
 
+export async function generateStaticParams() {
+  return getAllTeams().map(t => ({ slug: t.slug }))
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const report = buildTeamReport(slug)
-  if (!report) return { title: 'Equip | FutLab' }
+  if (!report) return { title: 'Equip | NeoScout' }
   return {
-    title: `${report.name} — Informe de l'equip | FutLab`,
+    title: `${report.name} — Informe de l'equip | NeoScout`,
     description: `Estadístiques, plantilla, propers rivals i anàlisi complet de ${report.name}. Futbol català temporada 2025/26.`,
   }
 }
@@ -339,66 +343,68 @@ function SanctionsCard({ sanctions }: { sanctions: Sanction[] }) {
 
 function SquadTable({ players }: { players: PlayerStat[] }) {
   return (
-    <div className="bg-white/4 border border-white/8 rounded-2xl p-5">
+    <div className="bg-white/4 border border-white/8 rounded-2xl p-4 sm:p-5">
       <div className="flex items-center gap-2 mb-4">
         <Users size={16} className="text-purple-400" />
         <h3 className="font-bold text-white text-sm">Plantilla — {players.length} jugadors</h3>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-white/8 text-slate-500 text-[11px] uppercase tracking-wider">
-              <th className="text-left pb-2.5 font-medium">Jugador</th>
-              <th className="text-center pb-2.5 font-medium w-10">PJ</th>
-              <th className="text-center pb-2.5 font-medium w-10">⚽</th>
-              <th className="text-center pb-2.5 font-medium w-10">🟨</th>
-              <th className="text-center pb-2.5 font-medium w-10">🟥</th>
-              <th className="text-center pb-2.5 font-medium w-16 hidden sm:table-cell">Min</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5">
-            {players.slice(0, 25).map((p, i) => (
-              <tr
-                key={i}
-                className={`transition-colors ${p.risk ? 'bg-amber-900/8 hover:bg-amber-900/15' : 'hover:bg-white/3'}`}
-              >
-                <td className="py-2.5 pr-3">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-slate-200 text-sm">{p.name}</span>
-                    {p.risk && (
-                      <span className="text-[10px] px-1.5 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/25 rounded-full font-semibold shrink-0">
-                        APERCIBUT
-                      </span>
-                    )}
-                  </div>
-                </td>
-                <td className="py-2.5 text-center text-slate-400 text-xs">
-                  {p.appearances > 0 ? p.appearances : <span className="text-slate-600">–</span>}
-                </td>
-                <td className="py-2.5 text-center">
-                  {p.goals > 0 ? <span className="text-green-400 font-bold text-xs">{p.goals}</span> : <span className="text-slate-600 text-xs">–</span>}
-                </td>
-                <td className="py-2.5 text-center">
-                  {p.yellow_cards > 0 ? (
-                    <span className={`font-bold text-xs ${p.yellow_cards >= 4 && p.yellow_cards % 4 === 0 ? 'text-amber-400' : 'text-slate-400'}`}>{p.yellow_cards}</span>
-                  ) : <span className="text-slate-600 text-xs">–</span>}
-                </td>
-                <td className="py-2.5 text-center">
-                  {p.red_cards > 0 ? <span className="text-red-400 font-bold text-xs">{p.red_cards}</span> : <span className="text-slate-600 text-xs">–</span>}
-                </td>
-                <td className="py-2.5 text-center text-slate-500 text-xs hidden sm:table-cell">
-                  {p.minutes_played > 0 ? `${p.minutes_played}'` : '–'}
-                </td>
+      <div className="overflow-x-auto -mx-4 sm:mx-0">
+        <div className="min-w-[340px] px-4 sm:px-0">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-white/8 text-slate-500 text-[11px] uppercase tracking-wider">
+                <th className="text-left pb-2.5 font-medium">Jugador</th>
+                <th className="text-center pb-2.5 font-medium w-10">PJ</th>
+                <th className="text-center pb-2.5 font-medium w-10">⚽</th>
+                <th className="text-center pb-2.5 font-medium w-10">🟨</th>
+                <th className="text-center pb-2.5 font-medium w-10">🟥</th>
+                <th className="text-center pb-2.5 font-medium w-16 hidden sm:table-cell">Min</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {players.slice(0, 25).map((p, i) => (
+                <tr
+                  key={i}
+                  className={`transition-colors ${p.risk ? 'bg-amber-900/8 hover:bg-amber-900/15' : 'hover:bg-white/3'}`}
+                >
+                  <td className="py-3 pr-3">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-slate-200 text-sm">{p.name}</span>
+                      {p.risk && (
+                        <span className="text-[9px] px-1.5 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/25 rounded-full font-semibold shrink-0 whitespace-nowrap">
+                          ⚠️ RISC
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="py-3 text-center text-slate-400 text-xs">
+                    {p.appearances > 0 ? p.appearances : <span className="text-slate-600">–</span>}
+                  </td>
+                  <td className="py-3 text-center">
+                    {p.goals > 0 ? <span className="text-green-400 font-bold text-xs">{p.goals}</span> : <span className="text-slate-600 text-xs">–</span>}
+                  </td>
+                  <td className="py-3 text-center">
+                    {p.yellow_cards > 0 ? (
+                      <span className={`font-bold text-xs ${p.yellow_cards >= 4 && p.yellow_cards % 4 === 0 ? 'text-amber-400' : 'text-slate-400'}`}>{p.yellow_cards}</span>
+                    ) : <span className="text-slate-600 text-xs">–</span>}
+                  </td>
+                  <td className="py-3 text-center">
+                    {p.red_cards > 0 ? <span className="text-red-400 font-bold text-xs">{p.red_cards}</span> : <span className="text-slate-600 text-xs">–</span>}
+                  </td>
+                  <td className="py-3 text-center text-slate-500 text-xs hidden sm:table-cell">
+                    {p.minutes_played > 0 ? `${p.minutes_played}'` : '–'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
       {players.some(p => p.risk) && (
-        <div className="mt-4 pt-3 border-t border-white/5 flex items-center gap-2">
-          <AlertTriangle size={12} className="text-amber-400" />
+        <div className="mt-4 pt-3 border-t border-white/5 flex items-start gap-2">
+          <AlertTriangle size={12} className="text-amber-400 shrink-0 mt-0.5" />
           <p className="text-xs text-amber-400/80">
-            <strong>APERCIBUT</strong>: jugador amb exactament 4, 8 o 12 grogues. La propera groga implica 1 partit de suspensió.
+            <strong>⚠️ RISC</strong>: jugador amb 4, 8 o 12 grogues. La propera groga implica 1 partit de suspensió.
           </p>
         </div>
       )}
@@ -408,28 +414,28 @@ function SquadTable({ players }: { players: PlayerStat[] }) {
 
 function RecentMatches({ form }: { form: MatchResult[] }) {
   return (
-    <div className="bg-white/4 border border-white/8 rounded-2xl p-5">
+    <div className="bg-white/4 border border-white/8 rounded-2xl p-4 sm:p-5">
       <div className="flex items-center gap-2 mb-4">
         <Calendar size={16} className="text-green-400" />
         <h3 className="font-bold text-white text-sm">Partits recents</h3>
       </div>
-      <div className="space-y-1.5">
+      <div className="space-y-1">
         {form.map((m, i) => (
-          <div key={i} className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/4 transition-colors">
+          <div key={i} className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-2.5 rounded-xl hover:bg-white/4 transition-colors">
             <FormDot result={m.result} />
-            <div className="flex-1 grid grid-cols-[1fr_auto_1fr] items-center gap-2 min-w-0">
-              <span className="text-xs text-slate-400 text-right truncate">{m.isHome ? 'LOCAL' : 'VISIT'}</span>
-              <div className="flex flex-col items-center">
-                <ScoreBadge gf={m.goalsFor} ga={m.goalsAgainst} />
-              </div>
+            <div className="flex-1 grid grid-cols-[auto_auto_1fr] sm:grid-cols-[1fr_auto_1fr] items-center gap-1.5 sm:gap-2 min-w-0">
+              <span className="text-[10px] sm:text-xs text-slate-500 text-right">
+                {m.isHome ? 'LOC' : 'VIS'}
+              </span>
+              <ScoreBadge gf={m.goalsFor} ga={m.goalsAgainst} />
               <Link
                 href={`/equip/${m.opponentSlug}`}
                 className="text-xs text-slate-300 hover:text-white truncate transition-colors"
               >
-                vs {m.opponent}
+                {m.opponent}
               </Link>
             </div>
-            <span className="text-[10px] text-slate-600 shrink-0 hidden sm:block">{formatDate(m.date)}</span>
+            <span className="text-[10px] text-slate-600 shrink-0">{formatDate(m.date)}</span>
             {m.referee && (
               <Link
                 href={`/arbitre/${slugify(m.referee)}`}
@@ -477,9 +483,29 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
   const topScorers = [...report.players].sort((a, b) => b.goals - a.goals).filter(p => p.goals > 0).slice(0, 5)
   const activeSanctions = report.sanctions.filter(s => s.matches_suspended > 0)
 
+  // Priority competitions with full, up-to-date data
+  const PRIORITY_COMPETITIONS = new Set([
+    'segona-catalana', 'tercera-catalana',
+    'preferent-juvenils', 'juvenil-primera-divisio',
+  ])
+  const isPriority = PRIORITY_COMPETITIONS.has(report.competition)
+
   return (
     <div className="min-h-screen bg-[#0f172a] text-white">
       <PublicHeader />
+
+      {/* Beta disclaimer for non-priority competitions */}
+      {!isPriority && (
+        <div className="bg-amber-500/10 border-b border-amber-500/20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center gap-2.5">
+            <AlertTriangle size={14} className="text-amber-400 shrink-0" />
+            <p className="text-xs text-amber-300/80">
+              <span className="font-semibold text-amber-300">Fase beta:</span>{' '}
+              En aquesta primera fase, NeoScout prioritza les categories Segona Catalana, Tercera Catalana, Preferent Juvenil i Primera Divisió Juvenil. Les dades d'altres categories poden no estar completament actualitzades.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* ─── Hero header ─── */}
       <div className="bg-gradient-to-b from-[#0a1628] to-[#0f172a] border-b border-white/5">
@@ -498,12 +524,12 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
           </div>
 
           {/* Team identity */}
-          <div className="flex items-start gap-5">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500/20 to-cyan-500/20 border border-green-500/30 flex items-center justify-center text-2xl font-black text-green-400 shrink-0">
+          <div className="flex items-start gap-4">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-green-500/20 to-cyan-500/20 border border-green-500/30 flex items-center justify-center text-2xl font-black text-green-400 shrink-0">
               {report.name.charAt(0)}
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl sm:text-3xl font-black text-white mb-1">{report.name}</h1>
+              <h1 className="text-xl sm:text-3xl font-black text-white mb-1 leading-tight">{report.name}</h1>
               <div className="flex items-center gap-2 flex-wrap">
                 {compName && (
                   <Link href={`/competicio/${report.competition}`} className="text-sm text-green-400 hover:text-green-300 transition-colors">
@@ -512,37 +538,44 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
                 )}
                 {report.position && (
                   <span className="text-xs px-2.5 py-1 bg-yellow-500/15 text-yellow-400 border border-yellow-500/20 rounded-full font-bold">
-                    #{report.position} classificació
+                    #{report.position} class.
                   </span>
                 )}
                 {report.nextMatch && (
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-slate-500 hidden sm:inline">
                     J{report.nextMatch.jornada} · {formatDate(report.nextMatch.date)}
                   </span>
                 )}
               </div>
+              {/* Form dots — inline on desktop, below on mobile */}
+              {report.form.length > 0 && (
+                <div className="hidden sm:flex items-center gap-1.5 mt-2">
+                  {report.form.slice(0, 5).reverse().map((f, i) => <FormDot key={i} result={f.result} />)}
+                </div>
+              )}
             </div>
-
-            {/* Form dots */}
-            {report.form.length > 0 && (
-              <div className="flex items-center gap-1.5 shrink-0">
-                {report.form.slice(0, 5).reverse().map((f, i) => <FormDot key={i} result={f.result} />)}
-              </div>
-            )}
           </div>
 
-          {/* Quick stats */}
-          <div className="flex flex-wrap gap-3 mt-6">
+          {/* Form dots — mobile only row */}
+          {report.form.length > 0 && (
+            <div className="flex sm:hidden items-center gap-1.5 mt-3">
+              <span className="text-xs text-slate-500 mr-1">Forma:</span>
+              {report.form.slice(0, 5).reverse().map((f, i) => <FormDot key={i} result={f.result} />)}
+            </div>
+          )}
+
+          {/* Quick stats — horizontally scrollable on mobile */}
+          <div className="flex gap-2 sm:gap-3 mt-5 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
             {[
-              { v: report.played, l: 'Partits', c: 'text-white' },
+              { v: report.played, l: 'PJ', c: 'text-white' },
               { v: report.wins, l: 'Victòries', c: 'text-green-400' },
               { v: report.draws, l: 'Empats', c: 'text-amber-400' },
               { v: report.losses, l: 'Derrotes', c: 'text-red-400' },
               { v: `${report.gf}–${report.ga}`, l: 'Gols', c: 'text-cyan-400' },
               { v: report.points, l: 'Punts', c: 'text-white' },
             ].map(s => (
-              <div key={s.l} className="bg-white/5 border border-white/8 rounded-xl px-4 py-2.5 text-center">
-                <div className={`text-lg font-black ${s.c}`}>{s.v}</div>
+              <div key={s.l} className="bg-white/5 border border-white/8 rounded-xl px-3 sm:px-4 py-2.5 text-center shrink-0">
+                <div className={`text-base sm:text-lg font-black ${s.c}`}>{s.v}</div>
                 <div className="text-[10px] text-slate-500 uppercase tracking-wide mt-0.5">{s.l}</div>
               </div>
             ))}
@@ -554,7 +587,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
         {/* ─── Row 1: Home/Away + Classification ─── */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           <SplitRecord
             label="Com a Local"
             record={report.home}
@@ -565,7 +598,9 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
             record={report.away}
             icon={<Plane size={15} className="text-sky-400" />}
           />
-          <MiniTable standings={report.standings} teamSlug={slug} />
+          <div className="col-span-2 lg:col-span-1">
+            <MiniTable standings={report.standings} teamSlug={slug} />
+          </div>
         </div>
 
         {/* ─── Row 2: Match info card + Goal timing ─── */}
