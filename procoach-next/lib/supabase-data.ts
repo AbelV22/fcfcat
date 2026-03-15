@@ -14,10 +14,14 @@
 import { createClient } from '@supabase/supabase-js'
 import { slugify } from '@/lib/data'
 
+// Anon key is public by design — safe to expose in client code.
+// Supabase RLS policies control what anon users can read.
+const DEFAULT_URL = 'https://nxgyduqprxbhtpqsepgj.supabase.co'
+const DEFAULT_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54Z3lkdXFwcnhiaHRwcXNlcGdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5OTc5NjcsImV4cCI6MjA4ODU3Mzk2N30.qb-T1ja19sGFyDIOLU6C8SM1OBOa9RnmzEakc9g2Y2U'
+
 function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key || url.includes('placeholder')) return null
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || DEFAULT_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || DEFAULT_ANON
   return createClient(url, key)
 }
 
