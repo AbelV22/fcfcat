@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "cf:build": "npx @opennextjs/cloudflare build && cp .open-next/worker.js .open-next/assets/_worker.js"
+    "cf:build": "npx @opennextjs/cloudflare build && bash -c 'cd .open-next && for f in *; do [ \"$f\" != \"assets\" ] && cp -r \"$f\" assets/; done && mv assets/worker.js assets/_worker.js'"
   },
   "dependencies": {
     "@supabase/ssr": "^0.9.0",
