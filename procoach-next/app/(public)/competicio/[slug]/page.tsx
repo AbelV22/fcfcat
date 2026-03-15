@@ -5,21 +5,20 @@ import CompetitionTabs from '@/components/CompetitionTabs'
 import {
   COMPETITION_NAMES,
   COMPETITION_CATEGORY,
-  getCompetitionMatches,
-  getCompetitionTeams,
-  getCompetitionDiscipline,
-  getCompetitionStandings,
-  getCompetitionRefereeRanking,
-  getCompetitionScorers,
-  getCompetitionCalendar,
-  getCompetitionNextJornada,
-  getCompetitionFCFStandings,
 } from '@/lib/data'
-import { Trophy, AlertTriangle, LogIn, ChevronRight, Zap } from 'lucide-react'
+import {
+  getCompetitionCalendarDB,
+  getCompetitionMatchesDB,
+  getCompetitionFCFStandingsDB,
+  getCompetitionTeamsDB,
+  getCompetitionScorersDB,
+  getCompetitionDisciplineDB,
+  getCompetitionRefereeRankingDB,
+} from '@/lib/supabase-data'
+import { Trophy, AlertTriangle, LogIn, ChevronRight } from 'lucide-react'
 
-// Force static rendering — data is baked in at build time from local JSON files.
-// Tabs are handled client-side in CompetitionTabs.tsx to avoid searchParams
-// making this page dynamic (which would break file-system reads on the Worker).
+// Force static rendering — data is fetched from Supabase at build time.
+// Tabs are handled client-side in CompetitionTabs.tsx.
 export const dynamic = 'force-static'
 
 export async function generateStaticParams() {
@@ -58,17 +57,19 @@ export default async function CompeticionPage({
   const category = COMPETITION_CATEGORY[slug] || 'adult'
   const isPriority = PRIORITY_COMPETITIONS.has(slug)
 
-  // All data fetched at build time from local JSON files
-  const matches = getCompetitionMatches(slug)
-  const teams = getCompetitionTeams(slug)
-  const discipline = getCompetitionDiscipline(slug)
-  const standings = getCompetitionStandings(slug)
-  const refereeRanking = getCompetitionRefereeRanking(slug)
-  const scorers = getCompetitionScorers(slug)
-  const calendar = getCompetitionCalendar(slug)
-  const nextJornada = getCompetitionNextJornada(slug)
-  const fcfStandings = getCompetitionFCFStandings(slug)
+  // All data fetched from Supabase at build time (parallel queries)
+  const [calendar, fcfStandings, scorers, matches, discipline, refereeRanking, teams] =
+    await Promise.all([
+      getCompetitionCalendarDB(slug),
+      getCompetitionFCFStandingsDB(slug),
+      getCompetitionScorersDB(slug),
+      getCompetitionMatchesDB(slug),
+      getCompetitionDisciplineDB(slug),
+      getCompetitionRefereeRankingDB(slug),
+      getCompetitionTeamsDB(slug),
+    ])
 
+  // Compute next jornada from calendar
   const today = new Date()
   const upcomingFixtures = calendar.filter((m: any) => {
     if (m.home_score !== null && m.away_score !== null) return false
@@ -82,13 +83,23 @@ export default async function CompeticionPage({
     }
     return true
   })
+
+  const nextJornada: number | null =
+    upcomingFixtures.length > 0
+      ? Math.min(...upcomingFixtures.map((m: any) => m.jornada as number))
+      : null
+
   const nextJornadaFixtures = nextJornada !== null
     ? upcomingFixtures.filter((m: any) => m.jornada === nextJornada)
     : upcomingFixtures.slice(0, 10)
-  const displayStandings = fcfStandings.length > 0 ? fcfStandings : standings
+
+  // fcfStandings from DB is authoritative; standings (acta-computed) no longer needed
+  const displayStandings = fcfStandings
 
   const playedMatches = matches.filter((m: any) => m.home_score !== null)
-  const totalGoals = playedMatches.reduce((s: number, m: any) => s + (m.home_score as number) + (m.away_score as number), 0)
+  const totalGoals = playedMatches.reduce(
+    (s: number, m: any) => s + (m.home_score as number) + (m.away_score as number), 0
+  )
   const totalYellows = discipline.players.reduce((s: number, p: any) => s + p.yellows, 0)
   const totalReds = discipline.players.reduce((s: number, p: any) => s + p.reds, 0)
 
@@ -176,7 +187,7 @@ export default async function CompeticionPage({
         matches={matches}
         teams={teams}
         discipline={discipline}
-        standings={standings}
+        standings={fcfStandings}
         refereeRanking={refereeRanking}
         scorers={scorers}
         nextJornadaFixtures={nextJornadaFixtures}
