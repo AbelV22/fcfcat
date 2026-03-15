@@ -1,13 +1,14 @@
-name: 🚀 Deploy to Cloudflare Pages
+name: 🚀 Deploy to Cloudflare Workers
 
-# Deploys the Next.js frontend to Cloudflare Pages.
+# Deploys the Next.js frontend to Cloudflare Workers (via OpenNext).
 #
 # Triggers:
-#   - Push to master (manual code changes)
+#   - Push to master that touches procoach-next/ files
 #   - After the weekly data pipeline completes (auto-redeploy with fresh data)
+#   - Manual dispatch
 #
 # Required GitHub secrets:
-#   CLOUDFLARE_API_TOKEN      — Cloudflare API token with Pages:Edit permission
+#   CLOUDFLARE_API_TOKEN      — Cloudflare API token with Workers:Edit permission
 #   CLOUDFLARE_ACCOUNT_ID     — Your Cloudflare account ID
 #   NEXT_PUBLIC_SUPABASE_URL  — Supabase project URL
 #   NEXT_PUBLIC_SUPABASE_ANON_KEY — Supabase anon (public) key
@@ -17,6 +18,7 @@ on:
     branches: [master]
     paths:
       - 'procoach-next/**'
+      - 'data/teams/**'
       - '.github/workflows/deploy-cloudflare.yml'
   workflow_run:
     workflows: ["📅 FCF Weekly Pipeline — Self-Maintaining"]
@@ -46,23 +48,18 @@ jobs:
         working-directory: procoach-next
         run: npm ci
 
-      - name: Build Next.js
+      - name: Build for Cloudflare Workers (OpenNext)
         working-directory: procoach-next
-        run: npm run build
+        run: npx @opennextjs/cloudflare@latest build
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          # Silence Next.js telemetry in CI
           NEXT_TELEMETRY_DISABLED: 1
 
-      - name: Transform for Cloudflare Pages
-        working-directory: procoach-next
-        run: npx @cloudflare/next-on-pages@1
-
-      - name: Deploy to Cloudflare Pages
+      - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: procoach-next
-          command: pages deploy .vercel/output/static --project-name=neoscout --commit-dirty=true
+          command: deploy
