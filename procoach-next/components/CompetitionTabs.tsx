@@ -6,7 +6,7 @@ import {
   Trophy, Users, Calendar, Shield, AlertTriangle,
   TrendingUp, Zap, LogIn, BarChart2, Target, Clock,
 } from 'lucide-react'
-import { slugify } from '@/lib/data'
+import { slugify } from '@/lib/utils'
 
 type TabId = 'resultats' | 'classificacio' | 'disciplina' | 'arbitres' | 'golejadors'
 

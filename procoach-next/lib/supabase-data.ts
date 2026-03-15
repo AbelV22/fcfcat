@@ -12,7 +12,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js'
-import { slugify } from '@/lib/data'
+import { slugify } from '@/lib/utils'
 
 // Anon key is public by design — safe to expose in client code.
 // Supabase RLS policies control what anon users can read.
