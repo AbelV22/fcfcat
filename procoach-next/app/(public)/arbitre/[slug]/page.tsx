@@ -66,20 +66,20 @@ export default async function ArbitrePage({ params }: Props) {
         </div>
 
         {/* Header */}
-        <div className="glass-card rounded-2xl p-8 mb-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-3xl font-black text-white shrink-0">
+        <div className="glass-card rounded-2xl p-5 sm:p-8 mb-6">
+          <div className="flex items-start gap-4 sm:gap-6">
+            <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-2xl sm:text-3xl font-black text-white shrink-0">
               {ref.name.split(' ')[0]?.[0] || 'A'}
             </div>
-            <div className="flex-1">
-              <h1 className="text-3xl font-black text-white mb-1">{ref.name}</h1>
-              <div className="flex flex-wrap items-center gap-3 mt-2">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-3xl font-black text-white mb-1 leading-tight">{ref.name}</h1>
+              <div className="flex flex-wrap items-center gap-2 mt-1.5">
                 <span className="text-sm text-slate-400 flex items-center gap-1.5">
-                  <Shield size={14} className="text-purple-400" />
+                  <Shield size={13} className="text-purple-400" />
                   Àrbitre FCF
                 </span>
                 {ref.competitions.slice(0, 2).map(c => (
-                  <span key={c} className="text-xs px-2.5 py-1 bg-white/6 border border-white/10 rounded-full text-slate-400">
+                  <span key={c} className="text-xs px-2 py-0.5 bg-white/6 border border-white/10 rounded-full text-slate-400">
                     {COMPETITION_NAMES[c] || c}
                   </span>
                 ))}
@@ -89,49 +89,42 @@ export default async function ArbitrePage({ params }: Props) {
         </div>
 
         {/* Stats grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          <StatBadge value={ref.matches} label="Partits arbitrats" color="text-white" />
-          <StatBadge value={ref.yellows_per_match} label="🟨 per partit" color="text-yellow-400" />
-          <StatBadge value={ref.reds_per_match} label="🟥 per partit" color="text-red-400" />
-          <StatBadge value={`${expulsionPct}%`} label="Partits amb expulsió" color="text-orange-400" />
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
+          <StatBadge value={ref.matches} label="Partits" color="text-white" />
+          <StatBadge value={ref.yellows_per_match} label="🟨 per part." color="text-yellow-400" />
+          <StatBadge value={ref.reds_per_match} label="🟥 per part." color="text-red-400" />
+          <StatBadge value={`${expulsionPct}%`} label="Amb expulsió" color="text-orange-400" />
         </div>
 
         {/* Two column: history + premium CTA */}
-        <div className="grid lg:grid-cols-3 gap-6">
+        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
 
           {/* Match history */}
-          <div className="lg:col-span-2 glass-card rounded-2xl p-6">
-            <h2 className="text-lg font-bold text-white mb-5 flex items-center gap-2">
-              <Calendar size={18} className="text-green-400" />
+          <div className="lg:col-span-2 glass-card rounded-2xl p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <Calendar size={16} className="text-green-400" />
               Últims {ref.recentMatches.length} partits arbitrats
             </h2>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {ref.recentMatches.map((match, i) => (
-                <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 rounded-xl hover:bg-white/5 transition-colors border border-white/5">
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-xs text-slate-500 w-20">{formatDate(match.date)}</span>
-                    <span className="text-xs text-slate-600 hidden sm:inline">J{match.jornada}</span>
-                  </div>
-                  <div className="flex-1 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                    <span className="text-sm text-slate-300 text-right truncate">{match.home_team}</span>
-                    <span className="text-sm font-bold text-white bg-white/8 px-2.5 py-1 rounded-lg shrink-0 font-mono">
+                <div key={i} className="flex items-center gap-2 p-2.5 sm:p-3 rounded-xl hover:bg-white/5 active:bg-white/8 transition-colors border border-white/5">
+                  <span className="text-[10px] sm:text-xs text-slate-500 shrink-0 w-16 sm:w-20">{formatDate(match.date)}</span>
+                  <div className="flex-1 grid grid-cols-[1fr_auto_1fr] items-center gap-1.5 sm:gap-2 min-w-0">
+                    <span className="text-xs sm:text-sm text-slate-300 text-right truncate">{match.home_team}</span>
+                    <span className="text-xs sm:text-sm font-bold text-white bg-white/8 px-2 sm:px-2.5 py-1 rounded-lg shrink-0 font-mono">
                       {match.home_score ?? '–'}–{match.away_score ?? '–'}
                     </span>
-                    <span className="text-sm text-slate-300 truncate">{match.away_team}</span>
+                    <span className="text-xs sm:text-sm text-slate-300 truncate">{match.away_team}</span>
                   </div>
-                  <div className="flex items-center gap-2 sm:ml-3 shrink-0">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     {match.yellows > 0 && (
-                      <span className="flex items-center gap-1 text-xs text-yellow-400">
-                        🟨 {match.yellows}
-                      </span>
+                      <span className="text-xs text-yellow-400 font-semibold">🟨{match.yellows}</span>
                     )}
                     {match.reds > 0 && (
-                      <span className="flex items-center gap-1 text-xs text-red-400">
-                        🟥 {match.reds}
-                      </span>
+                      <span className="text-xs text-red-400 font-semibold">🟥{match.reds}</span>
                     )}
                     {match.yellows === 0 && match.reds === 0 && (
-                      <span className="text-xs text-slate-600">Sense targetes</span>
+                      <span className="text-[10px] text-slate-700">–</span>
                     )}
                   </div>
                 </div>

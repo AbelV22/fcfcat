@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Custom xs breakpoint (480px) for fine-grained mobile control */
+@theme {
+  --breakpoint-xs: 480px;
+}
+
 :root {
   --background: #0f172a;
   --foreground: #f1f5f9;
@@ -61,11 +66,24 @@ body {
 .delay-300 { animation-delay: 0.3s; }
 .delay-400 { animation-delay: 0.4s; }
 
+/* Touch optimization — removes 300ms delay on mobile */
+a, button { touch-action: manipulation; }
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #0f172a; }
 ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+/* Hide scrollbar but allow scrolling (for horizontal scroll strips) */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Fade-right edge indicator for horizontal scroll strips */
+.scroll-fade-right {
+  -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  mask-image: linear-gradient(to right, black 85%, transparent 100%);
+}
 
 /* Stat card gradient border */
 .stat-card {

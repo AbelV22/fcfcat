@@ -328,18 +328,18 @@ export function RivalScoutCard({
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
 
       {/* ─── Header bar ─────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-white/5">
-        <div className="flex items-center gap-2.5">
-          <Crosshair size={13} className="text-cyan-400" />
-          <span className="text-[10px] font-black tracking-[0.18em] text-cyan-400 uppercase">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 gap-2 border-b border-white/5">
+        <div className="flex items-center gap-2">
+          <Crosshair size={12} className="text-cyan-400 shrink-0" />
+          <span className="text-[10px] font-black tracking-[0.15em] text-cyan-400 uppercase">
             Informe de Reconeixement
           </span>
           <span className="text-[10px] text-slate-600">·</span>
           <span className="text-[10px] text-slate-500 font-medium">J{nextMatch.jornada}</span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <span className="text-[10px] text-slate-500">{formatDate(nextMatch.date)}{nextMatch.time ? ` · ${nextMatch.time}h` : ''}</span>
-          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+          <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${
             nextMatch.isHome
               ? 'bg-green-500/15 text-green-400 border border-green-500/20'
               : 'bg-sky-500/15 text-sky-400 border border-sky-500/20'
@@ -350,13 +350,13 @@ export function RivalScoutCard({
       </div>
 
       {/* ─── Preview (always visible) ───────────────────────────────── */}
-      <div className="px-6 py-5">
+      <div className="px-4 sm:px-6 py-4 sm:py-5">
 
         {/* Team identity + quick metrics */}
-        <div className="flex items-start gap-4 mb-5">
+        <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-5">
           {/* Crest */}
           <div className="relative shrink-0">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-600/20 border border-cyan-500/20 flex items-center justify-center text-2xl font-black text-cyan-300">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-600/20 border border-cyan-500/20 flex items-center justify-center text-2xl font-black text-cyan-300">
               {nextMatch.opponent.charAt(0)}
             </div>
             {rival.position && (
@@ -367,10 +367,10 @@ export function RivalScoutCard({
           </div>
 
           <div className="flex-1 min-w-0">
-            <h2 className="text-xl font-black text-white leading-tight truncate mb-1">{nextMatch.opponent}</h2>
+            <h2 className="text-lg sm:text-xl font-black text-white leading-tight truncate mb-1">{nextMatch.opponent}</h2>
 
             {/* Stats pills */}
-            <div className="flex flex-wrap gap-1.5 mb-2.5">
+            <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-2 sm:mb-2.5">
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/6 text-slate-400">
                 {rival.played} PJ
               </span>
@@ -404,14 +404,14 @@ export function RivalScoutCard({
                     style={{ width: `${winRate}%` }}
                   />
                 </div>
-                <span className="text-[10px] text-slate-500 shrink-0">{winRate}% victòries</span>
+                <span className="text-[10px] text-slate-500 shrink-0">{winRate}%</span>
               </div>
             )}
           </div>
 
-          {/* Form strip */}
+          {/* Form strip — hide on very small screens */}
           {rival.form.length > 0 && (
-            <div className="shrink-0 flex flex-col items-end gap-1">
+            <div className="hidden xs:flex shrink-0 flex-col items-end gap-1">
               <span className="text-[9px] text-slate-600 uppercase tracking-wider">Forma</span>
               <div className="flex gap-1">
                 {rival.form.slice(0, 5).reverse().map((r, i) => <FormDot key={i} result={r.result} />)}
@@ -419,6 +419,14 @@ export function RivalScoutCard({
             </div>
           )}
         </div>
+
+        {/* Form strip — mobile only, below identity */}
+        {rival.form.length > 0 && (
+          <div className="flex xs:hidden items-center gap-1.5 mb-3 -mt-1">
+            <span className="text-[10px] text-slate-500">Forma:</span>
+            {rival.form.slice(0, 5).reverse().map((r, i) => <FormDot key={i} result={r.result} />)}
+          </div>
+        )}
 
         {/* ─── 3-column intel grid ──────────────────────────────── */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -495,7 +503,7 @@ export function RivalScoutCard({
         className="overflow-hidden transition-all duration-500 ease-in-out"
         style={{ maxHeight: expanded ? '3000px' : '0px' }}
       >
-        <div className="px-6 pb-2 space-y-6 border-t border-white/5 pt-5">
+        <div className="px-4 sm:px-6 pb-2 space-y-5 sm:space-y-6 border-t border-white/5 pt-4 sm:pt-5">
 
           {/* Goal timing full */}
           <div>
@@ -630,10 +638,10 @@ export function RivalScoutCard({
       </div>
 
       {/* ─── Expand / Collapse button ──────────────────────────────── */}
-      <div className="px-6 py-4">
+      <div className="px-4 sm:px-6 py-3 sm:py-4">
         <button
           onClick={() => setExpanded(v => !v)}
-          className="w-full py-3.5 rounded-xl border border-cyan-500/20 bg-cyan-500/5 hover:bg-cyan-500/10 hover:border-cyan-500/35 transition-all duration-200 flex items-center justify-center gap-2.5 group"
+          className="w-full py-4 rounded-xl border border-cyan-500/20 bg-cyan-500/5 hover:bg-cyan-500/10 hover:border-cyan-500/35 active:bg-cyan-500/15 transition-all duration-200 flex items-center justify-center gap-2.5 group"
         >
           <Crosshair size={13} className="text-cyan-500 group-hover:text-cyan-300 transition-colors" />
           <span className="text-sm font-black text-cyan-400 group-hover:text-cyan-300 tracking-wide transition-colors">

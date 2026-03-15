@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Search, Menu, X, Trophy, LogIn, ChevronDown } from 'lucide-react'
+import Image from 'next/image'
+import { Search, Menu, X, LogIn, ChevronDown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 const competitions = [
@@ -13,7 +14,7 @@ const competitions = [
   { name: 'Quarta Catalana', slug: 'quarta-catalana' },
   { name: 'Tercera Federació', slug: 'tercera-federacio' },
   { name: "Div. Honor Juvenil", slug: 'divisio-honor-juvenil' },
-  { name: 'Preferent Juvenil', slug: 'preferent-juvenil' },
+  { name: 'Preferent Juvenil', slug: 'preferent-juvenils' },
   { name: "Div. Honor Cadet S16", slug: 'divisio-honor-cadet-s16' },
   { name: 'Preferent Cadet S16', slug: 'preferent-cadet-s16' },
   { name: "Div. Honor Infantil S14", slug: 'divisio-honor-infantil-s14' },
@@ -24,28 +25,33 @@ export default function PublicHeader() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [compOpen, setCompOpen] = useState(false)
+  const [mobileCompOpen, setMobileCompOpen] = useState(false)
   const router = useRouter()
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
       router.push(`/cerca?q=${encodeURIComponent(searchQuery.trim())}`)
+      setMenuOpen(false)
     }
   }
 
+  const closeMenu = () => setMenuOpen(false)
+
   return (
-    <header className="sticky top-0 z-50 bg-[#0a1628]/90 backdrop-blur-xl border-b border-white/8">
+    <header className="sticky top-0 z-50 bg-[#0a1628]/95 backdrop-blur-xl border-b border-white/8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14 sm:h-16">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center animate-pulse-glow">
-              <Trophy size={16} className="text-white" />
-            </div>
+          <Link href="/" className="flex items-center gap-2 shrink-0" onClick={closeMenu}>
+            <Image src="/logo_neoscout.png" alt="" width={32} height={32} className="w-8 h-8 rounded-lg object-cover" priority />
             <span className="font-bold text-lg tracking-tight">
-              <span className="text-white">Fut</span>
-              <span className="text-green-400">Lab</span>
+              <span className="text-white">Neo</span>
+              <span className="text-green-400">Scout</span>
+            </span>
+            <span className="ml-1 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-md leading-none hidden xs:inline">
+              beta
             </span>
           </Link>
 
@@ -57,21 +63,25 @@ export default function PublicHeader() {
                 className="flex items-center gap-1 px-3 py-2 text-sm text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
               >
                 Competicions
-                <ChevronDown size={14} className={`transition-transform ${compOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown size={14} className={`transition-transform duration-200 ${compOpen ? 'rotate-180' : ''}`} />
               </button>
               {compOpen && (
-                <div className="absolute top-full left-0 mt-1 w-52 bg-[#1e293b] border border-white/10 rounded-xl shadow-xl py-1 z-50">
-                  {competitions.map(c => (
-                    <Link
-                      key={c.slug}
-                      href={`/competicio/${c.slug}`}
-                      className="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
-                      onClick={() => setCompOpen(false)}
-                    >
-                      {c.name}
-                    </Link>
-                  ))}
-                </div>
+                <>
+                  {/* Backdrop */}
+                  <div className="fixed inset-0 z-40" onClick={() => setCompOpen(false)} />
+                  <div className="absolute top-full left-0 mt-1 w-52 bg-[#1a2744] border border-white/10 rounded-xl shadow-2xl py-1.5 z-50">
+                    {competitions.map(c => (
+                      <Link
+                        key={c.slug}
+                        href={`/competicio/${c.slug}`}
+                        className="block px-4 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
+                        onClick={() => setCompOpen(false)}
+                      >
+                        {c.name}
+                      </Link>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
             <Link href="/resultats" className="px-3 py-2 text-sm text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-colors">
@@ -106,62 +116,114 @@ export default function PublicHeader() {
             </Link>
           </div>
 
-          {/* Mobile menu toggle */}
-          <button
-            className="md:hidden p-2 text-slate-400 hover:text-white transition-colors"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            {menuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          {/* Mobile: search icon shortcut + menu toggle */}
+          <div className="md:hidden flex items-center gap-1">
+            <Link
+              href="/cerca"
+              className="p-2.5 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+              aria-label="Cerca"
+            >
+              <Search size={19} />
+            </Link>
+            <button
+              className="p-2.5 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label={menuOpen ? 'Tancar menú' : 'Obrir menú'}
+            >
+              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Mobile menu */}
-      {menuOpen && (
-        <div className="md:hidden border-t border-white/8 bg-[#0a1628] px-4 py-4 space-y-2">
-          <form onSubmit={handleSearch} className="relative mb-4">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Busca equip, jugador..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="pl-9 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-green-500/50 w-full"
-            />
-          </form>
-          {[
-            { label: 'Resultats', href: '/resultats' },
-            { label: 'Jugadors', href: '/cerca?type=jugador' },
-            { label: 'Àrbitres', href: '/cerca?type=arbitre' },
-          ].map(item => (
+      {/* Mobile menu — slide down with transition */}
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          menuOpen ? 'max-h-[90vh] opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <div className="border-t border-white/8 bg-[#0a1628] overflow-y-auto max-h-[85vh]">
+
+          {/* Search */}
+          <div className="px-4 pt-4 pb-3">
+            <form onSubmit={handleSearch} className="relative">
+              <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Busca equip, jugador..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-3 bg-white/6 border border-white/10 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-green-500/50 w-full"
+              />
+            </form>
+          </div>
+
+          {/* Main nav links */}
+          <div className="px-2 pb-2 space-y-0.5">
             <Link
-              key={item.label}
-              href={item.href}
-              className="block py-2 text-slate-300 hover:text-white text-sm transition-colors"
-              onClick={() => setMenuOpen(false)}
+              href="/resultats"
+              className="flex items-center px-4 py-3.5 text-sm font-medium text-slate-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+              onClick={closeMenu}
             >
-              {item.label}
+              Resultats
             </Link>
-          ))}
-          {competitions.map(c => (
             <Link
-              key={c.slug}
-              href={`/competicio/${c.slug}`}
-              className="block py-1.5 pl-3 text-xs text-slate-400 hover:text-white transition-colors border-l border-white/10"
-              onClick={() => setMenuOpen(false)}
+              href="/cerca?type=jugador"
+              className="flex items-center px-4 py-3.5 text-sm font-medium text-slate-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+              onClick={closeMenu}
             >
-              {c.name}
+              Jugadors
             </Link>
-          ))}
-          <Link
-            href="/entrenador"
-            className="block mt-3 text-center py-2 bg-gradient-to-r from-green-600 to-cyan-600 text-white text-sm font-medium rounded-xl"
-            onClick={() => setMenuOpen(false)}
-          >
-            Per a entrenadors — Gratis
-          </Link>
+            <Link
+              href="/cerca?type=arbitre"
+              className="flex items-center px-4 py-3.5 text-sm font-medium text-slate-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+              onClick={closeMenu}
+            >
+              Àrbitres
+            </Link>
+
+            {/* Competitions accordion */}
+            <button
+              className="w-full flex items-center justify-between px-4 py-3.5 text-sm font-medium text-slate-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+              onClick={() => setMobileCompOpen(v => !v)}
+            >
+              <span>Competicions</span>
+              <ChevronDown
+                size={16}
+                className={`text-slate-400 transition-transform duration-200 ${mobileCompOpen ? 'rotate-180' : ''}`}
+              />
+            </button>
+
+            {/* Competitions list — collapsible */}
+            <div className={`overflow-hidden transition-all duration-300 ${mobileCompOpen ? 'max-h-96' : 'max-h-0'}`}>
+              <div className="ml-4 pl-3 border-l border-white/8 space-y-0.5 pb-1">
+                {competitions.map(c => (
+                  <Link
+                    key={c.slug}
+                    href={`/competicio/${c.slug}`}
+                    className="block px-3 py-2.5 text-sm text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+                    onClick={closeMenu}
+                  >
+                    {c.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="px-4 pb-5 pt-2">
+            <Link
+              href="/entrenador"
+              className="flex items-center justify-center gap-2 w-full py-4 bg-gradient-to-r from-green-600 to-cyan-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-green-900/30"
+              onClick={closeMenu}
+            >
+              <LogIn size={15} />
+              Per a entrenadors — Gratis
+            </Link>
+          </div>
         </div>
-      )}
+      </div>
     </header>
   )
 }

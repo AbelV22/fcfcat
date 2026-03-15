@@ -48,32 +48,38 @@ export default function EntrenadorPage() {
 
       {/* Hero */}
       <div className="bg-gradient-to-b from-[#0a1628] to-[#0f172a] border-b border-white/5">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-full text-green-400 text-xs font-semibold mb-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-full text-green-400 text-xs font-semibold mb-5">
             <Zap size={12} />
             100% GRATIS · Sense targeta de crèdit
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4 leading-tight">
-            La plataforma per als<br />
+          <h1 className="text-3xl sm:text-5xl font-bold mb-4 leading-tight">
+            La plataforma per als{' '}
             <span className="bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">
               entrenadors de futbol català
             </span>
           </h1>
-          <p className="text-lg text-slate-400 max-w-2xl mx-auto mb-10">
-            Afegeix el teu equip gratis. Accedeix a informes arbitrals, estadístiques de jugadors i anàlisi de rivals de tota la FCF.
+          <p className="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto mb-8">
+            Afegeix el teu equip gratis. Accedeix a informes arbitrals, estadístiques i anàlisi de rivals de tota la FCF.
           </p>
-          <div className="flex items-center justify-center gap-4 flex-wrap">
-            <a href="#registre" className="px-8 py-4 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-green-900/30 text-lg">
+          <div className="flex flex-col xs:flex-row items-center justify-center gap-3">
+            <a
+              href="#registre"
+              className="w-full xs:w-auto px-6 sm:px-8 py-4 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-green-900/30 text-base sm:text-lg text-center"
+            >
               Afegeix el teu equip — Gratis
             </a>
-            <Link href="/cerca" className="px-6 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 font-medium rounded-xl transition-all">
+            <Link
+              href="/cerca"
+              className="w-full xs:w-auto px-5 sm:px-6 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 font-medium rounded-xl transition-all text-center text-sm sm:text-base"
+            >
               Explorar la plataforma
             </Link>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 space-y-20">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16 space-y-14 sm:space-y-20">
 
         {/* Free vs Pro */}
         <div>
@@ -108,23 +114,23 @@ export default function EntrenadorPage() {
 
         {/* Social proof */}
         <div className="text-center">
-          <div className="flex justify-center gap-8 flex-wrap">
+          <div className="grid grid-cols-2 sm:flex sm:justify-center gap-6 sm:gap-10">
             {[
               { value: '1.400+', label: 'Partits analitzats' },
               { value: '200+', label: 'Àrbitres al sistema' },
               { value: '6', label: 'Categories FCF' },
               { value: '100%', label: 'Gratis per entrenadors' },
             ].map(s => (
-              <div key={s.label} className="text-center">
-                <div className="text-3xl font-bold text-green-400">{s.value}</div>
-                <div className="text-sm text-slate-500 mt-1">{s.label}</div>
+              <div key={s.label} className="text-center py-4 bg-white/3 sm:bg-transparent border sm:border-0 border-white/6 rounded-2xl sm:rounded-none px-4 sm:px-0">
+                <div className="text-2xl sm:text-3xl font-bold text-green-400">{s.value}</div>
+                <div className="text-xs sm:text-sm text-slate-500 mt-1">{s.label}</div>
               </div>
             ))}
           </div>
         </div>
 
         {/* Registration form */}
-        <div id="registre" className="bg-white/4 border border-white/10 rounded-2xl p-8">
+        <div id="registre" className="bg-white/4 border border-white/10 rounded-2xl p-5 sm:p-8">
           {sent ? (
             <div className="text-center py-8">
               <CheckCircle size={48} className="mx-auto mb-4 text-green-400" />
@@ -134,7 +140,7 @@ export default function EntrenadorPage() {
                 Mentrestant, explora la plataforma.
               </p>
               <Link href="/" className="inline-flex items-center gap-2 mt-6 text-green-400 hover:text-green-300 transition-colors">
-                Explorar FutLab <ChevronRight size={16} />
+                Explorar NeoScout <ChevronRight size={16} />
               </Link>
             </div>
           ) : (
@@ -207,7 +213,7 @@ export default function EntrenadorPage() {
       </div>
 
       <footer className="border-t border-white/5 mt-8 py-8 text-center text-sm text-slate-600">
-        <p>FutLab · Estadístiques del futbol català · Temporada 2025/26</p>
+        <p>NeoScout · Estadístiques del futbol català · Temporada 2025/26</p>
       </footer>
     </div>
   )

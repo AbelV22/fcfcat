@@ -41,8 +41,8 @@ COMPETITIONS = [
     # ── Juvenil ──────────────────────────────────────────────────────────────
     {"slug": "divisio-honor-juvenil",      "name": "Divisió d'Honor Juvenil",     "tier": 10, "category": "juvenil"},
     {"slug": "lliga-nacional-juvenil",     "name": "Lliga Nacional Juvenil",      "tier": 11, "category": "juvenil"},
-    {"slug": "preferent-juvenil",          "name": "Preferent Juvenil",           "tier": 12, "category": "juvenil"},
-    {"slug": "primera-divisio-juvenil",    "name": "Juvenil Primera Divisió",     "tier": 13, "category": "juvenil"},
+    {"slug": "preferent-juvenils",         "name": "Preferent Juvenil",           "tier": 12, "category": "juvenil"},
+    {"slug": "juvenil-primera-divisio",    "name": "Juvenil Primera Divisió",     "tier": 13, "category": "juvenil"},
     {"slug": "segona-catalana-juvenil",    "name": "Juvenil Segona Divisió",      "tier": 14, "category": "juvenil"},
     {"slug": "tercera-catalana-juvenil",   "name": "Juvenil Tercera Divisió",     "tier": 15, "category": "juvenil"},
     # ── Cadet S16 ────────────────────────────────────────────────────────────
@@ -77,7 +77,7 @@ REFEREE_COMPETITIONS = {
     # Juvenil
     "divisio-honor-juvenil",
     "lliga-nacional-juvenil",
-    "preferent-juvenil",
+    "preferent-juvenils",
     # Cadet S16
     "divisio-honor-cadet-s16",
     "preferent-cadet-s16",
@@ -106,8 +106,8 @@ KNOWN_GROUPS = {
     # Juvenil
     "divisio-honor-juvenil":       ["grup-unic"],
     "lliga-nacional-juvenil":      ["grup-unic"],
-    "preferent-juvenil":           ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6"],
-    "primera-divisio-juvenil":     ["grup-1", "grup-2"],
+    "preferent-juvenils":          ["grup-1", "grup-2", "grup-3", "grup-4"],
+    "juvenil-primera-divisio":     ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8", "grup-9", "grup-10", "grup-11", "grup-12", "grup-13", "grup-14", "grup-15"],
     "segona-catalana-juvenil":     ["grup-1"],
     "tercera-catalana-juvenil":    ["grup-1"],
     # Cadet S16

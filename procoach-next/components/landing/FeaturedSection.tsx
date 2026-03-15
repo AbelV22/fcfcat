@@ -14,7 +14,7 @@ const COMPETITIONS = [
   { name: 'Tercera Catalana', slug: 'tercera-catalana', tier: 3 },
   { name: 'Quarta Catalana', slug: 'quarta-catalana', tier: 4 },
   { name: 'Div. Honor Juvenil', slug: 'divisio-honor-juvenil', tier: 5 },
-  { name: 'Preferent Juvenil', slug: 'preferent-juvenil', tier: 6 },
+  { name: 'Preferent Juvenil', slug: 'preferent-juvenils', tier: 6 },
   { name: 'Div. Honor Cadet S16', slug: 'divisio-honor-cadet-s16', tier: 7 },
 ]
 

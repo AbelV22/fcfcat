@@ -3,8 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "FutLab — Intel·ligència per a Entrenadors de Futbol Català",
-    template: "%s | FutLab",
+    default: "NeoScout — Intel·ligència per a Entrenadors de Futbol Català",
+    template: "%s | NeoScout",
   },
   description:
     "La plataforma de referència del futbol regional català. Informes d'equip, anàlisi de rivals, apercibits, timing de gols i molt més. Dades oficials FCF.",
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     "segona catalana", "tercera catalana", "jugadors", "àrbitres", "entrenadors", "scouting",
   ],
   openGraph: {
-    siteName: "FutLab",
+    siteName: "NeoScout",
     locale: "ca_ES",
     type: "website",
   },

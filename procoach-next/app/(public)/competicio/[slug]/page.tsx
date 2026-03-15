@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const name = COMPETITION_NAMES[slug]
   if (!name) return { title: 'Competició no trobada' }
   return {
-    title: `${name} | FutLab — Estadístiques Futbol Català`,
+    title: `${name} | NeoScout — Estadístiques Futbol Català`,
     description: `Resultats, classificació, disciplina i àrbitres de la ${name}. Dades exclusives del futbol català.`,
   }
 }
@@ -121,9 +121,28 @@ export default async function CompeticionPage({
     { id: 'arbitres', label: 'Àrbitres', icon: <Shield size={14} />, count: refereeRanking.length },
   ]
 
+  const PRIORITY_COMPETITIONS = new Set([
+    'segona-catalana', 'tercera-catalana',
+    'preferent-juvenils', 'juvenil-primera-divisio',
+  ])
+  const isPriority = PRIORITY_COMPETITIONS.has(slug)
+
   return (
     <div className="min-h-screen bg-[#0f172a] text-white">
       <PublicHeader />
+
+      {/* Beta disclaimer for non-priority competitions */}
+      {!isPriority && (
+        <div className="bg-amber-500/10 border-b border-amber-500/20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center gap-2.5">
+            <AlertTriangle size={14} className="text-amber-400 shrink-0" />
+            <p className="text-xs text-amber-300/80">
+              <span className="font-semibold text-amber-300">Fase beta:</span>{' '}
+              En aquesta primera fase, NeoScout prioritza les categories Segona Catalana, Tercera Catalana, Preferent Juvenil i Primera Divisió Juvenil. Les dades d'aquesta competició poden no estar completament actualitzades.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Hero */}
       <div className="bg-gradient-to-b from-[#0a1628] to-[#0f172a] border-b border-white/5">
@@ -137,29 +156,29 @@ export default async function CompeticionPage({
             <span className="text-white">{name}</span>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500/20 to-cyan-500/20 border border-green-500/30 flex items-center justify-center shrink-0">
-                <Trophy size={24} className="text-green-400" />
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-green-500/20 to-cyan-500/20 border border-green-500/30 flex items-center justify-center shrink-0">
+                <Trophy size={22} className="text-green-400" />
               </div>
               <div>
                 <p className="text-xs text-slate-500 uppercase tracking-wider font-medium mb-0.5">{CATEGORY_LABEL[category]}</p>
-                <h1 className="text-2xl sm:text-3xl font-bold">{name}</h1>
-                <p className="text-xs text-slate-500 mt-1">Temporada 2025/26</p>
+                <h1 className="text-xl sm:text-3xl font-bold leading-tight">{name}</h1>
+                <p className="text-xs text-slate-500 mt-0.5">Temporada 2025/26</p>
               </div>
             </div>
 
-            {/* Stats pills */}
+            {/* Stats pills — horizontal scroll on mobile */}
             {hasData && (
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide sm:flex-wrap -mx-4 px-4 sm:mx-0 sm:px-0">
                 {[
                   { label: 'Equips', value: teams.length, color: 'text-white' },
                   { label: 'Partits', value: playedMatches.length, color: 'text-cyan-400' },
                   { label: 'Gols', value: totalGoals, color: 'text-green-400' },
-                  { label: '🟨 Grogues', value: totalYellows, color: 'text-amber-400' },
-                  { label: '🟥 Vermelles', value: totalReds, color: 'text-red-400' },
+                  { label: '🟨', value: totalYellows, color: 'text-amber-400' },
+                  { label: '🟥', value: totalReds, color: 'text-red-400' },
                 ].map(s => (
-                  <div key={s.label} className="bg-white/5 border border-white/8 rounded-xl px-3 py-2 text-center min-w-[60px]">
+                  <div key={s.label} className="bg-white/5 border border-white/8 rounded-xl px-3 py-2 text-center shrink-0 min-w-[52px]">
                     <div className={`text-lg font-bold ${s.color}`}>{s.value}</div>
                     <div className="text-[10px] text-slate-500 mt-0.5 whitespace-nowrap">{s.label}</div>
                   </div>
@@ -172,14 +191,14 @@ export default async function CompeticionPage({
 
       {/* Coach CTA strip — ALWAYS visible */}
       <div className="bg-gradient-to-r from-green-900/40 to-cyan-900/40 border-b border-green-500/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4 flex-wrap">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
           <p className="text-sm text-slate-300">
             <span className="text-green-400 font-semibold">Ets entrenador de {name}?</span>
-            {' '}Accedeix als informes arbitrals del teu equip — gratis.
+            {' '}<span className="text-slate-400">Accedeix als informes arbitrals — gratis.</span>
           </p>
           <Link
             href="/entrenador"
-            className="shrink-0 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-green-900/30"
+            className="shrink-0 flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-green-900/30 self-start sm:self-auto"
           >
             <LogIn size={14} />
             Registra el teu equip
@@ -197,13 +216,13 @@ export default async function CompeticionPage({
           </div>
         ) : (
           <>
-            {/* Tab navigation */}
-            <div className="flex gap-1 mb-6 overflow-x-auto pb-1">
+            {/* Tab navigation — horizontal scroll on mobile */}
+            <div className="flex gap-1.5 mb-6 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
               {tabs.map(t => (
                 <Link
                   key={t.id}
                   href={`?tab=${t.id}`}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
+                  className={`flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-3 rounded-xl text-sm font-medium transition-all whitespace-nowrap shrink-0 ${
                     activeTab === t.id
                       ? 'bg-green-600 text-white shadow-lg shadow-green-900/30'
                       : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/8'
@@ -682,7 +701,7 @@ export default async function CompeticionPage({
       </div>
 
       <footer className="border-t border-white/5 mt-8 py-8 text-center text-sm text-slate-600">
-        <p>FutLab · Estadístiques del futbol català · Temporada 2025/26</p>
+        <p>NeoScout · Estadístiques del futbol català · Temporada 2025/26</p>
       </footer>
     </div>
   )

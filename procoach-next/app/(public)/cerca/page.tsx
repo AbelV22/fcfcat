@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Search, Shield, Users, Trophy } from 'lucide-react'
+import { Search, Shield, Users, Trophy, ArrowRight } from 'lucide-react'
 import PublicHeader from '@/components/PublicHeader'
 import PublicFooter from '@/components/PublicFooter'
 import { getAllReferees, getAllPlayers, getAllTeams } from '@/lib/data'
@@ -39,30 +39,65 @@ export default async function CercaPage({ searchParams }: Props) {
   return (
     <div className="min-h-screen bg-[#0f172a]">
       <PublicHeader />
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
 
-        <h1 className="text-3xl font-black text-white mb-2">Cerca</h1>
-        {query && (
-          <p className="text-slate-400 mb-6">
-            {total} resultats per a <strong className="text-white">"{q}"</strong>
-          </p>
-        )}
+      {/* Search hero */}
+      <div className="bg-gradient-to-b from-[#0a1628] to-[#0f172a] border-b border-white/5">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+          <h1 className="text-2xl sm:text-3xl font-black text-white mb-4">
+            {query ? (
+              <>
+                <span className="text-slate-400 font-normal text-lg sm:text-xl block mb-1">Resultats per a</span>
+                &ldquo;{q}&rdquo;
+              </>
+            ) : 'Cerca'}
+          </h1>
 
-        {/* Type tabs */}
-        <div className="flex flex-wrap gap-2 mb-8">
+          {/* Inline search form */}
+          <form action="/cerca" method="GET" className="flex gap-2 max-w-lg">
+            <div className="relative flex-1">
+              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                name="q"
+                defaultValue={q}
+                type="search"
+                placeholder="Equip, jugador o àrbitre..."
+                className="w-full pl-10 pr-4 py-3 bg-white/6 border border-white/12 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/60 focus:bg-white/8 transition-all text-sm"
+              />
+              <input type="hidden" name="type" value={type} />
+            </div>
+            <button
+              type="submit"
+              className="px-4 py-3 bg-green-600 hover:bg-green-500 text-white rounded-xl transition-colors shrink-0 font-medium text-sm"
+            >
+              <ArrowRight size={16} />
+            </button>
+          </form>
+
+          {query && (
+            <p className="text-slate-500 text-sm mt-2">
+              {total} resultat{total !== 1 ? 's' : ''}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+
+        {/* Type tabs — horizontal scroll on mobile */}
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
           {[
-            { key: 'all', label: 'Tot', icon: <Search size={14} /> },
-            { key: 'arbitre', label: 'Àrbitres', icon: <Shield size={14} /> },
-            { key: 'jugador', label: 'Jugadors', icon: <Users size={14} /> },
-            { key: 'equip', label: 'Equips', icon: <Trophy size={14} /> },
+            { key: 'all', label: 'Tot', icon: <Search size={13} /> },
+            { key: 'arbitre', label: 'Àrbitres', icon: <Shield size={13} /> },
+            { key: 'jugador', label: 'Jugadors', icon: <Users size={13} /> },
+            { key: 'equip', label: 'Equips', icon: <Trophy size={13} /> },
           ].map(tab => (
             <Link
               key={tab.key}
               href={`/cerca?q=${encodeURIComponent(q)}&type=${tab.key}`}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all
+              className={`flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium transition-all whitespace-nowrap shrink-0
                 ${type === tab.key
-                  ? 'bg-green-600 text-white'
-                  : 'bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/8'
+                  ? 'bg-green-600 text-white shadow-lg shadow-green-900/30'
+                  : 'bg-white/5 border border-white/8 text-slate-400 hover:text-white hover:bg-white/8'
                 }`}
             >
               {tab.icon}
@@ -160,12 +195,12 @@ export default async function CercaPage({ searchParams }: Props) {
 
           {/* Empty state */}
           {total === 0 && (
-            <div className="text-center py-20">
+            <div className="text-center py-16">
               <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-4">
                 <Search size={24} className="text-slate-500" />
               </div>
               <p className="text-slate-400 mb-2">
-                {query ? `No s'han trobat resultats per "${q}"` : 'Escriu per cercar equipos, jugadors o àrbitres'}
+                {query ? `No s'han trobat resultats per "${q}"` : 'Escriu per cercar equips, jugadors o àrbitres'}
               </p>
               <p className="text-sm text-slate-600">Prova amb un nom parcial o canvia la categoria</p>
             </div>

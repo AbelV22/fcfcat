@@ -271,8 +271,8 @@ export const COMPETITION_NAMES: Record<string, string> = {
   // Juvenil
   'divisio-honor-juvenil':       "Divisió d'Honor Juvenil",
   'lliga-nacional-juvenil':      'Lliga Nacional Juvenil',
-  'preferent-juvenil':           'Preferent Juvenil',
-  'primera-divisio-juvenil':     'Juvenil Primera Divisió',
+  'preferent-juvenils':          'Preferent Juvenil',
+  'juvenil-primera-divisio':     'Juvenil Primera Divisió',
   'segona-catalana-juvenil':     'Juvenil Segona Divisió',
   'tercera-catalana-juvenil':    'Juvenil Tercera Divisió',
   // Cadet S16
@@ -301,7 +301,7 @@ export const COMPETITION_CATEGORY: Record<string, string> = {
   'primera-catalana': 'adult', 'segona-catalana': 'adult',
   'tercera-catalana': 'adult', 'quarta-catalana': 'adult',
   'divisio-honor-juvenil': 'juvenil', 'lliga-nacional-juvenil': 'juvenil',
-  'preferent-juvenil': 'juvenil', 'primera-divisio-juvenil': 'juvenil',
+  'preferent-juvenils': 'juvenil', 'juvenil-primera-divisio': 'juvenil',
   'segona-catalana-juvenil': 'juvenil', 'tercera-catalana-juvenil': 'juvenil',
   'divisio-honor-cadet-s16': 'cadet', 'preferent-cadet-s16': 'cadet',
   'cadet-primera-divisio-s16': 'cadet', 'cadet-segona-divisio-s16': 'cadet',

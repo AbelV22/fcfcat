@@ -495,6 +495,16 @@ Examples:
         print(f"  Noves:     {meta.get('new_actas_scraped', 0)}")
         print(f"  Temps:     {meta.get('elapsed_seconds', 0):.1f}s")
         print(f"{'='*50}\n")
+
+        # Write result to output file (same as non-update mode)
+        if args.output:
+            out_path = Path(args.output)
+        else:
+            out_path = OUTPUT_DIR / "fcf_data.json"
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(out_path, "w", encoding="utf-8") as f:
+            json.dump(result, f, cls=DataEncoder, ensure_ascii=False, indent=2)
+        print(f"  Data saved to: {out_path}")
     else:
         run_scraper(
             team=args.team,
