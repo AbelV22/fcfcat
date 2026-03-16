@@ -2,8 +2,9 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import PublicHeader from '@/components/PublicHeader'
 import PublicFooter from '@/components/PublicFooter'
-import { COMPETITION_NAMES, slugify, getAllTeams } from '@/lib/data'
-import { buildTeamReport, type TeamReport, type RivalReport, type PlayerStat, type GoalBucket, type MatchResult, type StandingRow, type Sanction } from '@/lib/team-report'
+import { COMPETITION_NAMES, slugify } from '@/lib/data'
+import { buildTeamReport, type TeamReport, type RivalReport, type PlayerStat, type GoalBucket, type MatchResult, type StandingRow, type Sanction, type SplitRecord } from '@/lib/team-report'
+import { getAllTeamsDB, getTeamBasicDataDB } from '@/lib/supabase-data'
 import { RivalScoutCard } from '@/components/RivalScoutCard'
 import {
   Users, Trophy, Shield, ChevronRight, AlertTriangle,
@@ -12,17 +13,28 @@ import {
 } from 'lucide-react'
 
 export async function generateStaticParams() {
-  return getAllTeams().map(t => ({ slug: t.slug }))
+  const teams = await getAllTeamsDB()
+  return teams.map(t => ({ slug: t.slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const report = buildTeamReport(slug)
-  if (!report) return { title: 'Equip | NeoScout' }
-  return {
-    title: `${report.name} — Informe de l'equip | NeoScout`,
-    description: `Estadístiques, plantilla, propers rivals i anàlisi complet de ${report.name}. Futbol català temporada 2025/26.`,
+  if (report) {
+    return {
+      title: `${report.name} — Informe de l'equip | NeoScout`,
+      description: `Estadístiques, plantilla, propers rivals i anàlisi complet de ${report.name}. Futbol català temporada 2025/26.`,
+    }
   }
+  // Fallback: try Supabase for team name
+  const dbData = await getTeamBasicDataDB(slug)
+  if (dbData) {
+    return {
+      title: `${dbData.name} — Estadístiques | NeoScout`,
+      description: `Resultats, classificació i estadístiques de ${dbData.name}. Futbol català temporada 2025/26.`,
+    }
+  }
+  return { title: 'Equip | NeoScout' }
 }
 
 // ─── Sub-components ────────────────────────────────────────────────────────
@@ -455,7 +467,40 @@ function RecentMatches({ form }: { form: MatchResult[] }) {
 
 export default async function EquipPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const report = buildTeamReport(slug)
+
+  // Try local JSON first (full acta data), then fall back to Supabase standings data
+  let report: TeamReport | null = buildTeamReport(slug)
+
+  if (!report) {
+    const dbData = await getTeamBasicDataDB(slug)
+    if (dbData) {
+      // Map Supabase data to TeamReport shape
+      report = {
+        name: dbData.name,
+        slug: dbData.slug,
+        competition: dbData.competition,
+        position: dbData.position,
+        played: dbData.played,
+        wins: dbData.wins,
+        draws: dbData.draws,
+        losses: dbData.losses,
+        gf: dbData.gf,
+        ga: dbData.ga,
+        points: dbData.points,
+        form: dbData.recentMatches as MatchResult[],
+        nextMatch: dbData.nextMatch as TeamReport['nextMatch'],
+        standings: dbData.standings as StandingRow[],
+        goalBuckets: dbData.goalBuckets as GoalBucket[],
+        players: dbData.players as PlayerStat[],
+        sanctions: dbData.sanctions as Sanction[],
+        home: dbData.home as SplitRecord,
+        away: dbData.away as SplitRecord,
+        rival: dbData.rival as RivalReport | null,
+        headToHead: dbData.headToHead as MatchResult[],
+        hasDetailedData: false,
+      } as TeamReport
+    }
+  }
 
   if (!report) {
     return (

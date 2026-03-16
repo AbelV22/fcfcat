@@ -370,6 +370,131 @@ export async function getAllRefereesDB() {
   })).sort((a, b) => b.matches - a.matches)
 }
 
+// ─── Team basic data (fallback for pages without local JSON) ─────────────────
+
+/** Basic team info from Supabase — used when local team JSON is unavailable */
+export async function getTeamBasicDataDB(slug: string) {
+  const supabase = getSupabase()
+
+  // Find team standing by slug
+  const { data: standingRows } = await supabase
+    .from('fcf_standings')
+    .select('*')
+    .eq('team_slug', slug)
+    .limit(1)
+
+  const standing = standingRows?.[0] || null
+  if (!standing) return null
+
+  // Get recent played matches
+  const { data: recentRaw } = await supabase
+    .from('fcf_matches')
+    .select('jornada, match_date, home_team, away_team, home_score, away_score, home_slug, away_slug, group_name')
+    .or(`home_slug.eq.${slug},away_slug.eq.${slug}`)
+    .not('home_score', 'is', null)
+    .order('match_date', { ascending: false })
+    .limit(10)
+
+  // Get next upcoming match
+  const { data: upcomingRaw } = await supabase
+    .from('fcf_matches')
+    .select('jornada, match_date, match_time, home_team, away_team, home_slug, away_slug')
+    .or(`home_slug.eq.${slug},away_slug.eq.${slug}`)
+    .is('home_score', null)
+    .order('match_date', { ascending: true })
+    .limit(1)
+
+  // Get all standings for this group
+  const { data: groupStandings } = await supabase
+    .from('fcf_standings')
+    .select('position, team_name, team_slug, played, won, drawn, lost, goals_for, goals_against, goal_diff, points')
+    .eq('competition', standing.competition)
+    .eq('group_name', standing.group_name)
+    .order('position', { ascending: true })
+
+  const recentMatches = (recentRaw || []).map(m => {
+    const isHome = m.home_slug === slug
+    const gf = isHome ? m.home_score : m.away_score
+    const ga = isHome ? m.away_score : m.home_score
+    const result: 'W' | 'D' | 'L' | null =
+      gf === null || ga === null ? null : gf > ga ? 'W' : gf < ga ? 'L' : 'D'
+    return {
+      date: m.match_date || '',
+      jornada: m.jornada,
+      opponent: isHome ? (m.away_team || '') : (m.home_team || ''),
+      opponentSlug: isHome ? (m.away_slug || '') : (m.home_slug || ''),
+      isHome,
+      goalsFor: gf,
+      goalsAgainst: ga,
+      result,
+      referee: null as string | null,
+    }
+  })
+
+  const nextRaw = upcomingRaw?.[0] || null
+  const nextMatch = nextRaw ? (() => {
+    const isHome = nextRaw.home_slug === slug
+    return {
+      jornada: nextRaw.jornada,
+      date: nextRaw.match_date || '',
+      time: nextRaw.match_time || '',
+      opponent: isHome ? (nextRaw.away_team || '') : (nextRaw.home_team || ''),
+      opponentSlug: isHome ? (nextRaw.away_slug || '') : (nextRaw.home_slug || ''),
+      isHome,
+      venue: '',
+      referee: null as string | null,
+      referees: [] as string[],
+    }
+  })() : null
+
+  return {
+    name: standing.team_name || '',
+    slug: standing.team_slug || slug,
+    competition: standing.competition || '',
+    group: standing.group_name || '',
+    position: standing.position || null,
+    played: standing.played || 0,
+    wins: standing.won || 0,
+    draws: standing.drawn || 0,
+    losses: standing.lost || 0,
+    gf: standing.goals_for || 0,
+    ga: standing.goals_against || 0,
+    points: standing.points || 0,
+    form: standing.form || '',
+    standings: (groupStandings || []).map(s => ({
+      position: s.position,
+      name: s.team_name || '',
+      slug: s.team_slug || slugify(s.team_name || ''),
+      played: s.played || 0,
+      wins: s.won || 0,
+      draws: s.drawn || 0,
+      losses: s.lost || 0,
+      gf: s.goals_for || 0,
+      ga: s.goals_against || 0,
+      points: s.points || 0,
+      // Home/away split not available from standings table
+      home_won: 0, home_drawn: 0, home_lost: 0,
+      away_won: 0, away_drawn: 0, away_lost: 0,
+    })),
+    recentMatches,
+    nextMatch: nextMatch ? {
+      ...nextMatch,
+      // Add MatchResult required fields
+      goalsFor: null as null,
+      goalsAgainst: null as null,
+      result: null as null,
+    } : null,
+    // Empty/not-available fields (no acta data for most teams)
+    players: [] as any[],
+    sanctions: [] as any[],
+    goalBuckets: [] as any[],
+    home: { played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, points: 0 },
+    away: { played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, points: 0 },
+    rival: null,
+    headToHead: [],
+  }
+}
+
 /** Single referee profile by slug from fcf_referee_matches */
 export async function getRefereeBySlugDB(slug: string) {
   const supabase = getSupabase()

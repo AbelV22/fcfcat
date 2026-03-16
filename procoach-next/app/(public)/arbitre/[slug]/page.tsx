@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { Shield, ArrowLeft, Calendar, AlertTriangle, Lock, TrendingUp } from 'lucide-react'
 import PublicHeader from '@/components/PublicHeader'
 import PublicFooter from '@/components/PublicFooter'
-import { getRefereeBySlug, getAllReferees, COMPETITION_NAMES } from '@/lib/data'
+import { COMPETITION_NAMES } from '@/lib/data'
+import { getRefereeBySlugDB, getAllRefereesDB } from '@/lib/supabase-data'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -12,7 +13,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const ref = getRefereeBySlug(slug)
+  const ref = await getRefereeBySlugDB(slug)
   if (!ref) return { title: 'Àrbitre no trobat' }
   return {
     title: `${ref.name} — Àrbitre FCF`,
@@ -21,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export async function generateStaticParams() {
-  const refs = getAllReferees().slice(0, 200)
+  const refs = await getAllRefereesDB()
   return refs.map(r => ({ slug: r.slug }))
 }
 
@@ -36,7 +37,7 @@ function StatBadge({ value, label, color }: { value: string | number; label: str
 
 export default async function ArbitrePage({ params }: Props) {
   const { slug } = await params
-  const ref = getRefereeBySlug(slug)
+  const ref = await getRefereeBySlugDB(slug)
 
   if (!ref) notFound()
 
