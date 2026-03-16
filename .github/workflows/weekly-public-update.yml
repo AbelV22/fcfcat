@@ -266,6 +266,16 @@ jobs:
           python -m scraper.build_public_db --season 2526
         continue-on-error: true
 
+      - name: Push player stats to Supabase
+        if: ${{ env.SUPABASE_URL != '' && env.SUPABASE_SERVICE_KEY != '' }}
+        env:
+          SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          pip install supabase -q
+          python push_player_stats.py
+        continue-on-error: true
+
       - name: Push referee DB to Supabase
         if: ${{ env.SUPABASE_URL != '' && env.SUPABASE_SERVICE_KEY != '' }}
         env:
@@ -300,6 +310,7 @@ jobs:
           else
             RUN_TYPE=$([ "$(date +%u)" = "3" ] && echo "Wednesday (referee designations)" || echo "Monday (match results)")
             git commit -m "data: auto-update $(date -u '+%Y-%m-%d %H:%M') UTC — $RUN_TYPE"
+            git pull --rebase origin HEAD
             git push origin HEAD
             echo "✓ Committed and pushed updated data"
           fi

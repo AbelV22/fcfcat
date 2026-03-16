@@ -14,6 +14,36 @@
 import { createClient } from '@supabase/supabase-js'
 import { slugify } from '@/lib/utils'
 
+// Competition display names — mirrors lib/data.ts COMPETITION_NAMES
+const COMPETITION_NAMES: Record<string, string> = {
+  'tercera-federacio': 'Tercera Federació',
+  'lliga-elit': 'Lliga Elit',
+  'primera-catalana': 'Primera Catalana',
+  'segona-catalana': 'Segona Catalana',
+  'tercera-catalana': 'Tercera Catalana',
+  'quarta-catalana': 'Quarta Catalana',
+  'divisio-honor-juvenil': "Divisió d'Honor Juvenil",
+  'lliga-nacional-juvenil': 'Lliga Nacional Juvenil',
+  'preferent-juvenils': 'Preferent Juvenil',
+  'juvenil-primera-divisio': 'Juvenil Primera Divisió',
+  'segona-catalana-juvenil': 'Juvenil Segona Divisió',
+  'tercera-catalana-juvenil': 'Juvenil Tercera Divisió',
+  'divisio-honor-cadet-s16': "Divisió d'Honor Cadet S16",
+  'preferent-cadet-s16': 'Preferent Cadet S16',
+  'cadet-primera-divisio-s16': 'Cadet Primera Divisió S16',
+  'cadet-segona-divisio-s16': 'Cadet Segona Divisió S16',
+  'divisio-honor-cadet-s15': "Divisió d'Honor Cadet S15",
+  'preferent-cadet-s15': 'Preferent Cadet S15',
+  'cadet-primera-divisio-s15': 'Cadet Primera Divisió S15',
+  'cadet-segona-divisio-s15': 'Cadet Segona Divisió S15',
+  'divisio-honor-infantil-s14': "Divisió d'Honor Infantil S14",
+  'preferent-infantil-s14': 'Preferent Infantil S14',
+  'primera-divisio-infantil-s14': 'Infantil Primera Divisió S14',
+  'divisio-honor-infantil-s13': "Divisió d'Honor Infantil S13",
+  'preferent-infantil-s13': 'Preferent Infantil S13',
+  'infantil-primera-divisio-s13': 'Infantil Primera Divisió S13',
+}
+
 // Anon key is public by design — safe to expose in client code.
 // Supabase RLS policies control what anon users can read.
 const DEFAULT_URL = 'https://nxgyduqprxbhtpqsepgj.supabase.co'
@@ -317,6 +347,7 @@ export async function getAllTeamsDB() {
       slug: t.team_slug || slugify(t.team_name || ''),
       name: t.team_name || '',
       competition: t.competition || '',
+      competitionName: COMPETITION_NAMES[t.competition || ''] || t.competition || '',
       group: t.group_name || '',
       season: t.season || '2526',
     }))
@@ -386,14 +417,14 @@ export async function getTeamBasicDataDB(slug: string) {
   const standing = standingRows?.[0] || null
   if (!standing) return null
 
-  // Get recent played matches
+  // Get all played matches (for recent form + home/away goals)
   const { data: recentRaw } = await supabase
     .from('fcf_matches')
     .select('jornada, match_date, home_team, away_team, home_score, away_score, home_slug, away_slug, group_name')
     .or(`home_slug.eq.${slug},away_slug.eq.${slug}`)
     .not('home_score', 'is', null)
     .order('match_date', { ascending: false })
-    .limit(10)
+    .limit(50)
 
   // Get next upcoming match
   const { data: upcomingRaw } = await supabase
@@ -412,7 +443,7 @@ export async function getTeamBasicDataDB(slug: string) {
     .eq('group_name', standing.group_name)
     .order('position', { ascending: true })
 
-  const recentMatches = (recentRaw || []).map(m => {
+  const allPlayedMatches = (recentRaw || []).map(m => {
     const isHome = m.home_slug === slug
     const gf = isHome ? m.home_score : m.away_score
     const ga = isHome ? m.away_score : m.home_score
@@ -430,6 +461,16 @@ export async function getTeamBasicDataDB(slug: string) {
       referee: null as string | null,
     }
   })
+
+  const recentMatches = allPlayedMatches.slice(0, 10)
+
+  // Compute home/away goals from match data
+  const homeMatches = allPlayedMatches.filter(m => m.isHome)
+  const awayMatches = allPlayedMatches.filter(m => !m.isHome)
+  const homeGF = homeMatches.reduce((s, m) => s + (m.goalsFor ?? 0), 0)
+  const homeGA = homeMatches.reduce((s, m) => s + (m.goalsAgainst ?? 0), 0)
+  const awayGF = awayMatches.reduce((s, m) => s + (m.goalsFor ?? 0), 0)
+  const awayGA = awayMatches.reduce((s, m) => s + (m.goalsAgainst ?? 0), 0)
 
   const nextRaw = upcomingRaw?.[0] || null
   const nextMatch = nextRaw ? (() => {
@@ -488,8 +529,24 @@ export async function getTeamBasicDataDB(slug: string) {
     players: [] as any[],
     sanctions: [] as any[],
     goalBuckets: [] as any[],
-    home: { played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, points: 0 },
-    away: { played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, points: 0 },
+    home: {
+      played: (standing.home_won || 0) + (standing.home_drawn || 0) + (standing.home_lost || 0),
+      wins: standing.home_won || 0,
+      draws: standing.home_drawn || 0,
+      losses: standing.home_lost || 0,
+      gf: homeGF,
+      ga: homeGA,
+      points: (standing.home_won || 0) * 3 + (standing.home_drawn || 0),
+    },
+    away: {
+      played: (standing.away_won || 0) + (standing.away_drawn || 0) + (standing.away_lost || 0),
+      wins: standing.away_won || 0,
+      draws: standing.away_drawn || 0,
+      losses: standing.away_lost || 0,
+      gf: awayGF,
+      ga: awayGA,
+      points: (standing.away_won || 0) * 3 + (standing.away_drawn || 0),
+    },
     rival: null,
     headToHead: [],
   }
