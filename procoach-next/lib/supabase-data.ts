@@ -552,6 +552,48 @@ export async function getTeamBasicDataDB(slug: string) {
   }
 }
 
+// ─── Home page aggregate stats ────────────────────────────────────────────────
+
+/**
+ * Counts used by the landing page StatsBar.
+ * Reads from Supabase so it works on Cloudflare Pages (no local JSON access).
+ *   matchCount  — played matches with acta data (rows in fcf_referee_matches)
+ *   refereeCount — distinct main referees in fcf_referee_matches
+ *   teamCount    — distinct teams in fcf_standings
+ */
+export async function getHomePageStatsDB(): Promise<{
+  matchCount: number
+  refereeCount: number
+  teamCount: number
+}> {
+  const supabase = getSupabase()
+
+  const [refMatchRes, standingsRes] = await Promise.all([
+    supabase
+      .from('fcf_referee_matches')
+      .select('main_referee', { count: 'exact', head: false }),
+    supabase
+      .from('fcf_standings')
+      .select('team_name', { count: 'exact', head: false }),
+  ])
+
+  const allRefRows = refMatchRes.data || []
+  const matchCount = allRefRows.length
+
+  const uniqueReferees = new Set(
+    allRefRows.map((r: any) => r.main_referee).filter(Boolean)
+  )
+  const refereeCount = uniqueReferees.size
+
+  const allTeamRows = standingsRes.data || []
+  const uniqueTeams = new Set(
+    allTeamRows.map((t: any) => t.team_name).filter(Boolean)
+  )
+  const teamCount = uniqueTeams.size
+
+  return { matchCount, refereeCount, teamCount }
+}
+
 /** Single referee profile by slug from fcf_referee_matches */
 export async function getRefereeBySlugDB(slug: string) {
   const supabase = getSupabase()
