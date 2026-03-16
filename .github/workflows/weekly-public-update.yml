@@ -310,9 +310,25 @@ jobs:
           else
             RUN_TYPE=$([ "$(date +%u)" = "3" ] && echo "Wednesday (referee designations)" || echo "Monday (match results)")
             git commit -m "data: auto-update $(date -u '+%Y-%m-%d %H:%M') UTC — $RUN_TYPE"
-            git pull --rebase origin HEAD
-            git push origin HEAD
-            echo "✓ Committed and pushed updated data"
+
+            # Push with up to 5 retries — rebase before each attempt to handle
+            # concurrent pushes from parallel jobs or re-runs of the same workflow.
+            PUSHED=false
+            for attempt in 1 2 3 4 5; do
+              echo "Push attempt $attempt..."
+              if git pull --rebase origin master && git push origin HEAD; then
+                echo "✓ Committed and pushed updated data"
+                PUSHED=true
+                break
+              fi
+              echo "Attempt $attempt failed — waiting 15s before retry"
+              git rebase --abort 2>/dev/null || true
+              sleep 15
+            done
+            if [ "$PUSHED" = "false" ]; then
+              echo "⚠ All push attempts failed — data is in Supabase but not committed to git"
+              exit 1
+            fi
           fi
 
       # ── Summary ───────────────────────────────────────────────────────────
