@@ -416,7 +416,7 @@ export async function getTeamBasicDataDB(slug: string) {
   // ── Played matches from fcf_referee_matches (has real scores from actas) ──
   // fcf_referee_matches has no home_slug/away_slug, so we use two .eq() queries
   // on home_team/away_team to avoid the PostgREST comma-parsing bug with .or().
-  const [homeRefRes, awayRefRes, upcomingRes, groupStandingsRes] = await Promise.all([
+  const [homeRefRes, awayRefRes, upcomingRes, groupStandingsRes, playerStatsRes] = await Promise.all([
     supabase
       .from('fcf_referee_matches')
       .select('jornada, match_date, home_team, away_team, home_score, away_score')
@@ -450,6 +450,12 @@ export async function getTeamBasicDataDB(slug: string) {
       .eq('competition', competition)
       .eq('group_name', standing.group_name)
       .order('position', { ascending: true }),
+    supabase
+      .from('fcf_player_stats')
+      .select('player_name, appearances, starts, goals, yellow_cards, red_cards, minutes_played')
+      .eq('team_slug', slug)
+      .order('appearances', { ascending: false })
+      .limit(35),
   ])
 
   // Build played matches list (with scores) sorted by jornada desc
@@ -479,6 +485,7 @@ export async function getTeamBasicDataDB(slug: string) {
   const recentMatches = allPlayedMatches.slice(0, 10)
 
   // Home/away split goals from actual played matches
+  const hasMatchData = allPlayedMatches.length > 0
   const homeMatches = allPlayedMatches.filter(m => m.isHome)
   const awayMatches = allPlayedMatches.filter(m => !m.isHome)
   const homeGF = homeMatches.reduce((s, m) => s + (m.goalsFor ?? 0), 0)
@@ -545,8 +552,17 @@ export async function getTeamBasicDataDB(slug: string) {
       goalsAgainst: null as null,
       result: null as null,
     } : null,
-    // Empty/not-available fields (no acta data for most teams)
-    players: [] as any[],
+    // Player stats from fcf_player_stats (populated when acta data is available)
+    players: (playerStatsRes.data || []).map((p: any) => ({
+      name: p.player_name || '',
+      appearances: p.appearances || 0,
+      goals: p.goals || 0,
+      yellow_cards: p.yellow_cards || 0,
+      red_cards: p.red_cards || 0,
+      minutes_played: p.minutes_played || 0,
+      // FCF suspension thresholds: 4, 9, 14 yellow cards
+      risk: [4, 9, 14].includes(p.yellow_cards || 0),
+    })),
     sanctions: [] as any[],
     goalBuckets: [] as any[],
     home: {
@@ -554,8 +570,8 @@ export async function getTeamBasicDataDB(slug: string) {
       wins: standing.home_won || 0,
       draws: standing.home_drawn || 0,
       losses: standing.home_lost || 0,
-      gf: homeGF,
-      ga: homeGA,
+      gf: hasMatchData ? homeGF : null,
+      ga: hasMatchData ? homeGA : null,
       points: (standing.home_won || 0) * 3 + (standing.home_drawn || 0),
     },
     away: {
@@ -563,8 +579,8 @@ export async function getTeamBasicDataDB(slug: string) {
       wins: standing.away_won || 0,
       draws: standing.away_drawn || 0,
       losses: standing.away_lost || 0,
-      gf: awayGF,
-      ga: awayGA,
+      gf: hasMatchData ? awayGF : null,
+      ga: hasMatchData ? awayGA : null,
       points: (standing.away_won || 0) * 3 + (standing.away_drawn || 0),
     },
     rival: null,

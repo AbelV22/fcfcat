@@ -79,7 +79,7 @@ function SplitRecord({
   label, record, icon,
 }: {
   label: string
-  record: { played: number; wins: number; draws: number; losses: number; gf: number; ga: number; points: number }
+  record: { played: number; wins: number; draws: number; losses: number; gf: number | null; ga: number | null; points: number }
   icon: React.ReactNode
 }) {
   const winRate = record.played > 0 ? Math.round((record.wins / record.played) * 100) : 0
@@ -103,7 +103,7 @@ function SplitRecord({
         ))}
       </div>
       <div className="flex items-center justify-between text-xs text-slate-400 mb-1.5">
-        <span>Gols: {record.gf}–{record.ga}</span>
+        <span>Gols: {record.gf !== null && record.ga !== null ? `${record.gf}–${record.ga}` : '–'}</span>
         <span className="text-white font-bold">{record.points} pts</span>
       </div>
       <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
@@ -397,7 +397,7 @@ function SquadTable({ players }: { players: PlayerStat[] }) {
                   </td>
                   <td className="py-3 text-center">
                     {p.yellow_cards > 0 ? (
-                      <span className={`font-bold text-xs ${p.yellow_cards >= 4 && p.yellow_cards % 4 === 0 ? 'text-amber-400' : 'text-slate-400'}`}>{p.yellow_cards}</span>
+                      <span className={`font-bold text-xs ${[4, 9, 14].includes(p.yellow_cards) ? 'text-amber-400' : 'text-slate-400'}`}>{p.yellow_cards}</span>
                     ) : <span className="text-slate-600 text-xs">–</span>}
                   </td>
                   <td className="py-3 text-center">
@@ -416,7 +416,7 @@ function SquadTable({ players }: { players: PlayerStat[] }) {
         <div className="mt-4 pt-3 border-t border-white/5 flex items-start gap-2">
           <AlertTriangle size={12} className="text-amber-400 shrink-0 mt-0.5" />
           <p className="text-xs text-amber-400/80">
-            <strong>⚠️ RISC</strong>: jugador amb 4, 8 o 12 grogues. La propera groga implica 1 partit de suspensió.
+            <strong>⚠️ RISC</strong>: jugador amb 4, 9 o 14 grogues. La propera groga implica 1 partit de suspensió.
           </p>
         </div>
       )}
@@ -493,8 +493,8 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
         goalBuckets: dbData.goalBuckets as GoalBucket[],
         players: dbData.players as PlayerStat[],
         sanctions: dbData.sanctions as Sanction[],
-        home: dbData.home as SplitRecord,
-        away: dbData.away as SplitRecord,
+        home: dbData.home as unknown as SplitRecord,
+        away: dbData.away as unknown as SplitRecord,
         rival: dbData.rival as RivalReport | null,
         headToHead: dbData.headToHead as MatchResult[],
         hasDetailedData: false,
@@ -655,11 +655,27 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
               <NextMatchInfoCard nextMatch={report.nextMatch} competition={report.competition} />
             </div>
             <div className="lg:col-span-3 flex flex-col gap-4">
-              <GoalTimingBar buckets={report.goalBuckets} />
+              {report.goalBuckets.length > 0 ? (
+                <GoalTimingBar buckets={report.goalBuckets} />
+              ) : (
+                <div className="bg-white/4 border border-white/8 rounded-2xl p-5 flex flex-col items-center justify-center min-h-[120px] text-center">
+                  <Clock size={20} className="text-slate-600 mb-2" />
+                  <p className="text-slate-500 text-sm font-medium">Timing de gols</p>
+                  <p className="text-slate-600 text-xs mt-1">Sense dades d'actes per a aquest equip</p>
+                </div>
+              )}
             </div>
           </div>
         ) : (
-          <GoalTimingBar buckets={report.goalBuckets} />
+          report.goalBuckets.length > 0 ? (
+            <GoalTimingBar buckets={report.goalBuckets} />
+          ) : (
+            <div className="bg-white/4 border border-white/8 rounded-2xl p-5 flex flex-col items-center justify-center min-h-[120px] text-center">
+              <Clock size={20} className="text-slate-600 mb-2" />
+              <p className="text-slate-500 text-sm font-medium">Timing de gols</p>
+              <p className="text-slate-600 text-xs mt-1">Sense dades d'actes per a aquest equip</p>
+            </div>
+          )
         )}
 
         {/* ─── Row 3: Rival Scout Card (full-width, expandable) ─── */}
