@@ -584,7 +584,7 @@ function buildRivalFromIntelligence(
       yellow_cards: s.yellow_cards || 0,
       red_cards: s.red_cards || 0,
       minutes_played: s.minutes_played || 0,
-      risk: (s.yellow_cards || 0) >= 4 && (s.yellow_cards || 0) % 4 === 0,
+      risk: [4, 9, 14].includes(s.yellow_cards || 0),
     }))
     .sort((a, b) => b.appearances - a.appearances)
 
@@ -647,7 +647,7 @@ function buildRivalReport(
 
   const rawPlayers = computePlayers(playedMatches, rivalSlug)
   const players: PlayerStat[] = Object.entries(rawPlayers)
-    .map(([name, s]) => ({ name, ...s, risk: s.yellow_cards >= 4 && s.yellow_cards % 4 === 0 }))
+    .map(([name, s]) => ({ name, ...s, risk: [4, 9, 14].includes(s.yellow_cards) }))
     .sort((a, b) => b.appearances - a.appearances)
 
   // global_referees has no goals data → all-zero buckets
@@ -720,7 +720,8 @@ export function buildTeamReport(teamSlug: string): TeamReport | null {
     hasActasData = true
     hasOwnJson = !!(teamJsonData.team_intelligence)
   } else {
-    // No own JSON — find the competition/group from global_referees to look for group data
+    // No own JSON — find the competition/group to look for group data
+    // 1. Try global_referees (fast, indexed by match ID)
     const sampleGlobal = allGlobalMatches.find(m =>
       slugify(m.home_team || '') === resolvedSlug ||
       slugify(m.away_team || '') === resolvedSlug
@@ -734,6 +735,37 @@ export function buildTeamReport(teamSlug: string): TeamReport | null {
         crossGroupStandings = groupData.standings
         hasActasData = true
       }
+    }
+    // 2. Fallback: scan local JSON actas directly for this team
+    //    (covers competitions not in global_referees, e.g. tercera-catalana)
+    if (!hasActasData) {
+      try {
+        const files = fs.readdirSync(TEAMS_DIR).filter((f: string) => f.endsWith('.json'))
+        for (const file of files) {
+          try {
+            const candidate = JSON.parse(fs.readFileSync(path.join(TEAMS_DIR, file), 'utf-8'))
+            const actas: any[] = candidate.actas || []
+            const hasTeam = actas.some(
+              a => slugify(a.home_team || '') === resolvedSlug || slugify(a.away_team || '') === resolvedSlug
+            )
+            if (hasTeam) {
+              const comp = candidate.meta?.competition || ''
+              const grp = candidate.meta?.group || ''
+              const groupData = findGroupData(comp, grp)
+              if (groupData) {
+                allActas = groupData.actas
+                crossGroupStandings = groupData.standings
+                hasActasData = true
+              } else {
+                allActas = actas
+                crossGroupStandings = candidate.standings ? parseStandings(candidate.standings) : []
+                hasActasData = true
+              }
+              break
+            }
+          } catch {}
+        }
+      } catch {}
     }
   }
 
@@ -814,13 +846,13 @@ export function buildTeamReport(teamSlug: string): TeamReport | null {
         yellow_cards: s.yellow_cards || 0,
         red_cards: s.red_cards || 0,
         minutes_played: s.minutes_played || 0,
-        risk: (s.yellow_cards || 0) >= 4 && (s.yellow_cards || 0) % 4 === 0,
+        risk: [4, 9, 14].includes(s.yellow_cards || 0),
       }))
       .sort((a, b) => b.appearances - a.appearances)
   } else {
     const rawPlayers = computePlayers(playedMatches, resolvedSlug)
     players = Object.entries(rawPlayers)
-      .map(([name, s]) => ({ name, ...s, risk: s.yellow_cards >= 4 && s.yellow_cards % 4 === 0 }))
+      .map(([name, s]) => ({ name, ...s, risk: [4, 9, 14].includes(s.yellow_cards) }))
       .sort((a, b) => b.appearances - a.appearances)
   }
 
