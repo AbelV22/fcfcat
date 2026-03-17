@@ -144,6 +144,7 @@ export interface TeamReport {
   headToHead: MatchResult[]
   sanctions: Sanction[]
   hasDetailedData: boolean  // true when team JSON with actas is available
+  homePitch: FieldDims | null
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -433,7 +434,7 @@ function normStr(s: string): string {
     .replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim()
 }
 
-type FieldDims = { length_m: number; width_m: number; field_name: string }
+export type FieldDims = { length_m: number; width_m: number; field_name: string }
 
 // Lazy-loaded singleton
 let _fieldLookup: {
@@ -978,6 +979,10 @@ export function buildTeamReport(teamSlug: string): TeamReport | null {
       article: s.article || '',
     }))
 
+  // Look up home pitch (find a home match to get venue string)
+  const homeMatch = allTeamMatches.find(m => slugify(m.home_team || '') === resolvedSlug)
+  const homePitch = lookupFieldDims(teamName, homeMatch?.venue || '')
+
   return {
     name: teamName,
     slug: teamSlug,
@@ -995,5 +1000,10 @@ export function buildTeamReport(teamSlug: string): TeamReport | null {
     headToHead,
     sanctions,
     hasDetailedData,
+    homePitch,
   }
+}
+
+export function lookupTeamPitch(teamName: string, venue?: string): FieldDims | null {
+  return lookupFieldDims(teamName, venue || '')
 }
