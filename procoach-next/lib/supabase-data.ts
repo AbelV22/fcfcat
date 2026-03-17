@@ -401,59 +401,84 @@ export async function getTeamBasicDataDB(slug: string) {
   const standing = standingRows?.[0] || null
   if (!standing) return null
 
-  // Get all played matches (for recent form + home/away goals)
-  const { data: recentRaw } = await supabase
-    .from('fcf_matches')
-    .select('jornada, match_date, home_team, away_team, home_score, away_score, home_slug, away_slug, group_name')
-    .or(`home_slug.eq.${slug},away_slug.eq.${slug}`)
-    .not('home_score', 'is', null)
-    .order('match_date', { ascending: false })
-    .limit(50)
+  const teamName = (standing.team_name || '') as string
+  const competition = (standing.competition || '') as string
 
-  // Get next upcoming match.
-  // Exclude played matches: FCF often omits inline scores and only sets
-  // status='ACTA TANCADA', so we must filter by BOTH home_score IS NULL
-  // AND status not containing 'TANCADA'. Order by jornada (not date,
-  // because match_date is stored as DD-MM-YYYY which doesn't sort correctly).
-  const { data: upcomingRaw } = await supabase
-    .from('fcf_matches')
-    .select('jornada, match_date, match_time, home_team, away_team, home_slug, away_slug')
-    .or(`home_slug.eq.${slug},away_slug.eq.${slug}`)
-    .is('home_score', null)
-    .not('status', 'ilike', '%TANCADA%')
-    .order('jornada', { ascending: true })
-    .limit(1)
+  // Helper: parse DD-MM-YYYY → Date (returns null if unparseable)
+  function parseMatchDate(d: string): Date | null {
+    const m = d?.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/)
+    if (!m) return null
+    return new Date(parseInt(m[3]), parseInt(m[2]) - 1, parseInt(m[1]))
+  }
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
 
-  // Get all standings for this group
-  const { data: groupStandings } = await supabase
-    .from('fcf_standings')
-    .select('position, team_name, team_slug, played, won, drawn, lost, goals_for, goals_against, goal_diff, points')
-    .eq('competition', standing.competition)
-    .eq('group_name', standing.group_name)
-    .order('position', { ascending: true })
+  // ── Played matches from fcf_referee_matches (has real scores from actas) ──
+  // fcf_referee_matches has no home_slug/away_slug, so we use two .eq() queries
+  // on home_team/away_team to avoid the PostgREST comma-parsing bug with .or().
+  const [homeRefRes, awayRefRes, upcomingRes, groupStandingsRes] = await Promise.all([
+    supabase
+      .from('fcf_referee_matches')
+      .select('jornada, match_date, home_team, away_team, home_score, away_score')
+      .eq('competition', competition)
+      .eq('home_team', teamName)
+      .order('jornada', { ascending: false })
+      .limit(20),
+    supabase
+      .from('fcf_referee_matches')
+      .select('jornada, match_date, home_team, away_team, home_score, away_score')
+      .eq('competition', competition)
+      .eq('away_team', teamName)
+      .order('jornada', { ascending: false })
+      .limit(20),
+    // Upcoming matches — fcf_matches has correct future dates even without scores.
+    // Filter by competition + group_name to avoid cross-group slug collisions.
+    // Fetch 30 candidates and filter by date >= today in JS (DD-MM-YYYY
+    // doesn't sort correctly as a string in PostgREST).
+    supabase
+      .from('fcf_matches')
+      .select('jornada, match_date, match_time, home_team, away_team, home_slug, away_slug')
+      .eq('competition', competition)
+      .eq('group_name', standing.group_name)
+      .or(`home_slug.eq.${slug},away_slug.eq.${slug}`)
+      .is('home_score', null)
+      .order('jornada', { ascending: true })
+      .limit(30),
+    supabase
+      .from('fcf_standings')
+      .select('position, team_name, team_slug, played, won, drawn, lost, goals_for, goals_against, goal_diff, points')
+      .eq('competition', competition)
+      .eq('group_name', standing.group_name)
+      .order('position', { ascending: true }),
+  ])
 
-  const allPlayedMatches = (recentRaw || []).map(m => {
-    const isHome = m.home_slug === slug
-    const gf = isHome ? m.home_score : m.away_score
-    const ga = isHome ? m.away_score : m.home_score
-    const result: 'W' | 'D' | 'L' | null =
-      gf === null || ga === null ? null : gf > ga ? 'W' : gf < ga ? 'L' : 'D'
-    return {
-      date: m.match_date || '',
-      jornada: m.jornada,
-      opponent: isHome ? (m.away_team || '') : (m.home_team || ''),
-      opponentSlug: isHome ? (m.away_slug || '') : (m.home_slug || ''),
-      isHome,
-      goalsFor: gf,
-      goalsAgainst: ga,
-      result,
-      referee: null as string | null,
-    }
-  })
+  // Build played matches list (with scores) sorted by jornada desc
+  const allPlayedMatches = [
+    ...(homeRefRes.data || []).map(m => {
+      const gf = m.home_score, ga = m.away_score
+      return {
+        date: m.match_date || '', jornada: m.jornada,
+        opponent: m.away_team || '', opponentSlug: slugify(m.away_team || ''),
+        isHome: true, goalsFor: gf, goalsAgainst: ga,
+        result: (gf === null || ga === null ? null : gf > ga ? 'W' : gf < ga ? 'L' : 'D') as 'W' | 'D' | 'L' | null,
+        referee: null as string | null,
+      }
+    }),
+    ...(awayRefRes.data || []).map(m => {
+      const gf = m.away_score, ga = m.home_score
+      return {
+        date: m.match_date || '', jornada: m.jornada,
+        opponent: m.home_team || '', opponentSlug: slugify(m.home_team || ''),
+        isHome: false, goalsFor: gf, goalsAgainst: ga,
+        result: (gf === null || ga === null ? null : gf > ga ? 'W' : gf < ga ? 'L' : 'D') as 'W' | 'D' | 'L' | null,
+        referee: null as string | null,
+      }
+    }),
+  ].sort((a, b) => b.jornada - a.jornada)
 
   const recentMatches = allPlayedMatches.slice(0, 10)
 
-  // Compute home/away goals from match data
+  // Home/away split goals from actual played matches
   const homeMatches = allPlayedMatches.filter(m => m.isHome)
   const awayMatches = allPlayedMatches.filter(m => !m.isHome)
   const homeGF = homeMatches.reduce((s, m) => s + (m.goalsFor ?? 0), 0)
@@ -461,7 +486,11 @@ export async function getTeamBasicDataDB(slug: string) {
   const awayGF = awayMatches.reduce((s, m) => s + (m.goalsFor ?? 0), 0)
   const awayGA = awayMatches.reduce((s, m) => s + (m.goalsAgainst ?? 0), 0)
 
-  const nextRaw = upcomingRaw?.[0] || null
+  // Next upcoming match: first candidate whose date >= today
+  const nextRaw = (upcomingRes.data || []).find(m => {
+    const d = parseMatchDate(m.match_date || '')
+    return !d || d >= today
+  }) || null
   const nextMatch = nextRaw ? (() => {
     const isHome = nextRaw.home_slug === slug
     return {
@@ -477,6 +506,8 @@ export async function getTeamBasicDataDB(slug: string) {
     }
   })() : null
 
+  const groupStandings = groupStandingsRes.data
+
   return {
     name: standing.team_name || '',
     slug: standing.team_slug || slug,
@@ -491,7 +522,7 @@ export async function getTeamBasicDataDB(slug: string) {
     ga: standing.goals_against || 0,
     points: standing.points || 0,
     form: standing.form || '',
-    standings: (groupStandings || []).map(s => ({
+    standings: (groupStandings || []).map((s: any) => ({
       position: s.position,
       name: s.team_name || '',
       slug: s.team_slug || slugify(s.team_name || ''),
