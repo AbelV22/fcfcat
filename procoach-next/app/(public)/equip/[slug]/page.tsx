@@ -9,8 +9,58 @@ import { RivalScoutCard } from '@/components/RivalScoutCard'
 import {
   Users, Trophy, Shield, ChevronRight, AlertTriangle,
   Calendar, Target, Clock, Home, Plane, BarChart2,
-  ArrowRight, Crosshair, Ban,
+  ArrowRight, Crosshair, Ban, Lock, Star,
 } from 'lucide-react'
+
+// ─── Paywall components ────────────────────────────────────────────────────
+
+function RegisterBlur({ children, label = "Registra't gratis per veure aquesta secció" }: {
+  children: React.ReactNode
+  label?: string
+}) {
+  return (
+    <div className="relative overflow-hidden rounded-2xl">
+      <div className="blur-sm pointer-events-none select-none opacity-60">{children}</div>
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/70 to-transparent flex flex-col items-center justify-end pb-6 px-4 text-center">
+        <div className="w-9 h-9 rounded-full bg-green-500/15 border border-green-500/30 flex items-center justify-center mb-3">
+          <Lock size={16} className="text-green-400" />
+        </div>
+        <p className="text-sm font-semibold text-white mb-1">{label}</p>
+        <p className="text-xs text-slate-400 mb-3">Gratis per a entrenadors i tècnics</p>
+        <Link
+          href="/entrenador"
+          className="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 text-white text-xs font-bold rounded-lg transition-all"
+        >
+          Registra't gratis <ArrowRight size={12} />
+        </Link>
+      </div>
+    </div>
+  )
+}
+
+function PremiumBlur({ children, label = "Disponible al Pla Pro" }: {
+  children: React.ReactNode
+  label?: string
+}) {
+  return (
+    <div className="relative overflow-hidden rounded-2xl">
+      <div className="blur-sm pointer-events-none select-none opacity-50">{children}</div>
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/75 to-transparent flex flex-col items-center justify-end pb-6 px-4 text-center">
+        <div className="w-9 h-9 rounded-full bg-amber-500/15 border border-amber-500/30 flex items-center justify-center mb-3">
+          <Star size={16} className="text-amber-400" />
+        </div>
+        <p className="text-sm font-semibold text-white mb-1">{label}</p>
+        <p className="text-xs text-slate-400 mb-3">Informe complet del rival, àrbitre i timing exclusiu</p>
+        <Link
+          href="/entrenador"
+          className="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white text-xs font-bold rounded-lg transition-all"
+        >
+          Veure plans <ArrowRight size={12} />
+        </Link>
+      </div>
+    </div>
+  )
+}
 
 export async function generateStaticParams() {
   const teams = await getAllTeamsDB()
@@ -282,21 +332,13 @@ function NextMatchInfoCard({ nextMatch, competition }: {
         </div>
       )}
 
-      {/* Referee */}
+      {/* Referee teaser — locked, full info in premium card */}
       {nextMatch.referee && (
-        <div className="px-3 py-2 bg-white/5 rounded-xl flex items-center gap-2">
+        <div className="px-3 py-2 bg-white/5 rounded-xl flex items-center gap-2 opacity-50">
           <Shield size={12} className="text-purple-400 shrink-0" />
-          <div className="text-xs text-slate-400 min-w-0">
-            <span className="text-slate-500">Àrbitre: </span>
-            <Link
-              href={`/arbitre/${slugify(nextMatch.referee)}`}
-              className="text-purple-300 hover:text-purple-200 font-medium"
-            >
-              {nextMatch.referee.split(',')[0]}
-            </Link>
-            {nextMatch.referees && nextMatch.referees.length > 1 && (
-              <span className="text-slate-600 ml-1">+{nextMatch.referees.length - 1} assistents</span>
-            )}
+          <div className="text-xs text-slate-500 min-w-0 flex items-center gap-1.5">
+            <span>Àrbitre assignat</span>
+            <span className="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded font-semibold">PRO</span>
           </div>
         </div>
       )}
@@ -304,9 +346,23 @@ function NextMatchInfoCard({ nextMatch, competition }: {
   )
 }
 
+function parseSuspendedMatches(s: Sanction): number {
+  // The scraper stores yellow card count in matches_suspended for Art.334 — wrong.
+  // Parse the real suspension from the reason text: "X partit(s) de suspensió"
+  const m = s.reason?.match(/(\d+)\s*partit[s]?\s*de\s*suspensi/i)
+  if (m) return parseInt(m[1])
+  // Fallback: if matches_suspended is 1 it's already correct (e.g. Art.336)
+  if (s.matches_suspended === 1) return 1
+  // Art.334 with matches_suspended > 1 means yellow card count was stored — treat as 1-match ban
+  if (s.article?.startsWith('334') && s.matches_suspended > 1) return 1
+  return s.matches_suspended
+}
+
 function SanctionsCard({ sanctions }: { sanctions: Sanction[] }) {
-  const active = sanctions.filter(s => s.matches_suspended > 0)
-  const past = sanctions.filter(s => s.matches_suspended === 0)
+  // Use parsed suspension count, not the raw (possibly wrong) matches_suspended
+  const withParsed = sanctions.map(s => ({ ...s, _parsed: parseSuspendedMatches(s) }))
+  const active = withParsed.filter(s => s._parsed > 0)
+  const past = withParsed.filter(s => s._parsed === 0)
   if (sanctions.length === 0) return null
   return (
     <div className="bg-red-900/10 border border-red-500/20 rounded-2xl p-5">
@@ -328,7 +384,7 @@ function SanctionsCard({ sanctions }: { sanctions: Sanction[] }) {
             </div>
             <div className="shrink-0 flex flex-col items-end gap-1">
               <span className="text-xs font-bold text-red-400 bg-red-500/15 px-2 py-0.5 rounded-full whitespace-nowrap">
-                🚫 {s.matches_suspended} part{s.matches_suspended !== 1 ? 's' : ''}
+                🚫 {s._parsed} part{s._parsed !== 1 ? 's' : ''}
               </span>
               {s.article && <span className="text-[10px] text-slate-600">Art. {s.article}</span>}
             </div>
@@ -678,61 +734,102 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
           )
         )}
 
-        {/* ─── Row 3: Rival Scout Card (full-width, expandable) ─── */}
+        {/* ─── Row 3: Rival Scout Card (free register) + Referee card (premium) ─── */}
         {report.nextMatch && report.rival && (
-          <RivalScoutCard
-            rival={report.rival}
-            nextMatch={{
-              jornada: report.nextMatch.jornada,
-              date: report.nextMatch.date,
-              time: report.nextMatch.time,
-              opponent: report.nextMatch.opponent,
-              opponentSlug: report.nextMatch.opponentSlug,
-              isHome: report.nextMatch.isHome,
-              venue: report.nextMatch.venue,
-              referee: report.nextMatch.referee,
-              referees: report.nextMatch.referees,
-            }}
-            headToHead={report.headToHead}
-          />
+          <RegisterBlur label="Informe complet del Proper Rival — Registra't gratis">
+            <RivalScoutCard
+              rival={report.rival}
+              nextMatch={{
+                jornada: report.nextMatch.jornada,
+                date: report.nextMatch.date,
+                time: report.nextMatch.time,
+                opponent: report.nextMatch.opponent,
+                opponentSlug: report.nextMatch.opponentSlug,
+                isHome: report.nextMatch.isHome,
+                venue: report.nextMatch.venue,
+                referee: null,
+                referees: [],
+              }}
+              headToHead={report.headToHead}
+            />
+          </RegisterBlur>
         )}
 
-        {/* ─── Row 4: Sanctions + Apercibits + Top scorers ─── */}
+        {/* ─── Referee card: name visible, stats blurred (Pro teaser) ─── */}
+        {report.nextMatch?.referee && (
+          <div className="bg-white/4 border border-white/8 rounded-2xl p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <Shield size={16} className="text-cyan-400" />
+              <h3 className="font-bold text-cyan-400 text-sm">Àrbitre del proper partit</h3>
+              <span className="ml-auto text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded font-semibold">PRO</span>
+            </div>
+            {/* Name always visible */}
+            <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/5 mb-3">
+              <div className="w-9 h-9 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center shrink-0">
+                <span className="text-cyan-400 font-bold text-sm">{report.nextMatch.referee.split(',')[0]?.charAt(0) || '?'}</span>
+              </div>
+              <div className="min-w-0">
+                <p className="font-semibold text-slate-200 text-sm truncate">{report.nextMatch.referee}</p>
+                {report.nextMatch.referees && report.nextMatch.referees.length > 1 && (
+                  <p className="text-[11px] text-slate-500">+{report.nextMatch.referees.length - 1} assistents</p>
+                )}
+              </div>
+            </div>
+            {/* Stats teaser: labels visible, values blurred */}
+            <div className="space-y-1.5">
+              {[
+                { label: 'Targetes grogues / partit', value: '3.2' },
+                { label: '% partits amb vermella', value: '28%' },
+                { label: 'Tendència última jornada', value: 'Estricte' },
+                { label: 'Partits arbitrats (temp.)', value: '18' },
+              ].map(({ label, value }) => (
+                <div key={label} className="flex justify-between items-center px-2.5 py-1.5 rounded-lg bg-white/3">
+                  <span className="text-[11px] text-slate-500">{label}</span>
+                  <span className="text-xs font-bold text-slate-200 blur-sm select-none">{value}</span>
+                </div>
+              ))}
+            </div>
+            <Link
+              href="/entrenador"
+              className="mt-3 flex items-center justify-center gap-1.5 w-full py-2 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 text-amber-400 text-xs font-semibold rounded-lg transition-all"
+            >
+              <Star size={11} /> Desbloquejar amb Pla Pro
+            </Link>
+          </div>
+        )}
+
+        {/* ─── Row 4: Sanctions (register) + Apercibits (register) + Top scorers (free) ─── */}
         {(activeSanctions.length > 0 || apercibits.length > 0 || topScorers.length > 0 || report.sanctions.length > 0) && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
+            {/* Sancions FCF — full data, no paywall */}
             {report.sanctions.length > 0 && (
               <SanctionsCard sanctions={report.sanctions} />
             )}
 
+            {/* Apercibits: player names visible, card count blurred */}
             {apercibits.length > 0 && (
               <div className="bg-amber-900/10 border border-amber-500/20 rounded-2xl p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <AlertTriangle size={16} className="text-amber-400" />
                   <h3 className="font-bold text-amber-400 text-sm">Apercibits del teu equip</h3>
                   <span className="ml-auto text-xs text-amber-500/80 bg-amber-500/10 px-2 py-0.5 rounded-full">
-                    {apercibits.length} jugador{apercibits.length !== 1 ? 's' : ''}
+                    {apercibits.length} jugadors
                   </span>
                 </div>
                 <div className="space-y-2">
-                  {apercibits.map((p, i) => (
+                  {apercibits.slice(0, 4).map((p, i) => (
                     <div key={i} className="flex items-center justify-between px-3 py-2 rounded-xl bg-amber-900/15 border border-amber-500/15">
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-slate-200 truncate">{p.name}</p>
-                        {p.appearances > 0 && (
-                          <p className="text-xs text-slate-500">{p.appearances} partits · {p.minutes_played}′</p>
-                        )}
+                        <p className="text-xs text-slate-500">{p.appearances} partits</p>
                       </div>
                       <div className="flex items-center gap-1.5 ml-3 shrink-0">
                         <span className="text-xs font-bold text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded-full">🟨 {p.yellow_cards}</span>
-                        {p.red_cards > 0 && <span className="text-xs font-bold text-red-400 bg-red-500/20 px-2 py-0.5 rounded-full">🟥 {p.red_cards}</span>}
                       </div>
                     </div>
                   ))}
                 </div>
-                <p className="text-[11px] text-amber-500/60 mt-3">
-                  Una nova targeta groga implica 1 partit de suspensió.
-                </p>
               </div>
             )}
 
