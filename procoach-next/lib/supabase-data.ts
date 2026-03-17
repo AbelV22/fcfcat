@@ -86,58 +86,42 @@ export async function getCompetitionCalendarDB(slug: string) {
   }))
 }
 
-/** Played matches with optional referee/card data for the Resultats tab */
+/**
+ * Played matches with referee/card data for the Resultats tab.
+ *
+ * Uses fcf_referee_matches as the primary source because the FCF /calendari/
+ * page does not expose inline scores — only "ACTA TANCADA" status — so
+ * fcf_matches.home_score is NULL for most played matches. fcf_referee_matches
+ * is populated from actual actas and always has scores.
+ */
 export async function getCompetitionMatchesDB(slug: string) {
   const supabase = getSupabase()
   if (!supabase) return []
 
-  // Get played matches from fcf_matches
-  const { data: matchData, error } = await supabase
-    .from('fcf_matches')
-    .select('id, jornada, match_date, home_team, away_team, home_score, away_score, group_name')
+  const { data, error } = await supabase
+    .from('fcf_referee_matches')
+    .select('id, jornada, match_date, home_team, away_team, home_score, away_score, group_name, main_referee, yellow_cards, red_cards')
     .eq('competition', slug)
-    .not('home_score', 'is', null)
     .order('jornada', { ascending: false })
     .order('match_date', { ascending: false })
 
-  if (error || !matchData) return []
+  if (error || !data) return []
 
-  // Get referee/card data (if available for this competition)
-  const { data: refData } = await supabase
-    .from('fcf_referee_matches')
-    .select('home_team, away_team, jornada, main_referee, yellow_cards, red_cards')
-    .eq('competition', slug)
-
-  // Build lookup by jornada+teams
-  const refLookup: Record<string, any> = {}
-  for (const rm of refData || []) {
-    const key = `J${rm.jornada}-${slugify(rm.home_team || '')}-${slugify(rm.away_team || '')}`
-    refLookup[key] = rm
-  }
-
-  return matchData.map(m => {
-    const key = `J${m.jornada}-${slugify(m.home_team || '')}-${slugify(m.away_team || '')}`
-    const ref = refLookup[key]
-    return {
-      id: m.id,
-      date: m.match_date || '',
-      jornada: m.jornada,
-      group: m.group_name || '',
-      home_team: m.home_team || '',
-      away_team: m.away_team || '',
-      home_score: m.home_score,
-      away_score: m.away_score,
-      main_referee: ref?.main_referee || null,
-      yellows: ref
-        ? (Array.isArray(ref.yellow_cards) ? ref.yellow_cards : [])
-            .filter((c: any) => c.recipient_type === 'player').length
-        : 0,
-      reds: ref
-        ? (Array.isArray(ref.red_cards) ? ref.red_cards : [])
-            .filter((c: any) => c.recipient_type === 'player').length
-        : 0,
-    }
-  })
+  return data.map(m => ({
+    id: m.id,
+    date: m.match_date || '',
+    jornada: m.jornada,
+    group: m.group_name || '',
+    home_team: m.home_team || '',
+    away_team: m.away_team || '',
+    home_score: m.home_score,
+    away_score: m.away_score,
+    main_referee: m.main_referee || null,
+    yellows: (Array.isArray(m.yellow_cards) ? m.yellow_cards : [])
+      .filter((c: any) => c.recipient_type === 'player').length,
+    reds: (Array.isArray(m.red_cards) ? m.red_cards : [])
+      .filter((c: any) => c.recipient_type === 'player').length,
+  }))
 }
 
 // ─── FCF Standings ────────────────────────────────────────────────────────────

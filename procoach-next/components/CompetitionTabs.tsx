@@ -70,7 +70,10 @@ export default function CompetitionTabs({
 }: CompetitionTabsProps) {
   const [activeTab, setActiveTab] = useState<TabId>('resultats')
 
-  const hasData = matches.length > 0
+  // Show content if we have FCF standings OR referee-analyzed matches.
+  // matches comes from fcf_referee_matches (has scores); fcfStandings comes
+  // from the official FCF classification table and is always populated.
+  const hasData = fcfStandings.length > 0 || matches.length > 0
 
   const tabs: { id: TabId; label: string; icon: React.ReactNode; count?: number }[] = [
     { id: 'resultats', label: 'Resultats', icon: <Calendar size={14} />, count: playedMatches.length },
