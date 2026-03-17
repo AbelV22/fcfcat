@@ -426,13 +426,18 @@ export async function getTeamBasicDataDB(slug: string) {
     .order('match_date', { ascending: false })
     .limit(50)
 
-  // Get next upcoming match
+  // Get next upcoming match.
+  // Exclude played matches: FCF often omits inline scores and only sets
+  // status='ACTA TANCADA', so we must filter by BOTH home_score IS NULL
+  // AND status not containing 'TANCADA'. Order by jornada (not date,
+  // because match_date is stored as DD-MM-YYYY which doesn't sort correctly).
   const { data: upcomingRaw } = await supabase
     .from('fcf_matches')
     .select('jornada, match_date, match_time, home_team, away_team, home_slug, away_slug')
     .or(`home_slug.eq.${slug},away_slug.eq.${slug}`)
     .is('home_score', null)
-    .order('match_date', { ascending: true })
+    .not('status', 'ilike', '%TANCADA%')
+    .order('jornada', { ascending: true })
     .limit(1)
 
   // Get all standings for this group
