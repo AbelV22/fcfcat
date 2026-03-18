@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { cookies } from 'next/headers'
 import PublicHeader from '@/components/PublicHeader'
 import PublicFooter from '@/components/PublicFooter'
 import { COMPETITION_NAMES, slugify } from '@/lib/data'
@@ -8,6 +7,7 @@ import { buildTeamReport, lookupTeamPitch, type TeamReport, type RivalReport, ty
 import { getAllTeamsDB, getTeamBasicDataDB } from '@/lib/supabase-data'
 import { RivalScoutCard } from '@/components/RivalScoutCard'
 import { PitchCompare } from '@/components/PitchCompare'
+import { AdminGate, AdminBadge, AdminBlurValue, AdminUpgradeLink } from '@/components/AdminGate'
 import {
   Users, Trophy, Shield, ChevronRight, AlertTriangle,
   Calendar, Target, Clock, Home, Plane, BarChart2,
@@ -547,10 +547,6 @@ function RecentMatches({ form }: { form: MatchResult[] }) {
 export default async function EquipPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
 
-  // Check admin cookie
-  const cookieStore = await cookies()
-  const isAdmin = cookieStore.get('ns_admin')?.value === '1'
-
   // Try local JSON first (full acta data), then fall back to Supabase standings data
   let report: TeamReport | null = buildTeamReport(slug)
 
@@ -774,31 +770,33 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
 
         {/* ─── Row 3: Rival Scout Card (free register) + Referee card (premium) ─── */}
         {report.nextMatch && report.rival && (
-          isAdmin ? (
+          <AdminGate
+            fallback={
+              <RegisterBlur label="Informe complet del Proper Rival — Registra't gratis">
+                <RivalScoutCard
+                  rival={report.rival}
+                  nextMatch={{
+                    jornada: report.nextMatch.jornada,
+                    date: report.nextMatch.date,
+                    time: report.nextMatch.time,
+                    opponent: report.nextMatch.opponent,
+                    opponentSlug: report.nextMatch.opponentSlug,
+                    isHome: report.nextMatch.isHome,
+                    venue: report.nextMatch.venue,
+                    referee: null,
+                    referees: [],
+                  }}
+                  headToHead={report.headToHead}
+                />
+              </RegisterBlur>
+            }
+          >
             <RivalScoutCard
               rival={report.rival}
               nextMatch={report.nextMatch}
               headToHead={report.headToHead}
             />
-          ) : (
-            <RegisterBlur label="Informe complet del Proper Rival — Registra't gratis">
-              <RivalScoutCard
-                rival={report.rival}
-                nextMatch={{
-                  jornada: report.nextMatch.jornada,
-                  date: report.nextMatch.date,
-                  time: report.nextMatch.time,
-                  opponent: report.nextMatch.opponent,
-                  opponentSlug: report.nextMatch.opponentSlug,
-                  isHome: report.nextMatch.isHome,
-                  venue: report.nextMatch.venue,
-                  referee: null,
-                  referees: [],
-                }}
-                headToHead={report.headToHead}
-              />
-            </RegisterBlur>
-          )
+          </AdminGate>
         )}
 
         {/* ─── Referee card: name visible, stats blurred (Pro teaser) ─── */}
@@ -807,8 +805,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
             <div className="flex items-center gap-2 mb-4">
               <Shield size={16} className="text-cyan-400" />
               <h3 className="font-bold text-cyan-400 text-sm">Àrbitre del proper partit</h3>
-              {!isAdmin && <span className="ml-auto text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded font-semibold">PRO</span>}
-              {isAdmin && <span className="ml-auto text-[10px] bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded font-semibold">ADMIN</span>}
+              <AdminBadge />
             </div>
             {/* Name always visible */}
             <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/5 mb-3">
@@ -832,18 +829,11 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
               ].map(({ label, value }) => (
                 <div key={label} className="flex justify-between items-center px-2.5 py-1.5 rounded-lg bg-white/3">
                   <span className="text-[11px] text-slate-500">{label}</span>
-                  <span className={`text-xs font-bold text-slate-200 ${isAdmin ? '' : 'blur-sm select-none'}`}>{value}</span>
+                  <AdminBlurValue value={value} />
                 </div>
               ))}
             </div>
-            {!isAdmin && (
-              <Link
-                href="/entrenador"
-                className="mt-3 flex items-center justify-center gap-1.5 w-full py-2 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 text-amber-400 text-xs font-semibold rounded-lg transition-all"
-              >
-                <Star size={11} /> Desbloquejar amb Pla Pro
-              </Link>
-            )}
+            <AdminUpgradeLink />
           </div>
         )}
 
