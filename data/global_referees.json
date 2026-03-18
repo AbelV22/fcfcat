@@ -69039,7 +69039,28 @@
       }
     ],
     "red_cards": [],
-    "goals": []
+    "goals": [
+      {
+        "player": "KARROCH EL HASSANI, YASER",
+        "minute": "8",
+        "team": "home"
+      },
+      {
+        "player": "NNAMONU , MATTHEW CHIMAOBI",
+        "minute": "21",
+        "team": "home"
+      },
+      {
+        "player": "SALA ALONSO, DANIIL",
+        "minute": "47",
+        "team": "home"
+      },
+      {
+        "player": "GANDULLO RUIZ, FERRAN",
+        "minute": "85",
+        "team": "home"
+      }
+    ]
   },
   "J13-MOLLETENSE, U.D. A-v-CARDEDEU, F.C. A": {
     "id": "J13-MOLLETENSE, U.D. A-v-CARDEDEU, F.C. A",
@@ -69173,7 +69194,23 @@
         "recipient_type": "player"
       }
     ],
-    "goals": []
+    "goals": [
+      {
+        "player": "RUIZ PEREZ, GUILLEM",
+        "minute": "38",
+        "team": "home"
+      },
+      {
+        "player": "EL ASRI ANNOUR, MOHAMMED",
+        "minute": "55",
+        "team": "away"
+      },
+      {
+        "player": "ABAD MELENDO, RAUL",
+        "minute": "80",
+        "team": "home"
+      }
+    ]
   },
   "J13-MARTORELLES, C.F. A-v-ESCOLA FUTBOL MATARO C.E A": {
     "id": "J13-MARTORELLES, C.F. A-v-ESCOLA FUTBOL MATARO C.E A",
@@ -69210,7 +69247,18 @@
       }
     ],
     "red_cards": [],
-    "goals": []
+    "goals": [
+      {
+        "player": "FOFANA VALLS, CARLES",
+        "minute": "77",
+        "team": "home"
+      },
+      {
+        "player": "DIABY DIAWARA, LAMINE",
+        "minute": "89",
+        "team": "away"
+      }
+    ]
   },
   "J13-LLAVANERES, C.E. A-v-VILANOVA VALLES,C.F. A": {
     "id": "J13-LLAVANERES, C.E. A-v-VILANOVA VALLES,C.F. A",
@@ -69311,7 +69359,18 @@
       }
     ],
     "red_cards": [],
-    "goals": []
+    "goals": [
+      {
+        "player": "MESSATY LMRABET, OUSSAMA",
+        "minute": "36",
+        "team": "home"
+      },
+      {
+        "player": "CEPA HERNANDEZ, SERGIO",
+        "minute": "89",
+        "team": "away"
+      }
+    ]
   },
   "J13-INTER BARCELONA  A-v-LLOREDA, C.F. A": {
     "id": "J13-INTER BARCELONA  A-v-LLOREDA, C.F. A",
@@ -69405,7 +69464,23 @@
         "recipient_type": "player"
       }
     ],
-    "goals": []
+    "goals": [
+      {
+        "player": "SAMANIEGO VALLEDEPAZ, RUBEN",
+        "minute": "4",
+        "team": "away"
+      },
+      {
+        "player": "SAMANIEGO VALLEDEPAZ, RUBEN",
+        "minute": "9",
+        "team": "away"
+      },
+      {
+        "player": "DIAS LIONÇO, ALEXANDRE",
+        "minute": "84",
+        "team": "home"
+      }
+    ]
   },
   "J13-CIRERA, U.D. A-v-Pª BARC. ANGUERA A": {
     "id": "J13-CIRERA, U.D. A-v-Pª BARC. ANGUERA A",
@@ -69522,7 +69597,18 @@
       }
     ],
     "red_cards": [],
-    "goals": []
+    "goals": [
+      {
+        "player": "VELAZQUEZ MUÑOZ, DANIEL",
+        "minute": "19",
+        "team": "home"
+      },
+      {
+        "player": "GUARDIA SABARTES, PAU",
+        "minute": "58",
+        "team": "away"
+      }
+    ]
   },
   "J13-SANT JULIA DE VILATORTA, C.F. A-v-CABRILS, C.E. A": {
     "id": "J13-SANT JULIA DE VILATORTA, C.F. A-v-CABRILS, C.E. A",
@@ -69583,7 +69669,28 @@
       }
     ],
     "red_cards": [],
-    "goals": []
+    "goals": [
+      {
+        "player": "SORIA CANADELL, NIL",
+        "minute": "7",
+        "team": "home"
+      },
+      {
+        "player": "ROVIRA BOIX, ADAM",
+        "minute": "20",
+        "team": "home"
+      },
+      {
+        "player": "SORIA CANADELL, NIL",
+        "minute": "22",
+        "team": "home"
+      },
+      {
+        "player": "GODAYOL BRES, BIEL",
+        "minute": "36",
+        "team": "home"
+      }
+    ]
   },
   "J13-LES FRANQUESES, C.F. A-v-VIC RIUPRIMER REFO FUTBOL CLUB A": {
     "id": "J13-LES FRANQUESES, C.F. A-v-VIC RIUPRIMER REFO FUTBOL CLUB A",
@@ -69661,7 +69768,23 @@
         "recipient_type": "player"
       }
     ],
-    "goals": []
+    "goals": [
+      {
+        "player": "PUIG VILA, SERGI",
+        "minute": "7",
+        "team": "away"
+      },
+      {
+        "player": "PINTO MARTINEZ, ELOI",
+        "minute": "54",
+        "team": "home"
+      },
+      {
+        "player": "PUIG VILA, SERGI",
+        "minute": "60",
+        "team": "away"
+      }
+    ]
   },
   "J14-LES FRANQUESES, C.F. A-v-VILAMAJOR, C.F. A": {
     "id": "J14-LES FRANQUESES, C.F. A-v-VILAMAJOR, C.F. A",
@@ -71383,7 +71506,28 @@
       }
     ],
     "red_cards": [],
-    "goals": []
+    "goals": [
+      {
+        "player": "RUIZ RAMIREZ, OSCAR",
+        "minute": "15",
+        "team": "home"
+      },
+      {
+        "player": "NARANJO GAVIN , MARTI",
+        "minute": "34",
+        "team": "away"
+      },
+      {
+        "player": "SOLIANO ALBARRACIN, DAVID",
+        "minute": "65",
+        "team": "home"
+      },
+      {
+        "player": "PINTO MARTINEZ, ELOI",
+        "minute": "89",
+        "team": "away"
+      }
+    ]
   },
   "J16-CIRERA, U.D. A-v-CABRILS, C.E. A": {
     "id": "J16-CIRERA, U.D. A-v-CABRILS, C.E. A",
@@ -107084,7 +107228,7 @@
         "team": "home"
       },
       {
-        "player": "GALLOSO SOLSONA, DIDAC",
+        "player": "ROBRES VIVES, XAVIER",
         "minute": "89",
         "team": "away"
       }
@@ -111645,6 +111789,48 @@
         "is_double_yellow_dismissal": false,
         "recipient_type": "technical_staff"
       }
+    ],
+    "goals": [
+      {
+        "player": "COKER , THOMAS DAVID",
+        "minute": "8",
+        "team": "home"
+      },
+      {
+        "player": "SALVADOR HERNANDEZ, SERGI",
+        "minute": "13",
+        "team": "away"
+      },
+      {
+        "player": "MARTIN ALONSO, SAUL",
+        "minute": "21",
+        "team": "away"
+      },
+      {
+        "player": "PLA ONCINS, EDGAR",
+        "minute": "44",
+        "team": "home"
+      },
+      {
+        "player": "MARTÍNEZ HERRAIZ, ALBERT",
+        "minute": "44",
+        "team": "away"
+      },
+      {
+        "player": "PLA ONCINS, EDGAR",
+        "minute": "83",
+        "team": "home"
+      },
+      {
+        "player": "PLA ONCINS, EDGAR",
+        "minute": "86",
+        "team": "home"
+      },
+      {
+        "player": "FRAILE SANZ, CARLOS",
+        "minute": "89",
+        "team": "home"
+      }
     ]
   },
   "J6-GUISSONA, U.E. A-v-AEM, S.E. A": {
@@ -111738,6 +111924,23 @@
         "is_double_yellow_dismissal": false,
         "recipient_type": "player"
       }
+    ],
+    "goals": [
+      {
+        "player": "MAJORAL VILARDOSA, JAUME",
+        "minute": "33",
+        "team": "home"
+      },
+      {
+        "player": "RAMIREZ ESTRADA, CRISTHIAN FABIAN",
+        "minute": "66",
+        "team": "away"
+      },
+      {
+        "player": "ALTAMIRANO CANDELO, YORMAN EMILIO",
+        "minute": "89",
+        "team": "home"
+      }
     ]
   },
   "J6-LA SEU D'URGELL, F.C. A-v-ALGUAIRE, C.E. A": {
@@ -111798,7 +112001,24 @@
         "recipient_type": "player"
       }
     ],
-    "red_cards": []
+    "red_cards": [],
+    "goals": [
+      {
+        "player": "OBIOLS CASASSAS, PEP",
+        "minute": "15",
+        "team": "home"
+      },
+      {
+        "player": "YOUNG JUNCOSA, TOMAS EDUARD",
+        "minute": "33",
+        "team": "home"
+      },
+      {
+        "player": "COLOMO ESPOT, GERARD",
+        "minute": "59",
+        "team": "away"
+      }
+    ]
   },
   "J6-SALLENT, C.E. A-v-AGRAMUNT ESCOLA GERARD GATELL C.F A": {
     "id": "J6-SALLENT, C.E. A-v-AGRAMUNT ESCOLA GERARD GATELL C.F A",
@@ -117144,7 +117364,18 @@
         "recipient_type": "player"
       }
     ],
-    "goals": []
+    "goals": [
+      {
+        "player": "FONTAN FORNELL, EDGAR",
+        "minute": "12",
+        "team": "home"
+      },
+      {
+        "player": "SANYANG , ASSAN",
+        "minute": "25",
+        "team": "away"
+      }
+    ]
   },
   "J13-LA SEU D'URGELL, F.C. A-v-ARTESA DE SEGRE, C.E. A": {
     "id": "J13-LA SEU D'URGELL, F.C. A-v-ARTESA DE SEGRE, C.E. A",
@@ -118764,7 +118995,18 @@
     ],
     "yellow_cards": [],
     "red_cards": [],
-    "goals": []
+    "goals": [
+      {
+        "player": "MARANGES MONTANÉ, MARC",
+        "minute": "57",
+        "team": "home"
+      },
+      {
+        "player": "BALLETBO CAÑAVERAS, JOSEP FRANCESC",
+        "minute": "79",
+        "team": "home"
+      }
+    ]
   },
   "J15-GUISSONA, U.E. A-v-CAPELLADES, C.F. A": {
     "id": "J15-GUISSONA, U.E. A-v-CAPELLADES, C.F. A",
@@ -123110,13 +123352,18 @@
         "team": "away"
       },
       {
+        "player": "MONTESO ALBACAR, JOSEP",
+        "minute": "27",
+        "team": "away"
+      },
+      {
         "player": "BRIA LÓPEZ, DENÍS",
-        "minute": "21",
+        "minute": "84",
         "team": "home"
       },
       {
-        "player": "MONTESO ALBACAR, JOSEP",
-        "minute": "27",
+        "player": "TOURAY , ABOU KUNTA",
+        "minute": "85",
         "team": "away"
       }
     ]
@@ -125349,7 +125596,38 @@
       }
     ],
     "red_cards": [],
-    "goals": []
+    "goals": [
+      {
+        "player": "LOPEZ IBAÑEZ, ALEX",
+        "minute": "9",
+        "team": "home"
+      },
+      {
+        "player": "PEREZ PARRA, ALEX",
+        "minute": "36",
+        "team": "away"
+      },
+      {
+        "player": "CIDONCHA GARCIA, ÀLEX",
+        "minute": "49",
+        "team": "away"
+      },
+      {
+        "player": "CALLAU FUMADO, GENIS",
+        "minute": "55",
+        "team": "home"
+      },
+      {
+        "player": "CORDOBA SALAS, MARC",
+        "minute": "86",
+        "team": "home"
+      },
+      {
+        "player": "VERICAT QUINTANA, IKER",
+        "minute": "89",
+        "team": "home"
+      }
+    ]
   },
   "J4-CAMBRILS UNIÓ C.E. A-v-LA CAVA, C.D. A": {
     "id": "J4-CAMBRILS UNIÓ C.E. A-v-LA CAVA, C.D. A",
@@ -125679,7 +125957,18 @@
         "recipient_type": "player"
       }
     ],
-    "goals": []
+    "goals": [
+      {
+        "player": "SARAGOSSA CASTELL, ALBERT",
+        "minute": "10",
+        "team": "away"
+      },
+      {
+        "player": "LOPEZ AGUILAR, JONATAN",
+        "minute": "89",
+        "team": "home"
+      }
+    ]
   },
   "J5-AMPOSTA, C.F. A-v-POBLA MAFUMET, C.F. B": {
     "id": "J5-AMPOSTA, C.F. A-v-POBLA MAFUMET, C.F. B",
@@ -134224,7 +134513,23 @@
       }
     ],
     "red_cards": [],
-    "goals": []
+    "goals": [
+      {
+        "player": "RIBEIRO DE JESUS, ALLAN",
+        "minute": "37",
+        "team": "home"
+      },
+      {
+        "player": "TRISTAO PEREIRA BISNETTO, SINVAL",
+        "minute": "64",
+        "team": "home"
+      },
+      {
+        "player": "MONTALBO ESQUINAS, AARÓN",
+        "minute": "83",
+        "team": "home"
+      }
+    ]
   },
   "J17-REMOLINS-BITEM, U.E. A-v-LA SENIA, C.F. A": {
     "id": "J17-REMOLINS-BITEM, U.E. A-v-LA SENIA, C.F. A",
@@ -141934,9 +142239,61 @@
     "home_score": 0,
     "away_score": 0,
     "referees": [],
-    "yellow_cards": [],
+    "yellow_cards": [
+      {
+        "player": "FALL , YATMA",
+        "minute": "76",
+        "card_type": "yellow",
+        "team": "home",
+        "is_double_yellow_dismissal": false,
+        "recipient_type": "player"
+      },
+      {
+        "player": "PRADOS GARCIA, PAU",
+        "minute": "82",
+        "card_type": "yellow",
+        "team": "home",
+        "is_double_yellow_dismissal": false,
+        "recipient_type": "player"
+      },
+      {
+        "player": "AYATS DE AIZPURU, MARC",
+        "minute": "16",
+        "card_type": "yellow",
+        "team": "away",
+        "is_double_yellow_dismissal": false,
+        "recipient_type": "player"
+      },
+      {
+        "player": "PAZ ROBAINA, SERGIO ANTONIO",
+        "minute": "67",
+        "card_type": "yellow",
+        "team": "away",
+        "is_double_yellow_dismissal": false,
+        "recipient_type": "technical_staff"
+      },
+      {
+        "player": "CALVET RAYA, ADRIA",
+        "minute": "89",
+        "card_type": "yellow",
+        "team": "away",
+        "is_double_yellow_dismissal": false,
+        "recipient_type": "player"
+      }
+    ],
     "red_cards": [],
-    "goals": []
+    "goals": [
+      {
+        "player": "IÑAKI",
+        "minute": "34",
+        "team": "home"
+      },
+      {
+        "player": "URI FORT",
+        "minute": "72",
+        "team": "home"
+      }
+    ]
   },
   "J17-ESCUELA F.SAN PEDRO SAN PABLO A-v-ALDEANA, U.E. A": {
     "id": "J17-ESCUELA F.SAN PEDRO SAN PABLO A-v-ALDEANA, U.E. A",
@@ -325544,6 +325901,146 @@
         "player": "MARTÍNEZ MAÑEZ, OSCAR",
         "minute": "84",
         "team": "away"
+      }
+    ]
+  },
+  "J19-GIMNASTIC TARRAGONA, C. B-v-VILA-SECA C.F. A": {
+    "id": "J19-GIMNASTIC TARRAGONA, C. B-v-VILA-SECA C.F. A",
+    "competition": "preferent-cadet-s16",
+    "group": "grup-4",
+    "season": "2526",
+    "jornada": 19,
+    "date": "17-03-2026",
+    "home_team": "GIMNASTIC TARRAGONA, C. B",
+    "away_team": "VILA-SECA C.F. A",
+    "home_score": 2,
+    "away_score": 0,
+    "referees": [
+      "GARCIA DOZ, VICTOR"
+    ],
+    "yellow_cards": [
+      {
+        "player": "FERRÉ CALERO, ARNAU",
+        "minute": "55",
+        "card_type": "yellow",
+        "team": "home",
+        "is_double_yellow_dismissal": false,
+        "recipient_type": "player"
+      },
+      {
+        "player": "GRACIA MONTSERRAT, MARTI",
+        "minute": "79",
+        "card_type": "yellow",
+        "team": "home",
+        "is_double_yellow_dismissal": false,
+        "recipient_type": "player"
+      },
+      {
+        "player": "RAMOS BAENA, ENZO",
+        "minute": "36",
+        "card_type": "yellow",
+        "team": "away",
+        "is_double_yellow_dismissal": false,
+        "recipient_type": "player"
+      },
+      {
+        "player": "NANNETTI , MAXIMO NICOLAS",
+        "minute": "55",
+        "card_type": "yellow",
+        "team": "away",
+        "is_double_yellow_dismissal": false,
+        "recipient_type": "player"
+      }
+    ],
+    "red_cards": [],
+    "goals": [
+      {
+        "player": "VALVERDE TERESA, NICOLAS",
+        "minute": "2",
+        "team": "home"
+      },
+      {
+        "player": "LÓPEZ TERRÓN, HERNÁN",
+        "minute": "56",
+        "team": "home"
+      }
+    ]
+  },
+  "J24-BARCELONA, F.C. B-v-CONGRÉS CLUB ESP. B": {
+    "id": "J24-BARCELONA, F.C. B-v-CONGRÉS CLUB ESP. B",
+    "competition": "preferent-infantil-s13",
+    "group": "grup-2",
+    "season": "2526",
+    "jornada": 24,
+    "date": "17-03-2026",
+    "home_team": "BARCELONA, F.C. B",
+    "away_team": "CONGRÉS CLUB ESP. B",
+    "home_score": 10,
+    "away_score": 0,
+    "referees": [
+      "AGUIRREBEITIA MORENO, ÍKER"
+    ],
+    "yellow_cards": [
+      {
+        "player": "FAHEM SERROUKH, AYOUB",
+        "minute": "55",
+        "card_type": "yellow",
+        "team": "away",
+        "is_double_yellow_dismissal": false,
+        "recipient_type": "player"
+      }
+    ],
+    "red_cards": [],
+    "goals": [
+      {
+        "player": "FLORENZA ALBERT, MAX",
+        "minute": "1",
+        "team": "home"
+      },
+      {
+        "player": "SYLLA CISSE, OUSMANE",
+        "minute": "15",
+        "team": "home"
+      },
+      {
+        "player": "WINTER SANTORO, DENZEL",
+        "minute": "28",
+        "team": "home"
+      },
+      {
+        "player": "NISHIYAMA , SHINTA",
+        "minute": "33",
+        "team": "home"
+      },
+      {
+        "player": "JUAREZ MONTI, PEDRO",
+        "minute": "42",
+        "team": "home"
+      },
+      {
+        "player": "EJIOFOR JOHN, DESTINY KOSISO",
+        "minute": "45",
+        "team": "home"
+      },
+      {
+        "player": "MARTINEZ PEREZ, ARÇ",
+        "minute": "52",
+        "team": "home"
+      },
+      {
+        "player": "MOLLICA POVES, MARCO",
+        "minute": "55",
+        "team": "home"
+      },
+      {
+        "player": "VEGANZONES IGLESIAS, JAN",
+        "minute": "61",
+        "team": "home"
+      },
+      {
+        "player": "LAANTIT CASTRO, ISSAM",
+        "minute": "64",
+        "team": "home"
       }
     ]
   }
