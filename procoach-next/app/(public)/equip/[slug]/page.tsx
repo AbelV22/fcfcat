@@ -65,8 +65,29 @@ function PremiumBlur({ children, label = "Disponible al Pla Pro" }: {
 }
 
 export async function generateStaticParams() {
-  const teams = await getAllTeamsDB()
-  return teams.map(t => ({ slug: t.slug }))
+  // Teams from Supabase DB
+  const dbTeams = await getAllTeamsDB()
+  const dbSlugs = new Set(dbTeams.map(t => t.slug))
+
+  // Also include ALL local JSON team slugs so Cloudflare SSG bakes in the full data
+  const localSlugs: string[] = []
+  try {
+    const fs = (await import('fs')).default
+    const path = (await import('path')).default
+    const teamsDir = path.join(process.cwd(), '..', 'data', 'teams')
+    const files = fs.readdirSync(teamsDir).filter((f: string) => f.endsWith('.json'))
+    for (const f of files) {
+      const slug = f.replace('.json', '')
+      if (!dbSlugs.has(slug)) localSlugs.push(slug)
+    }
+  } catch {
+    // data dir not accessible at build time — skip
+  }
+
+  return [
+    ...dbTeams.map(t => ({ slug: t.slug })),
+    ...localSlugs.map(s => ({ slug: s })),
+  ]
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {

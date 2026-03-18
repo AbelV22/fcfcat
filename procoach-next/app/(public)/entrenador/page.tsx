@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import PublicHeader from '@/components/PublicHeader'
-import { Trophy, Shield, TrendingUp, Users, CheckCircle, ChevronRight, Star, Zap } from 'lucide-react'
+import { Trophy, Shield, TrendingUp, Users, CheckCircle, Star, Zap } from 'lucide-react'
 
 const COMPETITIONS = [
   'Primera Catalana', 'Segona Catalana', 'Tercera Catalana', 'Quarta Catalana',
@@ -29,17 +29,18 @@ const PRO_FEATURES = [
 
 export default function EntrenadorPage() {
   const [form, setForm] = useState({ team: '', competition: '', email: '', name: '' })
-  const [sent, setSent] = useState(false)
-  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.team || !form.competition || !form.email) return
-    setLoading(true)
-    // Simple mailto fallback — replace with Supabase insert when DB is live
-    await new Promise(r => setTimeout(r, 800))
-    setSent(true)
-    setLoading(false)
+    // Redirect to full signup page with pre-filled data
+    const params = new URLSearchParams({
+      team: form.team,
+      competition: form.competition,
+      email: form.email,
+      ...(form.name ? { name: form.name } : {}),
+    })
+    window.location.href = `/registre?${params.toString()}`
   }
 
   return (
@@ -63,12 +64,12 @@ export default function EntrenadorPage() {
             Afegeix el teu equip gratis. Accedeix a informes arbitrals, estadístiques i anàlisi de rivals de tota la FCF.
           </p>
           <div className="flex flex-col xs:flex-row items-center justify-center gap-3">
-            <a
-              href="#registre"
+            <Link
+              href="/registre"
               className="w-full xs:w-auto px-6 sm:px-8 py-4 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-green-900/30 text-base sm:text-lg text-center"
             >
               Afegeix el teu equip — Gratis
-            </a>
+            </Link>
             <Link
               href="/cerca"
               className="w-full xs:w-auto px-5 sm:px-6 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 font-medium rounded-xl transition-all text-center text-sm sm:text-base"
@@ -131,25 +132,12 @@ export default function EntrenadorPage() {
 
         {/* Registration form */}
         <div id="registre" className="bg-white/4 border border-white/10 rounded-2xl p-5 sm:p-8">
-          {sent ? (
-            <div className="text-center py-8">
-              <CheckCircle size={48} className="mx-auto mb-4 text-green-400" />
-              <h3 className="text-2xl font-bold mb-2">Rebut!</h3>
-              <p className="text-slate-400">
-                T'avisarem en 24h quan el teu equip estigui activat.<br />
-                Mentrestant, explora la plataforma.
-              </p>
-              <Link href="/" className="inline-flex items-center gap-2 mt-6 text-green-400 hover:text-green-300 transition-colors">
-                Explorar NeoScout <ChevronRight size={16} />
-              </Link>
-            </div>
-          ) : (
-            <>
-              <h2 className="text-2xl font-bold mb-2 text-center">Registra el teu equip</h2>
-              <p className="text-slate-400 text-center text-sm mb-8">Gratuït. Sense compromisos. L'equip s'activa en menys de 24h.</p>
+          <>
+            <h2 className="text-2xl font-bold mb-2 text-center">Registra el teu equip</h2>
+            <p className="text-slate-400 text-center text-sm mb-8">Gratuït. Sense compromisos. Accés immediat al teu panell.</p>
               <form onSubmit={handleSubmit} className="space-y-4 max-w-lg mx-auto">
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1.5">Nom de l'equip *</label>
+                  <label className="block text-sm font-medium text-slate-300 mb-1.5">Nom de l&apos;equip *</label>
                   <input
                     type="text"
                     value={form.team}
@@ -181,7 +169,7 @@ export default function EntrenadorPage() {
                     onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                     placeholder="Nom i cognoms"
                     required
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 transition-all"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all"
                   />
                 </div>
                 <div>
@@ -192,22 +180,20 @@ export default function EntrenadorPage() {
                     onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                     placeholder="entrenador@exemple.com"
                     required
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 transition-all"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all"
                   />
                 </div>
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="w-full py-4 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 disabled:opacity-50 text-white font-bold rounded-xl transition-all shadow-lg shadow-green-900/30 text-lg mt-2"
+                  className="w-full py-4 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-green-900/30 text-lg mt-2"
                 >
-                  {loading ? 'Enviant...' : 'Afegeix el teu equip — Gratis'}
+                  Continuar i crear compte →
                 </button>
                 <p className="text-xs text-slate-600 text-center">
                   Sense spam. Les teves dades no es compartiran amb tercers.
                 </p>
               </form>
-            </>
-          )}
+          </>
         </div>
 
       </div>
