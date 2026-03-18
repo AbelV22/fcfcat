@@ -69,7 +69,9 @@ export async function generateStaticParams() {
   const dbTeams = await getAllTeamsDB()
   const dbSlugs = new Set(dbTeams.map(t => t.slug))
 
-  // Also include ALL local JSON team slugs so Cloudflare SSG bakes in the full data
+  // Also include ALL local JSON team slugs so Cloudflare SSG bakes in the full data.
+  // IMPORTANT: use slugify(meta.team) — NOT the raw filename — because filenames can
+  // contain special chars (accents, dots, commas) that don't match the URL slug.
   const localSlugs: string[] = []
   try {
     const fs = (await import('fs')).default
@@ -77,8 +79,18 @@ export async function generateStaticParams() {
     const teamsDir = path.join(process.cwd(), '..', 'data', 'teams')
     const files = fs.readdirSync(teamsDir).filter((f: string) => f.endsWith('.json'))
     for (const f of files) {
-      const slug = f.replace('.json', '')
-      if (!dbSlugs.has(slug)) localSlugs.push(slug)
+      try {
+        const raw = fs.readFileSync(path.join(teamsDir, f), 'utf-8')
+        const data = JSON.parse(raw)
+        const metaTeam: string = data?.meta?.team || ''
+        // Use slugified team name (same as buildTeamReport resolvedSlug)
+        const slug = metaTeam ? slugify(metaTeam) : f.replace('.json', '')
+        if (!dbSlugs.has(slug) && !localSlugs.includes(slug)) {
+          localSlugs.push(slug)
+        }
+      } catch {
+        // skip corrupted or unreadable files
+      }
     }
   } catch {
     // data dir not accessible at build time — skip

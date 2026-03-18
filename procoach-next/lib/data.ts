@@ -200,6 +200,40 @@ export function getAllTeams() {
   return Object.values(teamsMap).sort((a, b) => a.name.localeCompare(b.name))
 }
 
+/** Get teams directly from local JSON files (uses slugify(meta.team) as slug).
+ *  Catches teams that are NOT in global_referees (e.g. names with special chars). */
+export function getAllTeamsFromJSON() {
+  const teams: { slug: string; name: string; competition: string; competitionName: string; group: string; season: string }[] = []
+  try {
+    const files = fs.readdirSync(TEAMS_DIR).filter(f => f.endsWith('.json'))
+    for (const file of files) {
+      try {
+        const raw = fs.readFileSync(path.join(TEAMS_DIR, file), 'utf-8')
+        const data = JSON.parse(raw)
+        const metaTeam: string = data?.meta?.team || ''
+        const competition: string = data?.meta?.competition || ''
+        const group: string = data?.meta?.group || ''
+        const season: string = data?.meta?.season || '2526'
+        if (!metaTeam) continue
+        const slug = slugify(metaTeam)
+        teams.push({
+          slug,
+          name: metaTeam,
+          competition,
+          competitionName: COMPETITION_NAMES[competition] || competition,
+          group,
+          season,
+        })
+      } catch {
+        // skip corrupted files
+      }
+    }
+  } catch {
+    // data dir not accessible
+  }
+  return teams
+}
+
 /** Get recent results from all global_referees matches */
 export function getRecentResults(limit = 20) {
   const refs = loadGlobalReferees()
