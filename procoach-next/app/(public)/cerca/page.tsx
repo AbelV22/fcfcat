@@ -19,14 +19,15 @@ export default async function CercaPage() {
 
   const referees = refDB.length > 0 ? refDB : getAllReferees()
 
-  // Merge Supabase teams + local JSON teams (deduped by slug).
-  // Local JSON uses slugify(meta.team) which may differ from Supabase slug,
-  // so we always include both sources to avoid missing any team in search.
-  const dbTeams = teamsDB.length > 0 ? teamsDB : getAllTeams()
+  // JSON files are the authoritative source for competition labels (meta.competition).
+  // DB/global_referees assigns competition from the first match found, which can be wrong
+  // (e.g. a team that played a cup match in a different competition).
+  // Strategy: JSON teams first, then add any DB/ref teams not already covered by JSON.
   const jsonTeams = getAllTeamsFromJSON()
-  const seenSlugs = new Set(dbTeams.map((t: { slug: string }) => t.slug))
-  const extraTeams = jsonTeams.filter(t => !seenSlugs.has(t.slug))
-  const teams = [...dbTeams, ...extraTeams].sort((a, b) => a.name.localeCompare(b.name))
+  const allRefTeams = teamsDB.length > 0 ? teamsDB : getAllTeams()
+  const jsonSlugs = new Set(jsonTeams.map(t => t.slug))
+  const extraRefTeams = allRefTeams.filter((t: { slug: string }) => !jsonSlugs.has(t.slug))
+  const teams = [...jsonTeams, ...extraRefTeams].sort((a, b) => a.name.localeCompare(b.name))
   // Players still come from local team JSON files (fcf_player_stats is empty)
   const players = getAllPlayers()
 

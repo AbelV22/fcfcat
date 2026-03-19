@@ -125850,14 +125850,4 @@
     "actas_in_db": 176,
     "new_actas_scraped": 176
   }
-}"rival": "BERGA, C.E. A",
-    "season": "2526",
-    "competition": "segona-catalana",
-    "group": "grup-4",
-    "scraped_at": "2026-03-17T18:34:44Z",
-    "elapsed_seconds": 318.9,
-    "update_mode": true,
-    "actas_in_db": 176,
-    "new_actas_scraped": 176
-  }
 }
