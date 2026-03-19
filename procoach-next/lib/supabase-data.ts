@@ -307,6 +307,20 @@ export async function getCompetitionRefereeRankingDB(slug: string) {
 
 // ─── Global / Cerca ───────────────────────────────────────────────────────────
 
+// Priority order for competition deduplication — when the same team slug appears
+// in multiple competitions (e.g. a club with adult + youth teams sharing a slug),
+// prefer the first matching competition in this list.
+const COMPETITION_PRIORITY = [
+  'tercera-federacio', 'lliga-elit', 'primera-catalana',
+  'segona-catalana', 'tercera-catalana', 'quarta-catalana',
+  'divisio-honor-juvenil', 'lliga-nacional-juvenil',
+  'preferent-juvenils', 'juvenil-primera-divisio',
+]
+function competitionRank(c: string) {
+  const i = COMPETITION_PRIORITY.indexOf(c)
+  return i === -1 ? 999 : i
+}
+
 /** All unique teams from standings (for cerca page) */
 export async function getAllTeamsDB() {
   const supabase = getSupabase()
@@ -318,7 +332,11 @@ export async function getAllTeamsDB() {
 
   if (error || !data) return []
 
-  // Deduplicate by slug
+  // Sort by competition priority so deduplication keeps the most relevant one.
+  // Same team_slug can appear in multiple competitions (different age groups or cups).
+  data.sort((a, b) => competitionRank(a.competition || '') - competitionRank(b.competition || ''))
+
+  // Deduplicate by slug — first occurrence wins (highest priority competition)
   const seen = new Set<string>()
   return data
     .filter(t => {
