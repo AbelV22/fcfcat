@@ -391,11 +391,13 @@ export async function getAllRefereesDB() {
 export async function getTeamBasicDataDB(slug: string) {
   const supabase = getSupabase()
 
-  // Find team standing by slug
+  // Find team standing by slug — restrict to adult priority competitions so
+  // clubs that also have youth teams don't return the wrong category
   const { data: standingRows } = await supabase
     .from('fcf_standings')
     .select('*')
     .eq('team_slug', slug)
+    .in('competition', ['segona-catalana', 'tercera-catalana'])
     .limit(1)
 
   const standing = standingRows?.[0] || null
@@ -454,6 +456,7 @@ export async function getTeamBasicDataDB(slug: string) {
       .from('fcf_player_stats')
       .select('player_name, appearances, starts, goals, yellow_cards, red_cards, minutes_played')
       .eq('team_slug', slug)
+      .eq('competition', competition)
       .order('appearances', { ascending: false })
       .limit(35),
   ])
@@ -835,10 +838,14 @@ export async function getFullTeamReportDB(slug: string): Promise<FullTeamReportD
   const supabase = getSupabase()
 
   // ── Round 1: Find team standing ──────────────────────────────────────────
+  // IMPORTANT: filter to priority adult competitions only — many clubs share
+  // the same slug across youth categories (e.g. parets-cf-a in 6 competitions).
+  // Without this filter, LIMIT 1 returns a random youth category row.
   const { data: standingRows, error: standingErr } = await supabase
     .from('fcf_standings')
     .select('*')
     .eq('team_slug', slug)
+    .in('competition', ['segona-catalana', 'tercera-catalana'])
     .limit(1)
 
   if (standingErr) {
@@ -894,6 +901,7 @@ export async function getFullTeamReportDB(slug: string): Promise<FullTeamReportD
       .from('fcf_player_stats')
       .select('player_name, appearances, starts, goals, yellow_cards, red_cards, minutes_played')
       .eq('team_slug', slug)
+      .eq('competition', competition)
       .order('appearances', { ascending: false })
       .limit(35),
   ])
@@ -993,7 +1001,7 @@ export async function getFullTeamReportDB(slug: string): Promise<FullTeamReportD
       ? supabase.from('fcf_referee_matches').select('jornada, match_date, home_team, away_team, home_score, away_score, main_referee').eq('competition', competition).eq('away_team', rivalName).not('away_score', 'is', null).order('jornada', { ascending: false }).limit(15)
       : Promise.resolve({ data: [] as any[] }),
     rivalSlug
-      ? supabase.from('fcf_player_stats').select('player_name, appearances, goals, yellow_cards, red_cards, minutes_played').eq('team_slug', rivalSlug).order('appearances', { ascending: false }).limit(30)
+      ? supabase.from('fcf_player_stats').select('player_name, appearances, goals, yellow_cards, red_cards, minutes_played').eq('team_slug', rivalSlug).eq('competition', competition).order('appearances', { ascending: false }).limit(30)
       : Promise.resolve({ data: [] as any[] }),
     refereeName
       ? supabase.from('fcf_referee_matches').select('competition, jornada, match_date, home_team, away_team, home_score, away_score, yellow_cards, red_cards').eq('main_referee', refereeName).order('match_date', { ascending: false }).limit(30)
