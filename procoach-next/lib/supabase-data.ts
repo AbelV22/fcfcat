@@ -764,6 +764,7 @@ export type RivalDataDB = {
   mostMinutes: PlayerEntry[]
   apercibits: PlayerEntry[]
   goalBuckets: GoalBucketEntry[]
+  awayByFieldSize: never[]  // not available from Supabase; always empty
 }
 
 export type FullTeamReportDB = {
@@ -882,15 +883,17 @@ export async function getFullTeamReportDB(slug: string): Promise<FullTeamReportD
       .not('away_score', 'is', null)
       .order('jornada', { ascending: false })
       .limit(20),
+    // Fetch ALL calendar entries for this team (scores never written to fcf_matches,
+    // so .is('home_score', null) matches everything — we filter by date in JS).
+    // Need all 30+ jornadas to find the first one with date >= today.
     supabase
       .from('fcf_matches')
       .select('jornada, match_date, match_time, home_team, away_team, home_slug, away_slug, referee')
       .eq('competition', competition)
       .eq('group_name', groupName)
       .or(`home_slug.eq.${slug},away_slug.eq.${slug}`)
-      .is('home_score', null)
       .order('jornada', { ascending: true })
-      .limit(5),
+      .limit(35),
     supabase
       .from('fcf_standings')
       .select('position, team_name, team_slug, played, won, drawn, lost, goals_for, goals_against, points')
@@ -1059,7 +1062,8 @@ export async function getFullTeamReportDB(slug: string): Promise<FullTeamReportD
       topScorers: [...rivalPlayers].sort((a,b) => b.goals - a.goals).filter(p => p.goals > 0).slice(0, 5),
       mostMinutes: [...rivalPlayers].sort((a,b) => b.minutes_played - a.minutes_played).filter(p => p.minutes_played > 0).slice(0, 5),
       apercibits: rivalPlayers.filter(p => p.risk),
-      goalBuckets: [],  // no goals JSONB in fcf_referee_matches
+      goalBuckets: [],        // no goals JSONB in fcf_referee_matches
+      awayByFieldSize: [],    // pitch dimension data not available from Supabase
     }
   }
 
