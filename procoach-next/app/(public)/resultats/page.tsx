@@ -3,7 +3,10 @@ import Link from 'next/link'
 import { Calendar } from 'lucide-react'
 import PublicHeader from '@/components/PublicHeader'
 import PublicFooter from '@/components/PublicFooter'
-import { getRecentResults, COMPETITION_NAMES } from '@/lib/data'
+import { getRecentResultsDB } from '@/lib/supabase-data'
+import { COMPETITION_NAMES } from '@/lib/data'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Últims Resultats — Futbol Català',
@@ -11,7 +14,7 @@ export const metadata: Metadata = {
 }
 
 export default async function ResultatsPage() {
-  const results = getRecentResults(50)
+  const results = await getRecentResultsDB(50)
 
   const formatDate = (date: string) => {
     if (!date) return '–'

@@ -5,7 +5,7 @@ import { Shield, ArrowLeft, Calendar, AlertTriangle, Lock, TrendingUp } from 'lu
 import PublicHeader from '@/components/PublicHeader'
 import PublicFooter from '@/components/PublicFooter'
 import { COMPETITION_NAMES } from '@/lib/data'
-import { getRefereeBySlugDB, getAllRefereesDB } from '@/lib/supabase-data'
+import { getRefereeBySlugDB } from '@/lib/supabase-data'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -21,10 +21,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export async function generateStaticParams() {
-  const refs = await getAllRefereesDB()
-  return refs.map(r => ({ slug: r.slug }))
-}
+// SSR — rendered on each request
+export const dynamic = 'force-dynamic'
 
 function StatBadge({ value, label, color }: { value: string | number; label: string; color: string }) {
   return (

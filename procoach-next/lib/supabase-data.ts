@@ -693,3 +693,430 @@ export async function getRefereeBySlugDB(slug: string) {
     })),
   }
 }
+
+// ─── Recent results (for /resultats page) ─────────────────────────────────────
+
+/** Recent played matches across all competitions — replaces getRecentResults() local JSON */
+export async function getRecentResultsDB(limit = 50) {
+  const supabase = getSupabase()
+  const { data, error } = await supabase
+    .from('fcf_referee_matches')
+    .select('id, jornada, match_date, home_team, away_team, home_score, away_score, competition, group_name, main_referee')
+    .not('home_score', 'is', null)
+    .order('match_date', { ascending: false })
+    .limit(limit)
+
+  if (error || !data) return []
+
+  return data.map(m => ({
+    id: m.id,
+    date: m.match_date || '',
+    jornada: m.jornada,
+    home_team: m.home_team || '',
+    away_team: m.away_team || '',
+    home_score: m.home_score,
+    away_score: m.away_score,
+    competition: m.competition || '',
+    group: m.group_name || '',
+    main_referee: m.main_referee || null,
+  }))
+}
+
+// ─── Full team report (SSR — replaces buildTeamReport filesystem reader) ──────
+
+type SplitStats = { played: number; wins: number; draws: number; losses: number; gf: number; ga: number; points: number }
+type PlayerEntry = { name: string; appearances: number; goals: number; yellow_cards: number; red_cards: number; minutes_played: number; risk: boolean }
+type MatchEntry = { date: string; jornada: number; opponent: string; opponentSlug: string; isHome: boolean; goalsFor: number | null; goalsAgainst: number | null; result: 'W' | 'D' | 'L' | null; referee: string | null }
+type StandingEntry = { position: number; name: string; slug: string; played: number; wins: number; draws: number; losses: number; gf: number; ga: number; points: number }
+type GoalBucketEntry = { label: string; scored: number; conceded: number }
+
+export type RefereeStatsDB = {
+  name: string
+  slug: string
+  matches: number
+  yellows: number
+  reds: number
+  yellows_per_match: number
+  reds_per_match: number
+  matches_with_red_pct: number
+  recentMatches: Array<{ date: string; home_team: string; away_team: string; home_score: number | null; away_score: number | null; yellows: number; reds: number; competition: string; jornada: number }>
+}
+
+export type RivalDataDB = {
+  name: string
+  slug: string
+  played: number
+  wins: number
+  draws: number
+  losses: number
+  gf: number
+  ga: number
+  points: number
+  position: number | null
+  home: SplitStats
+  away: SplitStats
+  players: PlayerEntry[]
+  form: MatchEntry[]
+  topScorers: PlayerEntry[]
+  mostMinutes: PlayerEntry[]
+  apercibits: PlayerEntry[]
+  goalBuckets: GoalBucketEntry[]
+}
+
+export type FullTeamReportDB = {
+  name: string
+  slug: string
+  competition: string
+  group: string
+  position: number | null
+  played: number
+  wins: number
+  draws: number
+  losses: number
+  gf: number
+  ga: number
+  points: number
+  home: SplitStats
+  away: SplitStats
+  players: PlayerEntry[]
+  form: MatchEntry[]
+  goalBuckets: GoalBucketEntry[]
+  standings: StandingEntry[]
+  sanctions: never[]
+  nextMatch: (MatchEntry & { venue: string; time: string; referees: string[] }) | null
+  rival: RivalDataDB | null
+  headToHead: MatchEntry[]
+  referee: RefereeStatsDB | null
+}
+
+function _splitStats(matches: Array<{ isHome: boolean; goalsFor: number; goalsAgainst: number }>, filter?: 'home' | 'away'): SplitStats {
+  let played = 0, wins = 0, draws = 0, losses = 0, gf = 0, ga = 0
+  for (const m of matches) {
+    if (filter === 'home' && !m.isHome) continue
+    if (filter === 'away' && m.isHome) continue
+    played++
+    gf += m.goalsFor
+    ga += m.goalsAgainst
+    if (m.goalsFor > m.goalsAgainst) wins++
+    else if (m.goalsFor === m.goalsAgainst) draws++
+    else losses++
+  }
+  return { played, wins, draws, losses, gf, ga, points: wins * 3 + draws }
+}
+
+function _toMatchEntry(m: any, isHome: boolean, teamName: string): MatchEntry {
+  const opponent = isHome ? (m.away_team || '') : (m.home_team || '')
+  const gf = isHome ? m.home_score : m.away_score
+  const ga = isHome ? m.away_score : m.home_score
+  return {
+    date: m.match_date || '',
+    jornada: m.jornada || 0,
+    opponent,
+    opponentSlug: slugify(opponent),
+    isHome,
+    goalsFor: gf ?? null,
+    goalsAgainst: ga ?? null,
+    result: gf !== null && ga !== null ? (gf > ga ? 'W' : gf < ga ? 'L' : 'D') : null,
+    referee: m.main_referee || null,
+  }
+}
+
+function _parseMatchDate(d: string): Date | null {
+  const m = (d || '').match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/)
+  if (!m) return null
+  return new Date(parseInt(m[3]), parseInt(m[2]) - 1, parseInt(m[1]))
+}
+
+/**
+ * Full team report from Supabase — SSR replacement for buildTeamReport().
+ * Two parallel query rounds: first for team data, second for rival + referee.
+ */
+export async function getFullTeamReportDB(slug: string): Promise<FullTeamReportDB | null> {
+  const supabase = getSupabase()
+
+  // ── Round 1: Find team standing ──────────────────────────────────────────
+  const { data: standingRows, error: standingErr } = await supabase
+    .from('fcf_standings')
+    .select('*')
+    .eq('team_slug', slug)
+    .limit(1)
+
+  if (standingErr) {
+    console.error('[getFullTeamReportDB] standings error for', slug, standingErr)
+  }
+
+  const standing = standingRows?.[0]
+  if (!standing) {
+    console.warn('[getFullTeamReportDB] no standing row found for slug:', slug, '| rows:', standingRows)
+    return null
+  }
+
+  const teamName = (standing.team_name || '') as string
+  const competition = (standing.competition || '') as string
+  const groupName = (standing.group_name || '') as string
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  // ── Round 1 parallel: matches + upcoming + standings + player stats ──────
+  const [homeRefRes, awayRefRes, upcomingRes, groupStandingsRes, playerStatsRes] = await Promise.all([
+    supabase
+      .from('fcf_referee_matches')
+      .select('jornada, match_date, home_team, away_team, home_score, away_score, main_referee')
+      .eq('competition', competition)
+      .eq('home_team', teamName)
+      .not('home_score', 'is', null)
+      .order('jornada', { ascending: false })
+      .limit(20),
+    supabase
+      .from('fcf_referee_matches')
+      .select('jornada, match_date, home_team, away_team, home_score, away_score, main_referee')
+      .eq('competition', competition)
+      .eq('away_team', teamName)
+      .not('away_score', 'is', null)
+      .order('jornada', { ascending: false })
+      .limit(20),
+    supabase
+      .from('fcf_matches')
+      .select('jornada, match_date, match_time, home_team, away_team, home_slug, away_slug, referee')
+      .eq('competition', competition)
+      .eq('group_name', groupName)
+      .or(`home_slug.eq.${slug},away_slug.eq.${slug}`)
+      .is('home_score', null)
+      .order('jornada', { ascending: true })
+      .limit(5),
+    supabase
+      .from('fcf_standings')
+      .select('position, team_name, team_slug, played, won, drawn, lost, goals_for, goals_against, points')
+      .eq('competition', competition)
+      .eq('group_name', groupName)
+      .order('position', { ascending: true }),
+    supabase
+      .from('fcf_player_stats')
+      .select('player_name, appearances, starts, goals, yellow_cards, red_cards, minutes_played')
+      .eq('team_slug', slug)
+      .order('appearances', { ascending: false })
+      .limit(35),
+  ])
+
+  // Build played matches list
+  const homePlayed = (homeRefRes.data || []).map(m => ({ ...m, isHome: true, goalsFor: m.home_score as number, goalsAgainst: m.away_score as number }))
+  const awayPlayed = (awayRefRes.data || []).map(m => ({ ...m, isHome: false, goalsFor: m.away_score as number, goalsAgainst: m.home_score as number }))
+  const allPlayed = [...homePlayed, ...awayPlayed].sort((a, b) => b.jornada - a.jornada)
+
+  // Upcoming match
+  const nextRaw = (upcomingRes.data || []).find(m => {
+    const d = _parseMatchDate(m.match_date || '')
+    return !d || d >= today
+  }) || null
+
+  const nextMatch = nextRaw ? (() => {
+    const isHome = (nextRaw as any).home_slug === slug
+    const opponent = isHome ? ((nextRaw as any).away_team || '') : ((nextRaw as any).home_team || '')
+    const referee = (nextRaw as any).referee || null
+    return {
+      jornada: (nextRaw as any).jornada || 0,
+      date: (nextRaw as any).match_date || '',
+      time: (nextRaw as any).match_time || '',
+      opponent,
+      opponentSlug: isHome ? ((nextRaw as any).away_slug || slugify(opponent)) : ((nextRaw as any).home_slug || slugify(opponent)),
+      isHome,
+      venue: '',
+      referee,
+      referees: referee ? [referee] : [] as string[],
+      goalsFor: null as null,
+      goalsAgainst: null as null,
+      result: null as null,
+    }
+  })() : null
+
+  // Players
+  const players: PlayerEntry[] = (playerStatsRes.data || []).map((p: any) => ({
+    name: p.player_name || '',
+    appearances: p.appearances || 0,
+    goals: p.goals || 0,
+    yellow_cards: p.yellow_cards || 0,
+    red_cards: p.red_cards || 0,
+    minutes_played: p.minutes_played || 0,
+    risk: [4, 9, 14].includes(p.yellow_cards || 0),
+  }))
+
+  // Group standings
+  const standings: StandingEntry[] = (groupStandingsRes.data || []).map((s: any) => ({
+    position: s.position || 0,
+    name: s.team_name || '',
+    slug: s.team_slug || slugify(s.team_name || ''),
+    played: s.played || 0,
+    wins: s.won || 0,
+    draws: s.drawn || 0,
+    losses: s.lost || 0,
+    gf: s.goals_for || 0,
+    ga: s.goals_against || 0,
+    points: s.points || 0,
+  }))
+
+  // Form (last 8 played, most recent first)
+  const form: MatchEntry[] = allPlayed.slice(0, 8).map(m => _toMatchEntry(m, m.isHome, teamName))
+
+  // Home/away split using standing data (most accurate)
+  const home: SplitStats = {
+    played: (standing.home_won || 0) + (standing.home_drawn || 0) + (standing.home_lost || 0),
+    wins: standing.home_won || 0,
+    draws: standing.home_drawn || 0,
+    losses: standing.home_lost || 0,
+    gf: homePlayed.reduce((s, m) => s + (m.goalsFor || 0), 0),
+    ga: homePlayed.reduce((s, m) => s + (m.goalsAgainst || 0), 0),
+    points: (standing.home_won || 0) * 3 + (standing.home_drawn || 0),
+  }
+  const away: SplitStats = {
+    played: (standing.away_won || 0) + (standing.away_drawn || 0) + (standing.away_lost || 0),
+    wins: standing.away_won || 0,
+    draws: standing.away_drawn || 0,
+    losses: standing.away_lost || 0,
+    gf: awayPlayed.reduce((s, m) => s + (m.goalsFor || 0), 0),
+    ga: awayPlayed.reduce((s, m) => s + (m.goalsAgainst || 0), 0),
+    points: (standing.away_won || 0) * 3 + (standing.away_drawn || 0),
+  }
+
+  // ── Round 2: rival + referee + h2h in parallel ────────────────────────────
+  const rivalSlug = nextMatch?.opponentSlug || ''
+  const rivalName = nextMatch?.opponent || ''
+  const refereeName = nextMatch?.referee || ''
+
+  const [rivalStandingRes, rivalHomeRes, rivalAwayRes, rivalPlayersRes, refereeMatchesRes, h2hHomeRes, h2hAwayRes] = await Promise.all([
+    rivalSlug
+      ? supabase.from('fcf_standings').select('position, team_name, team_slug, played, won, drawn, lost, goals_for, goals_against, points, home_won, home_drawn, home_lost, away_won, away_drawn, away_lost').eq('team_slug', rivalSlug).eq('competition', competition).limit(1)
+      : Promise.resolve({ data: [] as any[] }),
+    rivalName
+      ? supabase.from('fcf_referee_matches').select('jornada, match_date, home_team, away_team, home_score, away_score, main_referee').eq('competition', competition).eq('home_team', rivalName).not('home_score', 'is', null).order('jornada', { ascending: false }).limit(15)
+      : Promise.resolve({ data: [] as any[] }),
+    rivalName
+      ? supabase.from('fcf_referee_matches').select('jornada, match_date, home_team, away_team, home_score, away_score, main_referee').eq('competition', competition).eq('away_team', rivalName).not('away_score', 'is', null).order('jornada', { ascending: false }).limit(15)
+      : Promise.resolve({ data: [] as any[] }),
+    rivalSlug
+      ? supabase.from('fcf_player_stats').select('player_name, appearances, goals, yellow_cards, red_cards, minutes_played').eq('team_slug', rivalSlug).order('appearances', { ascending: false }).limit(30)
+      : Promise.resolve({ data: [] as any[] }),
+    refereeName
+      ? supabase.from('fcf_referee_matches').select('competition, jornada, match_date, home_team, away_team, home_score, away_score, yellow_cards, red_cards').eq('main_referee', refereeName).order('match_date', { ascending: false }).limit(30)
+      : Promise.resolve({ data: [] as any[] }),
+    // H2H: team at home vs rival away
+    rivalName && teamName
+      ? supabase.from('fcf_referee_matches').select('jornada, match_date, home_team, away_team, home_score, away_score, main_referee').eq('home_team', teamName).eq('away_team', rivalName).not('home_score', 'is', null).order('match_date', { ascending: false }).limit(5)
+      : Promise.resolve({ data: [] as any[] }),
+    // H2H: rival at home vs team away
+    rivalName && teamName
+      ? supabase.from('fcf_referee_matches').select('jornada, match_date, home_team, away_team, home_score, away_score, main_referee').eq('home_team', rivalName).eq('away_team', teamName).not('home_score', 'is', null).order('match_date', { ascending: false }).limit(5)
+      : Promise.resolve({ data: [] as any[] }),
+  ])
+
+  // ── Build rival ────────────────────────────────────────────────────────────
+  let rival: RivalDataDB | null = null
+  if (rivalSlug && rivalName) {
+    const rs = (rivalStandingRes.data || [])[0] as any
+    const rHomePlayed = (rivalHomeRes.data || []).map((m: any) => ({ ...m, isHome: true, goalsFor: m.home_score as number, goalsAgainst: m.away_score as number }))
+    const rAwayPlayed = (rivalAwayRes.data || []).map((m: any) => ({ ...m, isHome: false, goalsFor: m.away_score as number, goalsAgainst: m.home_score as number }))
+    const rAllPlayed = [...rHomePlayed, ...rAwayPlayed].sort((a, b) => b.jornada - a.jornada)
+
+    const rivalPlayers: PlayerEntry[] = (rivalPlayersRes.data || []).map((p: any) => ({
+      name: p.player_name || '',
+      appearances: p.appearances || 0,
+      goals: p.goals || 0,
+      yellow_cards: p.yellow_cards || 0,
+      red_cards: p.red_cards || 0,
+      minutes_played: p.minutes_played || 0,
+      risk: [4, 9, 14].includes(p.yellow_cards || 0),
+    }))
+
+    const rHome: SplitStats = rs
+      ? { played: (rs.home_won||0)+(rs.home_drawn||0)+(rs.home_lost||0), wins: rs.home_won||0, draws: rs.home_drawn||0, losses: rs.home_lost||0, gf: rHomePlayed.reduce((s:number,m:any)=>s+(m.goalsFor||0),0), ga: rHomePlayed.reduce((s:number,m:any)=>s+(m.goalsAgainst||0),0), points: (rs.home_won||0)*3+(rs.home_drawn||0) }
+      : _splitStats(rAllPlayed, 'home')
+    const rAway: SplitStats = rs
+      ? { played: (rs.away_won||0)+(rs.away_drawn||0)+(rs.away_lost||0), wins: rs.away_won||0, draws: rs.away_drawn||0, losses: rs.away_lost||0, gf: rAwayPlayed.reduce((s:number,m:any)=>s+(m.goalsFor||0),0), ga: rAwayPlayed.reduce((s:number,m:any)=>s+(m.goalsAgainst||0),0), points: (rs.away_won||0)*3+(rs.away_drawn||0) }
+      : _splitStats(rAllPlayed, 'away')
+
+    rival = {
+      name: rivalName,
+      slug: rivalSlug,
+      played: rs?.played || rAllPlayed.length,
+      wins: rs?.won || rAllPlayed.filter((m:any) => m.goalsFor > m.goalsAgainst).length,
+      draws: rs?.drawn || rAllPlayed.filter((m:any) => m.goalsFor === m.goalsAgainst).length,
+      losses: rs?.lost || rAllPlayed.filter((m:any) => m.goalsFor < m.goalsAgainst).length,
+      gf: rs?.goals_for ?? rAllPlayed.reduce((s:number,m:any)=>s+(m.goalsFor||0),0),
+      ga: rs?.goals_against ?? rAllPlayed.reduce((s:number,m:any)=>s+(m.goalsAgainst||0),0),
+      points: rs ? (rs.won||0)*3+(rs.drawn||0) : 0,
+      position: rs?.position ?? null,
+      home: rHome,
+      away: rAway,
+      players: rivalPlayers,
+      form: rAllPlayed.slice(0, 5).map((m:any) => _toMatchEntry(m, m.isHome, rivalName)),
+      topScorers: [...rivalPlayers].sort((a,b) => b.goals - a.goals).filter(p => p.goals > 0).slice(0, 5),
+      mostMinutes: [...rivalPlayers].sort((a,b) => b.minutes_played - a.minutes_played).filter(p => p.minutes_played > 0).slice(0, 5),
+      apercibits: rivalPlayers.filter(p => p.risk),
+      goalBuckets: [],  // no goals JSONB in fcf_referee_matches
+    }
+  }
+
+  // ── Build head-to-head ─────────────────────────────────────────────────────
+  const h2hAll = [
+    ...(h2hHomeRes.data || []).map((m: any) => ({ ...m, wasHome: true })),
+    ...(h2hAwayRes.data || []).map((m: any) => ({ ...m, wasHome: false })),
+  ].sort((a: any, b: any) => (b.match_date || '').localeCompare(a.match_date || '')).slice(0, 5)
+
+  const headToHead: MatchEntry[] = h2hAll.map((m: any) => _toMatchEntry(m, m.wasHome, teamName))
+
+  // ── Build referee stats ────────────────────────────────────────────────────
+  let referee: RefereeStatsDB | null = null
+  if (refereeName && (refereeMatchesRes.data || []).length > 0) {
+    const rm = refereeMatchesRes.data as any[]
+    const totalYellows = rm.flatMap(m => (Array.isArray(m.yellow_cards) ? m.yellow_cards : []).filter((c: any) => c.recipient_type === 'player')).length
+    const totalReds = rm.flatMap(m => (Array.isArray(m.red_cards) ? m.red_cards : []).filter((c: any) => c.recipient_type === 'player')).length
+    const matchesWithRed = rm.filter(m => (Array.isArray(m.red_cards) ? m.red_cards : []).some((c: any) => c.recipient_type === 'player')).length
+
+    referee = {
+      name: refereeName,
+      slug: slugify(refereeName),
+      matches: rm.length,
+      yellows: totalYellows,
+      reds: totalReds,
+      yellows_per_match: rm.length ? +(totalYellows / rm.length).toFixed(2) : 0,
+      reds_per_match: rm.length ? +(totalReds / rm.length).toFixed(2) : 0,
+      matches_with_red_pct: rm.length ? Math.round((matchesWithRed / rm.length) * 100) : 0,
+      recentMatches: rm.slice(0, 10).map(m => ({
+        date: m.match_date || '',
+        home_team: m.home_team || '',
+        away_team: m.away_team || '',
+        home_score: m.home_score,
+        away_score: m.away_score,
+        yellows: (Array.isArray(m.yellow_cards) ? m.yellow_cards : []).filter((c: any) => c.recipient_type === 'player').length,
+        reds: (Array.isArray(m.red_cards) ? m.red_cards : []).filter((c: any) => c.recipient_type === 'player').length,
+        competition: m.competition || '',
+        jornada: m.jornada || 0,
+      })),
+    }
+  }
+
+  return {
+    name: teamName,
+    slug,
+    competition,
+    group: groupName,
+    position: standing.position ?? null,
+    played: standing.played || 0,
+    wins: standing.won || 0,
+    draws: standing.drawn || 0,
+    losses: standing.lost || 0,
+    gf: standing.goals_for || 0,
+    ga: standing.goals_against || 0,
+    points: standing.points || 0,
+    home,
+    away,
+    players,
+    form,
+    goalBuckets: [],  // no goal timing from Supabase (no goals JSONB in fcf_referee_matches)
+    standings,
+    sanctions: [],
+    nextMatch,
+    rival,
+    headToHead,
+    referee,
+  }
+}

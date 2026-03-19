@@ -214,6 +214,13 @@ def run_weekly_update(
                         next_match.referees = refs
                         next_match.referee = refs[0]
                         diagnostics.append(f"👨‍⚖️ Àrbitre: {refs[0]}")
+                        # Persist referee to Supabase fcf_matches so SSR pages can read it
+                        try:
+                            from .supabase_uploader import update_match_referee, slugify as _slugify
+                            _team_slug = _slugify(team)
+                            update_match_referee(competition, group, next_match.jornada, _team_slug, refs[0])
+                        except Exception as _e:
+                            logger.warning(f"Could not persist referee to Supabase: {_e}")
 
                 all_data["next_match"] = asdict(next_match)
                 diagnostics.append(

@@ -17,13 +17,8 @@ import {
 } from '@/lib/supabase-data'
 import { Trophy, AlertTriangle, LogIn, ChevronRight } from 'lucide-react'
 
-// Force static rendering — data is fetched from Supabase at build time.
-// Tabs are handled client-side in CompetitionTabs.tsx.
-export const dynamic = 'force-static'
-
-export async function generateStaticParams() {
-  return Object.keys(COMPETITION_NAMES).map(slug => ({ slug }))
-}
+// SSR — rendered on each request so data is always fresh
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

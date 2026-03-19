@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import PublicHeader from '@/components/PublicHeader'
 import HeroSection from '@/components/landing/HeroSection'
 import StatsBar from '@/components/landing/StatsBar'

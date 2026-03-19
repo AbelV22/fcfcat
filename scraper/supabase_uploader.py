@@ -188,6 +188,41 @@ def push_matches(
     return n
 
 
+def update_match_referee(
+    competition: str,
+    group: str,
+    jornada: int,
+    team_slug: str,
+    referee: str,
+) -> bool:
+    """
+    Set the referee designation on the upcoming fcf_matches row.
+    Matches by competition + group_name + jornada + team slug (home or away).
+    Returns True if at least one row was updated.
+    """
+    client = _get_client()
+    try:
+        res = (
+            client.table("fcf_matches")
+            .update({"referee": referee})
+            .eq("competition", competition)
+            .eq("group_name", group)
+            .eq("jornada", jornada)
+            .is_("home_score", "null")
+            .execute()
+        )
+        # Filter in Python: only update the row that contains our team
+        # (PostgREST .or() with compound conditions can be unreliable)
+        # Re-run a targeted update for home + away separately
+        client.table("fcf_matches").update({"referee": referee}).eq("competition", competition).eq("group_name", group).eq("jornada", jornada).eq("home_slug", team_slug).execute()
+        client.table("fcf_matches").update({"referee": referee}).eq("competition", competition).eq("group_name", group).eq("jornada", jornada).eq("away_slug", team_slug).execute()
+        logger.info(f"referee    → {referee} [{competition}/{group} J{jornada}]")
+        return True
+    except Exception as e:
+        logger.warning(f"update_match_referee failed: {e}")
+        return False
+
+
 def push_referee_matches(refs: dict) -> int:
     """
     Upsert global_referees.json dict to fcf_referee_matches.

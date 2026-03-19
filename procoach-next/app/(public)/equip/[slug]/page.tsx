@@ -3,16 +3,17 @@ import Link from 'next/link'
 import PublicHeader from '@/components/PublicHeader'
 import PublicFooter from '@/components/PublicFooter'
 import { COMPETITION_NAMES, slugify } from '@/lib/data'
-import { buildTeamReport, lookupTeamPitch, type TeamReport, type RivalReport, type PlayerStat, type GoalBucket, type MatchResult, type StandingRow, type Sanction, type SplitRecord } from '@/lib/team-report'
-import { getAllTeamsDB, getTeamBasicDataDB } from '@/lib/supabase-data'
+import { getFullTeamReportDB, type FullTeamReportDB, type RivalDataDB, type RefereeStatsDB } from '@/lib/supabase-data'
 import { RivalScoutCard } from '@/components/RivalScoutCard'
-import { PitchCompare } from '@/components/PitchCompare'
 import { AdminGate, AdminBadge, AdminBlurValue, AdminUpgradeLink } from '@/components/AdminGate'
 import {
   Users, Trophy, Shield, ChevronRight, AlertTriangle,
   Calendar, Target, Clock, Home, Plane, BarChart2,
-  ArrowRight, Crosshair, Ban, Lock, Star,
+  ArrowRight, Crosshair, Ban, Lock, Star, TrendingUp,
 } from 'lucide-react'
+
+// SSR — rendered on each request, no filesystem access
+export const dynamic = 'force-dynamic'
 
 // ─── Paywall components ────────────────────────────────────────────────────
 
@@ -40,83 +41,13 @@ function RegisterBlur({ children, label = "Registra't gratis per veure aquesta s
   )
 }
 
-function PremiumBlur({ children, label = "Disponible al Pla Pro" }: {
-  children: React.ReactNode
-  label?: string
-}) {
-  return (
-    <div className="relative overflow-hidden rounded-2xl">
-      <div className="blur-sm pointer-events-none select-none opacity-50">{children}</div>
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/75 to-transparent flex flex-col items-center justify-end pb-6 px-4 text-center">
-        <div className="w-9 h-9 rounded-full bg-amber-500/15 border border-amber-500/30 flex items-center justify-center mb-3">
-          <Star size={16} className="text-amber-400" />
-        </div>
-        <p className="text-sm font-semibold text-white mb-1">{label}</p>
-        <p className="text-xs text-slate-400 mb-3">Informe complet del rival, àrbitre i timing exclusiu</p>
-        <Link
-          href="/entrenador"
-          className="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white text-xs font-bold rounded-lg transition-all"
-        >
-          Veure plans <ArrowRight size={12} />
-        </Link>
-      </div>
-    </div>
-  )
-}
-
-export async function generateStaticParams() {
-  // Teams from Supabase DB
-  const dbTeams = await getAllTeamsDB()
-  const dbSlugs = new Set(dbTeams.map(t => t.slug))
-
-  // Also include ALL local JSON team slugs so Cloudflare SSG bakes in the full data.
-  // IMPORTANT: use slugify(meta.team) — NOT the raw filename — because filenames can
-  // contain special chars (accents, dots, commas) that don't match the URL slug.
-  const localSlugs: string[] = []
-  try {
-    const fs = (await import('fs')).default
-    const path = (await import('path')).default
-    const teamsDir = path.join(process.cwd(), '..', 'data', 'teams')
-    const files = fs.readdirSync(teamsDir).filter((f: string) => f.endsWith('.json'))
-    for (const f of files) {
-      try {
-        const raw = fs.readFileSync(path.join(teamsDir, f), 'utf-8')
-        const data = JSON.parse(raw)
-        const metaTeam: string = data?.meta?.team || ''
-        // Use slugified team name (same as buildTeamReport resolvedSlug)
-        const slug = metaTeam ? slugify(metaTeam) : f.replace('.json', '')
-        if (!dbSlugs.has(slug) && !localSlugs.includes(slug)) {
-          localSlugs.push(slug)
-        }
-      } catch {
-        // skip corrupted or unreadable files
-      }
-    }
-  } catch {
-    // data dir not accessible at build time — skip
-  }
-
-  return [
-    ...dbTeams.map(t => ({ slug: t.slug })),
-    ...localSlugs.map(s => ({ slug: s })),
-  ]
-}
-
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const report = buildTeamReport(slug)
+  const report = await getFullTeamReportDB(slug)
   if (report) {
     return {
       title: `${report.name} — Informe de l'equip | NeoScout`,
       description: `Estadístiques, plantilla, propers rivals i anàlisi complet de ${report.name}. Futbol català temporada 2025/26.`,
-    }
-  }
-  // Fallback: try Supabase for team name
-  const dbData = await getTeamBasicDataDB(slug)
-  if (dbData) {
-    return {
-      title: `${dbData.name} — Estadístiques | NeoScout`,
-      description: `Resultats, classificació i estadístiques de ${dbData.name}. Futbol català temporada 2025/26.`,
     }
   }
   return { title: 'Equip | NeoScout' }
@@ -129,10 +60,9 @@ function FormDot({ result }: { result: 'W' | 'D' | 'L' | null }) {
     result === 'W' ? 'bg-green-500 text-white' :
     result === 'D' ? 'bg-amber-400 text-white' :
     result === 'L' ? 'bg-red-500 text-white' : 'bg-white/10 text-slate-500'
-  const label = result ?? '?'
   return (
     <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${cls}`}>
-      {label}
+      {result ?? '?'}
     </span>
   )
 }
@@ -160,11 +90,13 @@ function formatDate(d: string) {
   return d
 }
 
-function SplitRecord({
+type SplitStats = { played: number; wins: number; draws: number; losses: number; gf: number; ga: number; points: number }
+
+function SplitRecordCard({
   label, record, icon,
 }: {
   label: string
-  record: { played: number; wins: number; draws: number; losses: number; gf: number | null; ga: number | null; points: number }
+  record: SplitStats
   icon: React.ReactNode
 }) {
   const winRate = record.played > 0 ? Math.round((record.wins / record.played) * 100) : 0
@@ -188,100 +120,20 @@ function SplitRecord({
         ))}
       </div>
       <div className="flex items-center justify-between text-xs text-slate-400 mb-1.5">
-        <span>Gols: {record.gf !== null && record.ga !== null ? `${record.gf}–${record.ga}` : '–'}</span>
+        <span>Gols: {record.gf}–{record.ga}</span>
         <span className="text-white font-bold">{record.points} pts</span>
       </div>
       <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-        <div
-          className="h-full bg-gradient-to-r from-green-500 to-cyan-500 rounded-full transition-all"
-          style={{ width: `${winRate}%` }}
-        />
+        <div className="h-full bg-gradient-to-r from-green-500 to-cyan-500 rounded-full" style={{ width: `${winRate}%` }} />
       </div>
       <div className="text-[10px] text-slate-500 mt-1">{winRate}% victòries</div>
     </div>
   )
 }
 
-// ─── FIXED Goal Timing Bar ─────────────────────────────────────────────────
-// Fix: bars use flex items-end with percentage heights so they correctly
-// grow from the bottom of the container.
-function GoalTimingBar({ buckets }: { buckets: GoalBucket[] }) {
-  const maxVal = Math.max(...buckets.flatMap(b => [b.scored, b.conceded]), 1)
-  return (
-    <div className="bg-white/4 border border-white/8 rounded-2xl p-5">
-      <div className="flex items-center gap-2 mb-6">
-        <Clock size={16} className="text-green-400" />
-        <h3 className="font-bold text-white text-sm">Timing de gols</h3>
-      </div>
-
-      {/* Bar chart — items-end + percentage heights = bottom-anchored */}
-      <div className="flex items-end gap-1.5" style={{ height: '100px' }}>
-        {buckets.map(b => (
-          <div key={b.label} className="flex-1 flex items-end gap-px" style={{ height: '100%' }}>
-            {/* Scored bar */}
-            <div
-              className="flex-1 rounded-t bg-gradient-to-t from-green-700 to-green-400 opacity-80 hover:opacity-100 transition-opacity"
-              style={{
-                height: `${Math.max((b.scored / maxVal) * 100, b.scored > 0 ? 4 : 1)}%`,
-                minHeight: '1px',
-              }}
-              title={`Gols marcats: ${b.scored}`}
-            />
-            {/* Conceded bar */}
-            <div
-              className="flex-1 rounded-t bg-gradient-to-t from-red-800 to-red-500 opacity-70 hover:opacity-100 transition-opacity"
-              style={{
-                height: `${Math.max((b.conceded / maxVal) * 100, b.conceded > 0 ? 4 : 1)}%`,
-                minHeight: '1px',
-              }}
-              title={`Gols encaixats: ${b.conceded}`}
-            />
-          </div>
-        ))}
-      </div>
-
-      {/* Period labels */}
-      <div className="flex gap-1.5 mt-2">
-        {buckets.map(b => (
-          <div key={b.label} className="flex-1 text-center text-[9px] text-slate-500 leading-tight">
-            {b.label}
-          </div>
-        ))}
-      </div>
-
-      {/* Number values */}
-      <div className="flex gap-1.5 mt-2">
-        {buckets.map(b => (
-          <div key={b.label} className="flex-1 text-center">
-            <div className="text-[10px] font-bold text-green-400">{b.scored}</div>
-            <div className="text-[10px] text-red-400">{b.conceded}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Legend */}
-      <div className="flex gap-5 mt-3 text-xs">
-        <div className="flex items-center gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-sm bg-green-500" />
-          <span className="text-slate-400">Marcats</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-sm bg-red-500" />
-          <span className="text-slate-400">Encaixats</span>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function MiniTable({
-  standings, teamSlug,
-}: {
-  standings: StandingRow[]
-  teamSlug: string
-}) {
+function MiniTable({ standings, teamSlug }: { standings: FullTeamReportDB['standings']; teamSlug: string }) {
   if (standings.length === 0) return null
-  const myIdx = standings.findIndex(s => s.slug === teamSlug || slugify(s.name) === teamSlug)
+  const myIdx = standings.findIndex(s => s.slug === teamSlug)
   const startIdx = Math.max(0, Math.min(myIdx - 2, standings.length - 5))
   const rows = standings.slice(startIdx, startIdx + 5)
   return (
@@ -289,30 +141,19 @@ function MiniTable({
       <div className="flex items-center gap-2 mb-4">
         <Trophy size={16} className="text-yellow-400" />
         <h3 className="font-bold text-white text-sm">Classificació</h3>
-        <Link href="#" className="ml-auto text-xs text-green-400 hover:text-green-300">
-          Veure tot <ArrowRight size={10} className="inline" />
-        </Link>
       </div>
       <div className="space-y-1">
         {rows.map(s => {
-          const isMyTeam = s.slug === teamSlug || slugify(s.name) === teamSlug
+          const isMyTeam = s.slug === teamSlug
           return (
             <div
               key={s.slug}
-              className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs transition-colors ${
-                isMyTeam ? 'bg-green-500/15 border border-green-500/25' : 'hover:bg-white/5'
-              }`}
+              className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs transition-colors ${isMyTeam ? 'bg-green-500/15 border border-green-500/25' : 'hover:bg-white/5'}`}
             >
-              <span className={`w-4 text-right ${isMyTeam ? 'text-green-400 font-bold' : 'text-slate-600'}`}>
-                {s.position}
-              </span>
-              <span className={`flex-1 truncate ${isMyTeam ? 'text-white font-semibold' : 'text-slate-300'}`}>
-                {s.name}
-              </span>
+              <span className={`w-4 text-right ${isMyTeam ? 'text-green-400 font-bold' : 'text-slate-600'}`}>{s.position}</span>
+              <Link href={`/equip/${s.slug}`} className={`flex-1 truncate hover:text-white transition-colors ${isMyTeam ? 'text-white font-semibold' : 'text-slate-300'}`}>{s.name}</Link>
               <span className="text-slate-500 w-5 text-center">{s.played}</span>
-              <span className={`w-6 text-center font-bold ${isMyTeam ? 'text-green-400' : 'text-slate-300'}`}>
-                {s.points}
-              </span>
+              <span className={`w-6 text-center font-bold ${isMyTeam ? 'text-green-400' : 'text-slate-300'}`}>{s.points}</span>
             </div>
           )
         })}
@@ -321,9 +162,8 @@ function MiniTable({
   )
 }
 
-// Slim match info card — no rival intel (moved to RivalScoutCard)
 function NextMatchInfoCard({ nextMatch, competition }: {
-  nextMatch: NonNullable<TeamReport['nextMatch']>
+  nextMatch: NonNullable<FullTeamReportDB['nextMatch']>
   competition: string
 }) {
   return (
@@ -331,16 +171,10 @@ function NextMatchInfoCard({ nextMatch, competition }: {
       <div className="flex items-center gap-2 mb-5">
         <Crosshair size={18} className="text-cyan-400" />
         <h3 className="font-bold text-white">Proper Rival — J{nextMatch.jornada}</h3>
-        <span className={`ml-auto text-xs px-2.5 py-1 rounded-full font-semibold ${
-          nextMatch.isHome
-            ? 'bg-green-500/20 text-green-400 border border-green-500/25'
-            : 'bg-sky-500/20 text-sky-400 border border-sky-500/25'
-        }`}>
+        <span className={`ml-auto text-xs px-2.5 py-1 rounded-full font-semibold ${nextMatch.isHome ? 'bg-green-500/20 text-green-400 border border-green-500/25' : 'bg-sky-500/20 text-sky-400 border border-sky-500/25'}`}>
           {nextMatch.isHome ? '🏠 Local' : '✈️ Visita'}
         </span>
       </div>
-
-      {/* VS visual */}
       <div className="flex items-center justify-between gap-4 mb-5">
         <div className="text-center flex-1">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500/20 to-cyan-500/20 border border-green-500/25 flex items-center justify-center text-xl font-black text-green-400 mx-auto mb-2">T</div>
@@ -358,93 +192,17 @@ function NextMatchInfoCard({ nextMatch, competition }: {
           <div className="text-xs text-slate-200 font-semibold leading-tight">{nextMatch.opponent}</div>
         </div>
       </div>
-
-      {/* Venue */}
-      {nextMatch.venue && (
-        <div className="mb-3 px-3 py-2 bg-white/5 rounded-xl flex items-center gap-2">
-          <span className="text-xs">📍</span>
-          <span className="text-xs text-slate-400 truncate">{nextMatch.venue.split('  ')[0]}</span>
-        </div>
-      )}
-
-      {/* Referee teaser — locked, full info in premium card */}
       {nextMatch.referee && (
-        <div className="px-3 py-2 bg-white/5 rounded-xl flex items-center gap-2 opacity-50">
+        <div className="px-3 py-2 bg-white/5 rounded-xl flex items-center gap-2">
           <Shield size={12} className="text-purple-400 shrink-0" />
-          <div className="text-xs text-slate-500 min-w-0 flex items-center gap-1.5">
-            <span>Àrbitre assignat</span>
-            <span className="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded font-semibold">PRO</span>
-          </div>
+          <span className="text-xs text-slate-400 truncate">Àrbitre: <span className="text-slate-200 font-medium">{nextMatch.referee}</span></span>
         </div>
       )}
     </div>
   )
 }
 
-function parseSuspendedMatches(s: Sanction): number {
-  // The scraper stores yellow card count in matches_suspended for Art.334 — wrong.
-  // Parse the real suspension from the reason text: "X partit(s) de suspensió"
-  const m = s.reason?.match(/(\d+)\s*partit[s]?\s*de\s*suspensi/i)
-  if (m) return parseInt(m[1])
-  // Fallback: if matches_suspended is 1 it's already correct (e.g. Art.336)
-  if (s.matches_suspended === 1) return 1
-  // Art.334 with matches_suspended > 1 means yellow card count was stored — treat as 1-match ban
-  if (s.article?.startsWith('334') && s.matches_suspended > 1) return 1
-  return s.matches_suspended
-}
-
-function SanctionsCard({ sanctions }: { sanctions: Sanction[] }) {
-  // Use parsed suspension count, not the raw (possibly wrong) matches_suspended
-  const withParsed = sanctions.map(s => ({ ...s, _parsed: parseSuspendedMatches(s) }))
-  const active = withParsed.filter(s => s._parsed > 0)
-  const past = withParsed.filter(s => s._parsed === 0)
-  if (sanctions.length === 0) return null
-  return (
-    <div className="bg-red-900/10 border border-red-500/20 rounded-2xl p-5">
-      <div className="flex items-center gap-2 mb-4">
-        <Ban size={16} className="text-red-400" />
-        <h3 className="font-bold text-red-400 text-sm">Sancions FCF</h3>
-        {active.length > 0 && (
-          <span className="ml-auto text-xs text-red-500/80 bg-red-500/10 px-2 py-0.5 rounded-full">
-            {active.length} activa{active.length !== 1 ? 's' : ''}
-          </span>
-        )}
-      </div>
-      <div className="space-y-2">
-        {active.map((s, i) => (
-          <div key={i} className="flex items-start justify-between gap-3 px-3 py-2.5 rounded-xl bg-red-900/20 border border-red-500/20">
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-slate-200 truncate">{s.player}</p>
-              <p className="text-xs text-slate-500 mt-0.5 leading-snug line-clamp-2">{s.reason}</p>
-            </div>
-            <div className="shrink-0 flex flex-col items-end gap-1">
-              <span className="text-xs font-bold text-red-400 bg-red-500/15 px-2 py-0.5 rounded-full whitespace-nowrap">
-                🚫 {s._parsed} part{s._parsed !== 1 ? 's' : ''}
-              </span>
-              {s.article && <span className="text-[10px] text-slate-600">Art. {s.article}</span>}
-            </div>
-          </div>
-        ))}
-        {past.length > 0 && (
-          <>
-            {active.length > 0 && <div className="border-t border-white/5 my-1" />}
-            {past.map((s, i) => (
-              <div key={i} className="flex items-start justify-between gap-3 px-3 py-2 rounded-xl bg-white/3 opacity-60">
-                <div className="min-w-0">
-                  <p className="text-xs font-medium text-slate-400 truncate">{s.player}</p>
-                  <p className="text-[10px] text-slate-600 mt-0.5 leading-snug line-clamp-1">{s.reason}</p>
-                </div>
-                <span className="text-[10px] text-slate-600 shrink-0">Complida</span>
-              </div>
-            ))}
-          </>
-        )}
-      </div>
-    </div>
-  )
-}
-
-function SquadTable({ players }: { players: PlayerStat[] }) {
+function SquadTable({ players }: { players: FullTeamReportDB['players'] }) {
   return (
     <div className="bg-white/4 border border-white/8 rounded-2xl p-4 sm:p-5">
       <div className="flex items-center gap-2 mb-4">
@@ -452,7 +210,7 @@ function SquadTable({ players }: { players: PlayerStat[] }) {
         <h3 className="font-bold text-white text-sm">Plantilla — {players.length} jugadors</h3>
       </div>
       <div className="overflow-x-auto -mx-4 sm:mx-0">
-        <div className="min-w-[340px] px-4 sm:px-0">
+        <div className="min-w-[380px] px-4 sm:px-0">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-white/8 text-slate-500 text-[11px] uppercase tracking-wider">
@@ -465,36 +223,25 @@ function SquadTable({ players }: { players: PlayerStat[] }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {players.slice(0, 25).map((p, i) => (
-                <tr
-                  key={i}
-                  className={`transition-colors ${p.risk ? 'bg-amber-900/8 hover:bg-amber-900/15' : 'hover:bg-white/3'}`}
-                >
-                  <td className="py-3 pr-3">
+              {players.slice(0, 30).map((p, i) => (
+                <tr key={i} className={`transition-colors ${p.risk ? 'bg-amber-900/8 hover:bg-amber-900/15' : 'hover:bg-white/3'}`}>
+                  <td className="py-2.5 pr-3">
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-slate-200 text-sm">{p.name}</span>
                       {p.risk && (
-                        <span className="text-[9px] px-1.5 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/25 rounded-full font-semibold shrink-0 whitespace-nowrap">
-                          ⚠️ RISC
-                        </span>
+                        <span className="text-[9px] px-1.5 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/25 rounded-full font-semibold shrink-0">⚠️ RISC</span>
                       )}
                     </div>
                   </td>
-                  <td className="py-3 text-center text-slate-400 text-xs">
-                    {p.appearances > 0 ? p.appearances : <span className="text-slate-600">–</span>}
+                  <td className="py-2.5 text-center text-slate-400 text-xs">{p.appearances > 0 ? p.appearances : <span className="text-slate-600">–</span>}</td>
+                  <td className="py-2.5 text-center">{p.goals > 0 ? <span className="text-green-400 font-bold text-xs">{p.goals}</span> : <span className="text-slate-600 text-xs">–</span>}</td>
+                  <td className="py-2.5 text-center">
+                    {p.yellow_cards > 0
+                      ? <span className={`font-bold text-xs ${[4, 9, 14].includes(p.yellow_cards) ? 'text-amber-400' : 'text-slate-400'}`}>{p.yellow_cards}</span>
+                      : <span className="text-slate-600 text-xs">–</span>}
                   </td>
-                  <td className="py-3 text-center">
-                    {p.goals > 0 ? <span className="text-green-400 font-bold text-xs">{p.goals}</span> : <span className="text-slate-600 text-xs">–</span>}
-                  </td>
-                  <td className="py-3 text-center">
-                    {p.yellow_cards > 0 ? (
-                      <span className={`font-bold text-xs ${[4, 9, 14].includes(p.yellow_cards) ? 'text-amber-400' : 'text-slate-400'}`}>{p.yellow_cards}</span>
-                    ) : <span className="text-slate-600 text-xs">–</span>}
-                  </td>
-                  <td className="py-3 text-center">
-                    {p.red_cards > 0 ? <span className="text-red-400 font-bold text-xs">{p.red_cards}</span> : <span className="text-slate-600 text-xs">–</span>}
-                  </td>
-                  <td className="py-3 text-center text-slate-500 text-xs hidden sm:table-cell">
+                  <td className="py-2.5 text-center">{p.red_cards > 0 ? <span className="text-red-400 font-bold text-xs">{p.red_cards}</span> : <span className="text-slate-600 text-xs">–</span>}</td>
+                  <td className="py-2.5 text-center text-slate-500 text-xs hidden sm:table-cell">
                     {p.minutes_played > 0 ? `${p.minutes_played}'` : '–'}
                   </td>
                 </tr>
@@ -515,7 +262,7 @@ function SquadTable({ players }: { players: PlayerStat[] }) {
   )
 }
 
-function RecentMatches({ form }: { form: MatchResult[] }) {
+function RecentMatches({ form }: { form: FullTeamReportDB['form'] }) {
   return (
     <div className="bg-white/4 border border-white/8 rounded-2xl p-4 sm:p-5">
       <div className="flex items-center gap-2 mb-4">
@@ -526,24 +273,16 @@ function RecentMatches({ form }: { form: MatchResult[] }) {
         {form.map((m, i) => (
           <div key={i} className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-2.5 rounded-xl hover:bg-white/4 transition-colors">
             <FormDot result={m.result} />
-            <div className="flex-1 grid grid-cols-[auto_auto_1fr] sm:grid-cols-[1fr_auto_1fr] items-center gap-1.5 sm:gap-2 min-w-0">
-              <span className="text-[10px] sm:text-xs text-slate-500 text-right">
-                {m.isHome ? 'LOC' : 'VIS'}
-              </span>
+            <div className="flex-1 grid grid-cols-[auto_auto_1fr] items-center gap-1.5 min-w-0">
+              <span className="text-[10px] text-slate-500 text-right">{m.isHome ? 'LOC' : 'VIS'}</span>
               <ScoreBadge gf={m.goalsFor} ga={m.goalsAgainst} />
-              <Link
-                href={`/equip/${m.opponentSlug}`}
-                className="text-xs text-slate-300 hover:text-white truncate transition-colors"
-              >
+              <Link href={`/equip/${m.opponentSlug}`} className="text-xs text-slate-300 hover:text-white truncate transition-colors">
                 {m.opponent}
               </Link>
             </div>
             <span className="text-[10px] text-slate-600 shrink-0">{formatDate(m.date)}</span>
             {m.referee && (
-              <Link
-                href={`/arbitre/${slugify(m.referee)}`}
-                className="text-[10px] text-slate-600 hover:text-green-400 truncate shrink-0 hidden md:block max-w-[90px]"
-              >
+              <Link href={`/arbitre/${slugify(m.referee)}`} className="text-[10px] text-slate-600 hover:text-green-400 truncate shrink-0 hidden md:block max-w-[90px]">
                 {m.referee.split(',')[0]}
               </Link>
             )}
@@ -554,45 +293,90 @@ function RecentMatches({ form }: { form: MatchResult[] }) {
   )
 }
 
+function RefereeFullCard({ referee }: { referee: RefereeStatsDB }) {
+  const strictLevel = referee.yellows_per_match >= 5 ? 'Molt estricte' : referee.yellows_per_match >= 3.5 ? 'Estricte' : referee.yellows_per_match >= 2 ? 'Moderat' : 'Permissiu'
+  const strictColor = referee.yellows_per_match >= 5 ? 'text-red-400' : referee.yellows_per_match >= 3.5 ? 'text-amber-400' : referee.yellows_per_match >= 2 ? 'text-yellow-400' : 'text-green-400'
+
+  return (
+    <div className="bg-white/4 border border-white/8 rounded-2xl p-5">
+      <div className="flex items-center gap-2 mb-4">
+        <Shield size={16} className="text-cyan-400" />
+        <h3 className="font-bold text-cyan-400 text-sm">Àrbitre del proper partit</h3>
+        <AdminBadge />
+      </div>
+
+      {/* Referee identity */}
+      <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/5 mb-4">
+        <div className="w-10 h-10 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center shrink-0">
+          <span className="text-cyan-400 font-bold text-sm">{referee.name.split(',')[0]?.charAt(0) || '?'}</span>
+        </div>
+        <div className="min-w-0">
+          <p className="font-semibold text-slate-200 text-sm truncate">{referee.name}</p>
+          <p className="text-[11px] text-slate-500">{referee.matches} partits arbitrats aquesta temporada</p>
+        </div>
+        <Link href={`/arbitre/${referee.slug}`} className="ml-auto shrink-0 text-[10px] text-cyan-400 hover:text-cyan-300 transition-colors">
+          Veure perfil →
+        </Link>
+      </div>
+
+      {/* Stats grid — labels always visible, values blurred for non-admin */}
+      <div className="grid grid-cols-2 gap-2 mb-4">
+        {[
+          { label: '🟨 Grogues / partit', value: referee.yellows_per_match.toFixed(1) },
+          { label: '🟥 Vermelles / partit', value: referee.reds_per_match.toFixed(2) },
+          { label: '% partits amb vermella', value: `${referee.matches_with_red_pct}%` },
+          { label: 'Tendència', value: strictLevel },
+        ].map(({ label, value }) => (
+          <div key={label} className="px-3 py-2.5 rounded-xl bg-white/3 border border-white/5">
+            <div className="text-[10px] text-slate-500 mb-1">{label}</div>
+            <AdminGate fallback={<AdminBlurValue value={value} />}>
+              <span className={`text-sm font-bold ${label.includes('Tendència') ? strictColor : 'text-white'}`}>{value}</span>
+            </AdminGate>
+          </div>
+        ))}
+      </div>
+
+      {/* Recent matches */}
+      {referee.recentMatches.length > 0 && (
+        <AdminGate fallback={
+          <div className="space-y-1">
+            <div className="text-[11px] text-slate-500 mb-2 font-semibold uppercase tracking-wider">Últims partits</div>
+            {referee.recentMatches.slice(0, 5).map((m, i) => (
+              <div key={i} className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white/3 blur-sm">
+                <span className="text-xs text-slate-400 truncate">{m.home_team} – {m.away_team}</span>
+                <span className="text-[10px] text-slate-600 shrink-0 ml-2">{m.home_score}–{m.away_score}</span>
+              </div>
+            ))}
+            <AdminUpgradeLink />
+          </div>
+        }>
+          <div className="space-y-1">
+            <div className="text-[11px] text-slate-500 mb-2 font-semibold uppercase tracking-wider">Últims partits arbitrats</div>
+            {referee.recentMatches.slice(0, 5).map((m, i) => (
+              <div key={i} className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white/3 hover:bg-white/5 transition-colors">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-[10px] text-slate-600 shrink-0">J{m.jornada}</span>
+                  <span className="text-xs text-slate-300 truncate">{m.home_team} vs {m.away_team}</span>
+                </div>
+                <div className="flex items-center gap-2 shrink-0 ml-2">
+                  <span className="text-xs font-bold text-white">{m.home_score}–{m.away_score}</span>
+                  {m.yellows > 0 && <span className="text-[10px] text-amber-400">🟨{m.yellows}</span>}
+                  {m.reds > 0 && <span className="text-[10px] text-red-400">🟥{m.reds}</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </AdminGate>
+      )}
+    </div>
+  )
+}
+
 // ─── Page ──────────────────────────────────────────────────────────────────
 
 export default async function EquipPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-
-  // Try local JSON first (full acta data), then fall back to Supabase standings data
-  let report: TeamReport | null = buildTeamReport(slug)
-
-  if (!report) {
-    const dbData = await getTeamBasicDataDB(slug)
-    if (dbData) {
-      // Map Supabase data to TeamReport shape
-      report = {
-        name: dbData.name,
-        slug: dbData.slug,
-        competition: dbData.competition,
-        position: dbData.position,
-        played: dbData.played,
-        wins: dbData.wins,
-        draws: dbData.draws,
-        losses: dbData.losses,
-        gf: dbData.gf,
-        ga: dbData.ga,
-        points: dbData.points,
-        form: dbData.recentMatches as MatchResult[],
-        nextMatch: dbData.nextMatch as TeamReport['nextMatch'],
-        standings: dbData.standings as StandingRow[],
-        goalBuckets: dbData.goalBuckets as GoalBucket[],
-        players: dbData.players as PlayerStat[],
-        sanctions: dbData.sanctions as Sanction[],
-        home: dbData.home as unknown as SplitRecord,
-        away: dbData.away as unknown as SplitRecord,
-        rival: dbData.rival as RivalReport | null,
-        headToHead: dbData.headToHead as MatchResult[],
-        hasDetailedData: false,
-        homePitch: null,
-      } as TeamReport
-    }
-  }
+  const report = await getFullTeamReportDB(slug)
 
   if (!report) {
     return (
@@ -603,9 +387,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
             <Users size={32} className="text-green-400" />
           </div>
           <h1 className="text-3xl font-bold mb-3">Equip no trobat</h1>
-          <p className="text-slate-400 mb-8">
-            Aquest equip no apareix a les actes de la temporada actual de la FCF.
-          </p>
+          <p className="text-slate-400 mb-8">Aquest equip no apareix a les dades de la temporada actual de la FCF.</p>
           <Link href="/cerca" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 text-white font-semibold rounded-xl transition-all">
             Torna a la cerca
           </Link>
@@ -618,36 +400,28 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
   const compName = COMPETITION_NAMES[report.competition] || report.competition
   const apercibits = report.players.filter(p => p.risk)
   const topScorers = [...report.players].sort((a, b) => b.goals - a.goals).filter(p => p.goals > 0).slice(0, 5)
-  const activeSanctions = report.sanctions.filter(s => s.matches_suspended > 0)
-
-  // Priority competitions with full, up-to-date data
-  const PRIORITY_COMPETITIONS = new Set([
-    'segona-catalana', 'tercera-catalana',
-    'preferent-juvenils', 'juvenil-primera-divisio',
-  ])
-  const isPriority = PRIORITY_COMPETITIONS.has(report.competition)
+  const PRIORITY = new Set(['segona-catalana', 'tercera-catalana'])
+  const isPriority = PRIORITY.has(report.competition)
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-white">
       <PublicHeader />
 
-      {/* Beta disclaimer for non-priority competitions */}
       {!isPriority && (
         <div className="bg-amber-500/10 border-b border-amber-500/20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center gap-2.5">
             <AlertTriangle size={14} className="text-amber-400 shrink-0" />
             <p className="text-xs text-amber-300/80">
               <span className="font-semibold text-amber-300">Fase beta:</span>{' '}
-              En aquesta primera fase, NeoScout prioritza les categories Segona Catalana, Tercera Catalana, Preferent Juvenil i Primera Divisió Juvenil. Les dades d'altres categories poden no estar completament actualitzades.
+              NeoScout prioritza Segona i Tercera Catalana. Les dades d'altres categories poden no estar completament actualitzades.
             </p>
           </div>
         </div>
       )}
 
-      {/* ─── Hero header ─── */}
+      {/* ─── Hero ─── */}
       <div className="bg-gradient-to-b from-[#0a1628] to-[#0f172a] border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-          {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-5">
             <Link href="/" className="hover:text-slate-300 transition-colors">Inici</Link>
             <ChevronRight size={12} />
@@ -660,7 +434,6 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
             <span className="text-slate-300">{report.name}</span>
           </div>
 
-          {/* Team identity */}
           <div className="flex items-start gap-4">
             <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-green-500/20 to-cyan-500/20 border border-green-500/30 flex items-center justify-center text-2xl font-black text-green-400 shrink-0">
               {report.name.charAt(0)}
@@ -669,22 +442,12 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
               <h1 className="text-xl sm:text-3xl font-black text-white mb-1 leading-tight">{report.name}</h1>
               <div className="flex items-center gap-2 flex-wrap">
                 {compName && (
-                  <Link href={`/competicio/${report.competition}`} className="text-sm text-green-400 hover:text-green-300 transition-colors">
-                    {compName}
-                  </Link>
+                  <Link href={`/competicio/${report.competition}`} className="text-sm text-green-400 hover:text-green-300 transition-colors">{compName}</Link>
                 )}
                 {report.position && (
-                  <span className="text-xs px-2.5 py-1 bg-yellow-500/15 text-yellow-400 border border-yellow-500/20 rounded-full font-bold">
-                    #{report.position} class.
-                  </span>
-                )}
-                {report.nextMatch && (
-                  <span className="text-xs text-slate-500 hidden sm:inline">
-                    J{report.nextMatch.jornada} · {formatDate(report.nextMatch.date)}
-                  </span>
+                  <span className="text-xs px-2.5 py-1 bg-yellow-500/15 text-yellow-400 border border-yellow-500/20 rounded-full font-bold">#{report.position} class.</span>
                 )}
               </div>
-              {/* Form dots — inline on desktop, below on mobile */}
               {report.form.length > 0 && (
                 <div className="hidden sm:flex items-center gap-1.5 mt-2">
                   {report.form.slice(0, 5).reverse().map((f, i) => <FormDot key={i} result={f.result} />)}
@@ -693,7 +456,6 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
             </div>
           </div>
 
-          {/* Form dots — mobile only row */}
           {report.form.length > 0 && (
             <div className="flex sm:hidden items-center gap-1.5 mt-3">
               <span className="text-xs text-slate-500 mr-1">Forma:</span>
@@ -701,8 +463,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
             </div>
           )}
 
-          {/* Quick stats — horizontally scrollable on mobile */}
-          <div className="flex gap-2 sm:gap-3 mt-5 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
+          <div className="flex gap-2 sm:gap-3 mt-5 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
             {[
               { v: report.played, l: 'PJ', c: 'text-white' },
               { v: report.wins, l: 'Victòries', c: 'text-green-400' },
@@ -723,161 +484,82 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
       {/* ─── Main content ─── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
-        {/* ─── Row 1: Home/Away + Classification ─── */}
+        {/* Row 1: Home/Away + Table */}
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-          <SplitRecord
-            label="Com a Local"
-            record={report.home}
-            icon={<Home size={15} className="text-green-400" />}
-          />
-          <SplitRecord
-            label="Com a Visitant"
-            record={report.away}
-            icon={<Plane size={15} className="text-sky-400" />}
-          />
+          <SplitRecordCard label="Com a Local" record={report.home} icon={<Home size={15} className="text-green-400" />} />
+          <SplitRecordCard label="Com a Visitant" record={report.away} icon={<Plane size={15} className="text-sky-400" />} />
           <div className="col-span-2 lg:col-span-1">
             <MiniTable standings={report.standings} teamSlug={slug} />
           </div>
         </div>
 
-        {/* ─── Row 2: Match info card + Goal timing ─── */}
-        {report.nextMatch ? (
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-            <div className="lg:col-span-2">
-              <NextMatchInfoCard nextMatch={report.nextMatch} competition={report.competition} />
-            </div>
-            <div className="lg:col-span-3 flex flex-col gap-4">
-              {report.goalBuckets.length > 0 ? (
-                <GoalTimingBar buckets={report.goalBuckets} />
-              ) : (
-                <div className="bg-white/4 border border-white/8 rounded-2xl p-5 flex flex-col items-center justify-center min-h-[120px] text-center">
-                  <Clock size={20} className="text-slate-600 mb-2" />
-                  <p className="text-slate-500 text-sm font-medium">Timing de gols</p>
-                  <p className="text-slate-600 text-xs mt-1">Sense dades d'actes per a aquest equip</p>
-                </div>
-              )}
-            </div>
-          </div>
-        ) : (
-          report.goalBuckets.length > 0 ? (
-            <GoalTimingBar buckets={report.goalBuckets} />
-          ) : (
-            <div className="bg-white/4 border border-white/8 rounded-2xl p-5 flex flex-col items-center justify-center min-h-[120px] text-center">
-              <Clock size={20} className="text-slate-600 mb-2" />
-              <p className="text-slate-500 text-sm font-medium">Timing de gols</p>
-              <p className="text-slate-600 text-xs mt-1">Sense dades d'actes per a aquest equip</p>
-            </div>
-          )
-        )}
-
-        {/* ─── Pitch comparison ─── */}
+        {/* Row 2: Next match card */}
         {report.nextMatch && (
-          <PitchCompare
-            homePitch={report.homePitch ?? null}
-            rivalPitch={report.rival ? lookupTeamPitch(report.rival.name) : null}
-            homeTeamName={report.name}
-            rivalTeamName={report.nextMatch.opponent}
-          />
+          <NextMatchInfoCard nextMatch={report.nextMatch} competition={report.competition} />
         )}
 
-        {/* ─── Row 3: Rival Scout Card (free register) + Referee card (premium) ─── */}
+        {/* Row 3: Rival Scout Card */}
         {report.nextMatch && report.rival && (
           <AdminGate
             fallback={
               <RegisterBlur label="Informe complet del Proper Rival — Registra't gratis">
                 <RivalScoutCard
-                  rival={report.rival}
-                  nextMatch={{
-                    jornada: report.nextMatch.jornada,
-                    date: report.nextMatch.date,
-                    time: report.nextMatch.time,
-                    opponent: report.nextMatch.opponent,
-                    opponentSlug: report.nextMatch.opponentSlug,
-                    isHome: report.nextMatch.isHome,
-                    venue: report.nextMatch.venue,
-                    referee: null,
-                    referees: [],
-                  }}
-                  headToHead={report.headToHead}
+                  rival={report.rival as any}
+                  nextMatch={{ ...report.nextMatch, referee: null, referees: [] }}
+                  headToHead={report.headToHead as any}
                 />
               </RegisterBlur>
             }
           >
             <RivalScoutCard
-              rival={report.rival}
-              nextMatch={report.nextMatch}
-              headToHead={report.headToHead}
+              rival={report.rival as any}
+              nextMatch={report.nextMatch as any}
+              headToHead={report.headToHead as any}
             />
           </AdminGate>
         )}
 
-        {/* ─── Referee card: name visible, stats blurred (Pro teaser) ─── */}
-        {report.nextMatch?.referee && (
+        {/* Row 4: Referee card (real stats) */}
+        {report.referee && (
+          <RefereeFullCard referee={report.referee} />
+        )}
+        {report.nextMatch?.referee && !report.referee && (
+          /* Referee assigned but no stats yet (new referee) */
           <div className="bg-white/4 border border-white/8 rounded-2xl p-5">
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-3">
               <Shield size={16} className="text-cyan-400" />
               <h3 className="font-bold text-cyan-400 text-sm">Àrbitre del proper partit</h3>
-              <AdminBadge />
             </div>
-            {/* Name always visible */}
-            <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/5 mb-3">
+            <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/5">
               <div className="w-9 h-9 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center shrink-0">
                 <span className="text-cyan-400 font-bold text-sm">{report.nextMatch.referee.split(',')[0]?.charAt(0) || '?'}</span>
               </div>
-              <div className="min-w-0">
-                <p className="font-semibold text-slate-200 text-sm truncate">{report.nextMatch.referee}</p>
-                {report.nextMatch.referees && report.nextMatch.referees.length > 1 && (
-                  <p className="text-[11px] text-slate-500">+{report.nextMatch.referees.length - 1} assistents</p>
-                )}
+              <div>
+                <p className="font-semibold text-slate-200 text-sm">{report.nextMatch.referee}</p>
+                <p className="text-xs text-slate-500">Sense dades d'actes disponibles encara</p>
               </div>
             </div>
-            {/* Stats teaser: labels visible, values blurred unless admin */}
-            <div className="space-y-1.5">
-              {[
-                { label: 'Targetes grogues / partit', value: '3.2' },
-                { label: '% partits amb vermella', value: '28%' },
-                { label: 'Tendència última jornada', value: 'Estricte' },
-                { label: 'Partits arbitrats (temp.)', value: '18' },
-              ].map(({ label, value }) => (
-                <div key={label} className="flex justify-between items-center px-2.5 py-1.5 rounded-lg bg-white/3">
-                  <span className="text-[11px] text-slate-500">{label}</span>
-                  <AdminBlurValue value={value} />
-                </div>
-              ))}
-            </div>
-            <AdminUpgradeLink />
           </div>
         )}
 
-        {/* ─── Row 4: Sanctions (register) + Apercibits (register) + Top scorers (free) ─── */}
-        {(activeSanctions.length > 0 || apercibits.length > 0 || topScorers.length > 0 || report.sanctions.length > 0) && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-
-            {/* Sancions FCF — full data, no paywall */}
-            {report.sanctions.length > 0 && (
-              <SanctionsCard sanctions={report.sanctions} />
-            )}
-
-            {/* Apercibits: player names visible, card count blurred */}
+        {/* Row 5: Sanctions + Apercibits + Scorers */}
+        {(apercibits.length > 0 || topScorers.length > 0) && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {apercibits.length > 0 && (
               <div className="bg-amber-900/10 border border-amber-500/20 rounded-2xl p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <AlertTriangle size={16} className="text-amber-400" />
                   <h3 className="font-bold text-amber-400 text-sm">Apercibits del teu equip</h3>
-                  <span className="ml-auto text-xs text-amber-500/80 bg-amber-500/10 px-2 py-0.5 rounded-full">
-                    {apercibits.length} jugadors
-                  </span>
+                  <span className="ml-auto text-xs text-amber-500/80 bg-amber-500/10 px-2 py-0.5 rounded-full">{apercibits.length} jugadors</span>
                 </div>
                 <div className="space-y-2">
                   {apercibits.slice(0, 4).map((p, i) => (
                     <div key={i} className="flex items-center justify-between px-3 py-2 rounded-xl bg-amber-900/15 border border-amber-500/15">
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-slate-200 truncate">{p.name}</p>
-                        <p className="text-xs text-slate-500">{p.appearances} partits</p>
+                        <p className="text-xs text-slate-500">{p.appearances} partits · {p.minutes_played > 0 ? `${p.minutes_played}'` : '–'}</p>
                       </div>
-                      <div className="flex items-center gap-1.5 ml-3 shrink-0">
-                        <span className="text-xs font-bold text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded-full">🟨 {p.yellow_cards}</span>
-                      </div>
+                      <span className="text-xs font-bold text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded-full ml-3 shrink-0">🟨 {p.yellow_cards}</span>
                     </div>
                   ))}
                 </div>
@@ -894,12 +576,10 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
                   {topScorers.map((p, i) => (
                     <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-green-900/15 border border-green-500/15">
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="w-5 h-5 rounded-full bg-green-500/20 text-green-400 text-[10px] font-bold flex items-center justify-center shrink-0">
-                          {i + 1}
-                        </span>
+                        <span className="w-5 h-5 rounded-full bg-green-500/20 text-green-400 text-[10px] font-bold flex items-center justify-center shrink-0">{i + 1}</span>
                         <div className="min-w-0">
                           <p className="text-sm font-medium text-slate-200 truncate">{p.name}</p>
-                          <p className="text-xs text-slate-500">{p.appearances} partits</p>
+                          <p className="text-xs text-slate-500">{p.appearances} partits · {p.minutes_played > 0 ? `${p.minutes_played}'` : '–'}</p>
                         </div>
                       </div>
                       <span className="text-lg font-black text-green-400 ml-3 shrink-0">{p.goals} ⚽</span>
@@ -911,24 +591,19 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
           </div>
         )}
 
-        {/* ─── Row 5: Full squad ─── */}
+        {/* Row 6: Full squad */}
         {report.players.length > 0 ? (
           <SquadTable players={report.players} />
         ) : (
           <div className="bg-white/4 border border-white/8 rounded-2xl p-8 text-center">
             <Users size={28} className="text-slate-600 mx-auto mb-3" />
             <p className="text-slate-400 text-sm font-medium">Plantilla no disponible</p>
-            <p className="text-slate-600 text-xs mt-1">
-              Les dades detallades de plantilla provenen de les actes oficials de la FCF.<br/>
-              Aquest equip encara no ha estat analitzat en detall.
-            </p>
+            <p className="text-slate-600 text-xs mt-1">Les dades detallades de plantilla provenen de les actes oficials de la FCF.</p>
           </div>
         )}
 
-        {/* ─── Row 6: Recent results ─── */}
-        {report.form.length > 0 && (
-          <RecentMatches form={report.form} />
-        )}
+        {/* Row 7: Recent results */}
+        {report.form.length > 0 && <RecentMatches form={report.form} />}
 
       </div>
 
