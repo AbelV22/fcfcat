@@ -409,13 +409,13 @@ export async function getAllRefereesDB() {
 export async function getTeamBasicDataDB(slug: string) {
   const supabase = getSupabase()
 
-  // Find team standing by slug — restrict to adult priority competitions so
+  // Find team standing by slug — restrict to priority competitions so
   // clubs that also have youth teams don't return the wrong category
   const { data: standingRows } = await supabase
     .from('fcf_standings')
     .select('*')
     .eq('team_slug', slug)
-    .in('competition', ['segona-catalana', 'tercera-catalana'])
+    .in('competition', ['segona-catalana', 'tercera-catalana', 'preferent-juvenils', 'juvenil-primera-divisio', 'quarta-catalana'])
     .limit(1)
 
   const standing = standingRows?.[0] || null
@@ -857,14 +857,14 @@ export async function getFullTeamReportDB(slug: string): Promise<FullTeamReportD
   const supabase = getSupabase()
 
   // ── Round 1: Find team standing ──────────────────────────────────────────
-  // IMPORTANT: filter to priority adult competitions only — many clubs share
+  // IMPORTANT: filter to priority competitions only — many clubs share
   // the same slug across youth categories (e.g. parets-cf-a in 6 competitions).
   // Without this filter, LIMIT 1 returns a random youth category row.
   const { data: standingRows, error: standingErr } = await supabase
     .from('fcf_standings')
     .select('*')
     .eq('team_slug', slug)
-    .in('competition', ['segona-catalana', 'tercera-catalana'])
+    .in('competition', ['segona-catalana', 'tercera-catalana', 'preferent-juvenils', 'juvenil-primera-divisio', 'quarta-catalana'])
     .limit(1)
 
   if (standingErr) {
