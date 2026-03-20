@@ -10,6 +10,7 @@ interface JobStatus {
   actas_found?: number
   actas_scraped?: number
   error_msg?: string | null
+  cached?: boolean
 }
 
 interface Props {
@@ -24,6 +25,7 @@ export default function ScrapeProgressBanner({ slug, competition, group, teamNam
   const [job, setJob] = useState<JobStatus | null>(null)
   const [triggered, setTriggered] = useState(false)
   const [reloading, setReloading] = useState(false)
+  const [hasRefreshed, setHasRefreshed] = useState(false)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const mountedRef = useRef(true)
 
@@ -42,13 +44,18 @@ export default function ScrapeProgressBanner({ slug, competition, group, teamNam
         if (!mountedRef.current) return
         setJob(data)
         setTriggered(true)
-        // If data was already scraped (cached done), refresh the page immediately
-        // so the SquadTable renders without needing to poll.
+        // If done: only refresh if there's actual scraped data.
+        // actas_scraped === 0 means FCF had no data → show "no data" message,
+        // don't refresh (would cause infinite loop with 0 players forever).
         if (data.status === 'done') {
-          setReloading(true)
-          setTimeout(() => {
-            if (mountedRef.current) router.refresh()
-          }, 800)
+          const hasData = (data.actas_scraped ?? 0) > 0
+          if (hasData && !hasRefreshed) {
+            setHasRefreshed(true)
+            setReloading(true)
+            setTimeout(() => {
+              if (mountedRef.current) router.refresh()
+            }, 800)
+          }
         }
       } catch {
         if (mountedRef.current) {
@@ -84,10 +91,14 @@ export default function ScrapeProgressBanner({ slug, competition, group, teamNam
           if (pollRef.current) clearInterval(pollRef.current)
 
           if (data.status === 'done') {
-            setReloading(true)
-            setTimeout(() => {
-              if (mountedRef.current) router.refresh()
-            }, 2000)
+            const hasData = (data.actas_scraped ?? 0) > 0
+            if (hasData && !hasRefreshed) {
+              setHasRefreshed(true)
+              setReloading(true)
+              setTimeout(() => {
+                if (mountedRef.current) router.refresh()
+              }, 2000)
+            }
           }
         }
       } catch {
@@ -111,7 +122,8 @@ export default function ScrapeProgressBanner({ slug, competition, group, teamNam
     )
   }
 
-  if (job.status === 'done' || reloading) {
+  // Done with actual data → show success / reloading
+  if ((job.status === 'done' && (job.actas_scraped ?? 0) > 0) || reloading) {
     return (
       <div className="bg-green-900/20 border border-green-500/30 rounded-2xl p-6 flex items-center gap-3">
         {reloading ? (
@@ -128,6 +140,21 @@ export default function ScrapeProgressBanner({ slug, competition, group, teamNam
               {job.actas_scraped} actes processades
             </p>
           )}
+        </div>
+      </div>
+    )
+  }
+
+  // Done but 0 actas scraped → FCF had no data for this team yet
+  if (job.status === 'done' && (job.actas_scraped ?? 0) === 0) {
+    return (
+      <div className="bg-slate-800/40 border border-slate-700/40 rounded-2xl p-6 flex items-center gap-3">
+        <AlertTriangle size={18} className="text-slate-400 shrink-0" />
+        <div>
+          <p className="text-sm font-semibold text-slate-300">Plantilla no disponible</p>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Encara no hi ha actes oficials publicades per aquest equip a la FCF.
+          </p>
         </div>
       </div>
     )

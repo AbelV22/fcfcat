@@ -3,10 +3,13 @@
  *
  * GET  ?slug=mataronesa-ud-a        → returns job status from scrape_jobs table
  * POST { slug, competition, group, season?, team_name? }
- *      → triggers edge function (fire-and-forget), returns { jobId, status }
+ *      → triggers FCF scraping via next/server `after()` (runs on Cloudflare
+ *        outbound IPs which are NOT blocked by FCF, unlike Supabase's IPs).
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { after } from 'next/server'
+import { runScrapeInBackground } from '@/lib/fcf-scraper'
 
 // Supabase project constants — hardcoded so they work on Cloudflare Pages without env
 const SUPABASE_URL =
@@ -16,6 +19,14 @@ const SUPABASE_URL =
 const SUPABASE_ANON_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54Z3lkdXFwcnhiaHRwcXNlcGdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5OTc5NjcsImV4cCI6MjA4ODU3Mzk2N30.qb-T1ja19sGFyDIOLU6C8SM1OBOa9RnmzEakc9g2Y2U'
+
+function sbHeaders() {
+  return {
+    apikey: SUPABASE_ANON_KEY,
+    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json',
+  }
+}
 
 // ── GET /api/scrape?slug=... ──────────────────────────────────────────────────
 
@@ -27,19 +38,10 @@ export async function GET(req: NextRequest) {
 
   const res = await fetch(
     `${SUPABASE_URL}/rest/v1/scrape_jobs?team_slug=eq.${encodeURIComponent(slug)}&order=created_at.desc&limit=1`,
-    {
-      headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      cache: 'no-store',
-    },
+    { headers: sbHeaders(), cache: 'no-store' },
   )
 
   if (!res.ok) {
-    const text = await res.text()
-    console.error('[GET /api/scrape] Supabase error:', res.status, text.slice(0, 200))
     return NextResponse.json({ error: 'Failed to fetch job status' }, { status: 502 })
   }
 
@@ -97,83 +99,69 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  // Check if there's already a running/recent job to avoid duplicate scrapes
+  const jobId = `${season}-${competition}-${slug}`
+
+  // ── Check for existing done job ────────────────────────────────────────────
   const checkRes = await fetch(
     `${SUPABASE_URL}/rest/v1/scrape_jobs?team_slug=eq.${encodeURIComponent(slug)}&order=created_at.desc&limit=1`,
-    {
-      headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-      },
-      cache: 'no-store',
-    },
+    { headers: sbHeaders(), cache: 'no-store' },
   )
 
   if (checkRes.ok) {
-    const existing: Array<{ id: string; status: string; updated_at: string }> = await checkRes.json()
+    const existing: Array<{ id: string; status: string; actas_scraped: number }> = await checkRes.json()
     if (existing.length > 0) {
       const job = existing[0]
-      // A completed job means data is permanently stored in fcf_player_stats.
-      // Never re-trigger — a second user visiting the same team should just
-      // get the cached data immediately.
+      // Permanently cached — don't re-scrape
       if (job.status === 'done') {
-        return NextResponse.json({ jobId: job.id, status: 'done', cached: true })
+        return NextResponse.json({ jobId: job.id, status: 'done', cached: true, actas_scraped: job.actas_scraped })
       }
-      // If already running, return current status so the banner can poll
+      // Already in progress — tell banner to poll
       if (job.status === 'running' || job.status === 'pending') {
         return NextResponse.json({ jobId: job.id, status: job.status, cached: true })
       }
-      // status === 'error': fall through and re-trigger below
+      // status === 'error': fall through and re-trigger
     }
   }
 
-  // Extra safety: check if player stats already exist in fcf_player_stats.
-  // This covers the case where data was written without a scrape_jobs record,
-  // or the record was lost.
+  // ── Extra safety: check if player stats already exist ─────────────────────
   const statsCheckRes = await fetch(
     `${SUPABASE_URL}/rest/v1/fcf_player_stats?team_slug=eq.${encodeURIComponent(slug)}&competition=eq.${encodeURIComponent(competition)}&limit=1&select=id`,
-    {
-      headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-      },
-      cache: 'no-store',
-    },
+    { headers: sbHeaders(), cache: 'no-store' },
   )
   if (statsCheckRes.ok) {
     const existingStats: Array<{ id: string }> = await statsCheckRes.json()
     if (existingStats.length > 0) {
-      // Data already in DB — no scrape needed, tell banner to refresh
-      return NextResponse.json({ jobId: `${season}-${competition}-${slug}`, status: 'done', cached: true })
+      return NextResponse.json({ jobId, status: 'done', cached: true, actas_scraped: 1 })
     }
   }
 
-  // Call the edge function and await its initial HTTP response.
-  // The edge function returns immediately (200) and does the long work via waitUntil(),
-  // so awaiting here is fast (< 1s). We MUST await on Cloudflare Workers — fire-and-forget
-  // fetch() calls are killed as soon as the response is sent back to the client.
-  const edgeFnUrl = `${SUPABASE_URL}/functions/v1/scrape-team`
-  const jobId = `${season}-${competition}-${slug}`
+  // ── Create job record (anon key is enough — scrape_jobs RLS allows all) ───
+  await fetch(`${SUPABASE_URL}/rest/v1/scrape_jobs?on_conflict=id`, {
+    method: 'POST',
+    headers: {
+      ...sbHeaders(),
+      'Prefer': 'resolution=merge-duplicates,return=minimal',
+    },
+    body: JSON.stringify([{
+      id: jobId,
+      team_slug: slug,
+      team_name: team_name || slug,
+      competition,
+      group_name: group,
+      season,
+      status: 'running',
+      actas_found: 0,
+      actas_scraped: 0,
+      error_msg: null,
+    }]),
+  })
 
-  try {
-    const edgeRes = await fetch(edgeFnUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        apikey: SUPABASE_ANON_KEY,
-      },
-      body: JSON.stringify({ slug, competition, group, season, team_name }),
-    })
-    if (!edgeRes.ok) {
-      const text = await edgeRes.text()
-      console.error('[POST /api/scrape] edge function error:', edgeRes.status, text.slice(0, 200))
-      return NextResponse.json({ error: 'Scraping service error', detail: text.slice(0, 100) }, { status: 502 })
-    }
-  } catch (err) {
-    console.error('[POST /api/scrape] edge function call failed:', err)
-    return NextResponse.json({ error: 'Could not reach scraping service' }, { status: 502 })
-  }
+  // ── Schedule scraping AFTER the response is sent ───────────────────────────
+  // `after()` maps to Cloudflare's ctx.waitUntil() — runs on Cloudflare's
+  // outbound IPs which are NOT blocked by FCF (unlike Supabase's IPs).
+  after(async () => {
+    await runScrapeInBackground({ jobId, slug, teamName: team_name || slug, competition, group, season })
+  })
 
   return NextResponse.json({ jobId, status: 'running' })
 }
