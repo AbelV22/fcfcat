@@ -5,8 +5,8 @@ import CercaClient from '@/components/CercaClient'
 import { getAllReferees, getAllPlayers, getAllTeams, getAllTeamsFromJSON } from '@/lib/data'
 import { getAllRefereesDB, getAllTeamsDB } from '@/lib/supabase-data'
 
-// Force static rendering — search filtering happens client-side in CercaClient.tsx
-export const dynamic = 'force-static'
+// Dynamic so new teams/referees added to the DB appear without a redeploy
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Cerca — Equips, Jugadors i Àrbitres',

@@ -10,7 +10,6 @@ export async function loginAdmin(_prevState: unknown, formData: FormData) {
     const cookieStore = await cookies()
     cookieStore.set('ns_admin', '1', {
       path: '/',
-      httpOnly: true,
       sameSite: 'strict',
       maxAge: 60 * 60 * 24 * 30, // 30 days
     })
