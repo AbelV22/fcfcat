@@ -148,24 +148,32 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Fire-and-forget: call the edge function
-  // The edge function has verify_jwt:false so the anon key is sufficient to invoke it.
-  // It uses its own server-side service key internally for DB writes.
+  // Call the edge function and await its initial HTTP response.
+  // The edge function returns immediately (200) and does the long work via waitUntil(),
+  // so awaiting here is fast (< 1s). We MUST await on Cloudflare Workers — fire-and-forget
+  // fetch() calls are killed as soon as the response is sent back to the client.
   const edgeFnUrl = `${SUPABASE_URL}/functions/v1/scrape-team`
   const jobId = `${season}-${competition}-${slug}`
 
-  // We don't await — the edge function runs independently
-  fetch(edgeFnUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-      apikey: SUPABASE_ANON_KEY,
-    },
-    body: JSON.stringify({ slug, competition, group, season, team_name }),
-  }).catch(err => {
+  try {
+    const edgeRes = await fetch(edgeFnUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        apikey: SUPABASE_ANON_KEY,
+      },
+      body: JSON.stringify({ slug, competition, group, season, team_name }),
+    })
+    if (!edgeRes.ok) {
+      const text = await edgeRes.text()
+      console.error('[POST /api/scrape] edge function error:', edgeRes.status, text.slice(0, 200))
+      return NextResponse.json({ error: 'Scraping service error', detail: text.slice(0, 100) }, { status: 502 })
+    }
+  } catch (err) {
     console.error('[POST /api/scrape] edge function call failed:', err)
-  })
+    return NextResponse.json({ error: 'Could not reach scraping service' }, { status: 502 })
+  }
 
   return NextResponse.json({ jobId, status: 'running' })
 }
