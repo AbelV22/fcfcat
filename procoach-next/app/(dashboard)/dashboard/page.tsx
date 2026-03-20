@@ -1,15 +1,23 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase-server'
+import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { BarChart3, Shield, Users, Calendar, Trophy, ArrowRight, Settings } from 'lucide-react'
 
 export default async function DashboardPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const cookieStore = await cookies()
+  const isAdmin = cookieStore.get('ns_admin')?.value === '1'
 
-  if (!user) redirect('/login')
+  let clubName = 'El teu equip'
 
-  const clubName = user.user_metadata?.club_name || user.email?.split('@')[0] || 'El teu equip'
+  if (!isAdmin) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) redirect('/login')
+    clubName = user.user_metadata?.club_name || user.email?.split('@')[0] || 'El teu equip'
+  } else {
+    clubName = 'Admin'
+  }
 
   return (
     <div className="min-h-screen bg-[#0f172a]">
@@ -23,7 +31,7 @@ export default async function DashboardPage() {
             <span className="font-bold text-white">Neo<span className="text-green-400">Scout</span> <span className="text-slate-400 font-normal text-sm">· Pro Dashboard</span></span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-slate-400 hidden sm:block">{user.email}</span>
+            {isAdmin && <span className="text-xs px-2 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/25 rounded-full font-bold">ADMIN</span>}
             <Link href="/" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
               Tornar a l&apos;inici →
             </Link>

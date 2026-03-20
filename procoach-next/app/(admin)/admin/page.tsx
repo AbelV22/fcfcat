@@ -55,6 +55,44 @@ export default async function AdminPage() {
 
         {/* Cards grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Dashboard Pro */}
+          <Link
+            href="/dashboard"
+            className="group bg-white/4 hover:bg-white/7 border border-white/8 hover:border-cyan-500/30 rounded-2xl p-6 transition-all"
+          >
+            <div className="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-500/20 flex items-center justify-center mb-4 group-hover:bg-cyan-500/25 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="text-cyan-400" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="9" rx="1" /><rect x="14" y="3" width="7" height="5" rx="1" /><rect x="14" y="12" width="7" height="9" rx="1" /><rect x="3" y="16" width="7" height="5" rx="1" />
+              </svg>
+            </div>
+            <h2 className="font-bold text-white text-sm mb-1">Dashboard Pro</h2>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Accés complet al panell d&apos;usuari sense compte. Intel·ligència, rivals, àrbitres i calendari.
+            </p>
+            <div className="mt-4 text-xs text-cyan-400 font-semibold group-hover:text-cyan-300 transition-colors">
+              Accedir →
+            </div>
+          </Link>
+
+          {/* Cerca */}
+          <Link
+            href="/cerca"
+            className="group bg-white/4 hover:bg-white/7 border border-white/8 hover:border-purple-500/30 rounded-2xl p-6 transition-all"
+          >
+            <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/20 flex items-center justify-center mb-4 group-hover:bg-purple-500/25 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="text-purple-400" aria-hidden="true">
+                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </div>
+            <h2 className="font-bold text-white text-sm mb-1">Cerca global</h2>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Cerca equips, àrbitres i jugadors. Accés a tots els informes complets.
+            </p>
+            <div className="mt-4 text-xs text-purple-400 font-semibold group-hover:text-purple-300 transition-colors">
+              Cercar →
+            </div>
+          </Link>
+
           {/* Gestió de Camps */}
           <Link
             href="/admin/camps"
