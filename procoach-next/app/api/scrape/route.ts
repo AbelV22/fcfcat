@@ -17,9 +17,6 @@ const SUPABASE_ANON_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54Z3lkdXFwcnhiaHRwcXNlcGdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5OTc5NjcsImV4cCI6MjA4ODU3Mzk2N30.qb-T1ja19sGFyDIOLU6C8SM1OBOa9RnmzEakc9g2Y2U'
 
-// Service key — only available server-side (never exposed to client)
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
-
 // ── GET /api/scrape?slug=... ──────────────────────────────────────────────────
 
 export async function GET(req: NextRequest) {
@@ -151,15 +148,9 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  if (!SUPABASE_SERVICE_KEY) {
-    console.error('[POST /api/scrape] SUPABASE_SERVICE_ROLE_KEY not set')
-    return NextResponse.json(
-      { error: 'Scraping service not configured (missing service key)' },
-      { status: 503 },
-    )
-  }
-
   // Fire-and-forget: call the edge function
+  // The edge function has verify_jwt:false so the anon key is sufficient to invoke it.
+  // It uses its own server-side service key internally for DB writes.
   const edgeFnUrl = `${SUPABASE_URL}/functions/v1/scrape-team`
   const jobId = `${season}-${competition}-${slug}`
 
@@ -168,8 +159,8 @@ export async function POST(req: NextRequest) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
-      apikey: SUPABASE_SERVICE_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      apikey: SUPABASE_ANON_KEY,
     },
     body: JSON.stringify({ slug, competition, group, season, team_name }),
   }).catch(err => {
