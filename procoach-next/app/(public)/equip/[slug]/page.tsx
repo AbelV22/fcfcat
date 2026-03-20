@@ -6,6 +6,7 @@ import { COMPETITION_NAMES, slugify } from '@/lib/data'
 import { getFullTeamReportDB, type FullTeamReportDB, type RivalDataDB, type RefereeStatsDB } from '@/lib/supabase-data'
 import { RivalScoutCard } from '@/components/RivalScoutCard'
 import { AdminGate, AdminBadge, AdminBlurValue, AdminUpgradeLink } from '@/components/AdminGate'
+import ScrapeProgressBanner from '@/components/ScrapeProgressBanner'
 import {
   Users, Trophy, Shield, ChevronRight, AlertTriangle,
   Calendar, Target, Clock, Home, Plane, BarChart2,
@@ -594,6 +595,13 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
         {/* Row 6: Full squad */}
         {report.players.length > 0 ? (
           <SquadTable players={report.players} />
+        ) : isPriority ? (
+          <ScrapeProgressBanner
+            slug={slug}
+            competition={report.competition}
+            group={report.group}
+            teamName={report.name}
+          />
         ) : (
           <div className="bg-white/4 border border-white/8 rounded-2xl p-8 text-center">
             <Users size={28} className="text-slate-600 mx-auto mb-3" />
