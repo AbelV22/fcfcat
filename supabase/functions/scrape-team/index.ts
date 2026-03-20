@@ -126,8 +126,10 @@ async function runScrape(opts: {
   competition: string
   group: string
   season: string
+  /** When true, skip the automatic rival scrape (prevents infinite recursion) */
+  skipRival?: boolean
 }) {
-  const { SUPABASE_URL, SERVICE_KEY, jobId, slug, teamName, competition, group, season } = opts
+  const { SUPABASE_URL, SERVICE_KEY, jobId, slug, teamName, competition, group, season, skipRival = false } = opts
 
   try {
     // 1. Fetch all acta URLs for this team from fcf_matches
@@ -226,6 +228,20 @@ async function runScrape(opts: {
       status: 'done',
       actas_scraped: scraped,
     })
+
+    // 6. Also scrape the next rival (for RivalScoutCard) — runs silently after
+    //    the main job is done so the page can refresh immediately.
+    //    skipRival=true prevents the rival's own scrape from triggering its rival.
+    if (!skipRival) {
+      await scrapeRivalIfNeeded({
+        SUPABASE_URL,
+        SERVICE_KEY,
+        mainSlug: slug,
+        competition,
+        group,
+        season,
+      })
+    }
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err)
     console.error('[scrape-team] Fatal error:', msg)
@@ -233,6 +249,114 @@ async function runScrape(opts: {
       status: 'error',
       error_msg: msg.slice(0, 500),
     })
+  }
+}
+
+// ─── Rival auto-scrape ────────────────────────────────────────────────────────
+
+/**
+ * After the main team is scraped, find the next upcoming opponent and
+ * trigger a full scrape for them too (so the RivalScoutCard has data).
+ * Only runs if the rival has no existing player stats and no active job.
+ */
+async function scrapeRivalIfNeeded(opts: {
+  SUPABASE_URL: string
+  SERVICE_KEY: string
+  mainSlug: string
+  competition: string
+  group: string
+  season: string
+}) {
+  const { SUPABASE_URL, SERVICE_KEY, mainSlug, competition, group, season } = opts
+
+  try {
+    // Find the first upcoming unplayed match for this team
+    const [homeUpcoming, awayUpcoming] = await Promise.all([
+      fetch(
+        `${SUPABASE_URL}/rest/v1/fcf_matches?select=home_slug,away_slug,home_team,away_team,jornada&competition=eq.${enc(competition)}&group_name=eq.${enc(group)}&season=eq.${enc(season)}&home_slug=eq.${enc(mainSlug)}&home_score=is.null&order=jornada.asc&limit=5`,
+        { headers: sbHeaders(SERVICE_KEY) },
+      ),
+      fetch(
+        `${SUPABASE_URL}/rest/v1/fcf_matches?select=home_slug,away_slug,home_team,away_team,jornada&competition=eq.${enc(competition)}&group_name=eq.${enc(group)}&season=eq.${enc(season)}&away_slug=eq.${enc(mainSlug)}&home_score=is.null&order=jornada.asc&limit=5`,
+        { headers: sbHeaders(SERVICE_KEY) },
+      ),
+    ])
+
+    type MatchRow = { home_slug: string; away_slug: string; home_team: string; away_team: string; jornada: number }
+    const homeRows: MatchRow[] = homeUpcoming.ok ? await homeUpcoming.json() : []
+    const awayRows: MatchRow[] = awayUpcoming.ok ? await awayUpcoming.json() : []
+
+    // Pick the earliest upcoming match
+    const allUpcoming = [...homeRows, ...awayRows].sort((a, b) => a.jornada - b.jornada)
+    if (!allUpcoming.length) return
+
+    const next = allUpcoming[0]
+    const rivalSlug = next.home_slug === mainSlug ? next.away_slug : next.home_slug
+    const rivalName = next.home_slug === mainSlug ? next.away_team : next.home_team
+
+    if (!rivalSlug || rivalSlug === mainSlug) return
+
+    console.log(`[scrapeRivalIfNeeded] Next rival: ${rivalSlug} (J${next.jornada})`)
+
+    // Check if rival already has player stats in DB
+    const statsCheck = await fetch(
+      `${SUPABASE_URL}/rest/v1/fcf_player_stats?team_slug=eq.${enc(rivalSlug)}&competition=eq.${enc(competition)}&limit=1&select=id`,
+      { headers: sbHeaders(SERVICE_KEY) },
+    )
+    if (statsCheck.ok) {
+      const existing: Array<{ id: string }> = await statsCheck.json()
+      if (existing.length > 0) {
+        console.log(`[scrapeRivalIfNeeded] Rival ${rivalSlug} already has stats — skipping`)
+        return
+      }
+    }
+
+    // Check if a scrape job is already running or done for the rival
+    const rivalJobId = `${season}-${competition}-${rivalSlug}`
+    const jobCheck = await fetch(
+      `${SUPABASE_URL}/rest/v1/scrape_jobs?id=eq.${enc(rivalJobId)}&select=id,status`,
+      { headers: sbHeaders(SERVICE_KEY) },
+    )
+    if (jobCheck.ok) {
+      const jobs: Array<{ id: string; status: string }> = await jobCheck.json()
+      if (jobs.length > 0 && (jobs[0].status === 'done' || jobs[0].status === 'running' || jobs[0].status === 'pending')) {
+        console.log(`[scrapeRivalIfNeeded] Rival ${rivalSlug} job already ${jobs[0].status} — skipping`)
+        return
+      }
+    }
+
+    // Create a job entry for the rival and scrape them
+    console.log(`[scrapeRivalIfNeeded] Scraping rival ${rivalSlug}...`)
+    await dbUpsert(SUPABASE_URL, SERVICE_KEY, 'scrape_jobs', {
+      id: rivalJobId,
+      team_slug: rivalSlug,
+      team_name: rivalName,
+      competition,
+      group_name: group,
+      season,
+      status: 'running',
+      actas_found: 0,
+      actas_scraped: 0,
+      error_msg: null,
+    })
+
+    // Reuse runScrape with skipRival=true to prevent further chaining
+    await runScrape({
+      SUPABASE_URL,
+      SERVICE_KEY,
+      jobId: rivalJobId,
+      slug: rivalSlug,
+      teamName: rivalName,
+      competition,
+      group,
+      season,
+      skipRival: true,
+    })
+
+    console.log(`[scrapeRivalIfNeeded] Rival ${rivalSlug} scraped successfully`)
+  } catch (err) {
+    // Non-fatal — rival scrape failure shouldn't affect the main team's result
+    console.error('[scrapeRivalIfNeeded] Error:', err instanceof Error ? err.message : String(err))
   }
 }
 
