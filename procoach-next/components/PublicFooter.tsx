@@ -93,6 +93,7 @@ export default function PublicFooter() {
           <p className="text-xs text-slate-600">
             Fet amb ❤️ per al futbol català
           </p>
+          <Link href="/admin/login" className="text-xs text-slate-800 hover:text-slate-700 transition-colors select-none" tabIndex={-1} aria-hidden="true">·</Link>
         </div>
       </div>
     </footer>
