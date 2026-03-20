@@ -102,7 +102,7 @@ KNOWN_GROUPS = {
     "primera-catalana":            ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8"],
     "segona-catalana":             ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8"],
     "tercera-catalana":            ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8", "grup-9", "grup-10"],
-    "quarta-catalana":             ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8", "grup-9", "grup-10"],
+    "quarta-catalana":             ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8", "grup-9", "grup-10", "grup-11", "grup-12", "grup-13", "grup-14", "grup-15", "grup-16", "grup-17", "grup-18", "grup-19"],
     # Juvenil
     "divisio-honor-juvenil":       ["grup-unic"],
     "lliga-nacional-juvenil":      ["grup-unic"],
