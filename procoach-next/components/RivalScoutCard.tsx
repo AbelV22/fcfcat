@@ -7,6 +7,7 @@ import {
   Shield, Users, Home, Plane, Crosshair, BarChart2, Maximize2,
 } from 'lucide-react'
 import type { RivalReport, GoalBucket, PlayerStat, MatchResult, StandingRow, FieldSizeRecord } from '@/lib/team-report'
+import type { RivalInsights } from '@/lib/supabase-data'
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -293,6 +294,80 @@ function FieldSizeMini({ records }: { records: FieldSizeRecord[] }) {
   )
 }
 
+// ─── Rival Insights Block ────────────────────────────────────────────────────
+
+function RivalInsightsBlock({ insights }: { insights: RivalInsights | null }) {
+  if (!insights) return null
+  if (insights.matchesAnalyzed < 3) {
+    return (
+      <div className="mt-3 bg-black/20 rounded-xl px-4 py-3 border border-white/5">
+        <div className="text-[10px] text-slate-600 italic">Sense prou dades per calcular insights</div>
+      </div>
+    )
+  }
+
+  const pills: Array<{ icon: string; label: string; value: string; color: string }> = []
+
+  if (insights.comebackRate !== null) {
+    pills.push({
+      icon: '🔄',
+      label: 'Remontades',
+      value: `${insights.comebackRate}%`,
+      color: insights.comebackRate >= 40 ? 'text-amber-300' : 'text-slate-400',
+    })
+  }
+
+  if (insights.cleanSheetRate !== null) {
+    pills.push({
+      icon: '🧹',
+      label: 'Porteria a zero',
+      value: `${insights.cleanSheetRate}%`,
+      color: insights.cleanSheetRate >= 35 ? 'text-green-400' : 'text-slate-400',
+    })
+  }
+
+  if (insights.lateGoalRate !== null) {
+    pills.push({
+      icon: '⚡',
+      label: "Gols finals (75')",
+      value: `${insights.lateGoalRate}%`,
+      color: insights.lateGoalRate >= 30 ? 'text-red-400' : 'text-slate-400',
+    })
+  }
+
+  const total1H2H = insights.firstHalfGoals + insights.secondHalfGoals
+  if (total1H2H > 0) {
+    pills.push({
+      icon: '⚽',
+      label: '1ª / 2ª part',
+      value: `${insights.firstHalfGoals} — ${insights.secondHalfGoals}`,
+      color: 'text-cyan-400',
+    })
+  }
+
+  if (pills.length === 0) return null
+
+  return (
+    <div className="mt-3 bg-black/20 rounded-xl px-4 py-3 border border-white/5">
+      <div className="flex items-center gap-1.5 mb-2">
+        <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Tendències del rival</span>
+        <span className="text-[9px] text-slate-700">· {insights.matchesAnalyzed} partits</span>
+      </div>
+      <div className="grid grid-cols-2 gap-1.5">
+        {pills.map((p, i) => (
+          <div key={i} className="flex items-center gap-1.5 bg-white/4 rounded-lg px-2.5 py-1.5 border border-white/5">
+            <span className="text-sm shrink-0">{p.icon}</span>
+            <div className="min-w-0">
+              <div className="text-[9px] text-slate-600 truncate">{p.label}</div>
+              <div className={`text-xs font-black ${p.color}`}>{p.value}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 interface NextMatchInfo {
@@ -312,7 +387,7 @@ export function RivalScoutCard({
   nextMatch,
   headToHead,
 }: {
-  rival: RivalReport
+  rival: RivalReport & { insights?: RivalInsights | null }
   nextMatch: NextMatchInfo
   headToHead: MatchResult[]
 }) {
@@ -496,6 +571,9 @@ export function RivalScoutCard({
 
         {/* Field size mini (only if we have data) */}
         <FieldSizeMini records={rival.awayByFieldSize} />
+
+        {/* Rival insights (goal event analytics from global_referees.json) */}
+        <RivalInsightsBlock insights={rival.insights ?? null} />
       </div>
 
       {/* ─── Expanded full report ───────────────────────────────────── */}
@@ -513,6 +591,9 @@ export function RivalScoutCard({
             <div className="bg-black/20 rounded-xl p-4 border border-white/5">
               <FullGoalTimingBar buckets={rival.goalBuckets} />
             </div>
+            {rival.insights != null && (
+              <RivalInsightsBlock insights={rival.insights} />
+            )}
           </div>
 
           {/* Home / Away splits */}

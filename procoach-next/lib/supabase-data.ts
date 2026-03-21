@@ -13,6 +13,7 @@
 
 import { createClient } from '@supabase/supabase-js'
 import { slugify } from '@/lib/utils'
+import { loadGlobalReferees } from '@/lib/data'
 
 // Competition display names — mirrors lib/data.ts COMPETITION_NAMES
 const COMPETITION_NAMES: Record<string, string> = {
@@ -751,6 +752,173 @@ type MatchEntry = { date: string; jornada: number; opponent: string; opponentSlu
 type StandingEntry = { position: number; name: string; slug: string; played: number; wins: number; draws: number; losses: number; gf: number; ga: number; points: number }
 type GoalBucketEntry = { label: string; scored: number; conceded: number }
 
+export type RivalInsights = {
+  comebackRate: number | null        // % matches where they were trailing at some point AND drew/won
+  scoreFirstWinRate: number | null   // % of matches where they scored first AND won
+  concededFirstWinRate: number | null // % of matches where opponent scored first AND rival won
+  cleanSheetRate: number | null      // % of played matches with 0 goals conceded
+  lateGoalRate: number | null        // % of goals scored in min 75+
+  firstHalfGoals: number
+  secondHalfGoals: number
+  matchesAnalyzed: number            // matches that had goal-level data
+}
+
+// Goal timing bucket definitions for computeGoalBucketsFromRefs
+const GOAL_BUCKETS = [
+  { label: "1–15'",  min: 1,  max: 15  },
+  { label: "16–30'", min: 16, max: 30  },
+  { label: "31–45'", min: 31, max: 45  },
+  { label: "46–60'", min: 46, max: 60  },
+  { label: "61–75'", min: 61, max: 75  },
+  { label: "76–90'", min: 76, max: 999 },
+]
+
+/** Parse a goal minute string like "45+2", "90", "18" → integer */
+function _parseGoalMinute(m: string | number | undefined): number {
+  const s = String(m ?? '0')
+  const match = s.match(/^(\d+)/)
+  return match ? parseInt(match[1], 10) : 0
+}
+
+type RefMatch = {
+  home_team: string
+  away_team: string
+  home_score: number | null
+  away_score: number | null
+  competition: string
+  group: string
+  goals?: Array<{ player: string; minute: string | number; team: 'home' | 'away' }>
+  home_slug?: string
+  away_slug?: string
+}
+
+/**
+ * Compute goal timing buckets from global_referees.json match data.
+ * Identifies which side is "our team" by matching slug to home/away team name.
+ */
+export function computeGoalBucketsFromRefs(matches: RefMatch[], teamSlug: string): GoalBucketEntry[] {
+  const buckets = GOAL_BUCKETS.map(b => ({ label: b.label, scored: 0, conceded: 0, min: b.min, max: b.max }))
+
+  for (const m of matches) {
+    if (m.home_score === null || m.away_score === null) continue
+    if (!Array.isArray(m.goals) || m.goals.length === 0) continue
+
+    const isHome = slugify(m.home_team || '') === teamSlug
+    const side = isHome ? 'home' : 'away'
+    const opSide = isHome ? 'away' : 'home'
+
+    for (const g of m.goals) {
+      const min = _parseGoalMinute(g.minute)
+      const bucket = buckets.find(b => min >= b.min && min <= b.max)
+      if (!bucket) continue
+      if (g.team === side) bucket.scored++
+      else if (g.team === opSide) bucket.conceded++
+    }
+  }
+
+  return buckets.map(({ label, scored, conceded }) => ({ label, scored, conceded }))
+}
+
+/**
+ * Compute rival insights from goal-event-level data in global_referees.json.
+ * All stats are from the rival's perspective.
+ */
+export function computeRivalInsights(matches: RefMatch[], rivalSlug: string): RivalInsights {
+  let matchesAnalyzed = 0
+  let comebackMatches = 0
+  let comebackOpportunities = 0
+  let scoreFirstWins = 0
+  let scoreFirstTotal = 0
+  let concededFirstWins = 0
+  let concededFirstTotal = 0
+  let cleanSheets = 0
+  let lateGoals = 0
+  let totalGoals = 0
+  let firstHalfGoals = 0
+  let secondHalfGoals = 0
+
+  for (const m of matches) {
+    if (m.home_score === null || m.away_score === null) continue
+
+    const isHome = slugify(m.home_team || '') === rivalSlug
+    const rivalSide: 'home' | 'away' = isHome ? 'home' : 'away'
+    const finalGF = isHome ? (m.home_score ?? 0) : (m.away_score ?? 0)
+    const finalGA = isHome ? (m.away_score ?? 0) : (m.home_score ?? 0)
+
+    matchesAnalyzed++
+
+    const hasGoalData = Array.isArray(m.goals) && m.goals.length > 0
+
+    // Clean sheet: rival conceded 0 goals
+    if (finalGA === 0) cleanSheets++
+
+    if (!hasGoalData) continue
+
+    const goals = [...(m.goals || [])].sort((a, b) =>
+      _parseGoalMinute(a.minute) - _parseGoalMinute(b.minute)
+    )
+
+    // Reconstruct score progression to detect comebacks + who scored first
+    let rivalScore = 0
+    let opScore = 0
+    let rivalWasTrailing = false
+    let rivalScoredFirst = false
+    let opponentScoredFirst = false
+    let firstGoalRecorded = false
+
+    for (const g of goals) {
+      if (!firstGoalRecorded) {
+        if (g.team === rivalSide) rivalScoredFirst = true
+        else opponentScoredFirst = true
+        firstGoalRecorded = true
+      }
+      if (g.team === rivalSide) rivalScore++
+      else opScore++
+
+      if (rivalScore < opScore) rivalWasTrailing = true
+    }
+
+    // Comeback: was trailing at some point AND ended with D or W
+    if (rivalWasTrailing) {
+      comebackOpportunities++
+      if (finalGF >= finalGA) comebackMatches++
+    }
+
+    // Score first win rate
+    if (rivalScoredFirst) {
+      scoreFirstTotal++
+      if (finalGF > finalGA) scoreFirstWins++
+    }
+
+    // Conceded first win rate
+    if (opponentScoredFirst) {
+      concededFirstTotal++
+      if (finalGF > finalGA) concededFirstWins++
+    }
+
+    // Goal timing stats
+    for (const g of goals) {
+      if (g.team !== rivalSide) continue
+      const min = _parseGoalMinute(g.minute)
+      totalGoals++
+      if (min >= 75) lateGoals++
+      if (min >= 1 && min <= 45) firstHalfGoals++
+      else if (min >= 46) secondHalfGoals++
+    }
+  }
+
+  return {
+    comebackRate: comebackOpportunities > 0 ? Math.round((comebackMatches / comebackOpportunities) * 100) : null,
+    scoreFirstWinRate: scoreFirstTotal > 0 ? Math.round((scoreFirstWins / scoreFirstTotal) * 100) : null,
+    concededFirstWinRate: concededFirstTotal > 0 ? Math.round((concededFirstWins / concededFirstTotal) * 100) : null,
+    cleanSheetRate: matchesAnalyzed > 0 ? Math.round((cleanSheets / matchesAnalyzed) * 100) : null,
+    lateGoalRate: totalGoals > 0 ? Math.round((lateGoals / totalGoals) * 100) : null,
+    firstHalfGoals,
+    secondHalfGoals,
+    matchesAnalyzed,
+  }
+}
+
 export type RefereeStatsDB = {
   name: string
   slug: string
@@ -783,6 +951,7 @@ export type RivalDataDB = {
   apercibits: PlayerEntry[]
   goalBuckets: GoalBucketEntry[]
   awayByFieldSize: never[]  // not available from Supabase; always empty
+  insights: RivalInsights | null
 }
 
 export type FullTeamReportDB = {
@@ -1076,6 +1245,20 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       : Promise.resolve({ data: [] as any[] }),
   ])
 
+  // ── Load global_referees for goal timing + insights ──────────────────────
+  // This runs server-side only; loadGlobalReferees reads from the filesystem.
+  const allGlobalRefs = Object.values(loadGlobalReferees()) as RefMatch[]
+
+  // Filter to this team's competition+group matches (by team name slug)
+  const teamRefMatches = allGlobalRefs.filter(m =>
+    m.competition === competition &&
+    m.group === groupName &&
+    (slugify(m.home_team || '') === slug || slugify(m.away_team || '') === slug)
+  )
+
+  // Compute goal buckets for the main team
+  const teamGoalBuckets: GoalBucketEntry[] = computeGoalBucketsFromRefs(teamRefMatches, slug)
+
   // ── Build rival ────────────────────────────────────────────────────────────
   let rival: RivalDataDB | null = null
   if (rivalSlug && rivalName) {
@@ -1101,6 +1284,15 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       ? { played: (rs.away_won||0)+(rs.away_drawn||0)+(rs.away_lost||0), wins: rs.away_won||0, draws: rs.away_drawn||0, losses: rs.away_lost||0, gf: rAwayPlayed.reduce((s:number,m:any)=>s+(m.goalsFor||0),0), ga: rAwayPlayed.reduce((s:number,m:any)=>s+(m.goalsAgainst||0),0), points: (rs.away_won||0)*3+(rs.away_drawn||0) }
       : _splitStats(rAllPlayed, 'away')
 
+    // Rival goal timing + insights from global_referees
+    const rivalRefMatches = allGlobalRefs.filter(m =>
+      m.competition === competition &&
+      m.group === groupName &&
+      (slugify(m.home_team || '') === rivalSlug || slugify(m.away_team || '') === rivalSlug)
+    )
+    const rivalGoalBuckets: GoalBucketEntry[] = computeGoalBucketsFromRefs(rivalRefMatches, rivalSlug)
+    const rivalInsights: RivalInsights = computeRivalInsights(rivalRefMatches, rivalSlug)
+
     rival = {
       name: rivalName,
       slug: rivalSlug,
@@ -1119,8 +1311,9 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       topScorers: [...rivalPlayers].sort((a,b) => b.goals - a.goals).filter(p => p.goals > 0).slice(0, 5),
       mostMinutes: [...rivalPlayers].sort((a,b) => b.minutes_played - a.minutes_played).filter(p => p.minutes_played > 0).slice(0, 5),
       apercibits: rivalPlayers.filter(p => p.risk),
-      goalBuckets: [],        // no goals JSONB in fcf_referee_matches
+      goalBuckets: rivalGoalBuckets,
       awayByFieldSize: [],    // pitch dimension data not available from Supabase
+      insights: rivalInsights.matchesAnalyzed > 0 ? rivalInsights : null,
     }
   }
 
@@ -1180,7 +1373,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     away,
     players,
     form,
-    goalBuckets: [],  // no goal timing from Supabase (no goals JSONB in fcf_referee_matches)
+    goalBuckets: teamGoalBuckets,
     standings,
     sanctions: [],
     nextMatch,
