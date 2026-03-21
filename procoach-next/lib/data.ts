@@ -21,10 +21,12 @@ export function loadGlobalReferees(): Record<string, any> {
   }
 }
 
-/** Load goal_buckets.json — pre-computed goal timing + insights per team/competition/group */
+/** Load goal_buckets.json — pre-computed goal timing + insights per team/competition/group.
+ *  Lives in procoach-next/data/ so it's bundled inside the Cloudflare Worker. */
 export function loadGoalBuckets(): Record<string, any> {
   try {
-    const filePath = path.join(DATA_DIR, 'goal_buckets.json')
+    // Use process.cwd() directly (= procoach-next/ in Cloudflare) NOT DATA_DIR (../data/)
+    const filePath = path.join(process.cwd(), 'data', 'goal_buckets.json')
     const raw = fs.readFileSync(filePath, 'utf-8')
     return JSON.parse(raw)
   } catch {
