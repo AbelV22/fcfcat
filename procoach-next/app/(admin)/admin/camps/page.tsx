@@ -20,7 +20,7 @@ interface FieldEntry {
 
 function loadFields(): FieldEntry[] {
   try {
-    const fieldsPath = path.join(process.cwd(), '..', 'data', 'fields.json')
+    const fieldsPath = path.join(process.cwd(), 'data', 'fields.json')
     const raw = JSON.parse(fs.readFileSync(fieldsPath, 'utf-8'))
     return Array.isArray(raw.fields) ? raw.fields : []
   } catch {
@@ -35,6 +35,13 @@ export default async function CampsPage() {
 
   const fields = loadFields()
   const teams = getAllTeamsFromJSON()
+
+  // Load FCF venue map (team_name -> detected venue string from actas)
+  let teamVenueMap: Record<string, string> = {}
+  try {
+    const venuesPath = path.join(process.cwd(), 'data', 'team_venues_fcf.json')
+    teamVenueMap = JSON.parse(fs.readFileSync(venuesPath, 'utf-8'))
+  } catch { /* no map available */ }
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-white">
@@ -63,13 +70,13 @@ export default async function CampsPage() {
           </p>
         </div>
 
-        <CampsForm fields={fields} teams={teams} />
+        <CampsForm fields={fields} teams={teams} teamVenueMap={teamVenueMap} />
 
         {/* Warning note */}
         <div className="px-4 py-3 rounded-xl bg-amber-500/8 border border-amber-500/15">
           <p className="text-xs text-amber-400/80">
             <span className="font-semibold text-amber-400">⚠️ Nota:</span>{' '}
-            Les dades es guarden localment a <code className="font-mono text-amber-300">data/fields.json</code>. Fes commit i push per publicar els canvis al servidor.
+            Les dades es guarden a <code className="font-mono text-amber-300">procoach-next/data/fields.json</code>. Fes commit i push per publicar els canvis al servidor.
           </p>
         </div>
       </main>

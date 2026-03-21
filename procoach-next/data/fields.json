@@ -1,0 +1,349 @@
+{
+  "_comment": "Dimensiones de campos medidas con Google Maps. Fuente: mediciones propias + FCF. Temporada 2025-26 Segona Catalana Grup 3.",
+  "fields": [
+    {
+      "name": "Campo Santa Eulalia",
+      "fcf_venue": "Camp de Futbol Municipal Santa Eulàlia",
+      "team": null,
+      "city": "L'Hospitalet de Llobregat",
+      "address": "C/ Aprestadora, 132-140",
+      "length_m": 100,
+      "width_m": 59,
+      "confirmed": false,
+      "notes": "Campo municipal en el barrio Santa Eulàlia de L'Hospitalet. Asociado al club FAF L'Hospitalet pero no como campo oficial de liga en FCF Grup 3."
+    },
+    {
+      "name": "Campo Hospitalet Athletic",
+      "fcf_venue": null,
+      "team": null,
+      "city": "L'Hospitalet de Llobregat",
+      "address": null,
+      "length_m": 91,
+      "width_m": 51,
+      "confirmed": false,
+      "notes": "Campo en el área de L'Hospitalet. Sin correspondencia clara con equipo de Grup 3."
+    },
+    {
+      "name": "Campo F.AF (Pubilla)",
+      "fcf_venue": "Camp de Futbol Mpal. Pubilla Casas",
+      "team": "FUNDACIÓ ACADEMIA F. L'HOSPITALET A",
+      "city": "L'Hospitalet de Llobregat",
+      "address": "Ctra. de Collblanc, 208",
+      "length_m": 90,
+      "width_m": 60,
+      "confirmed": true,
+      "notes": "Campo oficial de FCF para FUNDACIÓ ACADEMIA F. L'HOSPITALET A. Confirmado por actas de partidos."
+    },
+    {
+      "name": "Unificación Bellvitge",
+      "fcf_venue": "Camp de Futbol Mpal. La Feixa Llarga",
+      "team": "UNIFICACION BELLVITGE, U.D. A",
+      "city": "L'Hospitalet de Llobregat",
+      "address": "Trav. Industrial, 50",
+      "length_m": 100,
+      "width_m": 62,
+      "confirmed": true,
+      "notes": "Campo oficial de FCF para UNIFICACION BELLVITGE, U.D. A. Confirmado por actas de partidos."
+    },
+    {
+      "name": "C.E Hospitalet",
+      "fcf_venue": null,
+      "team": null,
+      "city": "L'Hospitalet de Llobregat",
+      "address": null,
+      "length_m": 103,
+      "width_m": 68,
+      "confirmed": false,
+      "notes": "Campo del Centre d'Esports L'Hospitalet (club de categoría superior). No pertenece a ningún equipo de Grup 3."
+    },
+    {
+      "name": "Terlenka",
+      "fcf_venue": null,
+      "team": null,
+      "city": "L'Hospitalet de Llobregat",
+      "address": null,
+      "length_m": 98,
+      "width_m": 63,
+      "confirmed": false,
+      "notes": "Nombre popular del campo en el barrio Bellvitge (histórico barrio Terlenka). Sin correspondencia clara con equipo de Grup 3 aparte de Unificación Bellvitge."
+    },
+    {
+      "name": "AE Prat",
+      "fcf_venue": "Camp de Futbol CEM Sagnier",
+      "team": "PRAT, A.E. B",
+      "city": "El Prat de Llobregat",
+      "address": "C/ del Roure, 418",
+      "length_m": 104,
+      "width_m": 63,
+      "confirmed": true,
+      "notes": "Campo oficial de FCF para PRAT, A.E. B. Confirmado por actas de partidos."
+    },
+    {
+      "name": "Can Vidalet",
+      "fcf_venue": "Camp Mpal. d'Esports El Molí",
+      "team": null,
+      "city": "Esplugues de Llobregat",
+      "address": "C/ del Molí, 80",
+      "length_m": 99,
+      "width_m": 62,
+      "confirmed": false,
+      "notes": "Campo del CF Can Vidalet (Esplugues de Llobregat). No pertenece a ningún equipo de Grup 3."
+    },
+    {
+      "name": "Poble Sec",
+      "fcf_venue": null,
+      "team": null,
+      "city": "Barcelona (Sants-Montjuïc)",
+      "address": null,
+      "length_m": 94,
+      "width_m": 48,
+      "confirmed": false,
+      "notes": "Campo en el barrio Poble Sec, distrito Sants-Montjuïc. Posiblemente campo alternativo del área."
+    },
+    {
+      "name": "Escola Industrial",
+      "fcf_venue": null,
+      "team": null,
+      "city": "Barcelona (Eixample)",
+      "address": "C/ Viladomat, 262",
+      "length_m": 90,
+      "width_m": 52,
+      "confirmed": false,
+      "notes": "Instalaciones Esportives Escola Industrial, Barcelona. Sin correspondencia clara con equipo de Grup 3."
+    },
+    {
+      "name": "Collblanc Sants",
+      "fcf_venue": null,
+      "team": null,
+      "city": "Barcelona / L'Hospitalet",
+      "address": null,
+      "length_m": 93,
+      "width_m": 49,
+      "confirmed": false,
+      "notes": "Campo en la zona Collblanc/Sants. Sin correspondencia clara con equipo de Grup 3."
+    },
+    {
+      "name": "Campo l'Àliga",
+      "fcf_venue": "Camp de Futbol Mpal. L'Àliga",
+      "team": "SARRIA, C.P. A",
+      "city": "Barcelona (Sarrià-Sant Gervasi)",
+      "address": "Pl. d'Alfonso Comín, 1",
+      "length_m": 99,
+      "width_m": 59,
+      "confirmed": true,
+      "notes": "Campo oficial de FCF para SARRIA, C.P. A. Confirmado por actas de partidos."
+    },
+    {
+      "name": "Sant Ignasi",
+      "fcf_venue": "Camp de Futbol Col·legi Sant Ignasi",
+      "team": "SANT IGNASI C.E. A",
+      "city": "Barcelona",
+      "address": "Carrasco i Formiguera, 32",
+      "length_m": 92,
+      "width_m": 50,
+      "confirmed": true,
+      "notes": "Campo oficial de FCF para SANT IGNASI C.E. A. Confirmado por perfil FCF del equipo."
+    },
+    {
+      "name": "La Báscula",
+      "fcf_venue": "CEM La Bàscula Emilio Fernández",
+      "team": null,
+      "city": "Barcelona (Sants-Montjuïc / Poble Sec)",
+      "address": "C/ del Foc, 132",
+      "length_m": 100,
+      "width_m": 60,
+      "confirmed": false,
+      "notes": "Campo gestionado por IES Montserrat (asociación escolar). No pertenece directamente a ningún equipo de Grup 3."
+    },
+    {
+      "name": "Campo INEF Barcelona",
+      "fcf_venue": null,
+      "team": null,
+      "city": "Barcelona (Montjuïc)",
+      "address": "Av. de l'Estadi, 12-22",
+      "length_m": 94,
+      "width_m": 49,
+      "confirmed": false,
+      "notes": "Campo de INEFC (Institut Nacional d'Educació Física de Catalunya), Montjuïc. Sin correspondencia clara con equipo de Grup 3."
+    },
+    {
+      "name": "Santboià",
+      "fcf_venue": "Camp de Futbol Mpal. Marianao",
+      "team": "MARIANAO POBLET UD A",
+      "city": "Sant Boi de Llobregat",
+      "address": "Ctra. Sant Climent, 1",
+      "length_m": 101,
+      "width_m": 66,
+      "confirmed": true,
+      "notes": "Campo oficial de FCF para MARIANAO POBLET UD A. Confirmado por actas de partidos. 'Santboià' = gentilicio de Sant Boi."
+    },
+    {
+      "name": "Viladecans",
+      "fcf_venue": "Camp de Futbol Mpal. Torre Roja",
+      "team": "SECTOR MONTSERRATINA U.D. A",
+      "city": "Viladecans",
+      "address": "Av. Torre Roja, s/n",
+      "length_m": 100,
+      "width_m": 60,
+      "confirmed": true,
+      "notes": "Campo oficial de FCF para SECTOR MONTSERRATINA U.D. A. Confirmado por perfil FCF del equipo (Torre Roja, Viladecans)."
+    },
+    {
+      "name": "Guineueta",
+      "fcf_venue": "Camp de Futbol CEM La Guineueta",
+      "team": "ESCOLA ESPORTIVA GUINEUETA C.F  A",
+      "city": "Barcelona (Nou Barris)",
+      "address": "C/ del Castor, 1",
+      "length_m": 96,
+      "width_m": 52,
+      "confirmed": true,
+      "notes": "Campo oficial de FCF para ESCOLA ESPORTIVA GUINEUETA C.F A. Confirmado por actas de partidos."
+    },
+    {
+      "name": "Cornellà",
+      "fcf_venue": "Camp de Futbol Mpal. Sant Ildefons",
+      "team": "SANT ILDEFONS, U.E. A",
+      "city": "Cornellà de Llobregat",
+      "address": "Salvador Allende / Alvarez de Castro",
+      "length_m": 100,
+      "width_m": 60,
+      "confirmed": true,
+      "notes": "Campo oficial de FCF para SANT ILDEFONS, U.E. A. Confirmado por perfil FCF del equipo. El barrio Sant Ildefons está en Cornellà."
+    }
+  ],
+  "team_venues": {
+    "FUNDACIÓ ACADEMIA F. L'HOSPITALET A": {
+      "field_name": "Campo F.AF (Pubilla)",
+      "fcf_venue": "Camp de Futbol Mpal. Pubilla Casas",
+      "city": "L'Hospitalet de Llobregat",
+      "length_m": 90,
+      "width_m": 60
+    },
+    "FUNDACIO ACADEMIA F. L'HOSPITALET A": {
+      "field_name": "Campo F.AF (Pubilla)",
+      "fcf_venue": "Camp de Futbol Mpal. Pubilla Casas",
+      "city": "L'Hospitalet de Llobregat",
+      "length_m": 90,
+      "width_m": 60
+    },
+    "UNIFICACION BELLVITGE, U.D. A": {
+      "field_name": "Unificación Bellvitge",
+      "fcf_venue": "Camp de Futbol Mpal. La Feixa Llarga",
+      "city": "L'Hospitalet de Llobregat",
+      "length_m": 100,
+      "width_m": 62
+    },
+    "PRAT, A.E. B": {
+      "field_name": "AE Prat",
+      "fcf_venue": "Camp de Futbol CEM Sagnier",
+      "city": "El Prat de Llobregat",
+      "length_m": 104,
+      "width_m": 63
+    },
+    "SARRIA, C.P. A": {
+      "field_name": "Campo l'Àliga",
+      "fcf_venue": "Camp de Futbol Mpal. L'Àliga",
+      "city": "Barcelona (Sarrià-Sant Gervasi)",
+      "length_m": 99,
+      "width_m": 59
+    },
+    "SANT IGNASI C.E. A": {
+      "field_name": "Sant Ignasi",
+      "fcf_venue": "Camp de Futbol Col·legi Sant Ignasi",
+      "city": "Barcelona",
+      "length_m": 92,
+      "width_m": 50
+    },
+    "MARIANAO POBLET UD A": {
+      "field_name": "Santboià",
+      "fcf_venue": "Camp de Futbol Mpal. Marianao",
+      "city": "Sant Boi de Llobregat",
+      "length_m": 101,
+      "width_m": 66
+    },
+    "ESCOLA ESPORTIVA GUINEUETA C.F  A": {
+      "field_name": "Guineueta",
+      "fcf_venue": "Camp de Futbol CEM La Guineueta",
+      "city": "Barcelona (Nou Barris)",
+      "length_m": 96,
+      "width_m": 52
+    },
+    "ESCOLA ESPORTIVA GUINEUETA C.F A": {
+      "field_name": "Guineueta",
+      "fcf_venue": "Camp de Futbol CEM La Guineueta",
+      "city": "Barcelona (Nou Barris)",
+      "length_m": 96,
+      "width_m": 52
+    },
+    "SANT ILDEFONS, U.E. A": {
+      "field_name": "Cornellà",
+      "fcf_venue": "Camp de Futbol Mpal. Sant Ildefons",
+      "city": "Cornellà de Llobregat",
+      "length_m": 100,
+      "width_m": 60
+    },
+    "SECTOR MONTSERRATINA U.D. A": {
+      "field_name": "Viladecans",
+      "fcf_venue": "Camp de Futbol Mpal. Torre Roja",
+      "city": "Viladecans",
+      "length_m": 100,
+      "width_m": 60
+    },
+    "BON PASTOR AGRUPACIO ESPORTIVA A": {
+      "field_name": null,
+      "fcf_venue": "Camp de Futbol CEM Bon Pastor",
+      "city": "Barcelona (Sant Andreu)",
+      "length_m": null,
+      "width_m": null
+    },
+    "BARCELONETA, C.F. A": {
+      "field_name": null,
+      "fcf_venue": "Camp de Futbol Mpal. Parc Catalana",
+      "city": "Barcelona (Barceloneta)",
+      "length_m": null,
+      "width_m": null
+    },
+    "GAVA, C.F. A": {
+      "field_name": null,
+      "fcf_venue": "Estadi Mpal. La Bòbila",
+      "city": "Gavà",
+      "length_m": null,
+      "width_m": null
+    },
+    "SPORTING GAVA 2013 FUTBOL CLUB A": {
+      "field_name": null,
+      "fcf_venue": "Camp de Futbol ZEM Can Tintorer",
+      "city": "Gavà",
+      "length_m": null,
+      "width_m": null
+    },
+    "CANYELLES,C.E. A": {
+      "field_name": null,
+      "fcf_venue": "Camp de Futbol Mpal. Canyelles (BCN)",
+      "city": "Barcelona (Nou Barris)",
+      "length_m": null,
+      "width_m": null
+    },
+    "CANYELLES, C.E. A": {
+      "field_name": null,
+      "fcf_venue": "Camp de Futbol Mpal. Canyelles (BCN)",
+      "city": "Barcelona (Nou Barris)",
+      "length_m": null,
+      "width_m": null
+    },
+    "RACING VALLBONA, C.F. A": {
+      "field_name": null,
+      "fcf_venue": "Camp de Futbol Mpal. Vallbona (Nou Provisional)",
+      "city": "Barcelona (Nou Barris)",
+      "length_m": null,
+      "width_m": null
+    },
+    "IBERIA, C. AT. A": {
+      "field_name": null,
+      "fcf_venue": "Camp de Futbol Mpal. Iberia",
+      "city": "Barcelona (La Marina de Port)",
+      "length_m": null,
+      "width_m": null
+    }
+  }
+}

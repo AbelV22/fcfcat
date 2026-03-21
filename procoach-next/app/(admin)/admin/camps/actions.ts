@@ -25,7 +25,7 @@ export async function saveField(_prevState: { error?: string; success?: string }
   }
 
   try {
-    const fieldsPath = path.join(process.cwd(), '..', 'data', 'fields.json')
+    const fieldsPath = path.join(process.cwd(), 'data', 'fields.json')
     const raw = JSON.parse(fs.readFileSync(fieldsPath, 'utf-8'))
 
     if (!Array.isArray(raw.fields)) raw.fields = []
