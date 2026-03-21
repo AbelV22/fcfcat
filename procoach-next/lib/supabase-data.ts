@@ -330,6 +330,7 @@ export async function getAllTeamsDB() {
   const { data, error } = await supabase
     .from('fcf_standings')
     .select('team_name, team_slug, competition, group_name, season')
+    .limit(5000)
 
   if (error || !data) return []
 
