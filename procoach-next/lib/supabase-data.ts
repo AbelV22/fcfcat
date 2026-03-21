@@ -332,7 +332,11 @@ export async function getAllTeamsDB() {
     .select('team_name, team_slug, competition, group_name, season')
     .limit(5000)
 
-  if (error || !data) return []
+  if (error || !data) {
+    console.error('[getAllTeamsDB] Supabase error:', error?.message || 'no data')
+    return []
+  }
+  console.log(`[getAllTeamsDB] Fetched ${data.length} rows from fcf_standings`)
 
   // Sort by competition priority so deduplication keeps the most relevant one.
   // Same team_slug can appear in multiple competitions (different age groups or cups).

@@ -31,9 +31,25 @@ export default async function CampsPage() {
 
   // Use Supabase DB (works in production); fall back to local JSON files
   const teamsDB = await getAllTeamsDB()
-  const teams = teamsDB.length > 0 ? teamsDB : getAllTeamsFromJSON()
+  const teamsFromDB = teamsDB.length > 0 ? teamsDB : getAllTeamsFromJSON()
 
   const teamVenueMap: Record<string, string> = teamVenuesData as Record<string, string>
+
+  // Merge venue map team names into the team list so all teams with known
+  // venues are always searchable — even if Supabase returns partial results
+  // or the local JSON fallback fails (Cloudflare has no filesystem).
+  const dbNames = new Set(teamsFromDB.map(t => t.name))
+  const venueOnlyTeams = Object.keys(teamVenueMap)
+    .filter(name => !dbNames.has(name))
+    .map(name => ({
+      slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+      name,
+      competition: '',
+      competitionName: 'Actes FCF',
+      group: '',
+      season: '2526',
+    }))
+  const teams = [...teamsFromDB, ...venueOnlyTeams].sort((a, b) => a.name.localeCompare(b.name))
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-white">
