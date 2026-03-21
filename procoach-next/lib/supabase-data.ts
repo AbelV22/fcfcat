@@ -852,26 +852,65 @@ function _parseMatchDate(d: string): Date | null {
 /**
  * Full team report from Supabase — SSR replacement for buildTeamReport().
  * Two parallel query rounds: first for team data, second for rival + referee.
+ *
+ * @param competitionHint — if provided, filters standings to this specific competition
+ *   (avoids slug collisions across competitions). If omitted, falls back to priority
+ *   competition ordering (adult competitions preferred over youth).
  */
-export async function getFullTeamReportDB(slug: string): Promise<FullTeamReportDB | null> {
+export async function getFullTeamReportDB(slug: string, competitionHint?: string): Promise<FullTeamReportDB | null> {
   const supabase = getSupabase()
+
+  // Priority order for resolving slug collisions across competitions.
+  // Adult competitions come first so that, e.g., poble-nou-at-a resolves to
+  // quarta-catalana rather than juvenil-primera-divisio.
+  const COMPETITION_PRIORITY = [
+    'primera-catalana',
+    'segona-catalana',
+    'tercera-catalana',
+    'quarta-catalana',
+    'preferent-juvenils',
+    'juvenil-primera-divisio',
+  ]
 
   // ── Round 1: Find team standing ──────────────────────────────────────────
   // IMPORTANT: filter to priority competitions only — many clubs share
   // the same slug across youth categories (e.g. parets-cf-a in 6 competitions).
   // Without this filter, LIMIT 1 returns a random youth category row.
-  const { data: standingRows, error: standingErr } = await supabase
+  let standingQuery = supabase
     .from('fcf_standings')
     .select('*')
     .eq('team_slug', slug)
-    .in('competition', ['segona-catalana', 'tercera-catalana', 'preferent-juvenils', 'juvenil-primera-divisio', 'quarta-catalana'])
-    .limit(1)
+
+  if (competitionHint) {
+    standingQuery = standingQuery.eq('competition', competitionHint)
+  } else {
+    standingQuery = standingQuery.in('competition', COMPETITION_PRIORITY)
+  }
+
+  const { data: standingRows, error: standingErr } = await standingQuery
 
   if (standingErr) {
     console.error('[getFullTeamReportDB] standings error for', slug, standingErr)
   }
 
-  const standing = standingRows?.[0]
+  // If a hint was provided, take the first row. Otherwise pick by priority order.
+  let standing: any = null
+  if (competitionHint) {
+    standing = standingRows?.[0]
+  } else if (standingRows && standingRows.length > 0) {
+    if (standingRows.length === 1) {
+      standing = standingRows[0]
+    } else {
+      // Multiple rows — pick the one with the highest priority competition
+      standing = standingRows.slice().sort((a: any, b: any) => {
+        const ai = COMPETITION_PRIORITY.indexOf(a.competition ?? '')
+        const bi = COMPETITION_PRIORITY.indexOf(b.competition ?? '')
+        const aRank = ai === -1 ? 999 : ai
+        const bRank = bi === -1 ? 999 : bi
+        return aRank - bRank
+      })[0]
+    }
+  }
   if (!standing) {
     console.warn('[getFullTeamReportDB] no standing row found for slug:', slug, '| rows:', standingRows)
     return null

@@ -13,9 +13,17 @@ interface CercaClientProps {
   teams: any[]
 }
 
-/** Strips accents and lowercases for accent-insensitive search */
+/** Strips accents and lowercases for accent-insensitive search.
+ *  Works for Catalan/Spanish chars: à, è, í, ï, ó, ú, ñ, ç, l·l, etc.
+ *  Strategy: normalize to NFC first (ensures precomposed chars), then NFD
+ *  (decomposes into base + combining marks), then strip all combining marks. */
 function norm(text: string) {
-  return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  return (text || '')
+    .toLowerCase()
+    .normalize('NFC')   // ensure all chars are precomposed first
+    .normalize('NFD')   // decompose: ñ → n + ̃, à → a + ̀, ç → c + ̧
+    .replace(/[\u0300-\u036f]/g, '')  // strip all combining diacritical marks
+    .replace(/·/g, '')  // strip Catalan middle dot (l·l → ll)
 }
 
 function CercaInner({ referees, players, teams }: CercaClientProps) {

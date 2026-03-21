@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import PublicHeader from '@/components/PublicHeader'
 import PublicFooter from '@/components/PublicFooter'
-import { COMPETITION_NAMES, slugify } from '@/lib/data'
+import { COMPETITION_NAMES, slugify, loadTeamData } from '@/lib/data'
 import { getFullTeamReportDB, type FullTeamReportDB, type RivalDataDB, type RefereeStatsDB } from '@/lib/supabase-data'
 import { RivalScoutCard } from '@/components/RivalScoutCard'
 import { AdminGate, AdminBadge, AdminBlurValue, AdminUpgradeLink } from '@/components/AdminGate'
@@ -44,7 +44,9 @@ function RegisterBlur({ children, label = "Registra't gratis per veure aquesta s
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const report = await getFullTeamReportDB(slug)
+  const jsonData = loadTeamData(slug)
+  const competitionHint: string | undefined = jsonData?.meta?.competition || undefined
+  const report = await getFullTeamReportDB(slug, competitionHint)
   if (report) {
     return {
       title: `${report.name} — Informe de l'equip | NeoScout`,
@@ -294,6 +296,258 @@ function RecentMatches({ form }: { form: FullTeamReportDB['form'] }) {
   )
 }
 
+// ─── Field Analysis Component ──────────────────────────────────────────────
+
+function StatBar({
+  teamVal, rivalVal, label, teamLabel, rivalLabel, colorTeam = 'bg-cyan-500', colorRival = 'bg-red-500',
+}: {
+  teamVal: number | null
+  rivalVal: number | null
+  label: string
+  teamLabel: string
+  rivalLabel: string
+  colorTeam?: string
+  colorRival?: string
+}) {
+  if (teamVal === null && rivalVal === null) {
+    return (
+      <div className="space-y-1">
+        <div className="text-xs text-slate-500 font-medium uppercase tracking-wide">{label}</div>
+        <div className="text-xs text-slate-600 italic">Sense dades</div>
+      </div>
+    )
+  }
+  const tv = teamVal ?? 0
+  const rv = rivalVal ?? 0
+  const total = tv + rv || 1
+  const teamPct = Math.round((tv / total) * 100)
+  const rivalPct = 100 - teamPct
+
+  return (
+    <div className="space-y-1.5">
+      <div className="text-xs text-slate-500 font-medium uppercase tracking-wide">{label}</div>
+      <div className="flex items-center gap-2 text-xs">
+        <span className="text-cyan-300 font-bold w-8 text-right tabular-nums">{tv}</span>
+        <div className="flex-1 flex rounded-full overflow-hidden h-2 bg-white/10">
+          <div className={`${colorTeam} transition-all`} style={{ width: `${teamPct}%` }} />
+          <div className={`${colorRival} transition-all`} style={{ width: `${rivalPct}%` }} />
+        </div>
+        <span className="text-red-400 font-bold w-8 tabular-nums">{rv}</span>
+      </div>
+      <div className="flex justify-between text-[10px] text-slate-500">
+        <span>{teamLabel}</span>
+        <span>{rivalLabel}</span>
+      </div>
+    </div>
+  )
+}
+
+function WinRateBar({
+  home, label, teamLabel, rivalLabel,
+}: {
+  home: { team: SplitStats | null; rival: SplitStats | null }
+  label: string
+  teamLabel: string
+  rivalLabel: string
+}) {
+  const t = home.team
+  const r = home.rival
+  const tRate = t && t.played > 0 ? Math.round((t.wins / t.played) * 100) : null
+  const rRate = r && r.played > 0 ? Math.round((r.wins / r.played) * 100) : null
+
+  if (tRate === null && rRate === null) {
+    return (
+      <div className="space-y-1">
+        <div className="text-xs text-slate-500 font-medium uppercase tracking-wide">{label}</div>
+        <div className="text-xs text-slate-600 italic">Sense dades</div>
+      </div>
+    )
+  }
+
+  const tv = tRate ?? 0
+  const rv = rRate ?? 0
+  const tRecord = t ? `${t.wins}V-${t.draws}E-${t.losses}D` : '–'
+  const rRecord = r ? `${r.wins}V-${r.draws}E-${r.losses}D` : '–'
+
+  return (
+    <div className="space-y-1.5">
+      <div className="text-xs text-slate-500 font-medium uppercase tracking-wide">{label}</div>
+      <div className="flex items-center gap-2 text-xs">
+        <span className="text-cyan-300 font-bold w-8 text-right tabular-nums">{tv}%</span>
+        <div className="flex-1 flex rounded-full overflow-hidden h-2 bg-white/10">
+          <div className="bg-cyan-500 transition-all" style={{ width: `${tv}%` }} />
+        </div>
+        <span className="text-red-400 font-bold w-8 tabular-nums">{rv}%</span>
+      </div>
+      <div className="flex justify-between text-[10px] text-slate-500">
+        <span>{tRecord}</span>
+        <span>{rRecord}</span>
+      </div>
+      <div className="flex items-center gap-2 text-xs">
+        <span className="w-8" />
+        <div className="flex-1 flex rounded-full overflow-hidden h-2 bg-white/10">
+          <div className="bg-red-500 transition-all" style={{ width: `${rv}%` }} />
+        </div>
+        <span className="w-8" />
+      </div>
+    </div>
+  )
+}
+
+function FieldAnalysisSection({
+  report, rival,
+}: {
+  report: FullTeamReportDB
+  rival: FullTeamReportDB['rival'] & {}
+}) {
+  const teamApercibits = report.players.filter(p => p.risk)
+  const rivalApercibits = rival.apercibits || []
+  const rivalAvgYellow = rival.players.length > 0
+    ? (rival.players.reduce((s, p) => s + p.yellow_cards, 0) / rival.players.length).toFixed(1)
+    : null
+
+  return (
+    <div className="bg-gradient-to-br from-[#0a1628] to-[#0d1f3a] border border-cyan-500/15 rounded-2xl p-5 sm:p-6">
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-6">
+        <BarChart2 size={18} className="text-cyan-400 shrink-0" />
+        <h3 className="font-bold text-white text-sm sm:text-base">
+          Anàlisi de Camp —{' '}
+          <span className="text-cyan-400">{report.name}</span>
+          <span className="text-slate-500"> vs </span>
+          <span className="text-red-400">{rival.name}</span>
+        </h3>
+      </div>
+
+      {/* Legend */}
+      <div className="flex items-center gap-4 mb-5 text-[11px]">
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 rounded-sm bg-cyan-500" />
+          <span className="text-cyan-300 font-medium">{report.name}</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 rounded-sm bg-red-500" />
+          <span className="text-red-400 font-medium">{rival.name}</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
+        {/* Attack */}
+        <div className="space-y-4">
+          <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest border-b border-white/5 pb-1.5">ATAC</div>
+          <StatBar
+            label="Gols marcats"
+            teamVal={report.gf ?? null}
+            rivalVal={rival.gf ?? null}
+            teamLabel={report.name}
+            rivalLabel={rival.name}
+          />
+          <StatBar
+            label="Gols encaixats"
+            teamVal={report.ga ?? null}
+            rivalVal={rival.ga ?? null}
+            teamLabel={report.name}
+            rivalLabel={rival.name}
+            colorTeam="bg-amber-500"
+            colorRival="bg-slate-400"
+          />
+        </div>
+
+        {/* Defence */}
+        <div className="space-y-4">
+          <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest border-b border-white/5 pb-1.5">RENDIMENT</div>
+          <WinRateBar
+            home={{ team: report.home, rival: rival.home }}
+            label="Rendiment local"
+            teamLabel={report.name}
+            rivalLabel={rival.name}
+          />
+          <WinRateBar
+            home={{ team: report.away, rival: rival.away }}
+            label="Rendiment visitant"
+            teamLabel={report.name}
+            rivalLabel={rival.name}
+          />
+        </div>
+
+        {/* Risk players */}
+        <div className="space-y-3">
+          <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest border-b border-white/5 pb-1.5">JUGADORS EN RISC</div>
+          {teamApercibits.length === 0 && rivalApercibits.length === 0 ? (
+            <div className="text-xs text-slate-600 italic">Cap jugador en risc</div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <div className="text-[10px] text-cyan-400/70 mb-1.5 font-semibold">{report.name}</div>
+                {teamApercibits.length === 0 ? (
+                  <div className="text-xs text-slate-600">–</div>
+                ) : (
+                  <div className="space-y-1">
+                    {teamApercibits.slice(0, 3).map((p, i) => (
+                      <div key={i} className="flex items-center gap-1.5 text-xs">
+                        <span className="text-amber-400">🟨</span>
+                        <span className="text-slate-300 truncate">{p.name}</span>
+                        <span className="text-amber-400 font-bold ml-auto shrink-0">{p.yellow_cards}</span>
+                      </div>
+                    ))}
+                    {teamApercibits.length > 3 && (
+                      <div className="text-[10px] text-slate-600">+{teamApercibits.length - 3} més</div>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div>
+                <div className="text-[10px] text-red-400/70 mb-1.5 font-semibold">{rival.name}</div>
+                {rivalApercibits.length === 0 ? (
+                  <div className="text-xs text-slate-600">–</div>
+                ) : (
+                  <div className="space-y-1">
+                    {rivalApercibits.slice(0, 3).map((p, i) => (
+                      <div key={i} className="flex items-center gap-1.5 text-xs">
+                        <span className="text-amber-400">🟨</span>
+                        <span className="text-slate-300 truncate">{p.name}</span>
+                        <span className="text-amber-400 font-bold ml-auto shrink-0">{p.yellow_cards}</span>
+                      </div>
+                    ))}
+                    {rivalApercibits.length > 3 && (
+                      <div className="text-[10px] text-slate-600">+{rivalApercibits.length - 3} més</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Cards summary */}
+        <div className="space-y-3">
+          <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest border-b border-white/5 pb-1.5">TARGETES</div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <div className="text-[10px] text-cyan-400/70 mb-1.5 font-semibold">{report.name}</div>
+              <div className="space-y-1 text-xs text-slate-400">
+                <div>🟨 Total: <span className="text-white font-bold">{report.players.reduce((s, p) => s + p.yellow_cards, 0)}</span></div>
+                <div>🟥 Total: <span className="text-white font-bold">{report.players.reduce((s, p) => s + p.red_cards, 0)}</span></div>
+              </div>
+            </div>
+            <div>
+              <div className="text-[10px] text-red-400/70 mb-1.5 font-semibold">{rival.name}</div>
+              {rivalAvgYellow !== null ? (
+                <div className="space-y-1 text-xs text-slate-400">
+                  <div>🟨 Total: <span className="text-white font-bold">{rival.players.reduce((s, p) => s + p.yellow_cards, 0)}</span></div>
+                  <div>🟥 Total: <span className="text-white font-bold">{rival.players.reduce((s, p) => s + p.red_cards, 0)}</span></div>
+                </div>
+              ) : (
+                <div className="text-xs text-slate-600 italic">Sense dades</div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function RefereeFullCard({ referee }: { referee: RefereeStatsDB }) {
   const strictLevel = referee.yellows_per_match >= 5 ? 'Molt estricte' : referee.yellows_per_match >= 3.5 ? 'Estricte' : referee.yellows_per_match >= 2 ? 'Moderat' : 'Permissiu'
   const strictColor = referee.yellows_per_match >= 5 ? 'text-red-400' : referee.yellows_per_match >= 3.5 ? 'text-amber-400' : referee.yellows_per_match >= 2 ? 'text-yellow-400' : 'text-green-400'
@@ -377,7 +631,9 @@ function RefereeFullCard({ referee }: { referee: RefereeStatsDB }) {
 
 export default async function EquipPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const report = await getFullTeamReportDB(slug)
+  const jsonData = loadTeamData(slug)
+  const competitionHint: string | undefined = jsonData?.meta?.competition || undefined
+  const report = await getFullTeamReportDB(slug, competitionHint)
 
   if (!report) {
     return (
@@ -518,6 +774,11 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
               headToHead={report.headToHead as any}
             />
           </AdminGate>
+        )}
+
+        {/* Row 3b: Field Analysis */}
+        {report.rival && (
+          <FieldAnalysisSection report={report} rival={report.rival} />
         )}
 
         {/* Row 4: Referee card (real stats) */}
