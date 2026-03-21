@@ -548,81 +548,194 @@ function FieldAnalysisSection({
   )
 }
 
-function RefereeFullCard({ referee }: { referee: RefereeStatsDB }) {
-  const strictLevel = referee.yellows_per_match >= 5 ? 'Molt estricte' : referee.yellows_per_match >= 3.5 ? 'Estricte' : referee.yellows_per_match >= 2 ? 'Moderat' : 'Permissiu'
-  const strictColor = referee.yellows_per_match >= 5 ? 'text-red-400' : referee.yellows_per_match >= 3.5 ? 'text-amber-400' : referee.yellows_per_match >= 2 ? 'text-yellow-400' : 'text-green-400'
+function PercentileBar({ value, label }: { value: number; label: string }) {
+  const color =
+    value >= 70 ? 'from-red-500 to-red-400' :
+    value >= 40 ? 'from-amber-500 to-amber-400' :
+    'from-green-500 to-green-400'
+  return (
+    <div className="mb-3">
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-[11px] text-slate-400">{label}</span>
+        <span className={`text-[11px] font-bold ${value >= 70 ? 'text-red-400' : value >= 40 ? 'text-amber-400' : 'text-green-400'}`}>{value}%ile</span>
+      </div>
+      <div className="h-2 bg-white/8 rounded-full overflow-hidden">
+        <div
+          className={`h-full rounded-full bg-gradient-to-r ${color} transition-all`}
+          style={{ width: `${value}%` }}
+        />
+      </div>
+    </div>
+  )
+}
+
+function RefereeDeepReport({ referee }: { referee: RefereeStatsDB }) {
+  const strictLevel =
+    referee.yellows_per_match >= 5 ? 'Molt estricte' :
+    referee.yellows_per_match >= 3.5 ? 'Estricte' :
+    referee.yellows_per_match >= 2 ? 'Moderat' : 'Permissiu'
+  const strictColor =
+    referee.yellows_per_match >= 5 ? 'text-red-400' :
+    referee.yellows_per_match >= 3.5 ? 'text-amber-400' :
+    referee.yellows_per_match >= 2 ? 'text-yellow-400' : 'text-green-400'
+
+  const totalHalfCards = referee.first_half_cards + referee.second_half_cards
+  const firstHalfPct = totalHalfCards > 0 ? Math.round((referee.first_half_cards / totalHalfCards) * 100) : 0
+  const secondHalfPct = totalHalfCards > 0 ? Math.round((referee.second_half_cards / totalHalfCards) * 100) : 0
+  const awayBias = referee.home_bias !== null ? 100 - referee.home_bias : null
+
+  const COMPETITION_LABELS: Record<string, string> = {
+    'primera-catalana': 'Primera Cat.',
+    'segona-catalana': 'Segona Cat.',
+    'tercera-catalana': 'Tercera Cat.',
+    'quarta-catalana': 'Quarta Cat.',
+    'preferent-juvenils': 'Pref. Juvenils',
+    'juvenil-primera-divisio': 'Juv. 1a Div.',
+  }
 
   return (
-    <div className="bg-white/4 border border-white/8 rounded-2xl p-5">
-      <div className="flex items-center gap-2 mb-4">
-        <Shield size={16} className="text-cyan-400" />
-        <h3 className="font-bold text-cyan-400 text-sm">Àrbitre del proper partit</h3>
-        <AdminBadge />
-      </div>
-
-      {/* Referee identity */}
-      <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/5 mb-4">
-        <div className="w-10 h-10 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center shrink-0">
-          <span className="text-cyan-400 font-bold text-sm">{referee.name.split(',')[0]?.charAt(0) || '?'}</span>
+    <div className="bg-white/4 border border-white/8 rounded-2xl overflow-hidden">
+      {/* Section A — always visible: basic identity + key stats */}
+      <div className="p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <Shield size={16} className="text-cyan-400" />
+          <h3 className="font-bold text-cyan-400 text-sm">Àrbitre del proper partit</h3>
+          <AdminBadge />
         </div>
-        <div className="min-w-0">
-          <p className="font-semibold text-slate-200 text-sm truncate">{referee.name}</p>
-          <p className="text-[11px] text-slate-500">{referee.matches} partits arbitrats aquesta temporada</p>
+
+        {/* Identity row */}
+        <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/5 mb-4">
+          <div className="w-10 h-10 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center shrink-0">
+            <span className="text-cyan-400 font-bold text-sm">{referee.name.split(',')[0]?.charAt(0) || '?'}</span>
+          </div>
+          <div className="min-w-0">
+            <p className="font-semibold text-slate-200 text-sm truncate">{referee.name}</p>
+            <p className="text-[11px] text-slate-500">{referee.matches} partits arbitrats · {referee.avg_goals_per_match.toFixed(1)} gols/part</p>
+          </div>
+          <Link href={`/arbitre/${referee.slug}`} className="ml-auto shrink-0 text-[10px] text-cyan-400 hover:text-cyan-300 transition-colors">
+            Veure perfil →
+          </Link>
         </div>
-        <Link href={`/arbitre/${referee.slug}`} className="ml-auto shrink-0 text-[10px] text-cyan-400 hover:text-cyan-300 transition-colors">
-          Veure perfil →
-        </Link>
+
+        {/* Key stats grid — always visible */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {[
+            { label: 'Grogues/part', value: referee.yellows_per_match.toFixed(1), icon: '🟨' },
+            { label: 'Vermelles/part', value: referee.reds_per_match.toFixed(2), icon: '🟥' },
+            { label: 'Amb expulsió', value: `${referee.matches_with_red_pct}%`, icon: '📋' },
+            { label: 'Tendència', value: strictLevel, color: strictColor },
+          ].map(({ label, value, icon, color }) => (
+            <div key={label} className="px-3 py-2.5 rounded-xl bg-white/3 border border-white/5 text-center">
+              <div className="text-[10px] text-slate-500 mb-1">{icon ? `${icon} ${label}` : label}</div>
+              <span className={`text-sm font-bold ${color || 'text-white'}`}>{value}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Stats grid — labels always visible, values blurred for non-admin */}
-      <div className="grid grid-cols-2 gap-2 mb-4">
-        {[
-          { label: '🟨 Grogues / partit', value: referee.yellows_per_match.toFixed(1) },
-          { label: '🟥 Vermelles / partit', value: referee.reds_per_match.toFixed(2) },
-          { label: '% partits amb vermella', value: `${referee.matches_with_red_pct}%` },
-          { label: 'Tendència', value: strictLevel },
-        ].map(({ label, value }) => (
-          <div key={label} className="px-3 py-2.5 rounded-xl bg-white/3 border border-white/5">
-            <div className="text-[10px] text-slate-500 mb-1">{label}</div>
-            <AdminGate fallback={<AdminBlurValue value={value} />}>
-              <span className={`text-sm font-bold ${label.includes('Tendència') ? strictColor : 'text-white'}`}>{value}</span>
-            </AdminGate>
-          </div>
-        ))}
-      </div>
+      {/* Divider */}
+      <div className="border-t border-white/6" />
 
-      {/* Recent matches */}
-      {referee.recentMatches.length > 0 && (
-        <AdminGate fallback={
-          <div className="space-y-1">
-            <div className="text-[11px] text-slate-500 mb-2 font-semibold uppercase tracking-wider">Últims partits</div>
-            {referee.recentMatches.slice(0, 5).map((m, i) => (
-              <div key={i} className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white/3 blur-sm">
-                <span className="text-xs text-slate-400 truncate">{m.home_team} – {m.away_team}</span>
-                <span className="text-[10px] text-slate-600 shrink-0 ml-2">{m.home_score}–{m.away_score}</span>
-              </div>
-            ))}
-            <AdminUpgradeLink />
+      {/* Section B — deep analysis, gated behind RegisterBlur */}
+      <RegisterBlur label="Anàlisi complet de l'àrbitre — Registra't gratis">
+        <div className="p-5 space-y-5">
+          {/* Header */}
+          <div className="flex items-center gap-2">
+            <TrendingUp size={15} className="text-cyan-400" />
+            <h4 className="font-bold text-cyan-400 text-sm uppercase tracking-wider">Anàlisi complet</h4>
           </div>
-        }>
-          <div className="space-y-1">
-            <div className="text-[11px] text-slate-500 mb-2 font-semibold uppercase tracking-wider">Últims partits arbitrats</div>
-            {referee.recentMatches.slice(0, 5).map((m, i) => (
-              <div key={i} className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white/3 hover:bg-white/5 transition-colors">
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="text-[10px] text-slate-600 shrink-0">J{m.jornada}</span>
-                  <span className="text-xs text-slate-300 truncate">{m.home_team} vs {m.away_team}</span>
+
+          {/* Percentiles */}
+          <div>
+            <p className="text-[11px] text-slate-500 font-semibold uppercase tracking-wider mb-3">Percentils vs àrbitres FCF</p>
+            <PercentileBar value={referee.yellows_percentile} label="Duresa (grogues/part)" />
+            <PercentileBar value={referee.reds_percentile} label="Expulsions (vermelles/part)" />
+          </div>
+
+          {/* Home/Away bias */}
+          {referee.home_bias !== null && (
+            <div>
+              <p className="text-[11px] text-slate-500 font-semibold uppercase tracking-wider mb-3">Biaix local / visitant</p>
+              <div className="flex items-center gap-2 text-[11px] text-slate-400 mb-1.5">
+                <span>Local</span>
+                <span className="ml-auto">Visitant</span>
+              </div>
+              <div className="h-3 rounded-full overflow-hidden flex">
+                <div
+                  className="bg-gradient-to-r from-blue-600 to-blue-500 h-full transition-all"
+                  style={{ width: `${referee.home_bias}%` }}
+                />
+                <div
+                  className="bg-gradient-to-r from-orange-500 to-orange-400 h-full flex-1"
+                />
+              </div>
+              <div className="flex items-center justify-between mt-1">
+                <span className="text-[11px] font-bold text-blue-400">{referee.home_yellows} ({referee.home_bias}%)</span>
+                <span className="text-[11px] font-bold text-orange-400">{referee.away_yellows} ({awayBias}%)</span>
+              </div>
+            </div>
+          )}
+
+          {/* Half-time split */}
+          {totalHalfCards > 0 && (
+            <div>
+              <p className="text-[11px] text-slate-500 font-semibold uppercase tracking-wider mb-3">Timing de targetes</p>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="px-3 py-2.5 rounded-xl bg-white/3 border border-white/5 text-center">
+                  <div className="text-[10px] text-slate-500 mb-1">1a meitat</div>
+                  <div className="text-base font-black text-slate-200">{referee.first_half_cards}</div>
+                  <div className="text-[10px] text-slate-500">{firstHalfPct}%</div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0 ml-2">
-                  <span className="text-xs font-bold text-white">{m.home_score}–{m.away_score}</span>
-                  {m.yellows > 0 && <span className="text-[10px] text-amber-400">🟨{m.yellows}</span>}
-                  {m.reds > 0 && <span className="text-[10px] text-red-400">🟥{m.reds}</span>}
+                <div className="px-3 py-2.5 rounded-xl bg-white/3 border border-white/5 text-center">
+                  <div className="text-[10px] text-slate-500 mb-1">2a meitat</div>
+                  <div className="text-base font-black text-slate-200">{referee.second_half_cards}</div>
+                  <div className="text-[10px] text-slate-500">{secondHalfPct}%</div>
                 </div>
               </div>
-            ))}
-          </div>
-        </AdminGate>
-      )}
+            </div>
+          )}
+
+          {/* Competition breakdown */}
+          {referee.competitionBreakdown.length > 0 && (
+            <div>
+              <p className="text-[11px] text-slate-500 font-semibold uppercase tracking-wider mb-3">Per competició</p>
+              <div className="space-y-1.5">
+                {referee.competitionBreakdown.slice(0, 4).map(c => (
+                  <div key={c.competition} className="flex items-center justify-between px-3 py-2 rounded-lg bg-white/3">
+                    <span className="text-xs text-slate-300">{COMPETITION_LABELS[c.competition] || c.competition}</span>
+                    <div className="flex items-center gap-3 text-[11px]">
+                      <span className="text-slate-500">{c.matches} partits</span>
+                      <span className="text-amber-400 font-semibold">🟨 {c.matches > 0 ? (c.yellows / c.matches).toFixed(1) : '0'}/part</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Recent matches table */}
+          {referee.recentMatches.length > 0 && (
+            <div>
+              <p className="text-[11px] text-slate-500 font-semibold uppercase tracking-wider mb-3">Últims {Math.min(referee.recentMatches.length, 10)} partits</p>
+              <div className="space-y-1">
+                {referee.recentMatches.slice(0, 10).map((m, i) => (
+                  <div key={i} className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white/3 hover:bg-white/5 transition-colors">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-[10px] text-slate-600 shrink-0 w-7">J{m.jornada}</span>
+                      <span className="text-xs text-slate-300 truncate">{m.home_team} vs {m.away_team}</span>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0 ml-2">
+                      <span className="text-xs font-bold text-white tabular-nums">{m.home_score ?? '?'}–{m.away_score ?? '?'}</span>
+                      {m.yellows > 0 && <span className="text-[10px] text-amber-400">🟨{m.yellows}</span>}
+                      {m.reds > 0 && <span className="text-[10px] text-red-400">🟥{m.reds}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </RegisterBlur>
     </div>
   )
 }
@@ -783,7 +896,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
 
         {/* Row 4: Referee card (real stats) */}
         {report.referee && (
-          <RefereeFullCard referee={report.referee} />
+          <RefereeDeepReport referee={report.referee} />
         )}
         {report.nextMatch?.referee && !report.referee && (
           /* Referee assigned but no stats yet (new referee) */

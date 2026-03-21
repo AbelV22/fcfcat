@@ -929,6 +929,20 @@ export type RefereeStatsDB = {
   reds_per_match: number
   matches_with_red_pct: number
   recentMatches: Array<{ date: string; home_team: string; away_team: string; home_score: number | null; away_score: number | null; yellows: number; reds: number; competition: string; jornada: number }>
+  // Percentiles (0-100, how strict vs all referees this season with ≥3 matches)
+  yellows_percentile: number
+  reds_percentile: number
+  // Card distribution home/away
+  home_yellows: number
+  away_yellows: number
+  home_bias: number | null  // home_yellows/total_yellows * 100, null if 0 yellows
+  // Half-time split (requires minute field on cards; 0 if not available)
+  first_half_cards: number
+  second_half_cards: number
+  // Competition breakdown
+  competitionBreakdown: Array<{ competition: string; matches: number; yellows: number; reds: number }>
+  // Goals context
+  avg_goals_per_match: number
 }
 
 export type RivalDataDB = {
@@ -1219,7 +1233,13 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
   const rivalName = nextMatch?.opponent || ''
   const refereeName = nextMatch?.referee || ''
 
-  const [rivalStandingRes, rivalHomeRes, rivalAwayRes, rivalPlayersRes, refereeMatchesRes, h2hHomeRes, h2hAwayRes] = await Promise.all([
+  // Priority competitions for referee percentile calculation
+  const PRIORITY_COMPETITIONS = [
+    'primera-catalana', 'segona-catalana', 'tercera-catalana', 'quarta-catalana',
+    'preferent-juvenils', 'juvenil-primera-divisio',
+  ]
+
+  const [rivalStandingRes, rivalHomeRes, rivalAwayRes, rivalPlayersRes, refereeMatchesRes, h2hHomeRes, h2hAwayRes, allRefereesRes] = await Promise.all([
     rivalSlug
       ? supabase.from('fcf_standings').select('position, team_name, team_slug, played, won, drawn, lost, goals_for, goals_against, points, home_won, home_drawn, home_lost, away_won, away_drawn, away_lost').eq('team_slug', rivalSlug).eq('competition', competition).limit(1)
       : Promise.resolve({ data: [] as any[] }),
@@ -1242,6 +1262,10 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     // H2H: rival at home vs team away
     rivalName && teamName
       ? supabase.from('fcf_referee_matches').select('jornada, match_date, home_team, away_team, home_score, away_score, main_referee').eq('home_team', rivalName).eq('away_team', teamName).not('home_score', 'is', null).order('match_date', { ascending: false }).limit(5)
+      : Promise.resolve({ data: [] as any[] }),
+    // Global referee stats for percentile computation (only when we have a referee)
+    refereeName
+      ? supabase.from('fcf_referee_matches').select('main_referee, yellow_cards, red_cards, home_score, away_score').in('competition', PRIORITY_COMPETITIONS).not('main_referee', 'is', null).limit(3000)
       : Promise.resolve({ data: [] as any[] }),
   ])
 
@@ -1328,9 +1352,76 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
   let referee: RefereeStatsDB | null = null
   if (refereeName && (refereeMatchesRes.data || []).length > 0) {
     const rm = refereeMatchesRes.data as any[]
-    const totalYellows = rm.flatMap(m => (Array.isArray(m.yellow_cards) ? m.yellow_cards : []).filter((c: any) => c.recipient_type === 'player')).length
-    const totalReds = rm.flatMap(m => (Array.isArray(m.red_cards) ? m.red_cards : []).filter((c: any) => c.recipient_type === 'player')).length
+
+    // Basic card counts
+    const allYellowCards = rm.flatMap(m => (Array.isArray(m.yellow_cards) ? m.yellow_cards : []).filter((c: any) => c.recipient_type === 'player'))
+    const allRedCards = rm.flatMap(m => (Array.isArray(m.red_cards) ? m.red_cards : []).filter((c: any) => c.recipient_type === 'player'))
+    const totalYellows = allYellowCards.length
+    const totalReds = allRedCards.length
     const matchesWithRed = rm.filter(m => (Array.isArray(m.red_cards) ? m.red_cards : []).some((c: any) => c.recipient_type === 'player')).length
+
+    // Home/away card split
+    const home_yellows = allYellowCards.filter((c: any) => c.team === 'home').length
+    const away_yellows = allYellowCards.filter((c: any) => c.team === 'away').length
+    const home_bias = totalYellows > 0 ? Math.round((home_yellows / totalYellows) * 100) : null
+
+    // Half-time split (cards with a numeric minute field)
+    let first_half_cards = 0
+    let second_half_cards = 0
+    const allCards = [...allYellowCards, ...allRedCards]
+    for (const c of allCards) {
+      if (c.minute !== undefined && c.minute !== null) {
+        const min = _parseGoalMinute(c.minute)
+        if (min >= 1 && min <= 45) first_half_cards++
+        else if (min >= 46) second_half_cards++
+      }
+    }
+
+    // Goals per match
+    const totalGoals = rm.reduce((s: number, m: any) => s + (m.home_score ?? 0) + (m.away_score ?? 0), 0)
+    const avg_goals_per_match = rm.length > 0 ? +(totalGoals / rm.length).toFixed(2) : 0
+
+    // Competition breakdown
+    const compMap: Record<string, { matches: number; yellows: number; reds: number }> = {}
+    for (const m of rm) {
+      const comp = m.competition || 'Desconeguda'
+      if (!compMap[comp]) compMap[comp] = { matches: 0, yellows: 0, reds: 0 }
+      compMap[comp].matches++
+      compMap[comp].yellows += (Array.isArray(m.yellow_cards) ? m.yellow_cards : []).filter((c: any) => c.recipient_type === 'player').length
+      compMap[comp].reds += (Array.isArray(m.red_cards) ? m.red_cards : []).filter((c: any) => c.recipient_type === 'player').length
+    }
+    const competitionBreakdown = Object.entries(compMap)
+      .map(([comp, stats]) => ({ competition: comp, ...stats }))
+      .sort((a, b) => b.matches - a.matches)
+
+    // Percentiles — compute from global referee data
+    const yellows_per_match = rm.length ? +(totalYellows / rm.length).toFixed(2) : 0
+    const reds_per_match = rm.length ? +(totalReds / rm.length).toFixed(2) : 0
+
+    let yellows_percentile = 50
+    let reds_percentile = 50
+    if ((allRefereesRes.data || []).length > 0) {
+      // Group by referee name and compute per-match averages
+      const globalRefMap: Record<string, { matches: number; yellows: number; reds: number }> = {}
+      for (const row of (allRefereesRes.data as any[])) {
+        const name = row.main_referee
+        if (!name) continue
+        if (!globalRefMap[name]) globalRefMap[name] = { matches: 0, yellows: 0, reds: 0 }
+        globalRefMap[name].matches++
+        globalRefMap[name].yellows += (Array.isArray(row.yellow_cards) ? row.yellow_cards : []).filter((c: any) => c.recipient_type === 'player').length
+        globalRefMap[name].reds += (Array.isArray(row.red_cards) ? row.red_cards : []).filter((c: any) => c.recipient_type === 'player').length
+      }
+      // Filter to referees with ≥3 matches for meaningful comparison
+      const qualified = Object.values(globalRefMap).filter(r => r.matches >= 3)
+      if (qualified.length > 1) {
+        const ypm = qualified.map(r => r.yellows / r.matches)
+        const rpm = qualified.map(r => r.reds / r.matches)
+        const yBelow = ypm.filter(v => v < yellows_per_match).length
+        const rBelow = rpm.filter(v => v < reds_per_match).length
+        yellows_percentile = Math.round((yBelow / qualified.length) * 100)
+        reds_percentile = Math.round((rBelow / qualified.length) * 100)
+      }
+    }
 
     referee = {
       name: refereeName,
@@ -1338,8 +1429,8 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       matches: rm.length,
       yellows: totalYellows,
       reds: totalReds,
-      yellows_per_match: rm.length ? +(totalYellows / rm.length).toFixed(2) : 0,
-      reds_per_match: rm.length ? +(totalReds / rm.length).toFixed(2) : 0,
+      yellows_per_match,
+      reds_per_match,
       matches_with_red_pct: rm.length ? Math.round((matchesWithRed / rm.length) * 100) : 0,
       recentMatches: rm.slice(0, 10).map(m => ({
         date: m.match_date || '',
@@ -1352,6 +1443,15 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
         competition: m.competition || '',
         jornada: m.jornada || 0,
       })),
+      yellows_percentile,
+      reds_percentile,
+      home_yellows,
+      away_yellows,
+      home_bias,
+      first_half_cards,
+      second_half_cards,
+      competitionBreakdown,
+      avg_goals_per_match,
     }
   }
 
