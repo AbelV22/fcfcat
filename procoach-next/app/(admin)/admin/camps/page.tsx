@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import CampsForm from './CampsForm'
 import { getAllTeamsFromJSON } from '@/lib/data'
+import { getAllTeamsDB } from '@/lib/supabase-data'
 
 interface FieldEntry {
   name: string
@@ -34,7 +35,9 @@ export default async function CampsPage() {
   if (!isAdmin) redirect('/admin/login')
 
   const fields = loadFields()
-  const teams = getAllTeamsFromJSON()
+  // Use Supabase DB (works in production); fall back to local JSON files
+  const teamsDB = await getAllTeamsDB()
+  const teams = teamsDB.length > 0 ? teamsDB : getAllTeamsFromJSON()
 
   // Load FCF venue map (team_name -> detected venue string from actas)
   let teamVenueMap: Record<string, string> = {}
