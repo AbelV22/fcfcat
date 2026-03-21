@@ -31,7 +31,7 @@ const EMPTY: Record<string, string | boolean> = {
 }
 
 export default function CampsForm({ teams, fields }: Props) {
-  const [state, formAction, isPending] = useActionState(saveField, {})
+  const [state, formAction, isPending] = useActionState(saveField, {} as { error?: string; success?: string })
   const [form, setForm] = useState<Record<string, string | boolean>>(EMPTY)
   const [editingName, setEditingName] = useState<string | null>(null)
   const [teamQuery, setTeamQuery] = useState('')
@@ -39,7 +39,7 @@ export default function CampsForm({ teams, fields }: Props) {
 
   // Reset form after successful save
   useEffect(() => {
-    if ((state as { success?: string })?.success) {
+    if (state?.success) {
       setForm(EMPTY)
       setEditingName(null)
       setTeamQuery('')
@@ -201,14 +201,14 @@ export default function CampsForm({ teams, fields }: Props) {
           )}
         </div>
 
-        {(state as { success?: string })?.success && (
+        {state?.success && (
           <div className="mb-4 px-3 py-2.5 rounded-xl bg-green-500/10 border border-green-500/25">
-            <p className="text-sm text-green-400">{(state as { success: string }).success}</p>
+            <p className="text-sm text-green-400">{state.success}</p>
           </div>
         )}
-        {(state as { error?: string })?.error && (
+        {state?.error && (
           <div className="mb-4 px-3 py-2.5 rounded-xl bg-red-500/10 border border-red-500/25">
-            <p className="text-sm text-red-400">{(state as { error: string }).error}</p>
+            <p className="text-sm text-red-400">{state.error}</p>
           </div>
         )}
 
