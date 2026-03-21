@@ -1,11 +1,14 @@
-import fs from 'fs'
-import path from 'path'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import CampsForm from './CampsForm'
 import { getAllTeamsFromJSON } from '@/lib/data'
 import { getAllTeamsDB } from '@/lib/supabase-data'
+import fieldsData from '@/data/fields.json'
+import teamVenuesData from '@/data/team_venues_fcf.json'
+
+// Must be dynamic — fetches teams from Supabase at request time
+export const dynamic = 'force-dynamic'
 
 interface FieldEntry {
   name: string
@@ -19,32 +22,18 @@ interface FieldEntry {
   notes: string
 }
 
-function loadFields(): FieldEntry[] {
-  try {
-    const fieldsPath = path.join(process.cwd(), 'data', 'fields.json')
-    const raw = JSON.parse(fs.readFileSync(fieldsPath, 'utf-8'))
-    return Array.isArray(raw.fields) ? raw.fields : []
-  } catch {
-    return []
-  }
-}
-
 export default async function CampsPage() {
   const cookieStore = await cookies()
   const isAdmin = cookieStore.get('ns_admin')?.value === '1'
   if (!isAdmin) redirect('/admin/login')
 
-  const fields = loadFields()
+  const fields: FieldEntry[] = Array.isArray(fieldsData.fields) ? fieldsData.fields : []
+
   // Use Supabase DB (works in production); fall back to local JSON files
   const teamsDB = await getAllTeamsDB()
   const teams = teamsDB.length > 0 ? teamsDB : getAllTeamsFromJSON()
 
-  // Load FCF venue map (team_name -> detected venue string from actas)
-  let teamVenueMap: Record<string, string> = {}
-  try {
-    const venuesPath = path.join(process.cwd(), 'data', 'team_venues_fcf.json')
-    teamVenueMap = JSON.parse(fs.readFileSync(venuesPath, 'utf-8'))
-  } catch { /* no map available */ }
+  const teamVenueMap: Record<string, string> = teamVenuesData as Record<string, string>
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-white">
