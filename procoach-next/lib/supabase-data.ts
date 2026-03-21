@@ -1138,7 +1138,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
   today.setHours(0, 0, 0, 0)
 
   // ── Round 1 parallel: matches + upcoming + standings + player stats ──────
-  const [homeRefRes, awayRefRes, upcomingRes, groupStandingsRes, playerStatsRes, lastGroupRefereeRes] = await Promise.all([
+  const [homeRefRes, awayRefRes, upcomingRes, groupStandingsRes, playerStatsRes] = await Promise.all([
     supabase
       .from('fcf_referee_matches')
       .select('jornada, match_date, home_team, away_team, home_score, away_score, main_referee')
@@ -1179,15 +1179,6 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       .eq('competition', competition)
       .order('appearances', { ascending: false })
       .limit(35),
-    // Most recent referees in this group (fallback when no referee is pre-assigned in fcf_matches)
-    supabase
-      .from('fcf_referee_matches')
-      .select('main_referee')
-      .eq('competition', competition)
-      .eq('group_name', groupName)
-      .not('main_referee', 'is', null)
-      .order('match_date', { ascending: false })
-      .limit(10),
   ])
 
   // Build played matches list
@@ -1272,20 +1263,10 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
   // ── Round 2: rival + referee + h2h in parallel ────────────────────────────
   const rivalSlug = nextMatch?.opponentSlug || ''
   const rivalName = nextMatch?.opponent || ''
-  // FCF never pre-assigns referees in fcf_matches.referee — use the most common
-  // recent referee in this group as a "probable" prediction instead.
-  let refereeName = nextMatch?.referee || ''
-  let refereeIsPredicted = false
-  if (!refereeName && nextMatch && (lastGroupRefereeRes.data || []).length > 0) {
-    const refs = (lastGroupRefereeRes.data as any[]).map(r => r.main_referee).filter(Boolean) as string[]
-    const counts: Record<string, number> = {}
-    for (const r of refs) counts[r] = (counts[r] || 0) + 1
-    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1])
-    if (sorted.length > 0) {
-      refereeName = sorted[0][0]
-      refereeIsPredicted = true
-    }
-  }
+  // fcf_matches.referee is populated by update_upcoming_referees.py which scrapes
+  // the FCF acta page before each match weekend.
+  const refereeName = nextMatch?.referee || ''
+  const refereeIsPredicted = false
 
   // Priority competitions for referee percentile calculation
   const PRIORITY_COMPETITIONS = [
