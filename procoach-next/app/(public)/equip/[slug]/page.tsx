@@ -701,7 +701,14 @@ function RefereeDeepReport({ referee }: { referee: RefereeStatsDB }) {
             <span className="text-cyan-400 font-bold text-sm">{referee.name.split(',')[0]?.charAt(0) || '?'}</span>
           </div>
           <div className="min-w-0">
-            <p className="font-semibold text-slate-200 text-sm truncate">{referee.name}</p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="font-semibold text-slate-200 text-sm truncate">{referee.name}</p>
+              {referee.predicted && (
+                <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/25 shrink-0">
+                  Probable
+                </span>
+              )}
+            </div>
             <p className="text-[11px] text-slate-500">{referee.matches} partits arbitrats · {referee.avg_goals_per_match.toFixed(1)} gols/part</p>
           </div>
           <Link href={`/arbitre/${referee.slug}`} className="ml-auto shrink-0 text-[10px] text-cyan-400 hover:text-cyan-300 transition-colors">

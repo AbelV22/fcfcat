@@ -17,7 +17,8 @@
       "name": "procoach-next",
       "runtimeExecutable": "cmd",
       "runtimeArgs": ["/c", "cd procoach-next && npm run dev"],
-      "port": 3000
+      "port": 3000,
+      "autoPort": true
     }
   ]
 }

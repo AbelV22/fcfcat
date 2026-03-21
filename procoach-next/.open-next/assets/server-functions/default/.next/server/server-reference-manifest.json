@@ -1,0 +1,51 @@
+{
+  "node": {
+    "005e80a97140b6f9bc45fc08ee088e6a195857553a": {
+      "workers": {
+        "app/(admin)/admin/page": {
+          "moduleId": 35301,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_0",
+          "filename": "app/(admin)/admin/page.tsx"
+        }
+      },
+      "layer": {
+        "app/(admin)/admin/page": "rsc"
+      },
+      "filename": "app/(admin)/admin/page.tsx",
+      "exportedName": "$$RSC_SERVER_ACTION_0"
+    },
+    "60dce1396aa0fdd3af2ffa4d6666fd916c1bc80765": {
+      "workers": {
+        "app/(admin)/admin/camps/page": {
+          "moduleId": 72485,
+          "async": false,
+          "exportedName": "saveField",
+          "filename": "app/(admin)/admin/camps/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(admin)/admin/camps/page": "action-browser"
+      },
+      "filename": "app/(admin)/admin/camps/actions.ts",
+      "exportedName": "saveField"
+    },
+    "6016c270311931d3e4eb1ce6f1a7e5aec61a27b7c9": {
+      "workers": {
+        "app/(admin)/admin/login/page": {
+          "moduleId": 81234,
+          "async": false,
+          "exportedName": "loginAdmin",
+          "filename": "app/(admin)/admin/login/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(admin)/admin/login/page": "action-browser"
+      },
+      "filename": "app/(admin)/admin/login/actions.ts",
+      "exportedName": "loginAdmin"
+    }
+  },
+  "edge": {},
+  "encryptionKey": "quUU9KYpntvxYZS0q+XRXnPGjRDF7nZfFexwu0L5/2E="
+}

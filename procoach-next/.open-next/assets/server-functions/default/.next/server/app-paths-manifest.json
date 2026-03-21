@@ -1,0 +1,18 @@
+{
+  "/(admin)/admin/camps/page": "app/(admin)/admin/camps/page.js",
+  "/(admin)/admin/login/page": "app/(admin)/admin/login/page.js",
+  "/(admin)/admin/page": "app/(admin)/admin/page.js",
+  "/(auth)/login/page": "app/(auth)/login/page.js",
+  "/(auth)/registre/page": "app/(auth)/registre/page.js",
+  "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
+  "/(public)/arbitre/[slug]/page": "app/(public)/arbitre/[slug]/page.js",
+  "/(public)/cerca/page": "app/(public)/cerca/page.js",
+  "/(public)/competicio/[slug]/page": "app/(public)/competicio/[slug]/page.js",
+  "/(public)/entrenador/page": "app/(public)/entrenador/page.js",
+  "/(public)/equip/[slug]/page": "app/(public)/equip/[slug]/page.js",
+  "/(public)/resultats/page": "app/(public)/resultats/page.js",
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/page": "app/page.js"
+}

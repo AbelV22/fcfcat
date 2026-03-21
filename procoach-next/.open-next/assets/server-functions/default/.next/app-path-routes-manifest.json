@@ -1,0 +1,18 @@
+{
+  "/(admin)/admin/camps/page": "/admin/camps",
+  "/(admin)/admin/login/page": "/admin/login",
+  "/(admin)/admin/page": "/admin",
+  "/(auth)/login/page": "/login",
+  "/(auth)/registre/page": "/registre",
+  "/(dashboard)/dashboard/page": "/dashboard",
+  "/(public)/arbitre/[slug]/page": "/arbitre/[slug]",
+  "/(public)/cerca/page": "/cerca",
+  "/(public)/competicio/[slug]/page": "/competicio/[slug]",
+  "/(public)/entrenador/page": "/entrenador",
+  "/(public)/equip/[slug]/page": "/equip/[slug]",
+  "/(public)/resultats/page": "/resultats",
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/favicon.ico/route": "/favicon.ico",
+  "/page": "/"
+}
