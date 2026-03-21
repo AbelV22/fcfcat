@@ -52,8 +52,19 @@ function ScoreBadge({ gf, ga }: { gf: number | null; ga: number | null }) {
   )
 }
 
+function hasGoalData(buckets: GoalBucket[]): boolean {
+  return buckets.length > 0 && buckets.some(b => b.scored > 0 || b.conceded > 0)
+}
+
 // Mini bar chart (scored only, for preview)
 function MiniGoalBars({ buckets }: { buckets: GoalBucket[] }) {
+  if (!hasGoalData(buckets)) {
+    return (
+      <div className="flex items-center justify-center text-xs text-slate-600 italic" style={{ height: '32px' }}>
+        Sense dades de timing
+      </div>
+    )
+  }
   const max = Math.max(...buckets.map(b => b.scored), 1)
   return (
     <div className="flex items-end gap-0.5" style={{ height: '32px' }}>
@@ -71,6 +82,15 @@ function MiniGoalBars({ buckets }: { buckets: GoalBucket[] }) {
 
 // Full goal timing chart (scored + conceded)
 function FullGoalTimingBar({ buckets }: { buckets: GoalBucket[] }) {
+  if (!hasGoalData(buckets)) {
+    return (
+      <div className="flex flex-col items-center justify-center py-6 text-center">
+        <Clock size={20} className="text-slate-700 mb-2" />
+        <p className="text-xs text-slate-600 italic">Sense dades de timing de gols</p>
+        <p className="text-[10px] text-slate-700 mt-1">Les dades es generen a partir de les actes oficials de la FCF</p>
+      </div>
+    )
+  }
   const max = Math.max(...buckets.flatMap(b => [b.scored, b.conceded]), 1)
   return (
     <div>
@@ -534,16 +554,20 @@ export function RivalScoutCard({
               <span className="text-[10px] font-black text-purple-400 uppercase tracking-wider">Quan marca</span>
             </div>
             <MiniGoalBars buckets={rival.goalBuckets} />
-            <div className="flex gap-0.5 mt-1 mb-2">
-              {rival.goalBuckets.map(b => (
-                <div key={b.label} className="flex-1 text-center text-[8px] text-slate-700">{b.label.replace("'", '').replace('–', '-')}</div>
-              ))}
-            </div>
-            {dangerBucket && dangerBucket.scored > 0 && (
-              <div className="text-[10px] text-slate-400 mt-1">
-                Perill màxim: <span className="text-purple-300 font-bold">{dangerBucket.label}</span>
-                <span className="text-slate-600 ml-1">({dangerBucket.scored} gols)</span>
-              </div>
+            {hasGoalData(rival.goalBuckets) && (
+              <>
+                <div className="flex gap-0.5 mt-1 mb-2">
+                  {rival.goalBuckets.map(b => (
+                    <div key={b.label} className="flex-1 text-center text-[8px] text-slate-700">{b.label.replace("'", '').replace('–', '-')}</div>
+                  ))}
+                </div>
+                {dangerBucket && dangerBucket.scored > 0 && (
+                  <div className="text-[10px] text-slate-400 mt-1">
+                    Perill màxim: <span className="text-purple-300 font-bold">{dangerBucket.label}</span>
+                    <span className="text-slate-600 ml-1">({dangerBucket.scored} gols)</span>
+                  </div>
+                )}
+              </>
             )}
           </div>
 

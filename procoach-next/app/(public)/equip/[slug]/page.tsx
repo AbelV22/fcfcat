@@ -3,7 +3,8 @@ import Link from 'next/link'
 import PublicHeader from '@/components/PublicHeader'
 import PublicFooter from '@/components/PublicFooter'
 import { COMPETITION_NAMES, slugify, loadTeamData } from '@/lib/data'
-import { getFullTeamReportDB, type FullTeamReportDB, type RivalDataDB, type RefereeStatsDB } from '@/lib/supabase-data'
+import { getFullTeamReportDB, type FullTeamReportDB, type RivalDataDB, type RefereeStatsDB, type FieldDimsDB } from '@/lib/supabase-data'
+import { PitchCompare } from '@/components/PitchCompare'
 import { RivalScoutCard } from '@/components/RivalScoutCard'
 import { AdminGate, AdminBadge, AdminBlurValue, AdminUpgradeLink } from '@/components/AdminGate'
 import ScrapeProgressBanner from '@/components/ScrapeProgressBanner'
@@ -896,7 +897,17 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
           </AdminGate>
         )}
 
-        {/* Row 3b: Field Analysis */}
+        {/* Row 3b: Pitch Compare */}
+        {(report.homePitch || report.rivalPitch) && report.rival && (
+          <PitchCompare
+            homePitch={report.homePitch}
+            rivalPitch={report.rivalPitch}
+            homeTeamName={report.name}
+            rivalTeamName={report.rival.name}
+          />
+        )}
+
+        {/* Row 3c: Field Analysis */}
         {report.rival && (
           <FieldAnalysisSection report={report} rival={report.rival} />
         )}

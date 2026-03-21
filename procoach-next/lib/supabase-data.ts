@@ -56,6 +56,24 @@ function getSupabase() {
   return createClient(url, key)
 }
 
+/** Paginated fetch helper — Supabase returns max 1000 rows per request.
+ *  Fetches all rows from a query builder by paging in chunks of 1000. */
+async function fetchAllRows<T = any>(
+  queryFn: (from: number, to: number) => ReturnType<ReturnType<ReturnType<typeof createClient>['from']>['select']>
+): Promise<T[]> {
+  const PAGE = 1000
+  const all: T[] = []
+  let offset = 0
+  while (true) {
+    const { data, error } = await (queryFn(offset, offset + PAGE - 1) as any)
+    if (error || !data || data.length === 0) break
+    all.push(...(data as T[]))
+    if (data.length < PAGE) break
+    offset += PAGE
+  }
+  return all
+}
+
 // ─── Calendar / Resultats ─────────────────────────────────────────────────────
 
 /** Full calendar (past + future) for a competition from fcf_matches table */
@@ -63,14 +81,17 @@ export async function getCompetitionCalendarDB(slug: string) {
   const supabase = getSupabase()
   if (!supabase) return []
 
-  const { data, error } = await supabase
-    .from('fcf_matches')
-    .select('jornada, match_date, match_time, home_team, away_team, home_score, away_score, status, acta_url, group_name')
-    .eq('competition', slug)
-    .order('jornada', { ascending: true })
-    .order('match_date', { ascending: true })
+  const data = await fetchAllRows((from, to) =>
+    supabase
+      .from('fcf_matches')
+      .select('jornada, match_date, match_time, home_team, away_team, home_score, away_score, status, acta_url, group_name')
+      .eq('competition', slug)
+      .order('jornada', { ascending: true })
+      .order('match_date', { ascending: true })
+      .range(from, to)
+  )
 
-  if (error || !data) return []
+  if (!data || data.length === 0) return []
 
   return data.map(m => ({
     jornada: m.jornada,
@@ -99,16 +120,19 @@ export async function getCompetitionMatchesDB(slug: string) {
   const supabase = getSupabase()
   if (!supabase) return []
 
-  const { data, error } = await supabase
-    .from('fcf_referee_matches')
-    .select('id, jornada, match_date, home_team, away_team, home_score, away_score, group_name, main_referee, yellow_cards, red_cards')
-    .eq('competition', slug)
-    .order('jornada', { ascending: false })
-    .order('match_date', { ascending: false })
+  const data = await fetchAllRows((from, to) =>
+    supabase
+      .from('fcf_referee_matches')
+      .select('id, jornada, match_date, home_team, away_team, home_score, away_score, group_name, main_referee, yellow_cards, red_cards')
+      .eq('competition', slug)
+      .order('jornada', { ascending: false })
+      .order('match_date', { ascending: false })
+      .range(from, to)
+  )
 
-  if (error || !data) return []
+  if (!data || data.length === 0) return []
 
-  return data.map(m => ({
+  return data.map((m: any) => ({
     id: m.id,
     date: m.match_date || '',
     jornada: m.jornada,
@@ -186,13 +210,16 @@ export async function getCompetitionScorersDB(slug: string) {
   const supabase = getSupabase()
   if (!supabase) return []
 
-  const { data, error } = await supabase
-    .from('fcf_scorers')
-    .select('player_name, team_name, goals, penalties, matches, goals_per_match, group_name')
-    .eq('competition', slug)
-    .order('goals', { ascending: false })
+  const data = await fetchAllRows((from, to) =>
+    supabase
+      .from('fcf_scorers')
+      .select('player_name, team_name, goals, penalties, matches, goals_per_match, group_name')
+      .eq('competition', slug)
+      .order('goals', { ascending: false })
+      .range(from, to)
+  )
 
-  if (error || !data) return []
+  if (!data || data.length === 0) return []
 
   return data.map(s => ({
     name: s.player_name || '',
@@ -212,12 +239,15 @@ export async function getCompetitionDisciplineDB(slug: string) {
   const supabase = getSupabase()
   if (!supabase) return { players: [], teams: [], riskPlayers: [] }
 
-  const { data, error } = await supabase
-    .from('fcf_referee_matches')
-    .select('home_team, away_team, home_score, away_score, yellow_cards, red_cards')
-    .eq('competition', slug)
+  const data = await fetchAllRows((from, to) =>
+    supabase
+      .from('fcf_referee_matches')
+      .select('home_team, away_team, home_score, away_score, yellow_cards, red_cards')
+      .eq('competition', slug)
+      .range(from, to)
+  )
 
-  if (error || !data || data.length === 0) return { players: [], teams: [], riskPlayers: [] }
+  if (!data || data.length === 0) return { players: [], teams: [], riskPlayers: [] }
 
   const playerStats: Record<string, { name: string; team: string; yellows: number; reds: number }> = {}
   const teamStats: Record<string, { name: string; slug: string; yellows: number; reds: number; matches: number }> = {}
@@ -276,12 +306,15 @@ export async function getCompetitionRefereeRankingDB(slug: string) {
   const supabase = getSupabase()
   if (!supabase) return []
 
-  const { data, error } = await supabase
-    .from('fcf_referee_matches')
-    .select('main_referee, yellow_cards, red_cards')
-    .eq('competition', slug)
+  const data = await fetchAllRows((from, to) =>
+    supabase
+      .from('fcf_referee_matches')
+      .select('main_referee, yellow_cards, red_cards')
+      .eq('competition', slug)
+      .range(from, to)
+  )
 
-  if (error || !data) return []
+  if (!data || data.length === 0) return []
 
   const refStats: Record<string, { name: string; slug: string; matches: number; yellows: number; reds: number }> = {}
 
@@ -352,13 +385,15 @@ export async function getAllTeamsDB() {
   const supabase = getSupabase()
   if (!supabase) return []
 
-  const { data, error } = await supabase
-    .from('fcf_standings')
-    .select('team_name, team_slug, competition, group_name, season')
-    .limit(5000)
+  const data = await fetchAllRows((from, to) =>
+    supabase
+      .from('fcf_standings')
+      .select('team_name, team_slug, competition, group_name, season')
+      .range(from, to)
+  )
 
-  if (error || !data) {
-    console.error('[getAllTeamsDB] Supabase error:', error?.message || 'no data')
+  if (!data || data.length === 0) {
+    console.error('[getAllTeamsDB] Supabase error: no data')
     return []
   }
   console.log(`[getAllTeamsDB] Fetched ${data.length} rows from fcf_standings`)
@@ -392,11 +427,14 @@ export async function getAllRefereesDB() {
   const supabase = getSupabase()
   if (!supabase) return []
 
-  const { data, error } = await supabase
-    .from('fcf_referee_matches')
-    .select('main_referee, competition, yellow_cards, red_cards, match_date')
+  const data = await fetchAllRows((from, to) =>
+    supabase
+      .from('fcf_referee_matches')
+      .select('main_referee, competition, yellow_cards, red_cards, match_date')
+      .range(from, to)
+  )
 
-  if (error || !data) return []
+  if (!data || data.length === 0) return []
 
   const refMap: Record<string, {
     name: string; slug: string; matches: number; yellows: number; reds: number;
@@ -687,28 +725,34 @@ export async function getRefereeBySlugDB(slug: string) {
   const supabase = getSupabase()
   if (!supabase) return null
 
-  // Fetch all referee names to find the one that maps to this slug
-  const { data: nameRows } = await supabase
-    .from('fcf_referee_matches')
-    .select('main_referee')
-    .not('main_referee', 'is', null)
+  // Fetch all referee names (paginated) to find the one that maps to this slug
+  const nameRows = await fetchAllRows<{ main_referee: string }>((from, to) =>
+    supabase
+      .from('fcf_referee_matches')
+      .select('main_referee')
+      .not('main_referee', 'is', null)
+      .range(from, to)
+  )
 
-  if (!nameRows) return null
+  if (!nameRows || nameRows.length === 0) return null
 
   const refName = nameRows
-    .map(r => r.main_referee as string)
+    .map(r => r.main_referee)
     .find(name => name && slugify(name) === slug)
 
   if (!refName) return null
 
-  // Fetch all matches for this referee
-  const { data: matches, error } = await supabase
-    .from('fcf_referee_matches')
-    .select('competition, group_name, jornada, match_date, home_team, away_team, home_score, away_score, yellow_cards, red_cards')
-    .eq('main_referee', refName)
-    .order('match_date', { ascending: false })
+  // Fetch all matches for this referee (paginated)
+  const matches = await fetchAllRows((from, to) =>
+    supabase
+      .from('fcf_referee_matches')
+      .select('competition, group_name, jornada, match_date, home_team, away_team, home_score, away_score, yellow_cards, red_cards')
+      .eq('main_referee', refName)
+      .order('match_date', { ascending: false })
+      .range(from, to)
+  )
 
-  if (error || !matches || matches.length === 0) return null
+  if (!matches || matches.length === 0) return null
 
   const yellows = matches.flatMap(m =>
     (Array.isArray(m.yellow_cards) ? m.yellow_cards : [])
@@ -1000,6 +1044,12 @@ export type RivalDataDB = {
   insights: RivalInsights | null
 }
 
+export type FieldDimsDB = {
+  length_m: number
+  width_m: number
+  field_name: string
+}
+
 export type FullTeamReportDB = {
   name: string
   slug: string
@@ -1024,6 +1074,8 @@ export type FullTeamReportDB = {
   rival: RivalDataDB | null
   headToHead: MatchEntry[]
   referee: RefereeStatsDB | null
+  homePitch: FieldDimsDB | null
+  rivalPitch: FieldDimsDB | null
 }
 
 function _splitStats(matches: Array<{ isHome: boolean; goalsFor: number; goalsAgainst: number }>, filter?: 'home' | 'away'): SplitStats {
@@ -1274,7 +1326,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     'preferent-juvenils', 'juvenil-primera-divisio',
   ]
 
-  const [rivalStandingRes, rivalHomeRes, rivalAwayRes, rivalPlayersRes, refereeMatchesRes, h2hHomeRes, h2hAwayRes, allRefereesRes] = await Promise.all([
+  const [rivalStandingRes, rivalHomeRes, rivalAwayRes, rivalPlayersRes, refereeMatchesRes, h2hHomeRes, h2hAwayRes, allRefereesRes, fieldsRes] = await Promise.all([
     rivalSlug
       ? supabase.from('fcf_standings').select('position, team_name, team_slug, played, won, drawn, lost, goals_for, goals_against, points, home_won, home_drawn, home_lost, away_won, away_drawn, away_lost').eq('team_slug', rivalSlug).eq('competition', competition).limit(1)
       : Promise.resolve({ data: [] as any[] }),
@@ -1298,6 +1350,8 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     rivalName && teamName
       ? supabase.from('fcf_referee_matches').select('jornada, match_date, home_team, away_team, home_score, away_score, main_referee').eq('home_team', rivalName).eq('away_team', teamName).not('home_score', 'is', null).order('match_date', { ascending: false }).limit(5)
       : Promise.resolve({ data: [] as any[] }),
+    // Field dimensions for PitchCompare (team + rival)
+    supabase.from('fields').select('name, team, length_m, width_m').order('name'),
     // Global referee stats for percentile computation (only when we have a referee)
     refereeName
       ? supabase.from('fcf_referee_matches').select('main_referee, yellow_cards, red_cards, home_score, away_score').in('competition', PRIORITY_COMPETITIONS).not('main_referee', 'is', null).limit(3000)
@@ -1491,6 +1545,21 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     }
   }
 
+  // ── Field dimensions lookup ─────────────────────────────────────────────────
+  const allFields = (fieldsRes.data || []) as Array<{ name: string; team: string | null; length_m: number; width_m: number }>
+  function findPitch(name: string): FieldDimsDB | null {
+    // Match by team name (case-insensitive prefix match)
+    const upper = name.toUpperCase()
+    const field = allFields.find(f => f.team && f.team.toUpperCase() === upper)
+      || allFields.find(f => f.team && upper.startsWith(f.team.toUpperCase()))
+    if (field && field.length_m > 0 && field.width_m > 0) {
+      return { length_m: field.length_m, width_m: field.width_m, field_name: field.name }
+    }
+    return null
+  }
+  const homePitch = findPitch(teamName)
+  const rivalPitch = rivalName ? findPitch(rivalName) : null
+
   return {
     name: teamName,
     slug,
@@ -1515,5 +1584,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     rival,
     headToHead,
     referee,
+    homePitch,
+    rivalPitch,
   }
 }
