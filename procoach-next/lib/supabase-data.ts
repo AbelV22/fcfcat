@@ -322,6 +322,31 @@ function competitionRank(c: string) {
   return i === -1 ? 999 : i
 }
 
+/** All fields from Supabase (replaces fields.json) */
+export async function getFieldsDB() {
+  const supabase = getSupabase()
+  if (!supabase) return []
+  const { data, error } = await supabase
+    .from('fields')
+    .select('name, fcf_venue, team, city, address, length_m, width_m, confirmed, notes')
+    .order('name')
+  if (error || !data) {
+    console.error('[getFieldsDB] Supabase error:', error?.message || 'no data')
+    return []
+  }
+  return data as {
+    name: string
+    fcf_venue: string | null
+    team: string | null
+    city: string
+    address: string | null
+    length_m: number
+    width_m: number
+    confirmed: boolean
+    notes: string
+  }[]
+}
+
 /** All unique teams from standings (for cerca page) */
 export async function getAllTeamsDB() {
   const supabase = getSupabase()

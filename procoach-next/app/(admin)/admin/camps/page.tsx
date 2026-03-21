@@ -3,33 +3,21 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import CampsForm from './CampsForm'
 import { getAllTeamsFromJSON } from '@/lib/data'
-import { getAllTeamsDB } from '@/lib/supabase-data'
-import fieldsData from '@/data/fields.json'
+import { getAllTeamsDB, getFieldsDB } from '@/lib/supabase-data'
 import teamVenuesData from '@/data/team_venues_fcf.json'
 
-// Must be dynamic — fetches teams from Supabase at request time
+// Must be dynamic — fetches teams and fields from Supabase at request time
 export const dynamic = 'force-dynamic'
-
-interface FieldEntry {
-  name: string
-  fcf_venue: string | null
-  team: string | null
-  city: string
-  address: string | null
-  length_m: number
-  width_m: number
-  confirmed: boolean
-  notes: string
-}
 
 export default async function CampsPage() {
   const cookieStore = await cookies()
   const isAdmin = cookieStore.get('ns_admin')?.value === '1'
   if (!isAdmin) redirect('/admin/login')
 
-  const fields: FieldEntry[] = Array.isArray(fieldsData.fields) ? fieldsData.fields : []
+  // Load fields from Supabase (replaces fields.json — works in Cloudflare Workers)
+  const fields = await getFieldsDB()
 
-  // Use Supabase DB (works in production); fall back to local JSON files
+  // Load teams from Supabase; fall back to local JSON in dev
   const teamsDB = await getAllTeamsDB()
   const teamsFromDB = teamsDB.length > 0 ? teamsDB : getAllTeamsFromJSON()
 
@@ -75,18 +63,11 @@ export default async function CampsPage() {
           <h1 className="text-xl font-black text-white mb-1">Gestió de Camps</h1>
           <p className="text-sm text-slate-500">
             Afegeix i edita les dimensions dels camps. Busca un equip per assignar-li automàticament el seu estadi.
+            Els canvis es desen a Supabase i s&apos;apliquen immediatament.
           </p>
         </div>
 
         <CampsForm fields={fields} teams={teams} teamVenueMap={teamVenueMap} />
-
-        {/* Warning note */}
-        <div className="px-4 py-3 rounded-xl bg-amber-500/8 border border-amber-500/15">
-          <p className="text-xs text-amber-400/80">
-            <span className="font-semibold text-amber-400">⚠️ Nota:</span>{' '}
-            Les dades es guarden a <code className="font-mono text-amber-300">procoach-next/data/fields.json</code>. Fes commit i push per publicar els canvis al servidor.
-          </p>
-        </div>
       </main>
     </div>
   )

@@ -1,9 +1,14 @@
 'use server'
-import fs from 'fs'
-import path from 'path'
 import { revalidatePath } from 'next/cache'
+import { createClient } from '@supabase/supabase-js'
 
-export async function saveField(_prevState: { error?: string; success?: string } | undefined, formData: FormData) {
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://nxgyduqprxbhtpqsepgj.supabase.co'
+const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54Z3lkdXFwcnhiaHRwcXNlcGdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5OTc5NjcsImV4cCI6MjA4ODU3Mzk2N30.qb-T1ja19sGFyDIOLU6C8SM1OBOa9RnmzEakc9g2Y2U'
+
+export async function saveField(
+  _prevState: { error?: string; success?: string } | undefined,
+  formData: FormData
+) {
   const entry = {
     name: (formData.get('name') as string)?.trim(),
     fcf_venue: (formData.get('fcf_venue') as string)?.trim() || null,
@@ -19,42 +24,38 @@ export async function saveField(_prevState: { error?: string; success?: string }
   if (!entry.name || isNaN(entry.length_m) || isNaN(entry.width_m)) {
     return { error: 'Nom, longitud i amplada són obligatoris' }
   }
-
   if (entry.length_m <= 0 || entry.width_m <= 0) {
     return { error: 'Les dimensions han de ser nombres positius' }
   }
 
   try {
-    const fieldsPath = path.join(process.cwd(), 'data', 'fields.json')
-    const raw = JSON.parse(fs.readFileSync(fieldsPath, 'utf-8'))
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON)
+    const { error } = await supabase
+      .from('fields')
+      .upsert(entry, { onConflict: 'name' })
 
-    if (!Array.isArray(raw.fields)) raw.fields = []
-    if (typeof raw.team_venues !== 'object' || raw.team_venues === null) raw.team_venues = {}
+    if (error) throw new Error(error.message)
 
-    // Update existing entry or add new
-    const idx = raw.fields.findIndex((f: { name: string }) => f.name === entry.name)
-    if (idx >= 0) {
-      raw.fields[idx] = entry
-    } else {
-      raw.fields.push(entry)
-    }
-
-    // Also update team_venues if team is specified
-    if (entry.team) {
-      raw.team_venues[entry.team] = {
-        field_name: entry.name,
-        fcf_venue: entry.fcf_venue,
-        city: entry.city,
-        length_m: entry.length_m,
-        width_m: entry.width_m,
-      }
-    }
-
-    fs.writeFileSync(fieldsPath, JSON.stringify(raw, null, 2), 'utf-8')
     revalidatePath('/admin/camps')
-    return { success: `Camp "${entry.name}" desat correctament` }
+    return { success: `Camp "${entry.name}" desat correctament ✓` }
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e)
     return { error: `Error desant: ${msg}` }
+  }
+}
+
+export async function deleteField(_prevState: unknown, formData: FormData) {
+  const name = (formData.get('name') as string)?.trim()
+  if (!name) return { error: 'Nom obligatori' }
+
+  try {
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON)
+    const { error } = await supabase.from('fields').delete().eq('name', name)
+    if (error) throw new Error(error.message)
+    revalidatePath('/admin/camps')
+    return { success: `Camp "${name}" eliminat` }
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e)
+    return { error: `Error eliminant: ${msg}` }
   }
 }
