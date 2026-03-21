@@ -13,7 +13,7 @@
 
 import { createClient } from '@supabase/supabase-js'
 import { slugify } from '@/lib/utils'
-import { loadGlobalReferees } from '@/lib/data'
+import { getGoalData } from '@/lib/data'
 
 // Competition display names — mirrors lib/data.ts COMPETITION_NAMES
 const COMPETITION_NAMES: Record<string, string> = {
@@ -1245,19 +1245,9 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       : Promise.resolve({ data: [] as any[] }),
   ])
 
-  // ── Load global_referees for goal timing + insights ──────────────────────
-  // This runs server-side only; loadGlobalReferees reads from the filesystem.
-  const allGlobalRefs = Object.values(loadGlobalReferees()) as RefMatch[]
-
-  // Filter to this team's competition+group matches (by team name slug)
-  const teamRefMatches = allGlobalRefs.filter(m =>
-    m.competition === competition &&
-    m.group === groupName &&
-    (slugify(m.home_team || '') === slug || slugify(m.away_team || '') === slug)
-  )
-
-  // Compute goal buckets for the main team
-  const teamGoalBuckets: GoalBucketEntry[] = computeGoalBucketsFromRefs(teamRefMatches, slug)
+  // ── Load pre-computed goal timing from goal_buckets.json ─────────────────
+  const teamGoalData = getGoalData(competition, groupName, slug)
+  const teamGoalBuckets: GoalBucketEntry[] = teamGoalData?.buckets ?? []
 
   // ── Build rival ────────────────────────────────────────────────────────────
   let rival: RivalDataDB | null = null
@@ -1285,13 +1275,22 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       : _splitStats(rAllPlayed, 'away')
 
     // Rival goal timing + insights from global_referees
-    const rivalRefMatches = allGlobalRefs.filter(m =>
-      m.competition === competition &&
-      m.group === groupName &&
-      (slugify(m.home_team || '') === rivalSlug || slugify(m.away_team || '') === rivalSlug)
-    )
-    const rivalGoalBuckets: GoalBucketEntry[] = computeGoalBucketsFromRefs(rivalRefMatches, rivalSlug)
-    const rivalInsights: RivalInsights = computeRivalInsights(rivalRefMatches, rivalSlug)
+    // Load pre-computed goal timing + insights for rival from goal_buckets.json
+    const rivalGoalData = getGoalData(competition, groupName, rivalSlug)
+    const rivalGoalBuckets: GoalBucketEntry[] = rivalGoalData?.buckets ?? []
+    const rivalInsightsRaw = rivalGoalData?.insights ?? null
+    const rivalInsights: RivalInsights | null = rivalInsightsRaw && (rivalInsightsRaw.matchesAnalyzed ?? 0) >= 3
+      ? {
+          comebackRate: rivalInsightsRaw.comebackRate ?? null,
+          scoreFirstWinRate: rivalInsightsRaw.scoreFirstWinRate ?? null,
+          concededFirstWinRate: rivalInsightsRaw.concededFirstWinRate ?? null,
+          cleanSheetRate: rivalInsightsRaw.cleanSheetRate ?? null,
+          lateGoalRate: rivalInsightsRaw.lateGoalRate ?? null,
+          firstHalfGoals: rivalInsightsRaw.firstHalfGoals ?? 0,
+          secondHalfGoals: rivalInsightsRaw.secondHalfGoals ?? 0,
+          matchesAnalyzed: rivalInsightsRaw.matchesAnalyzed ?? 0,
+        }
+      : null
 
     rival = {
       name: rivalName,
@@ -1313,7 +1312,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       apercibits: rivalPlayers.filter(p => p.risk),
       goalBuckets: rivalGoalBuckets,
       awayByFieldSize: [],    // pitch dimension data not available from Supabase
-      insights: rivalInsights.matchesAnalyzed > 0 ? rivalInsights : null,
+      insights: rivalInsights,
     }
   }
 

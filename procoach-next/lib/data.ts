@@ -21,6 +21,29 @@ export function loadGlobalReferees(): Record<string, any> {
   }
 }
 
+/** Load goal_buckets.json — pre-computed goal timing + insights per team/competition/group */
+export function loadGoalBuckets(): Record<string, any> {
+  try {
+    const filePath = path.join(DATA_DIR, 'goal_buckets.json')
+    const raw = fs.readFileSync(filePath, 'utf-8')
+    return JSON.parse(raw)
+  } catch {
+    return {}
+  }
+}
+
+/** Get pre-computed goal buckets + insights for a specific team.
+ *  Key format: '{competition}|{group}|{slug}'
+ */
+export function getGoalData(competition: string, group: string, slug: string): {
+  buckets: Array<{ label: string; scored: number; conceded: number }>
+  insights: Record<string, number | null>
+} | null {
+  const all = loadGoalBuckets()
+  const key = `${competition}|${group}|${slug}`
+  return all[key] ?? null
+}
+
 /** Count unique referees and total matches */
 export async function getRefereeStats() {
   const refs = loadGlobalReferees()
