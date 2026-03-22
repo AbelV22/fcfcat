@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase-server'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
-import { BarChart3, Shield, Users, Calendar, Trophy, ArrowRight, Settings } from 'lucide-react'
+import { BarChart3, Shield, Users, Calendar, Trophy, ArrowRight, Settings, ClipboardList } from 'lucide-react'
 
 export default async function DashboardPage() {
   const cookieStore = await cookies()
@@ -111,6 +111,13 @@ export default async function DashboardPage() {
               badge: null,
             },
             {
+              icon: <ClipboardList size={22} className="text-emerald-400" />,
+              title: 'Apunts de Partit',
+              desc: 'Registra lineups, esdeveniments, valoracions i notes tàctiques de cada partit.',
+              href: '/dashboard/apunts',
+              badge: 'NOU',
+            },
+            {
               icon: <Settings size={22} className="text-slate-400" />,
               title: 'Gestió de la plantilla',
               desc: 'Disponibilitat, sancions i convocatòries del teu equip.',
@@ -128,7 +135,11 @@ export default async function DashboardPage() {
                   {card.icon}
                 </div>
                 {card.badge && (
-                  <span className="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-400 border border-purple-500/25 rounded-full font-bold">
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
+                    card.badge === 'NOU'
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/25'
+                      : 'bg-purple-500/20 text-purple-400 border border-purple-500/25'
+                  }`}>
                     {card.badge}
                   </span>
                 )}
