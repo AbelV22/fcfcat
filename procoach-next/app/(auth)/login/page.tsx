@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { Trophy, Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Trophy, Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase-client'
 
-export default function LoginPage() {
+function LoginForm() {
+  const searchParams = useSearchParams()
+  const confirmed = searchParams.get('confirmed') === '1'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPass, setShowPass] = useState(false)
@@ -53,6 +55,14 @@ export default function LoginPage() {
             <h1 className="text-2xl font-black text-white mb-1">Benvingut de nou</h1>
             <p className="text-slate-400 text-sm">Inicia sessió com a entrenador o ojeador</p>
           </div>
+
+          {/* Confirmation banner */}
+          {confirmed && (
+            <div className="mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-xl flex items-center gap-2 text-sm text-green-400">
+              <CheckCircle size={16} />
+              Compte confirmat! Ja pots iniciar sessió.
+            </div>
+          )}
 
           {/* Form */}
           <div className="glass-card rounded-2xl p-8">
@@ -144,5 +154,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   )
 }

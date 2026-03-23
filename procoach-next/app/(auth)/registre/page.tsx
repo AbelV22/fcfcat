@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Trophy, Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, User, Search, ChevronDown, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase-client'
+import { SITE_URL } from '@/lib/supabase-config'
 import { Suspense } from 'react'
 
 /* ── Competition options mapped to DB slugs ── */
@@ -133,6 +134,7 @@ function RegistreForm() {
         email: form.email,
         password: form.password,
         options: {
+          emailRedirectTo: `${SITE_URL}/auth/callback`,
           data: {
             name: form.name,
             club_name: form.team,
