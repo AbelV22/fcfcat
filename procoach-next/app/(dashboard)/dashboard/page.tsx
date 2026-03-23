@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase-server'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
-import { BarChart3, Shield, Users, Calendar, Trophy, ArrowRight, Settings, ClipboardList, RefreshCw } from 'lucide-react'
+import { BarChart3, Shield, Users, Trophy, ArrowRight, Settings, ClipboardList, RefreshCw } from 'lucide-react'
 import { getDashboardTeam } from '@/lib/dashboard-auth'
 
 export const dynamic = 'force-dynamic'
@@ -97,10 +97,10 @@ export default async function DashboardPage() {
               badge: 'PRO',
             },
             {
-              icon: <Calendar size={22} className="text-amber-400" />,
-              title: 'Calendari i resultats',
-              desc: 'Tots els partits de la teva categoria amb resultats actualitzats.',
-              href: '/dashboard/calendari',
+              icon: <Shield size={22} className="text-amber-400" />,
+              title: 'Equips',
+              desc: 'Cerca i explora tots els equips de les competicions FCF.',
+              href: '/entrenador',
               badge: null,
             },
             {

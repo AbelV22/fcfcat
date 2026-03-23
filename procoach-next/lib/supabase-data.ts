@@ -1006,17 +1006,30 @@ export type RefereeStatsDB = {
   // Percentiles (0-100, how strict vs all referees this season with ≥3 matches)
   yellows_percentile: number
   reds_percentile: number
+  // Division-specific percentiles (within the coach's competition only)
+  division_yellows_percentile: number
+  division_reds_percentile: number
+  division_name: string  // display name for the division used
+  division_referee_count: number  // how many referees in this division sample
   // Card distribution home/away
   home_yellows: number
   away_yellows: number
+  home_reds: number
+  away_reds: number
   home_bias: number | null  // home_yellows/total_yellows * 100, null if 0 yellows
   // Half-time split (requires minute field on cards; 0 if not available)
   first_half_cards: number
   second_half_cards: number
+  first_half_yellows: number
+  second_half_yellows: number
+  first_half_reds: number
+  second_half_reds: number
   // Competition breakdown
   competitionBreakdown: Array<{ competition: string; matches: number; yellows: number; reds: number }>
   // Goals context
   avg_goals_per_match: number
+  // Severity score (0-100) — composite strictness index
+  severity_score: number
   // Whether referee is predicted (most recent in group) vs officially assigned
   predicted: boolean
 }
@@ -1320,10 +1333,12 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
   const refereeName = nextMatch?.referee || ''
   const refereeIsPredicted = false
 
-  // Priority competitions for referee percentile calculation
-  const PRIORITY_COMPETITIONS = [
-    'primera-catalana', 'segona-catalana', 'tercera-catalana', 'quarta-catalana',
-    'preferent-juvenils', 'juvenil-primera-divisio',
+  // Senior-level competitions — only these count for referee stats & percentiles.
+  // Excludes cadets, infantils, and lower juvenil (different refereeing dynamics).
+  const SENIOR_LEVEL_COMPETITIONS = [
+    'tercera-federacio', 'lliga-elit', 'primera-catalana',
+    'segona-catalana', 'tercera-catalana', 'quarta-catalana',
+    'divisio-honor-juvenil', 'lliga-nacional-juvenil', 'preferent-juvenils',
   ]
 
   const [rivalStandingRes, rivalHomeRes, rivalAwayRes, rivalPlayersRes, refereeMatchesRes, h2hHomeRes, h2hAwayRes, allRefereesRes, fieldsRes, teamGoalsHomeRes, teamGoalsAwayRes] = await Promise.all([
@@ -1340,7 +1355,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       ? supabase.from('fcf_player_stats').select('player_name, appearances, goals, yellow_cards, red_cards, minutes_played').eq('team_slug', rivalSlug).eq('competition', competition).order('appearances', { ascending: false }).limit(30)
       : Promise.resolve({ data: [] as any[] }),
     refereeName
-      ? supabase.from('fcf_referee_matches').select('competition, jornada, match_date, home_team, away_team, home_score, away_score, yellow_cards, red_cards').eq('main_referee', refereeName).order('match_date', { ascending: false }).limit(30)
+      ? supabase.from('fcf_referee_matches').select('competition, jornada, match_date, home_team, away_team, home_score, away_score, yellow_cards, red_cards').eq('main_referee', refereeName).in('competition', SENIOR_LEVEL_COMPETITIONS).order('match_date', { ascending: false }).limit(50)
       : Promise.resolve({ data: [] as any[] }),
     // H2H: team at home vs rival away
     rivalName && teamName
@@ -1352,9 +1367,9 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       : Promise.resolve({ data: [] as any[] }),
     // Field dimensions for PitchCompare (team + rival)
     supabase.from('fields').select('name, team, length_m, width_m').order('name'),
-    // Global referee stats for percentile computation (only when we have a referee)
+    // Global referee stats for percentile computation — senior-level only
     refereeName
-      ? supabase.from('fcf_referee_matches').select('main_referee, yellow_cards, red_cards, home_score, away_score').in('competition', PRIORITY_COMPETITIONS).not('main_referee', 'is', null).limit(3000)
+      ? supabase.from('fcf_referee_matches').select('main_referee, competition, yellow_cards, red_cards, home_score, away_score').in('competition', SENIOR_LEVEL_COMPETITIONS).not('main_referee', 'is', null).limit(5000)
       : Promise.resolve({ data: [] as any[] }),
     // Team goals data for goal timing (home matches)
     supabase.from('fcf_referee_matches').select('competition, group_name, home_team, away_team, home_score, away_score, goals').eq('competition', competition).eq('home_team', teamName).not('home_score', 'is', null).order('jornada', { ascending: false }),
@@ -1452,17 +1467,29 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     // Home/away card split
     const home_yellows = allYellowCards.filter((c: any) => c.team === 'home').length
     const away_yellows = allYellowCards.filter((c: any) => c.team === 'away').length
+    const home_reds = allRedCards.filter((c: any) => c.team === 'home').length
+    const away_reds = allRedCards.filter((c: any) => c.team === 'away').length
     const home_bias = totalYellows > 0 ? Math.round((home_yellows / totalYellows) * 100) : null
 
     // Half-time split (cards with a numeric minute field)
     let first_half_cards = 0
     let second_half_cards = 0
-    const allCards = [...allYellowCards, ...allRedCards]
-    for (const c of allCards) {
+    let first_half_yellows = 0
+    let second_half_yellows = 0
+    let first_half_reds = 0
+    let second_half_reds = 0
+    for (const c of allYellowCards) {
       if (c.minute !== undefined && c.minute !== null) {
         const min = _parseGoalMinute(c.minute)
-        if (min >= 1 && min <= 45) first_half_cards++
-        else if (min >= 46) second_half_cards++
+        if (min >= 1 && min <= 45) { first_half_cards++; first_half_yellows++ }
+        else if (min >= 46) { second_half_cards++; second_half_yellows++ }
+      }
+    }
+    for (const c of allRedCards) {
+      if (c.minute !== undefined && c.minute !== null) {
+        const min = _parseGoalMinute(c.minute)
+        if (min >= 1 && min <= 45) { first_half_cards++; first_half_reds++ }
+        else if (min >= 46) { second_half_cards++; second_half_reds++ }
       }
     }
 
@@ -1489,18 +1516,32 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
 
     let yellows_percentile = 50
     let reds_percentile = 50
+    let division_yellows_percentile = 50
+    let division_reds_percentile = 50
+    let division_referee_count = 0
     if ((allRefereesRes.data || []).length > 0) {
       // Group by referee name and compute per-match averages
       const globalRefMap: Record<string, { matches: number; yellows: number; reds: number }> = {}
+      // Also track per-division stats for the coach's competition
+      const divisionRefMap: Record<string, { matches: number; yellows: number; reds: number }> = {}
       for (const row of (allRefereesRes.data as any[])) {
         const name = row.main_referee
         if (!name) continue
         if (!globalRefMap[name]) globalRefMap[name] = { matches: 0, yellows: 0, reds: 0 }
         globalRefMap[name].matches++
-        globalRefMap[name].yellows += (Array.isArray(row.yellow_cards) ? row.yellow_cards : []).filter((c: any) => c.recipient_type === 'player').length
-        globalRefMap[name].reds += (Array.isArray(row.red_cards) ? row.red_cards : []).filter((c: any) => c.recipient_type === 'player').length
+        const yc = (Array.isArray(row.yellow_cards) ? row.yellow_cards : []).filter((c: any) => c.recipient_type === 'player').length
+        const rc = (Array.isArray(row.red_cards) ? row.red_cards : []).filter((c: any) => c.recipient_type === 'player').length
+        globalRefMap[name].yellows += yc
+        globalRefMap[name].reds += rc
+        // Division-specific tracking
+        if (row.competition === competition) {
+          if (!divisionRefMap[name]) divisionRefMap[name] = { matches: 0, yellows: 0, reds: 0 }
+          divisionRefMap[name].matches++
+          divisionRefMap[name].yellows += yc
+          divisionRefMap[name].reds += rc
+        }
       }
-      // Filter to referees with ≥3 matches for meaningful comparison
+      // Global percentiles — referees with ≥3 matches
       const qualified = Object.values(globalRefMap).filter(r => r.matches >= 3)
       if (qualified.length > 1) {
         const ypm = qualified.map(r => r.yellows / r.matches)
@@ -1510,7 +1551,25 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
         yellows_percentile = Math.round((yBelow / qualified.length) * 100)
         reds_percentile = Math.round((rBelow / qualified.length) * 100)
       }
+      // Division-specific percentiles — referees with ≥2 matches in this competition
+      const divQualified = Object.values(divisionRefMap).filter(r => r.matches >= 2)
+      division_referee_count = divQualified.length
+      if (divQualified.length > 1) {
+        // Use this referee's stats within the division only
+        const divRef = divisionRefMap[refereeName]
+        const divYpm = divRef ? divRef.yellows / divRef.matches : yellows_per_match
+        const divRpm = divRef ? divRef.reds / divRef.matches : reds_per_match
+        const dypm = divQualified.map(r => r.yellows / r.matches)
+        const drpm = divQualified.map(r => r.reds / r.matches)
+        division_yellows_percentile = Math.round((dypm.filter(v => v < divYpm).length / divQualified.length) * 100)
+        division_reds_percentile = Math.round((drpm.filter(v => v < divRpm).length / divQualified.length) * 100)
+      }
     }
+
+    // Severity score (0-100): composite index weighting yellows, reds, and expulsion rate
+    const severity_score = Math.min(100, Math.round(
+      yellows_percentile * 0.5 + reds_percentile * 0.3 + (rm.length ? (matchesWithRed / rm.length) * 100 : 0) * 0.2
+    ))
 
     referee = {
       name: refereeName,
@@ -1534,13 +1593,24 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       })),
       yellows_percentile,
       reds_percentile,
+      division_yellows_percentile,
+      division_reds_percentile,
+      division_name: COMPETITION_NAMES[competition] || competition,
+      division_referee_count,
       home_yellows,
       away_yellows,
+      home_reds,
+      away_reds,
       home_bias,
       first_half_cards,
       second_half_cards,
+      first_half_yellows,
+      second_half_yellows,
+      first_half_reds,
+      second_half_reds,
       competitionBreakdown,
       avg_goals_per_match,
+      severity_score,
       predicted: refereeIsPredicted,
     }
   }
