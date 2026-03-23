@@ -14,10 +14,15 @@ Usage:
 """
 
 import argparse
+import io
 import os
 import sys
 import time
 from datetime import date
+
+# Force UTF-8 output on Windows to handle special characters (✓, accented names, etc.)
+if sys.stdout.encoding and sys.stdout.encoding.lower() not in ('utf-8', 'utf8'):
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 
 from dotenv import load_dotenv
 
@@ -166,11 +171,12 @@ def main():
         try:
             sb.table('fcf_matches').update({'referee': main_referee}).eq('id', m['id']).execute()
             updated += 1
-            print(f"  OK [{m['competition']} {m['group_name']} J{m['jornada']}] "
-                  f"{m.get('home_slug','')} vs {m.get('away_slug','')} => {main_referee}")
         except Exception as e:
             print(f"  ERROR updating {m['id']}: {e}")
             errors += 1
+            continue
+        print(f"  OK [{m['competition']} {m['group_name']} J{m['jornada']}] "
+              f"{m.get('home_slug','')} vs {m.get('away_slug','')} => {main_referee}")
 
         time.sleep(0.3)
 

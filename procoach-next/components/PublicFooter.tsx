@@ -13,7 +13,7 @@ export default function PublicFooter() {
           <div>
             <Link href="/" className="flex items-center gap-2 mb-3">
               <Image src="/logo_neoscout.png" alt="" width={28} height={28} className="w-7 h-7 rounded-lg object-cover" />
-              <span className="font-bold text-white">Neo<span className="text-green-400">Scout</span></span>
+              <span className="font-display font-bold text-white">Neo<span className="text-emerald-400">Scout</span></span>
             </Link>
             <p className="text-xs text-slate-500 leading-relaxed max-w-[220px]">
               La plataforma del futbol regional català. Dades de FCF.cat.

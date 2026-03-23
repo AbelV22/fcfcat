@@ -40,15 +40,17 @@ export default function PublicHeader() {
 
   return (
     <header className="sticky top-0 z-50 bg-[#0a1628]/95 backdrop-blur-xl border-b border-white/8 shadow-lg shadow-black/20">
+      {/* Premium top accent line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-14 sm:h-16">
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0" onClick={closeMenu}>
             <Image src="/logo_neoscout.png" alt="" width={32} height={32} className="w-8 h-8 rounded-lg object-cover" priority />
-            <span className="font-bold text-lg tracking-tight">
+            <span className="font-display font-bold text-lg tracking-tight">
               <span className="text-white">Neo</span>
-              <span className="text-green-400">Scout</span>
+              <span className="text-emerald-400">Scout</span>
             </span>
             <span className="ml-1 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-md leading-none hidden xs:inline">
               beta

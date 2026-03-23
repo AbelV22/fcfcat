@@ -2,9 +2,18 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { ArrowLeft, Search, ChevronDown, X, CheckCircle, Trophy } from 'lucide-react'
-import { saveTeamSelection } from './actions'
+import { Search, ChevronDown, X, CheckCircle, Trophy } from 'lucide-react'
+
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+}
 
 const COMPETITIONS: { label: string; slug: string }[] = [
   { label: 'Primera Catalana',          slug: 'primera-catalana' },
@@ -70,35 +79,21 @@ export default function SetupPage() {
 
   const filteredTeams = teams.filter(t => t.name.toLowerCase().includes(teamSearch.toLowerCase()))
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!team || !competition) return
     setSaving(true)
     setError('')
-    const fd = new FormData()
-    fd.set('team', team)
-    fd.set('competition', competition)
-    const result = await saveTeamSelection(fd)
-    if (result.error) {
-      setError(result.error)
-      setSaving(false)
-    } else {
-      router.push('/dashboard')
-      router.refresh()
-    }
+
+    const maxAge = 60 * 60 * 24 * 365
+    document.cookie = `ns_team_slug=${encodeURIComponent(slugify(team))}; path=/; max-age=${maxAge}`
+    document.cookie = `ns_team_name=${encodeURIComponent(team)}; path=/; max-age=${maxAge}`
+    document.cookie = `ns_competition=${encodeURIComponent(competition)}; path=/; max-age=${maxAge}`
+
+    window.location.href = '/dashboard'
   }
 
   return (
-    <div className="min-h-screen bg-[#0f172a]">
-      <header className="border-b border-white/8 bg-[#0a1628]/80 backdrop-blur sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center">
-          <Link href="/dashboard" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm">
-            <ArrowLeft size={16} />
-            Tornar al Dashboard
-          </Link>
-        </div>
-      </header>
-
-      <main className="max-w-lg mx-auto px-4 py-16">
+    <div className="max-w-lg mx-auto px-4 py-6 lg:py-8">
         <div className="text-center mb-10">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center mx-auto mb-4">
             <Trophy size={28} className="text-white" />
@@ -195,7 +190,6 @@ export default function SetupPage() {
             )}
           </button>
         </div>
-      </main>
     </div>
   )
 }

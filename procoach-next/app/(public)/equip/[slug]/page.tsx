@@ -206,7 +206,7 @@ function NextMatchInfoCard({ nextMatch, competition }: {
   )
 }
 
-function SquadTable({ players }: { players: FullTeamReportDB['players'] }) {
+function SquadTable({ players, teamSlug }: { players: FullTeamReportDB['players']; teamSlug: string }) {
   return (
     <div className="bg-white/4 border border-white/8 rounded-2xl p-4 sm:p-5">
       <div className="flex items-center gap-2 mb-4">
@@ -231,7 +231,7 @@ function SquadTable({ players }: { players: FullTeamReportDB['players'] }) {
                 <tr key={i} className={`transition-colors ${p.risk ? 'bg-amber-900/8 hover:bg-amber-900/15' : 'hover:bg-white/3'}`}>
                   <td className="py-2.5 pr-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-slate-200 text-sm">{p.name}</span>
+                      <Link href={`/jugador/${slugify(p.name)}--${teamSlug}`} className="font-medium text-slate-200 text-sm hover:text-green-400 transition-colors">{p.name}</Link>
                       {p.risk && (
                         <span className="text-[9px] px-1.5 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/25 rounded-full font-semibold shrink-0">⚠️ RISC</span>
                       )}
@@ -949,7 +949,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
                   {apercibits.slice(0, 4).map((p, i) => (
                     <div key={i} className="flex items-center justify-between px-3 py-2 rounded-xl bg-amber-900/15 border border-amber-500/15">
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-slate-200 truncate">{p.name}</p>
+                        <Link href={`/jugador/${slugify(p.name)}--${slug}`} className="text-sm font-medium text-slate-200 truncate hover:text-green-400 transition-colors block">{p.name}</Link>
                         <p className="text-xs text-slate-500">{p.appearances} partits · {p.minutes_played > 0 ? `${p.minutes_played}'` : '–'}</p>
                       </div>
                       <span className="text-xs font-bold text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded-full ml-3 shrink-0">🟨 {p.yellow_cards}</span>
@@ -971,7 +971,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
                       <div className="flex items-center gap-2.5 min-w-0">
                         <span className="w-5 h-5 rounded-full bg-green-500/20 text-green-400 text-[10px] font-bold flex items-center justify-center shrink-0">{i + 1}</span>
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-slate-200 truncate">{p.name}</p>
+                          <Link href={`/jugador/${slugify(p.name)}--${slug}`} className="text-sm font-medium text-slate-200 truncate hover:text-green-400 transition-colors block">{p.name}</Link>
                           <p className="text-xs text-slate-500">{p.appearances} partits · {p.minutes_played > 0 ? `${p.minutes_played}'` : '–'}</p>
                         </div>
                       </div>
@@ -986,7 +986,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
 
         {/* Row 6: Full squad */}
         {report.players.length > 0 ? (
-          <SquadTable players={report.players} />
+          <SquadTable players={report.players} teamSlug={slug} />
         ) : isPriority ? (
           <ScrapeProgressBanner
             slug={slug}

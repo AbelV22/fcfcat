@@ -5,6 +5,18 @@
   --breakpoint-xs: 480px;
 }
 
+/* ── Premium typography utilities (vars set by next/font in layout.tsx) ── */
+.font-display {
+  font-family: var(--font-syne), sans-serif;
+}
+.font-headline {
+  font-family: var(--font-headline), sans-serif;
+}
+.font-score {
+  font-family: var(--font-bebas), cursive;
+  letter-spacing: 0.03em;
+}
+
 :root {
   --background: #0f172a;
   --foreground: #f1f5f9;
@@ -220,6 +232,47 @@ a, button { touch-action: manipulation; }
   animation: line-draw 5s ease-out 0.5s forwards, line-fade 6s ease-in-out 0.5s forwards;
 }
 
+/* ── Hero accent line — Apple-style, HTML div approach (reliable) ── */
+@keyframes accent-scale-x {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes accent-scale-y {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+@keyframes accent-dot-pop {
+  0%   { opacity: 0; transform: scale(0); }
+  70%  { transform: scale(1.3); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes accent-ring-out {
+  0%   { opacity: 0.5; transform: scale(1); }
+  100% { opacity: 0;   transform: scale(3.5); }
+}
+.hero-accent-vline {
+  transform-origin: top center;
+  transform: scaleY(0);
+  animation: accent-scale-y 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+}
+.hero-accent-hline {
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation: accent-scale-x 1s cubic-bezier(0.16, 1, 0.3, 1) 0.45s forwards;
+}
+.hero-accent-dot {
+  opacity: 0;
+  transform: scale(0);
+  transform-origin: center;
+  animation: accent-dot-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 1.3s forwards;
+}
+.hero-accent-ring {
+  opacity: 0;
+  transform: scale(1);
+  transform-origin: center;
+  animation: accent-ring-out 0.9s ease-out 1.6s forwards;
+}
+
 /* Noise texture overlay for depth */
 .noise-bg {
   position: relative;
@@ -238,6 +291,59 @@ a, button { touch-action: manipulation; }
 .glow-divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(110,231,183,0.25), rgba(165,243,252,0.15), transparent);
+}
+
+/* ── Stats band — unified scoreboard strip ── */
+.stats-band {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  background: linear-gradient(135deg, rgba(10,18,35,0.95) 0%, rgba(12,22,42,0.98) 100%);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(52,211,153,0.06), 0 24px 64px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.stats-band::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 5%, rgba(52,211,153,0.35) 30%, rgba(103,232,249,0.25) 70%, transparent 95%);
+  z-index: 1;
+}
+.stats-band-item {
+  flex: 1;
+  padding: 20px 12px;
+  text-align: center;
+  position: relative;
+  transition: background 0.3s;
+}
+.stats-band-item:hover {
+  background: rgba(52,211,153,0.03);
+}
+.stats-band-divider {
+  width: 1px;
+  background: rgba(255,255,255,0.06);
+  align-self: stretch;
+  margin: 12px 0;
+  flex-shrink: 0;
+}
+
+/* ── Pitch texture overlay for CTA section ── */
+.pitch-texture {
+  position: relative;
+}
+.pitch-texture::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2334d399' stroke-width='0.4' opacity='0.07'%3E%3Cline x1='40' y1='0' x2='40' y2='80'/%3E%3Ccircle cx='40' cy='40' r='20'/%3E%3Crect x='2' y='2' width='76' height='76'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 80px 80px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+  border-radius: inherit;
 }
 
 /* Section accent line above headings */

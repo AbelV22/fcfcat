@@ -24,31 +24,7 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f172a]">
-      {/* Dashboard header */}
-      <header className="border-b border-white/8 bg-[#0a1628]/80 backdrop-blur sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center">
-              <Trophy size={16} className="text-white" />
-            </div>
-            <span className="font-bold text-white">Neo<span className="text-green-400">Scout</span> <span className="text-slate-400 font-normal text-sm">· Pro Dashboard</span></span>
-          </div>
-          <div className="flex items-center gap-3">
-            {isAdmin && <span className="text-xs px-2 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/25 rounded-full font-bold">ADMIN</span>}
-            {team && (
-              <span className="text-xs px-2.5 py-1 bg-green-500/15 text-green-400 border border-green-500/20 rounded-full font-medium">
-                {team.name}
-              </span>
-            )}
-            <Link href="/" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
-              Tornar a l&apos;inici
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 lg:py-12">
 
         {/* Welcome */}
         <div className="mb-10">
@@ -103,14 +79,14 @@ export default async function DashboardPage() {
               icon: <BarChart3 size={22} className="text-green-400" />,
               title: "Intel·ligència de l'equip",
               desc: 'Estadístiques detallades de tots els teus jugadors per temporada.',
-              href: team ? `/equip/${team.slug}` : '/dashboard/setup',
+              href: '/dashboard/intel',
               badge: null,
             },
             {
               icon: <Users size={22} className="text-cyan-400" />,
               title: 'Anàlisi del rival',
               desc: "XI probable, goleadors, patrons de joc i targetes de l'equip rival.",
-              href: team ? `/competicio/${team.competition}` : '/dashboard/setup',
+              href: '/dashboard/rival',
               badge: null,
             },
             {
@@ -124,14 +100,14 @@ export default async function DashboardPage() {
               icon: <Calendar size={22} className="text-amber-400" />,
               title: 'Calendari i resultats',
               desc: 'Tots els partits de la teva categoria amb resultats actualitzats.',
-              href: team ? `/equip/${team.slug}` : '/dashboard/setup',
+              href: '/dashboard/calendari',
               badge: null,
             },
             {
               icon: <Trophy size={22} className="text-yellow-400" />,
               title: 'Classificació',
               desc: 'La taula de classificació del teu grup en temps real.',
-              href: team ? `/competicio/${team.competition}` : '/dashboard/setup',
+              href: '/dashboard/classificacio',
               badge: null,
             },
             {
@@ -173,7 +149,6 @@ export default async function DashboardPage() {
             </Link>
           ))}
         </div>
-      </main>
-    </div>
+      </div>
   )
 }

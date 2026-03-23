@@ -247,6 +247,7 @@ def push_referee_matches(refs: dict) -> int:
             "referees":     referees,
             "yellow_cards": m.get("yellow_cards", []),
             "red_cards":    m.get("red_cards", []),
+            "goals":        m.get("goals", []),
         })
     n = _batch_upsert("fcf_referee_matches", rows)
     logger.info(f"referee_matches → {n} rows")

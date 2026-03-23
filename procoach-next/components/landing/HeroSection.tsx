@@ -89,19 +89,24 @@ export default function HeroSection() {
         />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 overflow-hidden">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
           {/* ─── Left: Copy + Search ─── */}
           <div>
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/8 border border-emerald-500/15 rounded-full text-emerald-400 text-xs font-medium mb-8 backdrop-blur-sm animate-fade-up tracking-wide">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Temporada 2025-26 · Dades oficials FCF
-            </div>
+            {/* Elegant accent line */}
+            <div
+              className="mb-8 animate-fade-up"
+              aria-hidden="true"
+              style={{
+                height: 1,
+                width: 260,
+                background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.55) 25%, rgba(255,255,255,0.35) 65%, transparent)',
+              }}
+            />
 
             {/* Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight mb-6 leading-[1.05] animate-fade-up delay-100">
+            <h1 className="font-headline text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight mb-6 leading-[1.05] animate-fade-up delay-100">
               <span className="text-white">Prepara cada</span>
               <br />
               <span className="gradient-text-hero">
@@ -155,10 +160,22 @@ export default function HeroSection() {
 
           {/* ─── Right: Demo preview card ─── */}
           <div className="relative hidden lg:block animate-fade-up delay-300">
-            <div className="relative bg-[#0c1a2e]/80 border border-white/[0.07] rounded-2xl p-5 shadow-2xl shadow-black/30 backdrop-blur-sm">
+            <div className="relative bg-[#0c1a2e]/80 border border-white/[0.07] rounded-2xl p-5 shadow-2xl shadow-black/30 backdrop-blur-sm overflow-hidden">
+              {/* Top accent */}
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent" />
+
+              {/* Card header label */}
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-[9px] font-semibold uppercase tracking-widest text-slate-500">Informe de Preparació</span>
+                <span className="flex items-center gap-1 text-[9px] font-semibold text-emerald-400 tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Live
+                </span>
+              </div>
+
               {/* Team header */}
               <div className="flex items-center gap-3 mb-5 pb-4 border-b border-white/[0.06]">
-                <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/15 flex items-center justify-center font-bold text-emerald-400">
+                <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/15 flex items-center justify-center font-bold text-emerald-400 font-display">
                   M
                 </div>
                 <div className="flex-1 min-w-0">
@@ -262,7 +279,7 @@ export default function HeroSection() {
         </div>
 
         {/* ─── Mobile demo strip ─── */}
-        <div className="lg:hidden mt-10 flex gap-3 overflow-x-auto scrollbar-hide scroll-fade-right pb-2 animate-fade-up delay-400">
+        <div className="lg:hidden mt-10 -mx-4 px-4 flex gap-3 overflow-x-auto scrollbar-hide pb-2 animate-fade-up delay-400">
           <div className="shrink-0 flex items-center gap-2 px-4 py-3 bg-white/[0.04] border border-white/[0.06] rounded-xl">
             <Zap size={14} className="text-emerald-400" />
             <div>

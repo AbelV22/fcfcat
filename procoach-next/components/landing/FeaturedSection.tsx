@@ -87,7 +87,7 @@ export default function FeaturedSection() {
       {/* ─── Features grid ─── */}
       <div>
         <div className="text-center mb-12 section-accent-center reveal">
-          <h2 className="text-3xl sm:text-4xl font-black text-white mb-3">
+          <h2 className="font-headline text-3xl sm:text-4xl font-black text-white mb-3">
             Tot el que necessites per <span className="gradient-text-hero">preparar el partit</span>
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto text-sm sm:text-base">
@@ -115,7 +115,7 @@ export default function FeaturedSection() {
       {/* ─── Competitions ─── */}
       <div className="reveal">
         <div className="flex items-center justify-between mb-6 section-accent">
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+          <h2 className="font-headline text-xl font-bold text-white flex items-center gap-2">
             <Trophy size={20} className="text-green-400" />
             Competicions cobertes
           </h2>

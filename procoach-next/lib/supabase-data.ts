@@ -13,7 +13,7 @@
 
 import { createClient } from '@supabase/supabase-js'
 import { slugify } from '@/lib/utils'
-import { getGoalData } from '@/lib/data'
+// getGoalData no longer needed — goal timing is computed live from Supabase
 
 // Competition display names — mirrors lib/data.ts COMPETITION_NAMES
 const COMPETITION_NAMES: Record<string, string> = {
@@ -1326,15 +1326,15 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     'preferent-juvenils', 'juvenil-primera-divisio',
   ]
 
-  const [rivalStandingRes, rivalHomeRes, rivalAwayRes, rivalPlayersRes, refereeMatchesRes, h2hHomeRes, h2hAwayRes, allRefereesRes, fieldsRes] = await Promise.all([
+  const [rivalStandingRes, rivalHomeRes, rivalAwayRes, rivalPlayersRes, refereeMatchesRes, h2hHomeRes, h2hAwayRes, allRefereesRes, fieldsRes, teamGoalsHomeRes, teamGoalsAwayRes] = await Promise.all([
     rivalSlug
       ? supabase.from('fcf_standings').select('position, team_name, team_slug, played, won, drawn, lost, goals_for, goals_against, points, home_won, home_drawn, home_lost, away_won, away_drawn, away_lost').eq('team_slug', rivalSlug).eq('competition', competition).limit(1)
       : Promise.resolve({ data: [] as any[] }),
     rivalName
-      ? supabase.from('fcf_referee_matches').select('jornada, match_date, home_team, away_team, home_score, away_score, main_referee').eq('competition', competition).eq('home_team', rivalName).not('home_score', 'is', null).order('jornada', { ascending: false }).limit(15)
+      ? supabase.from('fcf_referee_matches').select('jornada, match_date, home_team, away_team, home_score, away_score, main_referee, goals').eq('competition', competition).eq('home_team', rivalName).not('home_score', 'is', null).order('jornada', { ascending: false }).limit(15)
       : Promise.resolve({ data: [] as any[] }),
     rivalName
-      ? supabase.from('fcf_referee_matches').select('jornada, match_date, home_team, away_team, home_score, away_score, main_referee').eq('competition', competition).eq('away_team', rivalName).not('away_score', 'is', null).order('jornada', { ascending: false }).limit(15)
+      ? supabase.from('fcf_referee_matches').select('jornada, match_date, home_team, away_team, home_score, away_score, main_referee, goals').eq('competition', competition).eq('away_team', rivalName).not('away_score', 'is', null).order('jornada', { ascending: false }).limit(15)
       : Promise.resolve({ data: [] as any[] }),
     rivalSlug
       ? supabase.from('fcf_player_stats').select('player_name, appearances, goals, yellow_cards, red_cards, minutes_played').eq('team_slug', rivalSlug).eq('competition', competition).order('appearances', { ascending: false }).limit(30)
@@ -1356,11 +1356,19 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     refereeName
       ? supabase.from('fcf_referee_matches').select('main_referee, yellow_cards, red_cards, home_score, away_score').in('competition', PRIORITY_COMPETITIONS).not('main_referee', 'is', null).limit(3000)
       : Promise.resolve({ data: [] as any[] }),
+    // Team goals data for goal timing (home matches)
+    supabase.from('fcf_referee_matches').select('competition, group_name, home_team, away_team, home_score, away_score, goals').eq('competition', competition).eq('home_team', teamName).not('home_score', 'is', null).order('jornada', { ascending: false }),
+    // Team goals data for goal timing (away matches)
+    supabase.from('fcf_referee_matches').select('competition, group_name, home_team, away_team, home_score, away_score, goals').eq('competition', competition).eq('away_team', teamName).not('away_score', 'is', null).order('jornada', { ascending: false }),
   ])
 
-  // ── Load pre-computed goal timing from goal_buckets.json ─────────────────
-  const teamGoalData = getGoalData(competition, groupName, slug)
-  const teamGoalBuckets: GoalBucketEntry[] = teamGoalData?.buckets ?? []
+  // ── Compute goal timing from Supabase (live, covers ALL teams) ───────────
+  const _mapGoalRow = (r: any): RefMatch => ({ ...r, group: r.group_name || '' })
+  const teamGoalMatches: RefMatch[] = [
+    ...(teamGoalsHomeRes.data || []).map(_mapGoalRow),
+    ...(teamGoalsAwayRes.data || []).map(_mapGoalRow),
+  ]
+  const teamGoalBuckets: GoalBucketEntry[] = computeGoalBucketsFromRefs(teamGoalMatches, slug)
 
   // ── Build rival ────────────────────────────────────────────────────────────
   let rival: RivalDataDB | null = null
@@ -1387,22 +1395,14 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       ? { played: (rs.away_won||0)+(rs.away_drawn||0)+(rs.away_lost||0), wins: rs.away_won||0, draws: rs.away_drawn||0, losses: rs.away_lost||0, gf: rAwayPlayed.reduce((s:number,m:any)=>s+(m.goalsFor||0),0), ga: rAwayPlayed.reduce((s:number,m:any)=>s+(m.goalsAgainst||0),0), points: (rs.away_won||0)*3+(rs.away_drawn||0) }
       : _splitStats(rAllPlayed, 'away')
 
-    // Rival goal timing + insights from global_referees
-    // Load pre-computed goal timing + insights for rival from goal_buckets.json
-    const rivalGoalData = getGoalData(competition, groupName, rivalSlug)
-    const rivalGoalBuckets: GoalBucketEntry[] = rivalGoalData?.buckets ?? []
-    const rivalInsightsRaw = rivalGoalData?.insights ?? null
-    const rivalInsights: RivalInsights | null = rivalInsightsRaw && (rivalInsightsRaw.matchesAnalyzed ?? 0) >= 3
-      ? {
-          comebackRate: rivalInsightsRaw.comebackRate ?? null,
-          scoreFirstWinRate: rivalInsightsRaw.scoreFirstWinRate ?? null,
-          concededFirstWinRate: rivalInsightsRaw.concededFirstWinRate ?? null,
-          cleanSheetRate: rivalInsightsRaw.cleanSheetRate ?? null,
-          lateGoalRate: rivalInsightsRaw.lateGoalRate ?? null,
-          firstHalfGoals: rivalInsightsRaw.firstHalfGoals ?? 0,
-          secondHalfGoals: rivalInsightsRaw.secondHalfGoals ?? 0,
-          matchesAnalyzed: rivalInsightsRaw.matchesAnalyzed ?? 0,
-        }
+    // Rival goal timing + insights — computed live from Supabase goals data
+    const rivalGoalMatches: RefMatch[] = [
+      ...(rivalHomeRes.data || []).map(_mapGoalRow),
+      ...(rivalAwayRes.data || []).map(_mapGoalRow),
+    ]
+    const rivalGoalBuckets: GoalBucketEntry[] = computeGoalBucketsFromRefs(rivalGoalMatches, rivalSlug)
+    const rivalInsights: RivalInsights | null = rivalGoalMatches.length >= 3
+      ? computeRivalInsights(rivalGoalMatches, rivalSlug)
       : null
 
     rival = {
@@ -1587,4 +1587,227 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     homePitch,
     rivalPitch,
   }
+}
+
+// ─── Player Profiles ──────────────────────────────────────────────────────────
+
+export type PlayerProfileDB = {
+  id: string
+  slug: string
+  displayName: string
+  bio: string | null
+  position: string | null
+  preferredFoot: string | null
+  birthYear: number | null
+  heightCm: number | null
+  weightKg: number | null
+  photoUrl: string | null
+  highlightUrl: string | null
+  phone: string | null
+  contactEmail: string | null
+  instagram: string | null
+  whatsapp: boolean
+  claimed: boolean
+  verified: boolean
+  optedOut: boolean
+  contactVisible: boolean
+  lookingForTeam: boolean
+  /** Aggregated career stats across all seasons/teams */
+  career: {
+    appearances: number
+    starts: number
+    goals: number
+    yellowCards: number
+    redCards: number
+    minutesPlayed: number
+  }
+  /** Per-season/team/competition breakdown */
+  seasons: {
+    season: string
+    competition: string
+    competitionName: string
+    groupName: string
+    teamName: string
+    teamSlug: string
+    appearances: number
+    starts: number
+    goals: number
+    yellowCards: number
+    redCards: number
+    minutesPlayed: number
+  }[]
+}
+
+/** Fetch a single player profile by slug, with linked stats */
+export async function getPlayerProfile(slug: string): Promise<PlayerProfileDB | null> {
+  const supabase = getSupabase()
+  if (!supabase) return null
+
+  // 1. Get the profile
+  const { data: profile, error: profileErr } = await supabase
+    .from('player_profiles')
+    .select('*')
+    .eq('canonical_slug', slug)
+    .single()
+
+  if (profileErr || !profile) return null
+
+  // GDPR opt-out: return minimal data
+  if (profile.opted_out) {
+    return {
+      id: profile.id,
+      slug: profile.canonical_slug,
+      displayName: profile.display_name,
+      bio: null, position: null, preferredFoot: null, birthYear: null,
+      heightCm: null, weightKg: null, photoUrl: null, highlightUrl: null,
+      phone: null, contactEmail: null, instagram: null, whatsapp: false,
+      claimed: !!profile.claimed_by, verified: profile.verified,
+      optedOut: true, contactVisible: false, lookingForTeam: false,
+      career: { appearances: 0, starts: 0, goals: 0, yellowCards: 0, redCards: 0, minutesPlayed: 0 },
+      seasons: [],
+    }
+  }
+
+  // 2. Get linked stats via join
+  const { data: links } = await supabase
+    .from('player_stats_links')
+    .select('player_stats_id')
+    .eq('profile_id', profile.id)
+
+  const statsIds = (links || []).map(l => l.player_stats_id)
+
+  let seasons: PlayerProfileDB['seasons'] = []
+  if (statsIds.length > 0) {
+    const { data: stats } = await supabase
+      .from('fcf_player_stats')
+      .select('*')
+      .in('id', statsIds)
+      .order('season', { ascending: false })
+
+    seasons = (stats || []).map(s => ({
+      season: s.season,
+      competition: s.competition,
+      competitionName: COMPETITION_NAMES[s.competition] || s.competition,
+      groupName: s.group_name,
+      teamName: s.team_name,
+      teamSlug: s.team_slug,
+      appearances: s.appearances || 0,
+      starts: s.starts || 0,
+      goals: s.goals || 0,
+      yellowCards: s.yellow_cards || 0,
+      redCards: s.red_cards || 0,
+      minutesPlayed: s.minutes_played || 0,
+    }))
+  }
+
+  // 3. Aggregate career totals
+  const career = seasons.reduce(
+    (acc, s) => ({
+      appearances: acc.appearances + s.appearances,
+      starts: acc.starts + s.starts,
+      goals: acc.goals + s.goals,
+      yellowCards: acc.yellowCards + s.yellowCards,
+      redCards: acc.redCards + s.redCards,
+      minutesPlayed: acc.minutesPlayed + s.minutesPlayed,
+    }),
+    { appearances: 0, starts: 0, goals: 0, yellowCards: 0, redCards: 0, minutesPlayed: 0 }
+  )
+
+  return {
+    id: profile.id,
+    slug: profile.canonical_slug,
+    displayName: profile.display_name,
+    bio: profile.bio,
+    position: profile.position,
+    preferredFoot: profile.preferred_foot,
+    birthYear: profile.birth_year,
+    heightCm: profile.height_cm,
+    weightKg: profile.weight_kg,
+    photoUrl: profile.photo_url,
+    highlightUrl: profile.highlight_url,
+    phone: profile.phone,
+    contactEmail: profile.contact_email,
+    instagram: profile.instagram,
+    whatsapp: profile.whatsapp ?? false,
+    claimed: !!profile.claimed_by,
+    verified: profile.verified ?? false,
+    optedOut: false,
+    contactVisible: profile.contact_visible ?? false,
+    lookingForTeam: profile.looking_for_team ?? false,
+    career,
+    seasons,
+  }
+}
+
+/** Fetch all players from player_profiles with aggregated stats for search/discovery */
+export async function getAllPlayersDB() {
+  const supabase = getSupabase()
+  if (!supabase) return []
+
+  // Get all non-opted-out profiles
+  const profiles = await fetchAllRows((from, to) =>
+    supabase
+      .from('player_profiles')
+      .select('canonical_slug, display_name, position, looking_for_team, verified, photo_url, opted_out')
+      .eq('opted_out', false)
+      .range(from, to)
+  )
+
+  if (!profiles || profiles.length === 0) return []
+
+  // Get all player stats for aggregation
+  const allStats = await fetchAllRows((from, to) =>
+    supabase
+      .from('fcf_player_stats')
+      .select('player_slug, team_name, team_slug, competition, appearances, goals, yellow_cards, red_cards, minutes_played')
+      .range(from, to)
+  )
+
+  // Aggregate stats by player_slug
+  const statsMap: Record<string, {
+    team: string; teamSlug: string; competition: string
+    appearances: number; goals: number; yellowCards: number; redCards: number
+  }> = {}
+
+  for (const s of allStats || []) {
+    const slug = s.player_slug
+    if (!slug) continue
+    if (!statsMap[slug]) {
+      statsMap[slug] = {
+        team: s.team_name, teamSlug: s.team_slug, competition: s.competition,
+        appearances: 0, goals: 0, yellowCards: 0, redCards: 0,
+      }
+    }
+    const entry = statsMap[slug]
+    entry.appearances += s.appearances || 0
+    entry.goals += s.goals || 0
+    entry.yellowCards += s.yellow_cards || 0
+    entry.redCards += s.red_cards || 0
+    // Keep the team with most appearances as "main team"
+    if ((s.appearances || 0) > (entry.appearances - (s.appearances || 0))) {
+      entry.team = s.team_name
+      entry.teamSlug = s.team_slug
+      entry.competition = s.competition
+    }
+  }
+
+  return profiles.map(p => {
+    const slug = p.canonical_slug
+    const stats = statsMap[slug]
+    return {
+      slug,
+      name: p.display_name,
+      position: p.position,
+      team: stats?.team || '',
+      teamSlug: stats?.teamSlug || '',
+      competition: stats?.competition || '',
+      appearances: stats?.appearances || 0,
+      goals: stats?.goals || 0,
+      yellow_cards: stats?.yellowCards || 0,
+      red_cards: stats?.redCards || 0,
+      lookingForTeam: p.looking_for_team ?? false,
+      verified: p.verified ?? false,
+      photoUrl: p.photo_url,
+    }
+  }).sort((a, b) => b.appearances - a.appearances)
 }
