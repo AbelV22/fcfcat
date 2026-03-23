@@ -1,8 +1,5 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase-server'
 import { NextResponse } from 'next/server'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://nxgyduqprxbhtpqsepgj.supabase.co'
-const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -12,7 +9,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ teams: [] })
   }
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON)
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('fcf_standings')
@@ -22,7 +19,8 @@ export async function GET(req: Request) {
     .order('team_name')
 
   if (error) {
-    return NextResponse.json({ teams: [] }, { status: 500 })
+    console.error('Teams API error:', error.message)
+    return NextResponse.json({ teams: [], error: error.message }, { status: 500 })
   }
 
   // Deduplicate team names (a team may appear in multiple rows)

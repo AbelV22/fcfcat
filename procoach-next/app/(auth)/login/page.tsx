@@ -22,6 +22,8 @@ export default function LoginPage() {
     try {
       const { error: err } = await supabase.auth.signInWithPassword({ email, password })
       if (err) { setError(err.message); return }
+      // Sync team metadata into dashboard cookies before navigating
+      await fetch('/api/sync-team', { method: 'POST' }).catch(() => {})
       router.push('/dashboard')
       router.refresh()
     } catch {

@@ -136,7 +136,7 @@ function RegistreForm() {
           data: {
             name: form.name,
             club_name: form.team,
-            competition: competitionLabel,
+            competition: form.competition, // slug, not label
           },
         },
       })
