@@ -34,7 +34,7 @@ export default function HeroSection() {
   const maxBucket = Math.max(...DEMO_BUCKETS)
 
   return (
-    <section className="relative overflow-hidden pt-16 sm:pt-20 pb-20 sm:pb-28">
+    <section className="relative overflow-hidden pt-10 sm:pt-16 lg:pt-20 pb-14 sm:pb-20 lg:pb-28">
       {/* ── Apple-style animated lines ── */}
       <div className="absolute inset-0 pointer-events-none">
         <svg
@@ -96,17 +96,16 @@ export default function HeroSection() {
           <div>
             {/* Elegant accent line */}
             <div
-              className="mb-8 animate-fade-up"
+              className="mb-6 sm:mb-8 animate-fade-up w-40 sm:w-64"
               aria-hidden="true"
               style={{
                 height: 1,
-                width: 260,
                 background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.55) 25%, rgba(255,255,255,0.35) 65%, transparent)',
               }}
             />
 
             {/* Headline */}
-            <h1 className="font-headline text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight mb-6 leading-[1.05] animate-fade-up delay-100">
+            <h1 className="font-headline text-[2rem] xs:text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight mb-5 sm:mb-6 leading-[1.08] animate-fade-up delay-100">
               <span className="text-white">Prepara cada</span>
               <br />
               <span className="gradient-text-hero">
@@ -115,12 +114,12 @@ export default function HeroSection() {
             </h1>
 
             {/* Subheadline */}
-            <p className="text-base sm:text-lg text-slate-400 mb-4 leading-relaxed max-w-lg animate-fade-up delay-200">
+            <p className="text-sm sm:text-base lg:text-lg text-slate-400 mb-3 leading-relaxed max-w-[90vw] sm:max-w-lg animate-fade-up delay-200">
               Analitza rivals, controla la teva plantilla i pren notes dels teus partits
               amb dades de les actes oficials de la FCF.
             </p>
 
-            <p className="text-sm text-slate-500 mb-10 animate-fade-up delay-200">
+            <p className="text-xs sm:text-sm text-slate-500 mb-8 sm:mb-10 animate-fade-up delay-200">
               Gratis per a tots els entrenadors del futbol català.
             </p>
 
@@ -130,31 +129,31 @@ export default function HeroSection() {
                               focus-within:border-emerald-500/40 focus-within:bg-white/[0.06]
                               focus-within:shadow-[0_0_40px_rgba(52,211,153,0.08)] transition-all duration-500
                               shadow-xl shadow-black/30">
-                <Search size={18} className="absolute left-5 text-slate-500 shrink-0" />
+                <Search size={16} className="absolute left-3.5 sm:left-5 text-slate-500 shrink-0" />
                 <input
                   type="text"
                   value={query}
                   onChange={e => setQuery(e.target.value)}
                   placeholder="Busca el teu equip..."
-                  className="flex-1 pl-14 pr-4 py-5 bg-transparent text-white placeholder-slate-500 text-base focus:outline-none"
+                  className="flex-1 min-w-0 pl-10 sm:pl-14 pr-2 py-4 sm:py-5 bg-transparent text-white placeholder-slate-500 text-sm sm:text-base focus:outline-none"
                 />
                 <button
                   type="submit"
-                  className="group shrink-0 m-2 px-6 py-3 bg-white text-slate-900 font-semibold rounded-xl
-                             transition-all flex items-center gap-2
+                  className="group shrink-0 m-1.5 sm:m-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-slate-900 font-semibold rounded-xl
+                             transition-all flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base
                              hover:bg-emerald-50 hover:shadow-[0_0_20px_rgba(52,211,153,0.15)]"
                 >
                   Cerca
-                  <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
+                  <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
                 </button>
               </div>
             </form>
 
             {/* Subtle feature tags */}
-            <div className="flex flex-wrap gap-4 text-xs text-slate-500 animate-fade-up delay-400">
+            <div className="flex flex-wrap gap-2 sm:gap-4 text-[11px] sm:text-xs text-slate-500 animate-fade-up delay-400">
               <span>⚔️ Anàlisi de rivals</span>
               <span>📋 Notes de partits</span>
-              <span>🛡️ Control de plantilla</span>
+              <span>🛡️ Control plantilla</span>
             </div>
           </div>
 

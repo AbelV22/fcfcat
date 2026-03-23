@@ -296,7 +296,6 @@ a, button { touch-action: manipulation; }
 /* ── Stats band — unified scoreboard strip ── */
 .stats-band {
   position: relative;
-  display: flex;
   align-items: stretch;
   background: linear-gradient(135deg, rgba(10,18,35,0.95) 0%, rgba(12,22,42,0.98) 100%);
   border: 1px solid rgba(255,255,255,0.07);
