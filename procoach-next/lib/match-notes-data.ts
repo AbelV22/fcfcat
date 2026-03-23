@@ -1,10 +1,13 @@
 import { createClient } from '@/lib/supabase-client'
-import type {
-  MatchNote,
-  MatchNoteFull,
-  MatchNoteLineup,
-  MatchNoteEvent,
-  MatchNoteRating,
+import {
+  FORMATIONS,
+  type MatchNote,
+  type MatchNoteFull,
+  type MatchNoteLineup,
+  type MatchNoteEvent,
+  type MatchNoteRating,
+  type ActaData,
+  type WizardState,
 } from './match-notes-types'
 
 // ─── CRUD Operations ─────────────────────────────────────
@@ -50,23 +53,47 @@ export async function upsertMatchNote(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
+  const payload = {
+    opponent: note.opponent,
+    match_date: note.match_date,
+    is_home: note.is_home,
+    goals_for: note.goals_for,
+    goals_against: note.goals_against,
+    formation: note.formation,
+    overall_rating: note.overall_rating,
+    tactical_approach: note.tactical_approach,
+    key_moments: note.key_moments,
+    opponent_analysis: note.opponent_analysis,
+    areas_to_improve: note.areas_to_improve,
+    status: note.status ?? 'draft',
+    // New fields
+    possession_estimate: note.possession_estimate ?? null,
+    corners_for: note.corners_for ?? null,
+    corners_against: note.corners_against ?? null,
+    fouls_for: note.fouls_for ?? null,
+    fouls_against: note.fouls_against ?? null,
+    offsides_for: note.offsides_for ?? null,
+    offsides_against: note.offsides_against ?? null,
+    shots_for: note.shots_for ?? null,
+    shots_against: note.shots_against ?? null,
+    saves: note.saves ?? null,
+    phase_attack: note.phase_attack ?? null,
+    phase_defense: note.phase_defense ?? null,
+    phase_transition_atk: note.phase_transition_atk ?? null,
+    phase_transition_def: note.phase_transition_def ?? null,
+    phase_set_pieces: note.phase_set_pieces ?? null,
+    training_focus: note.training_focus ?? null,
+    half_time_score_for: note.half_time_score_for ?? null,
+    half_time_score_against: note.half_time_score_against ?? null,
+    pitch_condition: note.pitch_condition ?? null,
+    weather: note.weather ?? null,
+    captain: note.captain ?? null,
+  }
+
   if (note.id) {
     const { error } = await supabase
       .from('match_notes')
-      .update({
-        opponent: note.opponent,
-        match_date: note.match_date,
-        is_home: note.is_home,
-        goals_for: note.goals_for,
-        goals_against: note.goals_against,
-        formation: note.formation,
-        overall_rating: note.overall_rating,
-        tactical_approach: note.tactical_approach,
-        key_moments: note.key_moments,
-        opponent_analysis: note.opponent_analysis,
-        areas_to_improve: note.areas_to_improve,
-        status: note.status ?? 'draft',
-      })
+      .update(payload)
       .eq('id', note.id)
 
     if (error) throw error
@@ -75,21 +102,7 @@ export async function upsertMatchNote(
 
   const { data, error } = await supabase
     .from('match_notes')
-    .insert({
-      user_id: user.id,
-      opponent: note.opponent,
-      match_date: note.match_date,
-      is_home: note.is_home,
-      goals_for: note.goals_for ?? null,
-      goals_against: note.goals_against ?? null,
-      formation: note.formation ?? null,
-      overall_rating: note.overall_rating ?? null,
-      tactical_approach: note.tactical_approach ?? null,
-      key_moments: note.key_moments ?? null,
-      opponent_analysis: note.opponent_analysis ?? null,
-      areas_to_improve: note.areas_to_improve ?? null,
-      status: note.status ?? 'draft',
-    })
+    .insert({ ...payload, user_id: user.id })
     .select('id')
     .single()
 
@@ -109,7 +122,13 @@ export async function upsertLineups(
 
   if (lineups.length > 0) {
     const { error } = await supabase.from('match_note_lineups').insert(
-      lineups.map((l) => ({ ...l, match_note_id: matchNoteId }))
+      lineups.map((l) => ({
+        ...l,
+        match_note_id: matchNoteId,
+        sub_reason: l.sub_reason ?? null,
+        effort_rating: l.effort_rating ?? null,
+        is_captain: l.is_captain ?? false,
+      }))
     )
     if (error) throw error
   }
@@ -126,7 +145,13 @@ export async function upsertEvents(
 
   if (events.length > 0) {
     const { error } = await supabase.from('match_note_events').insert(
-      events.map((e) => ({ ...e, match_note_id: matchNoteId }))
+      events.map((e) => ({
+        ...e,
+        match_note_id: matchNoteId,
+        goal_origin: e.goal_origin ?? null,
+        shot_zone: e.shot_zone ?? null,
+        is_opponent: e.is_opponent ?? false,
+      }))
     )
     if (error) throw error
   }
@@ -143,7 +168,11 @@ export async function upsertRatings(
 
   if (ratings.length > 0) {
     const { error } = await supabase.from('match_note_ratings').insert(
-      ratings.map((r) => ({ ...r, match_note_id: matchNoteId }))
+      ratings.map((r) => ({
+        ...r,
+        match_note_id: matchNoteId,
+        effort_rating: r.effort_rating ?? null,
+      }))
     )
     if (error) throw error
   }
@@ -165,13 +194,7 @@ export async function saveFullMatchNote(
     lineups: Omit<MatchNoteLineup, 'id' | 'match_note_id'>[]
     events: Omit<MatchNoteEvent, 'id' | 'match_note_id'>[]
     ratings: Omit<MatchNoteRating, 'id' | 'match_note_id'>[]
-    summary: {
-      overall_rating: number | null
-      tactical_approach: string | null
-      key_moments: string
-      opponent_analysis: string
-      areas_to_improve: string
-    }
+    summary: WizardState['summary']
   },
   status: 'draft' | 'completed' = 'completed'
 ): Promise<string> {
@@ -189,6 +212,27 @@ export async function saveFullMatchNote(
     key_moments: state.summary.key_moments || null,
     opponent_analysis: state.summary.opponent_analysis || null,
     areas_to_improve: state.summary.areas_to_improve || null,
+    training_focus: state.summary.training_focus || null,
+    possession_estimate: state.summary.possession_estimate ?? null,
+    corners_for: state.summary.corners_for ?? null,
+    corners_against: state.summary.corners_against ?? null,
+    fouls_for: state.summary.fouls_for ?? null,
+    fouls_against: state.summary.fouls_against ?? null,
+    offsides_for: state.summary.offsides_for ?? null,
+    offsides_against: state.summary.offsides_against ?? null,
+    shots_for: state.summary.shots_for ?? null,
+    shots_against: state.summary.shots_against ?? null,
+    saves: state.summary.saves ?? null,
+    phase_attack: state.summary.phase_attack ?? null,
+    phase_defense: state.summary.phase_defense ?? null,
+    phase_transition_atk: state.summary.phase_transition_atk ?? null,
+    phase_transition_def: state.summary.phase_transition_def ?? null,
+    phase_set_pieces: state.summary.phase_set_pieces ?? null,
+    half_time_score_for: state.summary.half_time_score_for ?? null,
+    half_time_score_against: state.summary.half_time_score_against ?? null,
+    pitch_condition: state.summary.pitch_condition ?? null,
+    weather: state.summary.weather ?? null,
+    captain: state.summary.captain ?? null,
     status,
   })
 
@@ -229,4 +273,216 @@ export async function fetchTeamRoster(teamSlug: string) {
 
   if (error) throw error
   return data ?? []
+}
+
+// ─── Acta Data Fetcher (for pre-filling wizard) ────────────
+
+/** Fetch acta data from fcf_referee_matches for a specific match */
+export async function fetchActaDataForMatch(
+  homeTeam: string,
+  awayTeam: string,
+  jornada?: number | null,
+  matchDate?: string | null,
+): Promise<ActaData | null> {
+  const supabase = createClient()
+
+  // Try to find the match in fcf_referee_matches
+  let query = supabase
+    .from('fcf_referee_matches')
+    .select('*')
+
+  // Match by teams (case insensitive)
+  if (jornada) {
+    query = query
+      .ilike('home_team', `%${homeTeam}%`)
+      .ilike('away_team', `%${awayTeam}%`)
+      .eq('jornada', jornada)
+  } else if (matchDate) {
+    query = query
+      .ilike('home_team', `%${homeTeam}%`)
+      .ilike('away_team', `%${awayTeam}%`)
+      .eq('match_date', matchDate)
+  } else {
+    query = query
+      .ilike('home_team', `%${homeTeam}%`)
+      .ilike('away_team', `%${awayTeam}%`)
+  }
+
+  const { data, error } = await query.limit(1).single()
+
+  if (error || !data) return null
+
+  // Parse JSONB fields (they may be stored as goals, substitutions, lineups if table is updated)
+  const yellowCards = Array.isArray(data.yellow_cards) ? data.yellow_cards : []
+  const redCards = Array.isArray(data.red_cards) ? data.red_cards : []
+  const goals = Array.isArray(data.goals) ? data.goals : []
+  const substitutions = Array.isArray(data.substitutions) ? data.substitutions : []
+  const homeLineup = Array.isArray(data.home_lineup) ? data.home_lineup : []
+  const awayLineup = Array.isArray(data.away_lineup) ? data.away_lineup : []
+  const homeBench = Array.isArray(data.home_bench) ? data.home_bench : []
+  const awayBench = Array.isArray(data.away_bench) ? data.away_bench : []
+
+  return {
+    goals,
+    yellow_cards: yellowCards,
+    red_cards: redCards,
+    substitutions,
+    home_lineup: homeLineup,
+    away_lineup: awayLineup,
+    home_bench: homeBench,
+    away_bench: awayBench,
+  }
+}
+
+/** Convert acta data into wizard events (pre-fill) */
+export function actaToWizardEvents(
+  acta: ActaData,
+  isHome: boolean,
+): Omit<MatchNoteEvent, 'id' | 'match_note_id'>[] {
+  const events: Omit<MatchNoteEvent, 'id' | 'match_note_id'>[] = []
+  const myTeam = isHome ? 'home' : 'away'
+
+  // Goals (our team only)
+  for (const g of acta.goals) {
+    if (g.team === myTeam) {
+      events.push({
+        event_type: 'goal',
+        minute: parseInt(g.minute) || 0,
+        player_name: formatPlayerName(g.player),
+        secondary_player: null,
+        goal_type: null,
+        goal_origin: null,
+        shot_zone: null,
+        note: 'Pre-carregat des de l\'acta FCF',
+        is_opponent: false,
+      })
+    }
+  }
+
+  // Yellow cards (our team)
+  for (const c of acta.yellow_cards) {
+    if (c.team === myTeam) {
+      events.push({
+        event_type: c.is_double_yellow_dismissal ? 'red_card' : 'yellow_card',
+        minute: parseInt(c.minute) || 0,
+        player_name: formatPlayerName(c.player),
+        secondary_player: null,
+        goal_type: null,
+        goal_origin: null,
+        shot_zone: null,
+        note: c.is_double_yellow_dismissal ? 'Doble groga' : null,
+        is_opponent: false,
+      })
+    }
+  }
+
+  // Red cards (our team)
+  for (const c of acta.red_cards) {
+    if (c.team === myTeam) {
+      events.push({
+        event_type: 'red_card',
+        minute: parseInt(c.minute) || 0,
+        player_name: formatPlayerName(c.player),
+        secondary_player: null,
+        goal_type: null,
+        goal_origin: null,
+        shot_zone: null,
+        note: null,
+        is_opponent: false,
+      })
+    }
+  }
+
+  // Substitutions (our team)
+  for (const s of acta.substitutions) {
+    if (s.team === myTeam) {
+      events.push({
+        event_type: 'substitution',
+        minute: parseInt(s.minute) || 0,
+        player_name: formatPlayerName(s.player_in),
+        secondary_player: formatPlayerName(s.player_out),
+        goal_type: null,
+        goal_origin: null,
+        shot_zone: null,
+        note: null,
+        is_opponent: false,
+      })
+    }
+  }
+
+  return events.sort((a, b) => a.minute - b.minute)
+}
+
+/** Convert acta lineup to wizard lineup entries */
+export function actaToWizardLineups(
+  acta: ActaData,
+  isHome: boolean,
+  formation: string,
+): Omit<MatchNoteLineup, 'id' | 'match_note_id'>[] {
+  const positions = FORMATIONS[formation] || FORMATIONS['4-3-3']
+  const lineup = isHome ? acta.home_lineup : acta.away_lineup
+  const bench = isHome ? acta.home_bench : acta.away_bench
+
+  const lineups: Omit<MatchNoteLineup, 'id' | 'match_note_id'>[] = []
+
+  // Starters: assign to formation positions
+  const starters = lineup.filter((p) => p.is_starter)
+  for (let i = 0; i < positions.length; i++) {
+    const pos = positions[i]
+    const player = starters[i]
+    lineups.push({
+      player_name: player ? formatPlayerName(player.name) : '',
+      player_slug: null,
+      position_x: pos.x,
+      position_y: pos.y,
+      role: pos.role,
+      is_starter: true,
+      attendance: 'present',
+      sub_minute: null,
+      sub_out_minute: null,
+      sub_reason: null,
+      effort_rating: null,
+      is_captain: false,
+    })
+  }
+
+  // Bench players
+  for (const p of bench) {
+    lineups.push({
+      player_name: formatPlayerName(p.name),
+      player_slug: null,
+      position_x: null,
+      position_y: null,
+      role: null,
+      is_starter: false,
+      attendance: 'present',
+      sub_minute: null,
+      sub_out_minute: null,
+      sub_reason: null,
+      effort_rating: null,
+      is_captain: false,
+    })
+  }
+
+  return lineups
+}
+
+/** Format FCF player names from "SURNAME, NAME" to "Name Surname" */
+function formatPlayerName(raw: string): string {
+  if (!raw) return ''
+  // FCF format: "FONT FARRE, JOSEP" -> "Josep Font Farre"
+  const parts = raw.split(',').map((s) => s.trim())
+  if (parts.length === 2) {
+    const [surname, name] = parts
+    return titleCase(name) + ' ' + titleCase(surname)
+  }
+  return titleCase(raw)
+}
+
+function titleCase(s: string): string {
+  return s
+    .toLowerCase()
+    .split(' ')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ')
 }

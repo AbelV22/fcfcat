@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calendar, MapPin, Search, Plus, Home, Plane } from 'lucide-react'
+import { Calendar, MapPin, Search, Plus, Home, Plane, Zap } from 'lucide-react'
 import { fetchTeamMatches } from '@/lib/match-notes-data'
 
 interface MatchData {
@@ -10,6 +10,9 @@ interface MatchData {
   is_home: boolean
   goals_for: number | null
   goals_against: number | null
+  jornada: number | null
+  competition: string | null
+  group_name: string | null
 }
 
 interface FcfMatch {
@@ -21,6 +24,8 @@ interface FcfMatch {
   away_score: number | null
   jornada: number | null
   status: string | null
+  competition: string | null
+  group_name: string | null
 }
 
 export default function StepSelectMatch({
@@ -55,7 +60,6 @@ export default function StepSelectMatch({
   const recentMatches = matches
     .filter((m) => {
       if (!m.match_date) return false
-      // FCF dates can be DD-MM-YYYY or YYYY-MM-DD
       const d = m.match_date.includes('-') && m.match_date.length === 10
         ? (m.match_date[4] === '-' ? m.match_date : m.match_date.split('-').reverse().join('-'))
         : m.match_date
@@ -107,6 +111,9 @@ export default function StepSelectMatch({
       is_home: isHome,
       goals_for: isHome ? m.home_score : m.away_score,
       goals_against: isHome ? m.away_score : m.home_score,
+      jornada: m.jornada ?? null,
+      competition: m.competition ?? null,
+      group_name: m.group_name ?? null,
     })
   }
 
@@ -119,6 +126,9 @@ export default function StepSelectMatch({
       is_home: manualForm.isHome,
       goals_for: null,
       goals_against: null,
+      jornada: null,
+      competition: null,
+      group_name: null,
     })
   }
 
@@ -131,13 +141,17 @@ export default function StepSelectMatch({
 
   function formatDate(d: string) {
     if (!d) return ''
-    // Handle both DD-MM-YYYY and YYYY-MM-DD
     if (d[4] === '-') {
       const [y, mo, day] = d.split('-')
       return `${day}/${mo}/${y}`
     }
     const [day, mo, y] = d.split('-')
     return `${day}/${mo}/${y}`
+  }
+
+  // Check if a match has acta data available (has scores)
+  function hasActa(m: FcfMatch) {
+    return m.home_score !== null && m.away_score !== null
   }
 
   function MatchCard({ m }: { m: FcfMatch }) {
@@ -147,6 +161,7 @@ export default function StepSelectMatch({
     const hasScore = m.home_score !== null && m.away_score !== null
     const goalsFor = isHome ? m.home_score : m.away_score
     const goalsAgainst = isHome ? m.away_score : m.home_score
+    const actaAvailable = hasActa(m)
 
     return (
       <button
@@ -165,6 +180,12 @@ export default function StepSelectMatch({
               <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-400 font-semibold">VISITANT</span>
             )}
             {m.jornada && <span className="text-[10px] text-slate-600">J{m.jornada}</span>}
+            {actaAvailable && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 font-semibold flex items-center gap-0.5">
+                <Zap size={8} />
+                ACTA
+              </span>
+            )}
           </div>
           {hasScore && (
             <span className={`text-sm font-bold ${
@@ -186,8 +207,12 @@ export default function StepSelectMatch({
   return (
     <div>
       <h2 className="text-xl font-bold text-white mb-1">Selecciona el partit</h2>
-      <p className="text-sm text-slate-400 mb-6">
+      <p className="text-sm text-slate-400 mb-2">
         Tria un partit del calendari o afegeix-ne un manualment.
+      </p>
+      <p className="text-xs text-amber-400/80 mb-6 flex items-center gap-1.5">
+        <Zap size={11} />
+        Els partits amb <span className="font-bold">ACTA</span> es pre-carreguen automaticament amb gols, targetes i substitucions.
       </p>
 
       {/* Search */}
@@ -236,7 +261,7 @@ export default function StepSelectMatch({
               />
             </div>
             <div>
-              <label className="text-xs text-slate-400 mb-2 block">Condició</label>
+              <label className="text-xs text-slate-400 mb-2 block">Condicio</label>
               <div className="flex gap-2">
                 <button
                   onClick={() => setManualForm({ ...manualForm, isHome: true })}
@@ -285,7 +310,7 @@ export default function StepSelectMatch({
           {filteredUpcoming.length > 0 && (
             <div>
               <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-                <MapPin size={12} /> Pròxims
+                <MapPin size={12} /> Proxims
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {filteredUpcoming.map((m) => (

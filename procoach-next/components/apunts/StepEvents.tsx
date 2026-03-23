@@ -3,10 +3,10 @@
 import { useState } from 'react'
 import {
   Plus, X, Target, ArrowRightLeft, AlertTriangle,
-  Zap, Circle, Trash2,
+  Zap, Circle, Trash2, Flag, Shield, Hand, Eye, Crosshair,
 } from 'lucide-react'
-import type { MatchNoteEvent, MatchNoteLineup, EventType, GoalType } from '@/lib/match-notes-types'
-import { EVENT_LABELS, GOAL_TYPE_LABELS } from '@/lib/match-notes-types'
+import type { MatchNoteEvent, MatchNoteLineup, EventType, GoalType, GoalOrigin, ShotZone } from '@/lib/match-notes-types'
+import { EVENT_LABELS, GOAL_TYPE_LABELS, GOAL_ORIGIN_LABELS, EVENT_CATEGORIES } from '@/lib/match-notes-types'
 import EventTimeline from './EventTimeline'
 
 type EventEntry = Omit<MatchNoteEvent, 'id' | 'match_note_id'>
@@ -20,6 +20,15 @@ const EVENT_ICONS: Record<EventType, typeof Target> = {
   red_card: AlertTriangle,
   substitution: ArrowRightLeft,
   injury: AlertTriangle,
+  shot_on_target: Crosshair,
+  shot_off_target: Crosshair,
+  shot_woodwork: Crosshair,
+  corner: Flag,
+  foul_committed: Hand,
+  foul_suffered: Hand,
+  save: Shield,
+  offside: Eye,
+  chance_created: Zap,
 }
 
 const EVENT_COLORS: Record<EventType, string> = {
@@ -30,10 +39,33 @@ const EVENT_COLORS: Record<EventType, string> = {
   red_card: 'red',
   substitution: 'orange',
   injury: 'rose',
+  shot_on_target: 'emerald',
+  shot_off_target: 'slate',
+  shot_woodwork: 'amber',
+  corner: 'sky',
+  foul_committed: 'rose',
+  foul_suffered: 'indigo',
+  save: 'teal',
+  offside: 'violet',
+  chance_created: 'lime',
 }
 
 const GOAL_TYPES: GoalType[] = ['right_foot', 'left_foot', 'header', 'penalty', 'free_kick', 'own_goal']
-const EVENT_TYPES: EventType[] = ['goal', 'assist', 'pre_assist', 'yellow_card', 'red_card', 'substitution', 'injury']
+const GOAL_ORIGINS: GoalOrigin[] = ['open_play', 'corner', 'free_kick', 'penalty', 'throw_in', 'counter_attack']
+const SHOT_ZONES: ShotZone[] = ['inside_box', 'outside_box']
+const SHOT_ZONE_LABELS: Record<ShotZone, string> = { inside_box: 'Dins area', outside_box: 'Fora area' }
+
+// Which events need a player selector
+const NEEDS_PLAYER: EventType[] = ['goal', 'assist', 'pre_assist', 'yellow_card', 'red_card', 'substitution', 'injury', 'shot_on_target', 'shot_off_target', 'shot_woodwork', 'foul_committed', 'foul_suffered', 'save', 'chance_created']
+// Which events are quick-counter (no player needed, just tally)
+const QUICK_COUNTER: EventType[] = ['corner', 'offside']
+
+const CATEGORY_LABELS: Record<string, string> = {
+  key: 'Clau',
+  discipline: 'Disciplina',
+  shots: 'Tirs',
+  other: 'Altres',
+}
 
 export default function StepEvents({
   lineups,
@@ -46,27 +78,34 @@ export default function StepEvents({
 }) {
   const [showModal, setShowModal] = useState(false)
   const [editIndex, setEditIndex] = useState<number | null>(null)
+  const [activeCategory, setActiveCategory] = useState<string>('key')
   const [form, setForm] = useState<EventEntry>({
     event_type: 'goal',
     minute: 1,
     player_name: '',
     secondary_player: null,
     goal_type: null,
+    goal_origin: null,
+    shot_zone: null,
     note: null,
+    is_opponent: false,
   })
 
   const playerNames = lineups
     .filter((l) => l.player_name && l.attendance === 'present')
     .map((l) => l.player_name)
 
-  function openNew(minute?: number) {
+  function openNew(minute?: number, eventType?: EventType) {
     setForm({
-      event_type: 'goal',
+      event_type: eventType || 'goal',
       minute: minute ?? 1,
       player_name: playerNames[0] || '',
       secondary_player: null,
-      goal_type: null,
+      goal_type: eventType === 'goal' ? 'right_foot' : null,
+      goal_origin: eventType === 'goal' ? 'open_play' : null,
+      shot_zone: null,
       note: null,
+      is_opponent: false,
     })
     setEditIndex(null)
     setShowModal(true)
@@ -79,7 +118,7 @@ export default function StepEvents({
   }
 
   function saveEvent() {
-    if (!form.player_name) return
+    if (NEEDS_PLAYER.includes(form.event_type) && !form.player_name) return
     const updated = [...events]
     if (editIndex !== null) {
       updated[editIndex] = form
@@ -91,26 +130,81 @@ export default function StepEvents({
     setShowModal(false)
   }
 
+  function quickAdd(type: EventType, isOpponent: boolean = false) {
+    const evt: EventEntry = {
+      event_type: type,
+      minute: 0,
+      player_name: '',
+      secondary_player: null,
+      goal_type: null,
+      goal_origin: null,
+      shot_zone: null,
+      note: null,
+      is_opponent: isOpponent,
+    }
+    onChange([...events, evt])
+  }
+
   function deleteEvent(index: number) {
     onChange(events.filter((_, i) => i !== index))
   }
 
   // Auto-calculate goals
-  const goalsFor = events.filter((e) => e.event_type === 'goal' && e.goal_type !== 'own_goal').length
-  const goalsAgainst = events.filter((e) => e.event_type === 'goal' && e.goal_type === 'own_goal').length
+  const goalsFor = events.filter((e) => e.event_type === 'goal' && e.goal_type !== 'own_goal' && !e.is_opponent).length
+  const goalsAgainst = events.filter((e) => e.event_type === 'goal' && (e.goal_type === 'own_goal' || e.is_opponent)).length
+
+  // Quick stats
+  const shotsOnTarget = events.filter((e) => e.event_type === 'shot_on_target' && !e.is_opponent).length
+  const shotsOffTarget = events.filter((e) => e.event_type === 'shot_off_target' && !e.is_opponent).length
+  const cornersFor = events.filter((e) => e.event_type === 'corner' && !e.is_opponent).length
+  const cornersAgainst = events.filter((e) => e.event_type === 'corner' && e.is_opponent).length
+  const foulsCommitted = events.filter((e) => e.event_type === 'foul_committed').length
+  const savesCount = events.filter((e) => e.event_type === 'save').length
+
+  // Pre-filled events indicator
+  const prefilledCount = events.filter((e) => e.note?.includes('Pre-carregat')).length
 
   return (
     <div>
       <h2 className="text-xl font-bold text-white mb-1">Esdeveniments del partit</h2>
       <p className="text-sm text-slate-400 mb-2">
-        Toca la línia de temps o el botó + per afegir esdeveniments.
+        Afegeix els esdeveniments clau i estadistiques del partit.
       </p>
 
+      {prefilledCount > 0 && (
+        <div className="mb-4 px-3 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center gap-2">
+          <Zap size={13} className="text-amber-400 shrink-0" />
+          <span className="text-xs text-amber-300">
+            {prefilledCount} esdeveniments pre-carregats des de l&apos;acta FCF. Pots editar-los o afegir-ne mes.
+          </span>
+        </div>
+      )}
+
       {/* Score display */}
-      <div className="flex items-center justify-center gap-4 mb-5 py-3">
+      <div className="flex items-center justify-center gap-4 mb-4 py-3">
         <span className="text-3xl font-black text-green-400">{goalsFor}</span>
-        <span className="text-sm text-slate-600">—</span>
+        <span className="text-sm text-slate-600">-</span>
         <span className="text-3xl font-black text-red-400">{goalsAgainst}</span>
+      </div>
+
+      {/* Quick stats band */}
+      <div className="grid grid-cols-4 gap-2 mb-5">
+        <div className="text-center p-2 bg-white/3 rounded-lg">
+          <p className="text-xs font-bold text-white">{shotsOnTarget + shotsOffTarget}</p>
+          <p className="text-[9px] text-slate-500">Tirs</p>
+        </div>
+        <div className="text-center p-2 bg-white/3 rounded-lg">
+          <p className="text-xs font-bold text-white">{cornersFor}</p>
+          <p className="text-[9px] text-slate-500">Corners</p>
+        </div>
+        <div className="text-center p-2 bg-white/3 rounded-lg">
+          <p className="text-xs font-bold text-white">{foulsCommitted}</p>
+          <p className="text-[9px] text-slate-500">Faltes</p>
+        </div>
+        <div className="text-center p-2 bg-white/3 rounded-lg">
+          <p className="text-xs font-bold text-white">{savesCount}</p>
+          <p className="text-[9px] text-slate-500">Parades</p>
+        </div>
       </div>
 
       {/* Timeline */}
@@ -118,42 +212,119 @@ export default function StepEvents({
         <EventTimeline events={events} onSelectMinute={(m) => openNew(m)} />
       </div>
 
+      {/* Quick counter buttons (corners, offsides) */}
+      <div className="mb-4">
+        <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Comptador rapid</p>
+        <div className="grid grid-cols-2 gap-2">
+          {/* Corners */}
+          <div className="flex items-center gap-2 p-2 bg-white/3 rounded-xl border border-white/5">
+            <Flag size={12} className="text-sky-400 shrink-0" />
+            <span className="text-xs text-white flex-1">Corners</span>
+            <div className="flex items-center gap-1">
+              <button onClick={() => quickAdd('corner', false)} className="w-6 h-6 rounded bg-green-500/15 text-green-400 text-xs font-bold hover:bg-green-500/25 transition-colors">+</button>
+              <span className="text-xs text-white font-bold w-8 text-center">{cornersFor}-{cornersAgainst}</span>
+              <button onClick={() => quickAdd('corner', true)} className="w-6 h-6 rounded bg-red-500/15 text-red-400 text-xs font-bold hover:bg-red-500/25 transition-colors">+</button>
+            </div>
+          </div>
+          {/* Offsides */}
+          <div className="flex items-center gap-2 p-2 bg-white/3 rounded-xl border border-white/5">
+            <Eye size={12} className="text-violet-400 shrink-0" />
+            <span className="text-xs text-white flex-1">Fores de joc</span>
+            <div className="flex items-center gap-1">
+              <button onClick={() => quickAdd('offside', false)} className="w-6 h-6 rounded bg-green-500/15 text-green-400 text-xs font-bold hover:bg-green-500/25 transition-colors">+</button>
+              <span className="text-xs text-white font-bold w-8 text-center">
+                {events.filter((e) => e.event_type === 'offside' && !e.is_opponent).length}
+                -
+                {events.filter((e) => e.event_type === 'offside' && e.is_opponent).length}
+              </span>
+              <button onClick={() => quickAdd('offside', true)} className="w-6 h-6 rounded bg-red-500/15 text-red-400 text-xs font-bold hover:bg-red-500/25 transition-colors">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Category tabs for adding events */}
+      <div className="flex gap-1 mb-3">
+        {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+          <button
+            key={key}
+            onClick={() => setActiveCategory(key)}
+            className={`px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all ${
+              activeCategory === key
+                ? 'bg-white/10 text-white'
+                : 'text-slate-500 hover:text-slate-300'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Quick-add buttons for active category */}
+      <div className="grid grid-cols-3 gap-1.5 mb-4">
+        {(EVENT_CATEGORIES[activeCategory as keyof typeof EVENT_CATEGORIES] || []).map((type) => {
+          const Icon = EVENT_ICONS[type]
+          const color = EVENT_COLORS[type]
+          return (
+            <button
+              key={type}
+              onClick={() => QUICK_COUNTER.includes(type) ? quickAdd(type) : openNew(undefined, type)}
+              className="flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl bg-white/3 border border-white/5 hover:border-white/15 hover:bg-white/5 transition-all"
+            >
+              <Icon size={14} style={{ color: `var(--color-${color}-400, #4ade80)` }} />
+              <span className="text-[9px] text-slate-400 font-medium text-center leading-tight">
+                {EVENT_LABELS[type]}
+              </span>
+            </button>
+          )
+        })}
+      </div>
+
       {/* Events list */}
       <div className="space-y-2 mb-4">
-        {events.map((evt, i) => {
+        {events.filter(e => !QUICK_COUNTER.includes(e.event_type) || e.player_name).map((evt, i) => {
+          const realIndex = events.indexOf(evt)
           const color = EVENT_COLORS[evt.event_type]
           const Icon = EVENT_ICONS[evt.event_type]
           return (
             <div
               key={i}
-              className="flex items-center gap-3 py-2.5 px-3 bg-white/3 rounded-xl border border-white/5 group"
+              className={`flex items-center gap-3 py-2.5 px-3 rounded-xl border group ${
+                evt.note?.includes('Pre-carregat')
+                  ? 'bg-amber-500/5 border-amber-500/10'
+                  : 'bg-white/3 border-white/5'
+              }`}
             >
               <span className="text-xs font-mono text-slate-500 w-7 text-right shrink-0">
-                {evt.minute}&apos;
+                {evt.minute > 0 ? `${evt.minute}'` : ''}
               </span>
-              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-${color}-500/15`}
+              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0`}
                 style={{ backgroundColor: `color-mix(in srgb, var(--color-${color}-500, #22c55e) 15%, transparent)` }}
               >
                 <Icon size={13} style={{ color: `var(--color-${color}-400, #4ade80)` }} />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-semibold text-white truncate">
-                  {evt.player_name}
+                  {evt.player_name || EVENT_LABELS[evt.event_type]}
                   {evt.secondary_player && (
                     <span className="text-slate-500 font-normal"> → {evt.secondary_player}</span>
+                  )}
+                  {evt.is_opponent && (
+                    <span className="text-red-400 font-normal text-[10px]"> (rival)</span>
                   )}
                 </p>
                 <p className="text-[10px] text-slate-500">
                   {EVENT_LABELS[evt.event_type]}
                   {evt.goal_type && ` · ${GOAL_TYPE_LABELS[evt.goal_type]}`}
-                  {evt.note && ` · ${evt.note}`}
+                  {evt.goal_origin && ` · ${GOAL_ORIGIN_LABELS[evt.goal_origin]}`}
+                  {evt.shot_zone && ` · ${SHOT_ZONE_LABELS[evt.shot_zone]}`}
                 </p>
               </div>
               <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onClick={() => openEdit(i)} className="text-slate-500 hover:text-white p-1">
+                <button onClick={() => openEdit(realIndex)} className="text-slate-500 hover:text-white p-1">
                   <Circle size={12} />
                 </button>
-                <button onClick={() => deleteEvent(i)} className="text-slate-500 hover:text-red-400 p-1">
+                <button onClick={() => deleteEvent(realIndex)} className="text-slate-500 hover:text-red-400 p-1">
                   <Trash2 size={12} />
                 </button>
               </div>
@@ -186,21 +357,27 @@ export default function StepEvents({
             </div>
 
             <div className="p-4 space-y-4">
-              {/* Event type grid */}
+              {/* Event type grid - all types */}
               <div>
                 <label className="text-xs text-slate-400 mb-2 block">Tipus</label>
                 <div className="grid grid-cols-4 gap-1.5">
-                  {EVENT_TYPES.map((type) => {
+                  {Object.values(EVENT_CATEGORIES).flat().filter(t => !QUICK_COUNTER.includes(t)).map((type) => {
                     const Icon = EVENT_ICONS[type]
                     const color = EVENT_COLORS[type]
                     const active = form.event_type === type
                     return (
                       <button
                         key={type}
-                        onClick={() => setForm({ ...form, event_type: type, goal_type: type === 'goal' ? 'right_foot' : null })}
+                        onClick={() => setForm({
+                          ...form,
+                          event_type: type,
+                          goal_type: type === 'goal' ? 'right_foot' : null,
+                          goal_origin: type === 'goal' ? 'open_play' : null,
+                          shot_zone: ['shot_on_target', 'shot_off_target', 'shot_woodwork'].includes(type) ? 'inside_box' : null,
+                        })}
                         className={`flex flex-col items-center gap-1 py-2 px-1 rounded-lg text-[10px] font-medium transition-all ${
                           active
-                            ? `bg-${color}-500/15 border border-${color}-500/30`
+                            ? `border`
                             : 'bg-white/3 border border-transparent hover:bg-white/5'
                         }`}
                         style={active ? {
@@ -242,36 +419,80 @@ export default function StepEvents({
               </div>
 
               {/* Player */}
-              <div>
-                <label className="text-xs text-slate-400 mb-1 block">Jugador</label>
-                <select
-                  value={form.player_name}
-                  onChange={(e) => setForm({ ...form, player_name: e.target.value })}
-                  className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-green-500/50"
-                >
-                  <option value="">Selecciona...</option>
-                  {playerNames.map((n) => (
-                    <option key={n} value={n}>{n}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Goal type (if goal) */}
-              {form.event_type === 'goal' && (
+              {NEEDS_PLAYER.includes(form.event_type) && (
                 <div>
-                  <label className="text-xs text-slate-400 mb-2 block">Tipus de gol</label>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {GOAL_TYPES.map((gt) => (
+                  <label className="text-xs text-slate-400 mb-1 block">Jugador</label>
+                  <select
+                    value={form.player_name}
+                    onChange={(e) => setForm({ ...form, player_name: e.target.value })}
+                    className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-green-500/50"
+                  >
+                    <option value="">Selecciona...</option>
+                    {playerNames.map((n) => (
+                      <option key={n} value={n}>{n}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Goal type */}
+              {form.event_type === 'goal' && (
+                <>
+                  <div>
+                    <label className="text-xs text-slate-400 mb-2 block">Tipus de gol</label>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {GOAL_TYPES.map((gt) => (
+                        <button
+                          key={gt}
+                          onClick={() => setForm({ ...form, goal_type: gt })}
+                          className={`py-2 rounded-lg text-[10px] font-medium transition-all ${
+                            form.goal_type === gt
+                              ? 'bg-green-500/15 text-green-400 border border-green-500/30'
+                              : 'bg-white/3 text-slate-500 border border-transparent hover:bg-white/5'
+                          }`}
+                        >
+                          {GOAL_TYPE_LABELS[gt]}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs text-slate-400 mb-2 block">Origen del gol</label>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {GOAL_ORIGINS.map((go) => (
+                        <button
+                          key={go}
+                          onClick={() => setForm({ ...form, goal_origin: go })}
+                          className={`py-2 rounded-lg text-[10px] font-medium transition-all ${
+                            form.goal_origin === go
+                              ? 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/30'
+                              : 'bg-white/3 text-slate-500 border border-transparent hover:bg-white/5'
+                          }`}
+                        >
+                          {GOAL_ORIGIN_LABELS[go]}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Shot zone (for shot events) */}
+              {['shot_on_target', 'shot_off_target', 'shot_woodwork'].includes(form.event_type) && (
+                <div>
+                  <label className="text-xs text-slate-400 mb-2 block">Zona del tir</label>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {SHOT_ZONES.map((sz) => (
                       <button
-                        key={gt}
-                        onClick={() => setForm({ ...form, goal_type: gt })}
+                        key={sz}
+                        onClick={() => setForm({ ...form, shot_zone: sz })}
                         className={`py-2 rounded-lg text-[10px] font-medium transition-all ${
-                          form.goal_type === gt
-                            ? 'bg-green-500/15 text-green-400 border border-green-500/30'
+                          form.shot_zone === sz
+                            ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
                             : 'bg-white/3 text-slate-500 border border-transparent hover:bg-white/5'
                         }`}
                       >
-                        {GOAL_TYPE_LABELS[gt]}
+                        {SHOT_ZONE_LABELS[sz]}
                       </button>
                     ))}
                   </div>
@@ -282,7 +503,7 @@ export default function StepEvents({
               {(form.event_type === 'substitution' || form.event_type === 'assist' || form.event_type === 'pre_assist') && (
                 <div>
                   <label className="text-xs text-slate-400 mb-1 block">
-                    {form.event_type === 'substitution' ? 'Jugador substituït' : 'Golejador'}
+                    {form.event_type === 'substitution' ? 'Jugador substituit' : 'Golejador'}
                   </label>
                   <select
                     value={form.secondary_player || ''}
@@ -297,12 +518,27 @@ export default function StepEvents({
                 </div>
               )}
 
+              {/* Opponent toggle */}
+              <div className="flex items-center gap-3">
+                <label className="text-xs text-slate-400">Esdeveniment del rival?</label>
+                <button
+                  onClick={() => setForm({ ...form, is_opponent: !form.is_opponent })}
+                  className={`w-10 h-5 rounded-full transition-all ${
+                    form.is_opponent ? 'bg-red-500' : 'bg-white/10'
+                  }`}
+                >
+                  <div className={`w-4 h-4 rounded-full bg-white transition-transform ${
+                    form.is_opponent ? 'translate-x-5.5' : 'translate-x-0.5'
+                  }`} style={{ transform: form.is_opponent ? 'translateX(22px)' : 'translateX(2px)' }} />
+                </button>
+              </div>
+
               {/* Note */}
               <div>
                 <label className="text-xs text-slate-400 mb-1 block">Nota (opcional)</label>
                 <input
                   type="text"
-                  placeholder="Detalls de l'acció..."
+                  placeholder="Detalls de l'accio..."
                   value={form.note || ''}
                   onChange={(e) => setForm({ ...form, note: e.target.value || null })}
                   className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:border-green-500/50"
@@ -320,7 +556,7 @@ export default function StepEvents({
               </button>
               <button
                 onClick={saveEvent}
-                disabled={!form.player_name}
+                disabled={NEEDS_PLAYER.includes(form.event_type) && !form.player_name}
                 className="flex-1 py-2.5 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 disabled:opacity-30 text-white text-sm font-semibold rounded-xl transition-all"
               >
                 {editIndex !== null ? 'Actualitzar' : 'Afegir'}

@@ -52,6 +52,9 @@ export default function StepLineup({
             attendance: 'present' as AttendanceStatus,
             sub_minute: null,
             sub_out_minute: null,
+            sub_reason: null,
+            effort_rating: null,
+            is_captain: false,
           }))
           onLineupsChange(initial)
         }
@@ -74,6 +77,9 @@ export default function StepLineup({
       attendance: starters[i]?.attendance || 'present',
       sub_minute: null,
       sub_out_minute: null,
+      sub_reason: null,
+      effort_rating: null,
+      is_captain: starters[i]?.is_captain || false,
     }))
     const bench = lineups.filter((l) => !l.is_starter)
     onLineupsChange([...newStarters, ...bench])
@@ -132,6 +138,9 @@ export default function StepLineup({
         attendance: 'present',
         sub_minute: null,
         sub_out_minute: null,
+        sub_reason: null,
+        effort_rating: null,
+        is_captain: false,
       },
     ])
   }

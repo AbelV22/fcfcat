@@ -12,6 +12,16 @@ export type EventType =
   | 'red_card'
   | 'substitution'
   | 'injury'
+  // New Tier 2 events
+  | 'shot_on_target'
+  | 'shot_off_target'
+  | 'shot_woodwork'
+  | 'corner'
+  | 'foul_committed'
+  | 'foul_suffered'
+  | 'save'
+  | 'offside'
+  | 'chance_created'
 
 export type GoalType =
   | 'right_foot'
@@ -21,10 +31,22 @@ export type GoalType =
   | 'free_kick'
   | 'own_goal'
 
+export type GoalOrigin =
+  | 'open_play'
+  | 'corner'
+  | 'free_kick'
+  | 'penalty'
+  | 'throw_in'
+  | 'counter_attack'
+
+export type ShotZone = 'inside_box' | 'outside_box'
+
 export type PlayerRole =
   | 'GK' | 'CB' | 'LB' | 'RB'
   | 'CDM' | 'CM' | 'CAM'
   | 'LW' | 'RW' | 'ST'
+
+export type SubReason = 'tactical' | 'injury' | 'fatigue' | 'disciplinary'
 
 export interface MatchNote {
   id: string
@@ -41,6 +63,28 @@ export interface MatchNote {
   opponent_analysis: string | null
   areas_to_improve: string | null
   status: MatchNoteStatus
+  // New fields
+  possession_estimate: number | null // 0-100
+  corners_for: number | null
+  corners_against: number | null
+  fouls_for: number | null
+  fouls_against: number | null
+  offsides_for: number | null
+  offsides_against: number | null
+  shots_for: number | null
+  shots_against: number | null
+  saves: number | null
+  phase_attack: number | null   // 1-5
+  phase_defense: number | null  // 1-5
+  phase_transition_atk: number | null // 1-5
+  phase_transition_def: number | null // 1-5
+  phase_set_pieces: number | null // 1-5
+  training_focus: string | null // derived action items for next week
+  half_time_score_for: number | null
+  half_time_score_against: number | null
+  pitch_condition: string | null // 'good' | 'average' | 'poor'
+  weather: string | null // 'sunny' | 'cloudy' | 'rain' | 'wind' | 'cold'
+  captain: string | null
   created_at: string
   updated_at: string
 }
@@ -57,6 +101,9 @@ export interface MatchNoteLineup {
   attendance: AttendanceStatus
   sub_minute: number | null
   sub_out_minute: number | null
+  sub_reason: SubReason | null
+  effort_rating: number | null // 1-5
+  is_captain: boolean
 }
 
 export interface MatchNoteEvent {
@@ -67,7 +114,10 @@ export interface MatchNoteEvent {
   player_name: string
   secondary_player: string | null
   goal_type: GoalType | null
+  goal_origin: GoalOrigin | null
+  shot_zone: ShotZone | null
   note: string | null
+  is_opponent: boolean // true = event by opponent (e.g. corner against us)
 }
 
 export interface MatchNoteRating {
@@ -76,6 +126,7 @@ export interface MatchNoteRating {
   player_name: string
   player_slug: string | null
   rating: number
+  effort_rating: number | null // 1-5 (effort/attitude)
   tags: string[]
   note: string | null
 }
@@ -97,6 +148,9 @@ export interface WizardState {
     is_home: boolean
     goals_for: number | null
     goals_against: number | null
+    jornada: number | null
+    competition: string | null
+    group_name: string | null
   } | null
   formation: string | null
   lineups: Omit<MatchNoteLineup, 'id' | 'match_note_id'>[]
@@ -108,7 +162,42 @@ export interface WizardState {
     key_moments: string
     opponent_analysis: string
     areas_to_improve: string
+    training_focus: string
+    possession_estimate: number | null
+    corners_for: number | null
+    corners_against: number | null
+    fouls_for: number | null
+    fouls_against: number | null
+    offsides_for: number | null
+    offsides_against: number | null
+    shots_for: number | null
+    shots_against: number | null
+    saves: number | null
+    half_time_score_for: number | null
+    half_time_score_against: number | null
+    phase_attack: number | null
+    phase_defense: number | null
+    phase_transition_atk: number | null
+    phase_transition_def: number | null
+    phase_set_pieces: number | null
+    pitch_condition: string | null
+    weather: string | null
+    captain: string | null
   }
+  // Pre-filled acta data (from Supabase)
+  actaPrefilled: boolean
+}
+
+// Acta data from fcf_referee_matches for pre-filling
+export interface ActaData {
+  goals: { player: string; minute: string; team: 'home' | 'away' }[]
+  yellow_cards: { player: string; minute: string; team: 'home' | 'away'; is_double_yellow_dismissal?: boolean }[]
+  red_cards: { player: string; minute: string; team: 'home' | 'away' }[]
+  substitutions: { player_out: string; player_in: string; minute: string; team: 'home' | 'away' }[]
+  home_lineup: { name: string; number: number; is_starter: boolean }[]
+  away_lineup: { name: string; number: number; is_starter: boolean }[]
+  home_bench: { name: string; number: number; is_starter: boolean }[]
+  away_bench: { name: string; number: number; is_starter: boolean }[]
 }
 
 // Formation presets
@@ -216,25 +305,38 @@ export const FORMATIONS: Record<string, FormationPosition[]> = {
 // Player tags for quick assessment
 export const PLAYER_TAGS = [
   { key: 'mvp', label: 'MVP', color: 'amber' },
-  { key: 'solid_defense', label: 'Defensiu sòlid', color: 'blue' },
-  { key: 'excessive_losses', label: 'Pèrdues excessives', color: 'red' },
+  { key: 'solid_defense', label: 'Defensiu solid', color: 'blue' },
+  { key: 'excessive_losses', label: 'Perdues excessives', color: 'red' },
   { key: 'scorer', label: 'Golejador', color: 'green' },
-  { key: 'key_assists', label: 'Assistències clau', color: 'cyan' },
+  { key: 'key_assists', label: 'Assistencies clau', color: 'cyan' },
   { key: 'leadership', label: 'Lideratge', color: 'purple' },
-  { key: 'technical_improvement', label: 'Millora tècnica', color: 'orange' },
+  { key: 'technical_improvement', label: 'Millora tecnica', color: 'orange' },
   { key: 'great_attitude', label: 'Gran actitud', color: 'emerald' },
   { key: 'lack_intensity', label: 'Falta d\'intensitat', color: 'slate' },
   { key: 'serious_error', label: 'Error greu', color: 'rose' },
+  { key: 'good_in_duels', label: 'Bo en duels', color: 'indigo' },
+  { key: 'creative', label: 'Creatiu', color: 'violet' },
+  { key: 'fast', label: 'Rapid', color: 'lime' },
+  { key: 'aerial_dominant', label: 'Dominant aeri', color: 'sky' },
 ] as const
 
 export const EVENT_LABELS: Record<EventType, string> = {
   goal: 'Gol',
-  assist: 'Assistència',
-  pre_assist: 'Pre-assistència',
+  assist: 'Assistencia',
+  pre_assist: 'Pre-assistencia',
   yellow_card: 'Targeta groga',
   red_card: 'Targeta vermella',
-  substitution: 'Substitució',
-  injury: 'Lesió',
+  substitution: 'Substitucio',
+  injury: 'Lesio',
+  shot_on_target: 'Tir a porta',
+  shot_off_target: 'Tir fora',
+  shot_woodwork: 'Tir al pal',
+  corner: 'Corner',
+  foul_committed: 'Falta comesa',
+  foul_suffered: 'Falta rebuda',
+  save: 'Parada',
+  offside: 'Fora de joc',
+  chance_created: 'Ocasio creada',
 }
 
 export const GOAL_TYPE_LABELS: Record<GoalType, string> = {
@@ -243,12 +345,51 @@ export const GOAL_TYPE_LABELS: Record<GoalType, string> = {
   header: 'Cap',
   penalty: 'Penal',
   free_kick: 'Falta directa',
-  own_goal: 'Pròpia porta',
+  own_goal: 'Propia porta',
+}
+
+export const GOAL_ORIGIN_LABELS: Record<GoalOrigin, string> = {
+  open_play: 'Joc obert',
+  corner: 'Corner',
+  free_kick: 'Falta',
+  penalty: 'Penal',
+  throw_in: 'Banda',
+  counter_attack: 'Contraatac',
 }
 
 export const TACTICAL_LABELS: Record<TacticalApproach, string> = {
-  possession: 'Possessió',
+  possession: 'Possessio',
   counter: 'Contraatac',
   'high-press': 'Pressing alt',
   'low-block': 'Bloc baix',
+}
+
+export const PHASE_LABELS: Record<string, string> = {
+  phase_attack: 'Atac',
+  phase_defense: 'Defensa',
+  phase_transition_atk: 'Transicio ofensiva',
+  phase_transition_def: 'Transicio defensiva',
+  phase_set_pieces: 'Pilota aturada',
+}
+
+export const WEATHER_OPTIONS = [
+  { value: 'sunny', label: 'Sol', emoji: '☀️' },
+  { value: 'cloudy', label: 'Nuvol', emoji: '☁️' },
+  { value: 'rain', label: 'Pluja', emoji: '🌧️' },
+  { value: 'wind', label: 'Vent', emoji: '💨' },
+  { value: 'cold', label: 'Fred', emoji: '🥶' },
+] as const
+
+export const PITCH_CONDITION_OPTIONS = [
+  { value: 'good', label: 'Bo', emoji: '✅' },
+  { value: 'average', label: 'Regular', emoji: '⚠️' },
+  { value: 'poor', label: 'Dolent', emoji: '❌' },
+] as const
+
+// Event categories for quick-add buttons (grouped)
+export const EVENT_CATEGORIES = {
+  key: ['goal', 'assist', 'pre_assist'] as EventType[],
+  discipline: ['yellow_card', 'red_card', 'foul_committed', 'foul_suffered'] as EventType[],
+  shots: ['shot_on_target', 'shot_off_target', 'shot_woodwork'] as EventType[],
+  other: ['corner', 'save', 'offside', 'chance_created', 'substitution', 'injury'] as EventType[],
 }

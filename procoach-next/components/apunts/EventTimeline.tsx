@@ -12,6 +12,15 @@ const EVENT_COLORS: Record<EventType, string> = {
   red_card: '#ef4444',
   substitution: '#f97316',
   injury: '#a855f7',
+  shot_on_target: '#10b981',
+  shot_off_target: '#64748b',
+  shot_woodwork: '#f59e0b',
+  corner: '#0ea5e9',
+  foul_committed: '#f43f5e',
+  foul_suffered: '#6366f1',
+  save: '#14b8a6',
+  offside: '#8b5cf6',
+  chance_created: '#84cc16',
 }
 
 export default function EventTimeline({

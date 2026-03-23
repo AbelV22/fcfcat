@@ -39,6 +39,9 @@ function NouApuntInner() {
         is_home: home === '1',
         goals_for: gf !== null ? parseInt(gf) : null,
         goals_against: ga !== null ? parseInt(ga) : null,
+        jornada: searchParams.get('jornada') ? parseInt(searchParams.get('jornada')!) : null,
+        competition: searchParams.get('comp') || null,
+        group_name: searchParams.get('group') || null,
       },
     }
   }, [searchParams])

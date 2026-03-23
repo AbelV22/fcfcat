@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, ArrowRight, Trophy, Save, Check } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Trophy, Save, Check, Zap } from 'lucide-react'
 import type { WizardState } from '@/lib/match-notes-types'
-import { saveFullMatchNote } from '@/lib/match-notes-data'
+import { saveFullMatchNote, fetchActaDataForMatch, actaToWizardEvents, actaToWizardLineups } from '@/lib/match-notes-data'
 import StepSelectMatch from './StepSelectMatch'
 import StepLineup from './StepLineup'
 import StepEvents from './StepEvents'
@@ -15,7 +15,7 @@ const STORAGE_KEY = 'neoscout_match_note_draft'
 
 const STEPS = [
   { label: 'Partit', short: 'Partit' },
-  { label: 'Alineació', short: 'Lineup' },
+  { label: 'Alineacio', short: 'Lineup' },
   { label: 'Esdeveniments', short: 'Events' },
   { label: 'Valoracions', short: 'Ratings' },
   { label: 'Resum', short: 'Resum' },
@@ -36,7 +36,29 @@ function getInitialState(): WizardState {
       key_moments: '',
       opponent_analysis: '',
       areas_to_improve: '',
+      training_focus: '',
+      possession_estimate: null,
+      corners_for: null,
+      corners_against: null,
+      fouls_for: null,
+      fouls_against: null,
+      offsides_for: null,
+      offsides_against: null,
+      shots_for: null,
+      shots_against: null,
+      saves: null,
+      half_time_score_for: null,
+      half_time_score_against: null,
+      phase_attack: null,
+      phase_defense: null,
+      phase_transition_atk: null,
+      phase_transition_def: null,
+      phase_set_pieces: null,
+      pitch_condition: null,
+      weather: null,
+      captain: null,
     },
+    actaPrefilled: false,
   }
 }
 
@@ -55,13 +77,13 @@ export default function WizardShell({
   const [state, setState] = useState<WizardState>(getInitialState)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [loadingActa, setLoadingActa] = useState(false)
 
   // Load prefill or draft from localStorage on mount
   const prefillOpponent = prefill?.matchData?.opponent || null
   useEffect(() => {
-    if (editNoteId) return // Skip draft restoration when editing
+    if (editNoteId) return
 
-    // If pre-filled from calendar, use that and skip draft
     if (prefill?.matchData) {
       setState((prev) => ({ ...prev, ...prefill }))
       return
@@ -93,6 +115,41 @@ export default function WizardShell({
     setState((prev) => ({ ...prev, ...partial }))
   }, [])
 
+  // Auto-load acta data when match is selected
+  const tryLoadActa = useCallback(async (matchData: WizardState['matchData']) => {
+    if (!matchData || !matchData.goals_for === undefined) return
+
+    setLoadingActa(true)
+    try {
+      const isHome = matchData.is_home
+      const homeTeam = isHome ? clubName : matchData.opponent
+      const awayTeam = isHome ? matchData.opponent : clubName
+
+      const acta = await fetchActaDataForMatch(
+        homeTeam,
+        awayTeam,
+        matchData.jornada,
+        matchData.match_date,
+      )
+
+      if (acta) {
+        const events = actaToWizardEvents(acta, isHome)
+        const hasLineups = (isHome ? acta.home_lineup : acta.away_lineup).length > 0
+
+        setState((prev) => ({
+          ...prev,
+          events: events.length > 0 ? events : prev.events,
+          lineups: hasLineups ? actaToWizardLineups(acta, isHome, prev.formation || '4-3-3') : prev.lineups,
+          actaPrefilled: events.length > 0 || hasLineups,
+        }))
+      }
+    } catch (err) {
+      console.warn('Could not load acta data:', err)
+    } finally {
+      setLoadingActa(false)
+    }
+  }, [clubName])
+
   const canAdvance = () => {
     if (state.step === 0) return !!state.matchData
     return true
@@ -100,6 +157,10 @@ export default function WizardShell({
 
   const goNext = () => {
     if (state.step < STEPS.length - 1 && canAdvance()) {
+      // When advancing from step 0 (match selection), try to load acta
+      if (state.step === 0 && state.matchData && !state.actaPrefilled) {
+        tryLoadActa(state.matchData)
+      }
       updateState({ step: state.step + 1 })
     }
   }
@@ -115,8 +176,8 @@ export default function WizardShell({
     setSaving(true)
     try {
       // Auto-calculate goals from events
-      const goalsFor = state.events.filter((e) => e.event_type === 'goal' && e.goal_type !== 'own_goal').length
-      const goalsAgainst = state.events.filter((e) => e.event_type === 'goal' && e.goal_type === 'own_goal').length
+      const goalsFor = state.events.filter((e) => e.event_type === 'goal' && e.goal_type !== 'own_goal' && !e.is_opponent).length
+      const goalsAgainst = state.events.filter((e) => e.event_type === 'goal' && (e.goal_type === 'own_goal' || e.is_opponent)).length
       const matchData = {
         ...state.matchData,
         goals_for: state.matchData.goals_for ?? goalsFor,
@@ -160,6 +221,12 @@ export default function WizardShell({
           <div className="flex items-center gap-2">
             <Trophy size={14} className="text-green-400" />
             <span className="text-sm font-semibold text-white">Nous apunts</span>
+            {loadingActa && (
+              <div className="flex items-center gap-1 text-amber-400">
+                <Zap size={12} className="animate-pulse" />
+                <span className="text-[10px]">Carregant acta...</span>
+              </div>
+            )}
           </div>
           <button
             onClick={() => handleSave('draft')}
@@ -277,7 +344,7 @@ export default function WizardShell({
                   disabled={!canAdvance()}
                   className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 disabled:opacity-30 rounded-xl transition-all"
                 >
-                  Següent
+                  Seguent
                   <ArrowRight size={16} />
                 </button>
               ) : (

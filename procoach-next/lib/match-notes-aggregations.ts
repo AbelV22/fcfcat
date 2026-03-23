@@ -7,6 +7,7 @@ export interface PlayerAgg {
   name: string
   matchesRated: number
   avgRating: number
+  avgEffort: number
   attended: number
   totalNotes: number
   goals: number
@@ -14,7 +15,15 @@ export interface PlayerAgg {
   preAssists: number
   yellows: number
   reds: number
+  shotsOnTarget: number
+  shotsOffTarget: number
+  shotsWoodwork: number
+  chancesCreated: number
+  foulsCommitted: number
+  foulsSuffered: number
+  saves: number
   goalTypes: Record<string, number>
+  goalOrigins: Record<string, number>
   ratingHistory: { date: string; rating: number; opponent: string }[]
   tags: Record<string, number>
 }
@@ -54,6 +63,7 @@ export async function fetchPlayerAggregations(userId: string): Promise<PlayerAgg
         name,
         matchesRated: 0,
         avgRating: 0,
+        avgEffort: 0,
         attended: 0,
         totalNotes: allNotes.length,
         goals: 0,
@@ -61,7 +71,15 @@ export async function fetchPlayerAggregations(userId: string): Promise<PlayerAgg
         preAssists: 0,
         yellows: 0,
         reds: 0,
+        shotsOnTarget: 0,
+        shotsOffTarget: 0,
+        shotsWoodwork: 0,
+        chancesCreated: 0,
+        foulsCommitted: 0,
+        foulsSuffered: 0,
+        saves: 0,
         goalTypes: {},
+        goalOrigins: {},
         ratingHistory: [],
         tags: {},
       })
@@ -74,6 +92,7 @@ export async function fetchPlayerAggregations(userId: string): Promise<PlayerAgg
     const p = getPlayer(r.player_name)
     p.matchesRated++
     p.avgRating += r.rating
+    if (r.effort_rating) p.avgEffort += r.effort_rating
     p.ratingHistory.push({
       date: noteMap[r.match_note_id]?.match_date || '',
       rating: r.rating,
@@ -93,11 +112,19 @@ export async function fetchPlayerAggregations(userId: string): Promise<PlayerAgg
       case 'goal':
         p.goals++
         if (e.goal_type) p.goalTypes[e.goal_type] = (p.goalTypes[e.goal_type] || 0) + 1
+        if (e.goal_origin) p.goalOrigins[e.goal_origin] = (p.goalOrigins[e.goal_origin] || 0) + 1
         break
       case 'assist': p.assists++; break
       case 'pre_assist': p.preAssists++; break
       case 'yellow_card': p.yellows++; break
       case 'red_card': p.reds++; break
+      case 'shot_on_target': p.shotsOnTarget++; break
+      case 'shot_off_target': p.shotsOffTarget++; break
+      case 'shot_woodwork': p.shotsWoodwork++; break
+      case 'chance_created': p.chancesCreated++; break
+      case 'foul_committed': p.foulsCommitted++; break
+      case 'foul_suffered': p.foulsSuffered++; break
+      case 'save': p.saves++; break
     }
   }
 
@@ -113,6 +140,7 @@ export async function fetchPlayerAggregations(userId: string): Promise<PlayerAgg
   for (const p of players.values()) {
     if (p.matchesRated > 0) {
       p.avgRating = Math.round((p.avgRating / p.matchesRated) * 10) / 10
+      p.avgEffort = Math.round((p.avgEffort / p.matchesRated) * 10) / 10
     }
     p.ratingHistory.sort((a, b) => a.date.localeCompare(b.date))
   }
