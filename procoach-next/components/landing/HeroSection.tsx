@@ -106,21 +106,21 @@ export default function HeroSection() {
 
             {/* Headline */}
             <h1 className="font-headline text-[2rem] xs:text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight mb-5 sm:mb-6 leading-[1.08] animate-fade-up delay-100">
-              <span className="text-white">Prepara cada</span>
+              <span className="text-white">Resultats i estadístiques</span>
               <br />
               <span className="gradient-text-hero">
-                partit amb dades
+                del futbol català
               </span>
             </h1>
 
             {/* Subheadline */}
             <p className="text-sm sm:text-base lg:text-lg text-slate-400 mb-3 leading-relaxed max-w-[90vw] sm:max-w-lg animate-fade-up delay-200">
-              Analitza rivals, controla la teva plantilla i pren notes dels teus partits
-              amb dades de les actes oficials de la FCF.
+              Classificació, resultats, estadístiques de jugadors i àrbitres de totes les categories FCF:
+              Segona Catalana, Tercera Catalana, Preferent Juvenil i més.
             </p>
 
             <p className="text-xs sm:text-sm text-slate-500 mb-8 sm:mb-10 animate-fade-up delay-200">
-              Gratis per a tots els entrenadors del futbol català.
+              Dades oficials de la Federació Catalana de Futbol, actualitzades setmanalment.
             </p>
 
             {/* Search */}

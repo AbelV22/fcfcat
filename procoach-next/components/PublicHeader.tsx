@@ -47,7 +47,7 @@ export default function PublicHeader() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0" onClick={closeMenu}>
-            <Image src="/logo_neoscout.png" alt="" width={32} height={32} className="w-8 h-8 rounded-lg object-cover" priority />
+            <Image src="/logo_neoscout.png" alt="NeoScout — Estadístiques Futbol Català" width={32} height={32} className="w-8 h-8 rounded-lg object-cover" priority />
             <span className="font-display font-bold text-lg tracking-tight">
               <span className="text-white">Neo</span>
               <span className="text-emerald-400">Scout</span>

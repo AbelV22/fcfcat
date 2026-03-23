@@ -8,8 +8,10 @@ import { getAllRefereesDB, getAllTeamsDB, getAllPlayersDB } from '@/lib/supabase
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Cerca — Equips, Jugadors i Àrbitres',
-  description: 'Busca qualsevol equip, jugador o àrbitre del futbol català.',
+  title: 'Cerca Equips, Jugadors i Àrbitres — Futbol Català',
+  description: 'Busca qualsevol equip, jugador o àrbitre de totes les categories del futbol català. Segona Catalana, Tercera Catalana, Preferent Juvenil i més. Dades oficials FCF.',
+  keywords: ['cerca futbol català', 'equips futbol català', 'jugadors FCF', 'àrbitres FCF', 'buscar equip', 'buscar jugador'],
+  alternates: { canonical: 'https://neoscout.es/cerca' },
 }
 
 export default async function CercaPage() {

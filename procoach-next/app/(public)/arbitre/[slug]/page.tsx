@@ -14,10 +14,15 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const ref = await getRefereeBySlugDB(slug)
-  if (!ref) return { title: 'Àrbitre no trobat' }
+  if (!ref) return { title: 'Àrbitre no trobat — NeoScout' }
+  const title = `${ref.name} — Àrbitre FCF | Estadístiques i Historial`
+  const description = `Perfil de l'àrbitre ${ref.name}: ${ref.matches} partits arbitrats, ${ref.yellows_per_match} targetes grogues i ${ref.reds_per_match} vermelles per partit. Historial complet de partits al futbol català.`
   return {
-    title: `${ref.name} — Àrbitre FCF`,
-    description: `Estadístiques de ${ref.name}: ${ref.matches} partits arbitrats, ${ref.yellows_per_match} targetes grogues de mitjana i ${ref.reds_per_match} vermelles per partit.`,
+    title,
+    description,
+    keywords: [ref.name, 'àrbitre', 'FCF', 'targetes', 'futbol català', 'estadístiques àrbitre'],
+    alternates: { canonical: `https://neoscout.es/arbitre/${slug}` },
+    openGraph: { title, description, url: `https://neoscout.es/arbitre/${slug}`, type: 'profile' },
   }
 }
 

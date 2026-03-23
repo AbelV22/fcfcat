@@ -9,8 +9,10 @@ import { COMPETITION_NAMES } from '@/lib/data'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Últims Resultats — Futbol Català',
-  description: 'Resultats recents de tots els partits de les categories de la Federació Catalana de Futbol.',
+  title: 'Resultats Futbol Català — Tots els Partits FCF Avui',
+  description: 'Resultats actualitzats de tots els partits del futbol català: Segona Catalana, Tercera Catalana, Preferent Juvenil, Primera Catalana i totes les categories FCF. Marcadors en directe.',
+  keywords: ['resultats futbol català', 'resultats FCF', 'marcadors futbol català', 'resultats segona catalana', 'resultats tercera catalana', 'partits avui futbol català'],
+  alternates: { canonical: 'https://neoscout.es/resultats' },
 }
 
 export default async function ResultatsPage() {

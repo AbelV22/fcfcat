@@ -49,12 +49,23 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const competitionHint: string | undefined = jsonData?.meta?.competition || undefined
   const report = await getFullTeamReportDB(slug, competitionHint)
   if (report) {
+    const compName = COMPETITION_NAMES[report.competition] || report.competition || ''
+    const title = `${report.name} — Resultats, Plantilla i Estadístiques${compName ? ` | ${compName}` : ''}`
+    const description = `Tot sobre ${report.name}: resultats, classificació, plantilla, propers rivals, estadístiques de gols i targetes. ${compName} temporada 2025/26. Dades oficials FCF.`
     return {
-      title: `${report.name} — Informe de l'equip | NeoScout`,
-      description: `Estadístiques, plantilla, propers rivals i anàlisi complet de ${report.name}. Futbol català temporada 2025/26.`,
+      title,
+      description,
+      keywords: [report.name, compName, 'resultats', 'classificació', 'plantilla', 'estadístiques', 'futbol català', 'FCF'].filter(Boolean),
+      alternates: { canonical: `https://neoscout.es/equip/${slug}` },
+      openGraph: {
+        title: `${report.name} — Estadístiques i Resultats`,
+        description,
+        url: `https://neoscout.es/equip/${slug}`,
+        type: 'website',
+      },
     }
   }
-  return { title: 'Equip | NeoScout' }
+  return { title: 'Equip no trobat | NeoScout' }
 }
 
 // ─── Sub-components ────────────────────────────────────────────────────────
@@ -781,8 +792,34 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
   const PRIORITY = new Set(['segona-catalana', 'tercera-catalana', 'preferent-juvenils', 'juvenil-primera-divisio', 'quarta-catalana'])
   const isPriority = PRIORITY.has(report.competition)
 
+  const teamJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SportsTeam",
+    name: report.name,
+    sport: "Football",
+    url: `https://neoscout.es/equip/${slug}`,
+    memberOf: { "@type": "SportsOrganization", name: compName },
+    member: report.players.slice(0, 25).map((p: any) => ({
+      "@type": "Person",
+      name: p.name,
+      ...(p.goals > 0 ? { description: `${p.goals} gols` } : {}),
+    })),
+  }
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "NeoScout", item: "https://neoscout.es" },
+      { "@type": "ListItem", position: 2, name: compName, item: `https://neoscout.es/competicio/${report.competition}` },
+      { "@type": "ListItem", position: 3, name: report.name, item: `https://neoscout.es/equip/${slug}` },
+    ],
+  }
+
   return (
     <div className="min-h-screen bg-[#0f172a] text-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(teamJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <PublicHeader />
 
       {!isPriority && (

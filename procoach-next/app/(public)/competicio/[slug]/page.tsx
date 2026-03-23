@@ -24,9 +24,21 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const name = COMPETITION_NAMES[slug]
   if (!name) return { title: 'Competició no trobada' }
+  const category = COMPETITION_CATEGORY[slug] || 'adult'
+  const catLabel = CATEGORY_LABEL[category] || 'Futbol Català'
+  const title = `${name} 2025/26 — Classificació, Resultats i Estadístiques`
+  const description = `Classificació actualitzada, resultats, golejadors, disciplina i àrbitres de la ${name} 2025/26. ${catLabel} — Federació Catalana de Futbol. Dades oficials FCF.`
   return {
-    title: `${name} | NeoScout — Estadístiques Futbol Català`,
-    description: `Resultats, classificació, disciplina i àrbitres de la ${name}. Dades exclusives del futbol català.`,
+    title,
+    description,
+    keywords: [name, 'classificació', 'resultats', 'golejadors', 'àrbitres', 'futbol català', 'FCF', catLabel, '2025/26'],
+    alternates: { canonical: `https://neoscout.es/competicio/${slug}` },
+    openGraph: {
+      title: `${name} — Classificació i Resultats 2025/26`,
+      description,
+      url: `https://neoscout.es/competicio/${slug}`,
+      type: 'website',
+    },
   }
 }
 
@@ -98,8 +110,31 @@ export default async function CompeticionPage({
   const totalYellows = discipline.players.reduce((s: number, p: any) => s + p.yellows, 0)
   const totalReds = discipline.players.reduce((s: number, p: any) => s + p.reds, 0)
 
+  // JSON-LD structured data for this competition
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SportsEvent",
+    name: `${name} 2025/26`,
+    description: `Classificació i resultats de la ${name}, temporada 2025/26. Futbol català — Federació Catalana de Futbol.`,
+    sport: "Football",
+    url: `https://neoscout.es/competicio/${slug}`,
+    location: { "@type": "Place", name: "Catalunya", address: { "@type": "PostalAddress", addressRegion: "Catalunya", addressCountry: "ES" } },
+    organizer: { "@type": "SportsOrganization", name: "Federació Catalana de Futbol", url: "https://www.fcf.cat" },
+  }
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "NeoScout", item: "https://neoscout.es" },
+      { "@type": "ListItem", position: 2, name: name, item: `https://neoscout.es/competicio/${slug}` },
+    ],
+  }
+
   return (
     <div className="min-h-screen bg-[#0f172a] text-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <PublicHeader />
 
       {/* Beta disclaimer for non-priority competitions */}

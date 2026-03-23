@@ -12,7 +12,7 @@ export default function PublicFooter() {
         <div className="flex items-start justify-between mb-8">
           <div>
             <Link href="/" className="flex items-center gap-2 mb-3">
-              <Image src="/logo_neoscout.png" alt="" width={28} height={28} className="w-7 h-7 rounded-lg object-cover" />
+              <Image src="/logo_neoscout.png" alt="NeoScout logo" width={28} height={28} className="w-7 h-7 rounded-lg object-cover" />
               <span className="font-display font-bold text-white">Neo<span className="text-emerald-400">Scout</span></span>
             </Link>
             <p className="text-xs text-slate-500 leading-relaxed max-w-[220px]">
@@ -36,10 +36,12 @@ export default function PublicFooter() {
             <h4 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Competicions</h4>
             <ul className="space-y-2">
               {[
-                { label: '1a Catalana', href: '/competicio/primera-catalana' },
-                { label: '2a Catalana', href: '/competicio/segona-catalana' },
-                { label: '3a Catalana', href: '/competicio/tercera-catalana' },
-                { label: 'Pref. Juvenil', href: '/competicio/preferent-juvenils' },
+                { label: 'Primera Catalana', href: '/competicio/primera-catalana' },
+                { label: 'Segona Catalana', href: '/competicio/segona-catalana' },
+                { label: 'Tercera Catalana', href: '/competicio/tercera-catalana' },
+                { label: 'Quarta Catalana', href: '/competicio/quarta-catalana' },
+                { label: 'Preferent Juvenil', href: '/competicio/preferent-juvenils' },
+                { label: 'Juvenil 1a Divisió', href: '/competicio/juvenil-primera-divisio' },
               ].map(c => (
                 <li key={c.href}>
                   <Link href={c.href} className="text-xs sm:text-sm text-slate-500 hover:text-slate-300 transition-colors">
@@ -88,7 +90,14 @@ export default function PublicFooter() {
           </div>
         </div>
 
-        <div className="pt-6 border-t border-white/8 flex flex-col sm:flex-row items-center justify-between gap-2">
+        {/* SEO text — visible, small, keyword-rich */}
+        <div className="pt-6 border-t border-white/8 mb-6">
+          <p className="text-[11px] text-slate-600 leading-relaxed max-w-3xl">
+            NeoScout és la plataforma d&apos;estadístiques i resultats del futbol català. Consulta la classificació, resultats, golejadors, àrbitres i disciplina de totes les competicions de la Federació Catalana de Futbol (FCF): Segona Catalana, Tercera Catalana, Primera Catalana, Preferent Juvenil, Juvenil Primera Divisió, Quarta Catalana, Lliga Elit i totes les categories de futbol base. Dades actualitzades setmanalment amb informació de les actes oficials de la temporada 2025/26.
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-slate-600">
             © 2025-2026 NeoScout · Dades no oficials extretes de fcf.cat
           </p>

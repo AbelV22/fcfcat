@@ -5,14 +5,24 @@ import {
 } from 'lucide-react'
 
 const COMPETITIONS = [
+  // Adult
+  { name: 'Tercera Federació', slug: 'tercera-federacio', tier: 0 },
   { name: 'Lliga Elit', slug: 'lliga-elit', tier: 0 },
   { name: 'Primera Catalana', slug: 'primera-catalana', tier: 1 },
   { name: 'Segona Catalana', slug: 'segona-catalana', tier: 2 },
   { name: 'Tercera Catalana', slug: 'tercera-catalana', tier: 3 },
   { name: 'Quarta Catalana', slug: 'quarta-catalana', tier: 4 },
+  // Juvenil
   { name: 'Div. Honor Juvenil', slug: 'divisio-honor-juvenil', tier: 5 },
+  { name: 'Lliga Nacional Juvenil', slug: 'lliga-nacional-juvenil', tier: 5 },
   { name: 'Preferent Juvenil', slug: 'preferent-juvenils', tier: 6 },
+  { name: 'Juvenil 1a Divisió', slug: 'juvenil-primera-divisio', tier: 6 },
+  // Cadet
   { name: 'Div. Honor Cadet S16', slug: 'divisio-honor-cadet-s16', tier: 7 },
+  { name: 'Preferent Cadet S16', slug: 'preferent-cadet-s16', tier: 7 },
+  // Infantil
+  { name: 'Div. Honor Infantil S14', slug: 'divisio-honor-infantil-s14', tier: 7 },
+  { name: 'Preferent Infantil S14', slug: 'preferent-infantil-s14', tier: 7 },
 ]
 
 const TIER_COLORS = [
@@ -88,10 +98,10 @@ export default function FeaturedSection() {
       <div>
         <div className="text-center mb-12 section-accent-center reveal">
           <h2 className="font-headline text-3xl sm:text-4xl font-black text-white mb-3">
-            Tot el que necessites per <span className="gradient-text-hero">preparar el partit</span>
+            Estadístiques del <span className="gradient-text-hero">futbol català</span>
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto text-sm sm:text-base">
-            Dades extretes de les actes oficials de la FCF. Gratis per a tots els entrenadors.
+            Classificació, resultats, golejadors, àrbitres i disciplina de totes les categories de la Federació Catalana de Futbol.
           </p>
         </div>
 
@@ -116,7 +126,7 @@ export default function FeaturedSection() {
       <div className="reveal">
         <div className="flex items-center gap-2 mb-4 section-accent">
           <Trophy size={16} className="text-emerald-400" />
-          <h2 className="font-headline text-lg font-bold text-white">Competicions cobertes</h2>
+          <h2 className="font-headline text-lg font-bold text-white">Competicions del futbol català — Temporada 2025/26</h2>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
           {COMPETITIONS.map((c, i) => (

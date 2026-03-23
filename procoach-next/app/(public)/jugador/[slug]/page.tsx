@@ -20,10 +20,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!player) return { title: 'Jugador no trobat — NeoScout' }
 
   const pos = POSITION_LABELS[player.position || ''] || ''
-  const desc = `${player.displayName}${pos ? ` · ${pos}` : ''} — ${player.career.appearances} partits, ${player.career.goals} gols. Perfil complet al NeoScout.`
+  const title = `${player.displayName}${pos ? ` — ${pos}` : ''} | Estadístiques Futbol Català`
+  const description = `Perfil de ${player.displayName}${pos ? ` (${pos})` : ''}: ${player.career.appearances} partits, ${player.career.goals} gols, ${player.career.yellows} targetes grogues. Estadístiques completes al futbol català.`
   return {
-    title: `${player.displayName} — NeoScout`,
-    description: desc,
+    title,
+    description,
+    keywords: [player.displayName, pos, 'jugador', 'futbol català', 'estadístiques', 'FCF'].filter(Boolean),
+    alternates: { canonical: `https://neoscout.es/jugador/${slug}` },
+    openGraph: { title, description, url: `https://neoscout.es/jugador/${slug}`, type: 'profile' },
   }
 }
 
