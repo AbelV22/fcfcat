@@ -114,21 +114,19 @@ export default function FeaturedSection() {
 
       {/* ─── Competitions ─── */}
       <div className="reveal">
-        <div className="flex items-center justify-between mb-6 section-accent">
-          <h2 className="font-headline text-xl font-bold text-white flex items-center gap-2">
-            <Trophy size={20} className="text-green-400" />
-            Competicions cobertes
-          </h2>
+        <div className="flex items-center gap-2 mb-4 section-accent">
+          <Trophy size={16} className="text-emerald-400" />
+          <h2 className="font-headline text-lg font-bold text-white">Competicions cobertes</h2>
         </div>
-        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
           {COMPETITIONS.map((c, i) => (
             <Link
               key={c.slug}
               href={`/competicio/${c.slug}`}
-              className="flex items-center gap-3 p-3.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/6 hover:border-green-500/25 transition-all group"
+              className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] hover:border-emerald-500/25 transition-all group"
             >
-              <div className={`w-1.5 h-8 rounded-full bg-gradient-to-b ${TIER_COLORS[i] || 'from-slate-500 to-slate-600'} shrink-0`} />
-              <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors truncate">{c.name}</span>
+              <div className={`w-2 h-2 rounded-full bg-gradient-to-br ${TIER_COLORS[i] || 'from-slate-500 to-slate-600'} shrink-0`} />
+              <span className="text-xs sm:text-sm font-medium text-slate-400 group-hover:text-white transition-colors truncate">{c.name}</span>
             </Link>
           ))}
         </div>
