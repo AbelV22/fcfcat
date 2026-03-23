@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const pos = POSITION_LABELS[player.position || ''] || ''
   const title = `${player.displayName}${pos ? ` — ${pos}` : ''} | Estadístiques Futbol Català`
-  const description = `Perfil de ${player.displayName}${pos ? ` (${pos})` : ''}: ${player.career.appearances} partits, ${player.career.goals} gols, ${player.career.yellows} targetes grogues. Estadístiques completes al futbol català.`
+  const description = `Perfil de ${player.displayName}${pos ? ` (${pos})` : ''}: ${player.career.appearances} partits, ${player.career.goals} gols, ${player.career.yellowCards} targetes grogues. Estadístiques completes al futbol català.`
   return {
     title,
     description,
