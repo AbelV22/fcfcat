@@ -3,7 +3,9 @@ import Image from 'next/image'
 
 export default function PublicFooter() {
   return (
-    <footer className="border-t border-white/8 bg-[#080f1e]">
+    <footer className="relative bg-[#080f1e]">
+      {/* Glow divider instead of plain border */}
+      <div className="absolute top-0 left-0 right-0 glow-divider" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
 
         {/* Brand row — always full width on mobile */}
@@ -88,7 +90,7 @@ export default function PublicFooter() {
 
         <div className="pt-6 border-t border-white/8 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-slate-600">
-            © 2025 NeoScout · Dades no oficials extretes de fcf.cat
+            © 2025-2026 NeoScout · Dades no oficials extretes de fcf.cat
           </p>
           <p className="text-xs text-slate-600">
             Fet amb ❤️ per al futbol català

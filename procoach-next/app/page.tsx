@@ -12,7 +12,7 @@ export default async function HomePage() {
   const { refereeCount, matchCount, teamCount } = await getHomePageStatsDB()
 
   return (
-    <div className="min-h-screen bg-[#0f172a]">
+    <div className="min-h-screen bg-[#0f172a] noise-bg">
       <PublicHeader />
       <main>
         <HeroSection />

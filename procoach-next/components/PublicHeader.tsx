@@ -39,7 +39,7 @@ export default function PublicHeader() {
   const closeMenu = () => setMenuOpen(false)
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0a1628]/95 backdrop-blur-xl border-b border-white/8">
+    <header className="sticky top-0 z-50 bg-[#0a1628]/95 backdrop-blur-xl border-b border-white/8 shadow-lg shadow-black/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-14 sm:h-16">
 
@@ -109,7 +109,7 @@ export default function PublicHeader() {
             </form>
             <Link
               href="/entrenador"
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 text-white text-sm font-medium rounded-xl transition-all shadow-lg shadow-green-900/30"
+              className="flex items-center gap-2 px-4 py-2 bg-white text-slate-900 text-sm font-semibold rounded-xl transition-all hover:bg-emerald-50 hover:shadow-[0_0_20px_rgba(52,211,153,0.1)]"
             >
               <LogIn size={14} />
               Per a entrenadors
@@ -215,7 +215,7 @@ export default function PublicHeader() {
           <div className="px-4 pb-5 pt-2">
             <Link
               href="/entrenador"
-              className="flex items-center justify-center gap-2 w-full py-4 bg-gradient-to-r from-green-600 to-cyan-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-green-900/30"
+              className="flex items-center justify-center gap-2 w-full py-4 bg-white text-slate-900 text-sm font-bold rounded-xl"
               onClick={closeMenu}
             >
               <LogIn size={15} />

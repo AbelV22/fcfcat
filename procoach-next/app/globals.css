@@ -98,5 +98,181 @@ a, button { touch-action: manipulation; }
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 2px;
-  background: linear-gradient(90deg, #22c55e, #06b6d4);
+  background: linear-gradient(90deg, #34d399, #67e8f9);
+}
+
+/* ═══ Premium redesign utilities ═══ */
+
+/* Scroll-triggered entrance — progressive enhancement */
+@supports (animation-timeline: view()) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    animation: reveal-up 0.6s ease both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
+  }
+  .reveal-left {
+    opacity: 0;
+    transform: translateX(-40px);
+    animation: reveal-h 0.6s ease both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
+  }
+  .reveal-right {
+    opacity: 0;
+    transform: translateX(40px);
+    animation: reveal-h 0.6s ease both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
+  }
+  @keyframes reveal-up {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes reveal-h {
+    to { opacity: 1; transform: translateX(0); }
+  }
+}
+@supports not (animation-timeline: view()) {
+  .reveal, .reveal-left, .reveal-right {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Elevated card — solid bg, green glow hover */
+.card-elevated {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.card-elevated:hover {
+  border-color: rgba(34, 197, 94, 0.25);
+  box-shadow: 0 8px 40px rgba(34, 197, 94, 0.08), 0 0 0 1px rgba(34, 197, 94, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Spotlight card — radial glow accent */
+.card-spotlight {
+  position: relative;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.card-spotlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(600px circle at 30% 0%, rgba(34,197,94,0.07), transparent 60%);
+  pointer-events: none;
+}
+.card-spotlight:hover {
+  border-color: rgba(34, 197, 94, 0.2);
+  box-shadow: 0 12px 48px rgba(34, 197, 94, 0.06);
+  transform: translateY(-2px);
+}
+
+/* Animated gradient text for hero — refined emerald palette */
+.gradient-text-hero {
+  background: linear-gradient(135deg, #6ee7b7 0%, #34d399 40%, #a5f3fc 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 8s ease-in-out infinite;
+}
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Apple-style SVG line draw animation */
+@keyframes line-draw {
+  from { stroke-dashoffset: 1000; }
+  to   { stroke-dashoffset: 0; }
+}
+@keyframes line-draw-reverse {
+  from { stroke-dashoffset: -1000; }
+  to   { stroke-dashoffset: 0; }
+}
+@keyframes line-fade {
+  0%   { opacity: 0; }
+  20%  { opacity: 0.15; }
+  80%  { opacity: 0.15; }
+  100% { opacity: 0; }
+}
+.hero-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: line-draw 3s ease-out forwards, line-fade 4s ease-in-out forwards;
+}
+.hero-line-reverse {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: -1000;
+  animation: line-draw-reverse 3.5s ease-out forwards, line-fade 4.5s ease-in-out 0.3s forwards;
+}
+.hero-line-slow {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: line-draw 5s ease-out 0.5s forwards, line-fade 6s ease-in-out 0.5s forwards;
+}
+
+/* Noise texture overlay for depth */
+.noise-bg {
+  position: relative;
+}
+.noise-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Glow divider line — refined */
+.glow-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(110,231,183,0.25), rgba(165,243,252,0.15), transparent);
+}
+
+/* Section accent line above headings */
+.section-accent::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #34d399, #67e8f9);
+  border-radius: 1px;
+  margin-bottom: 12px;
+}
+.section-accent-center::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #34d399, #67e8f9);
+  border-radius: 1px;
+  margin: 0 auto 12px;
+}
+
+/* Competition card with top accent */
+.comp-card {
+  position: relative;
+  overflow: hidden;
+}
+.comp-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+.comp-card:hover::before {
+  opacity: 1;
 }
