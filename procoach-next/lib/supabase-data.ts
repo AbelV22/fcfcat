@@ -1353,7 +1353,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     'divisio-honor-juvenil', 'lliga-nacional-juvenil', 'preferent-juvenils',
   ]
 
-  const [rivalStandingRes, rivalHomeRes, rivalAwayRes, rivalPlayersRes, refereeMatchesRes, h2hHomeRes, h2hAwayRes, allRefereesRes, fieldsRes, teamGoalsHomeRes, teamGoalsAwayRes] = await Promise.all([
+  const [rivalStandingRes, rivalHomeRes, rivalAwayRes, rivalPlayersRes, refereeMatchesRes, h2hHomeRes, h2hAwayRes, fieldsRes, allRefereesRes, teamGoalsHomeRes, teamGoalsAwayRes] = await Promise.all([
     rivalSlug
       ? supabase.from('fcf_standings').select('position, team_name, team_slug, played, won, drawn, lost, goals_for, goals_against, points, home_won, home_drawn, home_lost, away_won, away_drawn, away_lost').eq('team_slug', rivalSlug).eq('competition', competition).limit(1)
       : Promise.resolve({ data: [] as any[] }),
