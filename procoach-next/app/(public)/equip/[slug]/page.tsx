@@ -8,6 +8,7 @@ import { PitchCompare } from '@/components/PitchCompare'
 import { RivalScoutCard } from '@/components/RivalScoutCard'
 import { AdminGate, AdminBadge, AdminBlurValue, AdminUpgradeLink } from '@/components/AdminGate'
 import ScrapeProgressBanner from '@/components/ScrapeProgressBanner'
+import TeamReportActions, { type PDFReportData } from '@/components/TeamReportActions'
 import {
   Users, Trophy, Shield, ChevronRight, AlertTriangle,
   Calendar, Target, Clock, Home, Plane, BarChart2,
@@ -878,7 +879,33 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
             </div>
           )}
 
-          <div className="flex gap-2 sm:gap-3 mt-5 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
+          <div className="flex items-center gap-3 mt-5 flex-wrap">
+            <TeamReportActions
+              teamName={report.name}
+              teamSlug={slug}
+              competition={compName}
+              reportData={{
+                name: report.name,
+                competition: report.competition,
+                position: report.position,
+                played: report.played,
+                wins: report.wins,
+                draws: report.draws,
+                losses: report.losses,
+                gf: report.gf,
+                ga: report.ga,
+                points: report.points,
+                home: report.home,
+                away: report.away,
+                players: report.players.map(p => ({ name: p.name, appearances: p.appearances, goals: p.goals, yellow_cards: p.yellow_cards, red_cards: p.red_cards, minutes_played: p.minutes_played, risk: p.risk })),
+                form: report.form.map(f => ({ date: f.date, jornada: f.jornada, opponent: f.opponent, isHome: f.isHome, goalsFor: f.goalsFor, goalsAgainst: f.goalsAgainst, result: f.result, referee: f.referee })),
+                standings: report.standings.map(s => ({ position: s.position, name: s.name, slug: s.slug, played: s.played, points: s.points })),
+                nextMatch: report.nextMatch ? { opponent: report.nextMatch.opponent, date: report.nextMatch.date, jornada: report.nextMatch.jornada, isHome: report.nextMatch.isHome, time: report.nextMatch.time, referee: report.nextMatch.referee } : null,
+              } satisfies PDFReportData}
+            />
+          </div>
+
+          <div className="flex gap-2 sm:gap-3 mt-4 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
             {[
               { v: report.played, l: 'PJ', c: 'text-white' },
               { v: report.wins, l: 'Victòries', c: 'text-green-400' },
