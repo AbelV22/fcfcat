@@ -71,6 +71,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 // ─── Sub-components ────────────────────────────────────────────────────────
 
+const RESULT_LABEL: Record<string, string> = { W: 'V', D: 'E', L: 'D' }
+
 function FormDot({ result }: { result: 'W' | 'D' | 'L' | null }) {
   const cls =
     result === 'W' ? 'bg-green-500 text-white' :
@@ -78,7 +80,7 @@ function FormDot({ result }: { result: 'W' | 'D' | 'L' | null }) {
     result === 'L' ? 'bg-red-500 text-white' : 'bg-white/10 text-slate-500'
   return (
     <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${cls}`}>
-      {result ?? '?'}
+      {result ? RESULT_LABEL[result] : '?'}
     </span>
   )
 }
@@ -125,9 +127,9 @@ function SplitRecordCard({
       <div className="grid grid-cols-4 gap-2 mb-3">
         {[
           { v: record.played, l: 'PJ', c: 'text-white' },
-          { v: record.wins, l: 'G', c: 'text-green-400' },
+          { v: record.wins, l: 'V', c: 'text-green-400' },
           { v: record.draws, l: 'E', c: 'text-amber-400' },
-          { v: record.losses, l: 'P', c: 'text-red-400' },
+          { v: record.losses, l: 'D', c: 'text-red-400' },
         ].map(s => (
           <div key={s.l} className="text-center">
             <div className={`text-lg font-black ${s.c}`}>{s.v}</div>
@@ -906,6 +908,8 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
                 } : null,
                 headToHead: report.headToHead.map(h => ({ date: h.date, jornada: h.jornada, opponent: h.opponent, isHome: h.isHome, goalsFor: h.goalsFor, goalsAgainst: h.goalsAgainst, result: h.result, referee: h.referee })),
                 nextMatch: report.nextMatch ? { opponent: report.nextMatch.opponent, date: report.nextMatch.date, jornada: report.nextMatch.jornada, isHome: report.nextMatch.isHome, time: report.nextMatch.time, referee: report.nextMatch.referee } : null,
+                homePitch: report.homePitch ? { length_m: report.homePitch.length_m, width_m: report.homePitch.width_m, field_name: report.homePitch.field_name } : null,
+                rivalPitch: report.rivalPitch ? { length_m: report.rivalPitch.length_m, width_m: report.rivalPitch.width_m, field_name: report.rivalPitch.field_name } : null,
               } satisfies PDFReportData}
             />
           </div>

@@ -16,6 +16,8 @@ function formatDate(d: string) {
   return d
 }
 
+const RESULT_LABEL: Record<string, string> = { W: 'V', D: 'E', L: 'D' }
+
 function FormDot({ result }: { result: 'W' | 'D' | 'L' | null }) {
   const cls =
     result === 'W' ? 'bg-green-500 text-white' :
@@ -23,7 +25,7 @@ function FormDot({ result }: { result: 'W' | 'D' | 'L' | null }) {
     result === 'L' ? 'bg-red-500 text-white' : 'bg-white/10 text-slate-500'
   return (
     <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${cls}`}>
-      {result ?? '?'}
+      {result ? RESULT_LABEL[result] : '?'}
     </span>
   )
 }
@@ -107,7 +109,7 @@ function GoalTimingChart({ buckets }: { buckets: { label: string; scored: number
   )
 }
 
-/** Pitch comparison overlay */
+/** Pitch comparison overlay — visual filled SVG with grass stripes */
 function PitchCompareOverlay({ homePitch, rivalPitch, homeLabel, rivalLabel }: {
   homePitch: { length_m: number; width_m: number; field_name: string } | null
   rivalPitch: { length_m: number; width_m: number; field_name: string } | null
@@ -115,50 +117,194 @@ function PitchCompareOverlay({ homePitch, rivalPitch, homeLabel, rivalLabel }: {
   rivalLabel: string
 }) {
   if (!homePitch && !rivalPitch) return null
-  const maxL = Math.max(homePitch?.length_m || 0, rivalPitch?.length_m || 0, 105)
-  const maxW = Math.max(homePitch?.width_m || 0, rivalPitch?.width_m || 0, 68)
 
-  function PitchRect({ pitch, color, label }: { pitch: { length_m: number; width_m: number; field_name: string }; color: string; label: string }) {
-    const wPct = (pitch.width_m / maxW) * 100
-    const hPct = (pitch.length_m / maxL) * 100
+  const DISPLAY_H = 220
+  const maxL = Math.max(homePitch?.length_m ?? 1, rivalPitch?.length_m ?? 1)
+  const maxW = Math.max(homePitch?.width_m ?? 1, rivalPitch?.width_m ?? 1)
+  const scale = Math.min(DISPLAY_H / maxL, 300 / maxW)
+
+  const canvasH = Math.ceil(maxL * scale) + 8
+  const canvasW = Math.ceil(maxW * scale) + 8
+
+  const homeArea = homePitch ? homePitch.length_m * homePitch.width_m : null
+  const rivalArea = rivalPitch ? rivalPitch.length_m * rivalPitch.width_m : null
+
+  let diffPct = 0
+  let diffMsg = ''
+  let diffEmoji = ''
+  if (homeArea && rivalArea) {
+    diffPct = Math.round(Math.abs(rivalArea - homeArea) / homeArea * 100)
+    if (diffPct === 0) {
+      diffMsg = 'Els dos camps tenen la mateixa mida'
+      diffEmoji = '='
+    } else if (rivalArea < homeArea) {
+      diffMsg = `Camp rival ${diffPct}% més petit`
+      diffEmoji = '↓'
+    } else {
+      diffMsg = `Camp rival ${diffPct}% més gran`
+      diffEmoji = '↑'
+    }
+  }
+
+  function fieldCategory(area: number) {
+    if (area < 5500) return { label: 'Petit', color: 'text-red-400', bg: 'bg-red-500/20 border border-red-500/30' }
+    if (area < 6300) return { label: 'Mitjà', color: 'text-amber-400', bg: 'bg-amber-500/20 border border-amber-500/30' }
+    return { label: 'Gran', color: 'text-green-400', bg: 'bg-green-500/20 border border-green-500/30' }
+  }
+
+  const homeIsBigger = (homeArea ?? 0) >= (rivalArea ?? 0)
+
+  function pitchSVG(lengthM: number, widthM: number, color: string, fillColor: string, fillOpacity: number, strokeW: number) {
+    const pW = widthM * scale
+    const pH = lengthM * scale
+    const ox = (canvasW - pW) / 2
+    const oy = (canvasH - pH) / 2
+    const cx = canvasW / 2
+    const cy = canvasH / 2
+    const penD = Math.min(16.5 * scale, pH * 0.18)
+    const penW = Math.min(40.32 * scale, pW * 0.95)
+    const goalD = Math.min(5.5 * scale, pH * 0.06)
+    const goalW = Math.min(18.32 * scale, pW * 0.6)
+    const cr = Math.min(9.15 * scale, pW * 0.15)
+
     return (
-      <div
-        className={`absolute bottom-0 left-1/2 -translate-x-1/2 border-2 rounded-md ${color} transition-all duration-500`}
-        style={{ width: `${wPct}%`, height: `${hPct}%` }}
-      >
-        <div className={`absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-bold whitespace-nowrap ${color.replace('border-', 'text-').replace('/40', '')}`}>
-          {label} ({pitch.length_m}×{pitch.width_m}m)
-        </div>
-      </div>
+      <g>
+        <rect x={ox} y={oy} width={pW} height={pH} fill={fillColor} fillOpacity={fillOpacity} rx={3} />
+        <rect x={ox} y={oy} width={pW} height={pH} fill="none" stroke={color} strokeWidth={strokeW} rx={3} />
+        <line x1={ox} y1={cy} x2={ox + pW} y2={cy} stroke={color} strokeWidth={strokeW * 0.6} strokeOpacity={0.6} />
+        <circle cx={cx} cy={cy} r={cr} fill="none" stroke={color} strokeWidth={strokeW * 0.6} strokeOpacity={0.6} />
+        <circle cx={cx} cy={cy} r={strokeW * 1.5} fill={color} fillOpacity={0.6} />
+        <rect x={cx - penW / 2} y={oy} width={penW} height={penD} fill="none" stroke={color} strokeWidth={strokeW * 0.5} strokeOpacity={0.5} />
+        <rect x={cx - goalW / 2} y={oy} width={goalW} height={goalD} fill="none" stroke={color} strokeWidth={strokeW * 0.4} strokeOpacity={0.4} />
+        <rect x={cx - penW / 2} y={oy + pH - penD} width={penW} height={penD} fill="none" stroke={color} strokeWidth={strokeW * 0.5} strokeOpacity={0.5} />
+        <rect x={cx - goalW / 2} y={oy + pH - goalD} width={goalW} height={goalD} fill="none" stroke={color} strokeWidth={strokeW * 0.4} strokeOpacity={0.4} />
+      </g>
     )
   }
 
+  const stripeCount = Math.ceil(canvasH / 14)
+
   return (
     <div className="glass-card rounded-2xl p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Ruler size={18} className="text-emerald-400" />
-        <h2 className="text-lg font-bold text-white">Comparació de camps</h2>
-      </div>
-      <div className="flex items-center gap-3 mb-4 text-xs">
-        {homePitch && <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm bg-green-500/60 border border-green-500" /> {homeLabel}</span>}
-        {rivalPitch && <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm bg-cyan-500/60 border border-cyan-500" /> {rivalLabel}</span>}
-      </div>
-      <div className="relative mx-auto bg-emerald-900/20 border border-emerald-700/30 rounded-lg" style={{ width: '100%', maxWidth: '340px', aspectRatio: `${maxW}/${maxL}` }}>
-        {/* Field markings */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-16 h-16 rounded-full border border-emerald-700/30" />
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-2">
+          <Ruler size={18} className="text-emerald-400" />
+          <h2 className="text-lg font-bold text-white">Comparació de camps</h2>
         </div>
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-[18%] border-b border-l border-r border-emerald-700/30 rounded-b" />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/3 h-[18%] border-t border-l border-r border-emerald-700/30 rounded-t" />
-        <div className="absolute top-1/2 left-0 right-0 h-px bg-emerald-700/30" />
-        {/* Overlay rectangles */}
-        {homePitch && <PitchRect pitch={homePitch} color="border-green-500/40" label={homeLabel} />}
-        {rivalPitch && <PitchRect pitch={rivalPitch} color="border-cyan-400/40" label={rivalLabel} />}
+        {diffMsg && (
+          <span className={`text-sm font-bold px-3 py-1 rounded-full ${
+            diffPct === 0 ? 'bg-slate-500/20 text-slate-300' :
+            rivalArea! < homeArea! ? 'bg-amber-500/20 text-amber-400 border border-amber-500/20' :
+            'bg-cyan-500/20 text-cyan-400 border border-cyan-500/20'
+          }`}>
+            {diffEmoji} {diffMsg}
+          </span>
+        )}
       </div>
-      <div className="flex justify-center gap-6 mt-4 text-xs text-slate-500">
-        {homePitch && <span>{homePitch.field_name}</span>}
-        {rivalPitch && <span>{rivalPitch.field_name}</span>}
+
+      {/* Legend */}
+      <div className="flex items-center gap-5 mb-4 text-sm">
+        {homePitch && (
+          <span className="flex items-center gap-2">
+            <span className="w-4 h-4 rounded-md bg-green-500/40 border-2 border-green-500" />
+            <span className="text-slate-200 font-medium">{homeLabel}</span>
+          </span>
+        )}
+        {rivalPitch && (
+          <span className="flex items-center gap-2">
+            <span className="w-4 h-4 rounded-md bg-orange-500/40 border-2 border-orange-400" />
+            <span className="text-slate-200 font-medium">{rivalLabel}</span>
+          </span>
+        )}
       </div>
+
+      {/* Overlay SVG */}
+      <div className="flex justify-center mb-5">
+        <svg
+          width={canvasW}
+          height={canvasH}
+          viewBox={`0 0 ${canvasW} ${canvasH}`}
+          style={{ maxWidth: '100%', height: 'auto' }}
+          aria-label="Comparativa visual de camps superposats"
+        >
+          <rect width={canvasW} height={canvasH} fill="#0a1628" rx={8} />
+          {/* Grass stripes */}
+          {Array.from({ length: stripeCount }).map((_, i) => (
+            <rect key={i} x={0} y={i * 28} width={canvasW} height={14} fill="#0d2010" />
+          ))}
+          {/* Draw bigger pitch behind, smaller on top */}
+          {homeIsBigger ? (
+            <>
+              {homePitch && pitchSVG(homePitch.length_m, homePitch.width_m, '#4ade80', '#15803d', 0.7, 2)}
+              {rivalPitch && pitchSVG(rivalPitch.length_m, rivalPitch.width_m, '#fb923c', '#431407', 0.55, 2.5)}
+            </>
+          ) : (
+            <>
+              {rivalPitch && pitchSVG(rivalPitch.length_m, rivalPitch.width_m, '#fb923c', '#431407', 0.7, 2)}
+              {homePitch && pitchSVG(homePitch.length_m, homePitch.width_m, '#4ade80', '#14532d', 0.6, 2.5)}
+            </>
+          )}
+        </svg>
+      </div>
+
+      {/* Stats comparison cards */}
+      <div className="grid grid-cols-2 gap-4">
+        {/* Home pitch */}
+        <div className="bg-green-500/5 border border-green-500/15 rounded-xl p-4 text-center">
+          {homePitch ? (
+            <>
+              <p className="text-lg font-black text-white tabular-nums mb-0.5">
+                {homePitch.length_m} × {homePitch.width_m} m
+              </p>
+              <p className="text-sm text-slate-400 tabular-nums">
+                {(homePitch.length_m * homePitch.width_m).toLocaleString('ca-ES')} m²
+              </p>
+              {homeArea && (
+                <span className={`inline-block mt-2 text-xs font-semibold px-2 py-0.5 rounded-full ${fieldCategory(homeArea).bg} ${fieldCategory(homeArea).color}`}>
+                  {fieldCategory(homeArea).label}
+                </span>
+              )}
+              {homePitch.field_name && (
+                <p className="text-[10px] text-slate-500 mt-1.5 truncate">{homePitch.field_name}</p>
+              )}
+            </>
+          ) : (
+            <p className="text-sm text-slate-600">Sense dades</p>
+          )}
+        </div>
+
+        {/* Rival pitch */}
+        <div className="bg-orange-500/5 border border-orange-500/15 rounded-xl p-4 text-center">
+          {rivalPitch ? (
+            <>
+              <p className="text-lg font-black text-white tabular-nums mb-0.5">
+                {rivalPitch.length_m} × {rivalPitch.width_m} m
+              </p>
+              <p className="text-sm text-slate-400 tabular-nums">
+                {(rivalPitch.length_m * rivalPitch.width_m).toLocaleString('ca-ES')} m²
+              </p>
+              {rivalArea && (
+                <span className={`inline-block mt-2 text-xs font-semibold px-2 py-0.5 rounded-full ${fieldCategory(rivalArea).bg} ${fieldCategory(rivalArea).color}`}>
+                  {fieldCategory(rivalArea).label}
+                </span>
+              )}
+              {rivalPitch.field_name && (
+                <p className="text-[10px] text-slate-500 mt-1.5 truncate">{rivalPitch.field_name}</p>
+              )}
+            </>
+          ) : (
+            <p className="text-sm text-slate-600">Sense dades</p>
+          )}
+        </div>
+      </div>
+
+      {(!homePitch || !rivalPitch) && (
+        <div className="mt-3 pt-3 border-t border-white/5 text-center">
+          <p className="text-xs text-slate-500">
+            Mides del camp de {!homePitch ? homeLabel : rivalLabel} no disponibles
+          </p>
+        </div>
+      )}
     </div>
   )
 }
@@ -241,9 +387,9 @@ export default async function RivalPage() {
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 {[
                   { v: rival.played, l: 'PJ', c: 'text-white' },
-                  { v: rival.wins, l: 'G', c: 'text-green-400' },
+                  { v: rival.wins, l: 'V', c: 'text-green-400' },
                   { v: rival.draws, l: 'E', c: 'text-amber-400' },
-                  { v: rival.losses, l: 'P', c: 'text-red-400' },
+                  { v: rival.losses, l: 'D', c: 'text-red-400' },
                   { v: rival.points, l: 'Pts', c: 'text-cyan-400' },
                 ].map(s => (
                   <div key={s.l} className="glass-card rounded-xl p-4 text-center">
@@ -284,9 +430,9 @@ export default async function RivalPage() {
                 <div className="grid grid-cols-4 gap-2 text-center">
                   {[
                     { v: rival.home.played, l: 'PJ', c: 'text-white' },
-                    { v: rival.home.wins, l: 'G', c: 'text-green-400' },
+                    { v: rival.home.wins, l: 'V', c: 'text-green-400' },
                     { v: rival.home.draws, l: 'E', c: 'text-amber-400' },
-                    { v: rival.home.losses, l: 'P', c: 'text-red-400' },
+                    { v: rival.home.losses, l: 'D', c: 'text-red-400' },
                   ].map(s => (
                     <div key={s.l}>
                       <div className={`text-lg font-black ${s.c}`}>{s.v}</div>
@@ -316,9 +462,9 @@ export default async function RivalPage() {
                 <div className="grid grid-cols-4 gap-2 text-center">
                   {[
                     { v: rival.away.played, l: 'PJ', c: 'text-white' },
-                    { v: rival.away.wins, l: 'G', c: 'text-green-400' },
+                    { v: rival.away.wins, l: 'V', c: 'text-green-400' },
                     { v: rival.away.draws, l: 'E', c: 'text-amber-400' },
-                    { v: rival.away.losses, l: 'P', c: 'text-red-400' },
+                    { v: rival.away.losses, l: 'D', c: 'text-red-400' },
                   ].map(s => (
                     <div key={s.l}>
                       <div className={`text-lg font-black ${s.c}`}>{s.v}</div>
@@ -378,7 +524,7 @@ export default async function RivalPage() {
                         <div className={`absolute bottom-0 left-0 right-0 ${item.bg}/10`} style={{ height: `${item.v}%` }} />
                       )}
                       <div className={`text-2xl font-black ${item.color} relative`}>{item.v !== null ? `${item.v}${item.s}` : '-'}</div>
-                      <div className="text-[10px] text-slate-300 mt-1 relative">{item.l}</div>
+                      <div className="text-[10px] text-slate-100 mt-1 relative font-medium">{item.l}</div>
                     </div>
                   ))}
                 </div>

@@ -43,6 +43,9 @@ export interface PDFReportData {
   } | null
   headToHead: MatchEntry[]
   nextMatch: { opponent: string; date: string; jornada: number; isHome: boolean; time?: string; referee?: string | null } | null
+  // Pitch dimensions
+  homePitch: { length_m: number; width_m: number; field_name?: string } | null
+  rivalPitch: { length_m: number; width_m: number; field_name?: string } | null
 }
 
 interface TeamReportActionsProps {
@@ -98,8 +101,13 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
 
       const pdf = new jsPDF('p', 'mm', 'a4')
       const W = 210, H = 297
-      const M = 10 // margin
+      const M = 12 // margin
       const CW = W - 2 * M
+      const HEADER_H = 10 // header zone
+      const FOOTER_H = 10 // footer zone
+      const CONTENT_TOP = HEADER_H + 2
+      const CONTENT_BOTTOM = H - FOOTER_H - 2 // usable area bottom
+      let pageNum = 1
 
       // ─── Helpers ────────────────────────────────────────────────
       const fill = (c: RGB) => pdf.setFillColor(c[0], c[1], c[2])
@@ -107,55 +115,85 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       const rr = (x: number, y: number, w: number, h: number, rad: number, c: RGB) => { fill(c); pdf.roundedRect(x, y, w, h, rad, rad, 'F') }
       const pct = (n: number, total: number) => total > 0 ? Math.round((n / total) * 100) : 0
 
-      const compBar = (x: number, y: number, w: number, h: number, leftVal: number, rightVal: number, leftColor: RGB, rightColor: RGB) => {
+      const compBar = (x: number, yy: number, w: number, h: number, leftVal: number, rightVal: number, leftColor: RGB, _rightColor: RGB) => {
         const total = leftVal + rightVal
         const leftPct = total > 0 ? leftVal / total : 0.5
-        rr(x, y, w, h, h / 2, C.bgBar)
-        if (leftPct > 0) rr(x, y, Math.max(w * leftPct, h), h, h / 2, leftColor)
+        rr(x, yy, w, h, h / 2, C.bgBar)
+        if (leftPct > 0) rr(x, yy, Math.max(w * leftPct, h), h, h / 2, leftColor)
       }
 
       const RESULT_LABEL: Record<string, string> = { W: 'V', D: 'E', L: 'D' }
 
-      // ═══════════════════════════════════════════════════════════════
-      // FULL PAGE BACKGROUND
-      // ═══════════════════════════════════════════════════════════════
-      fill(C.bg); pdf.rect(0, 0, W, H, 'F')
-
-      // ─── Top green accent line ────────────────────────────────
-      fill(C.green); pdf.rect(0, 0, W, 1.2, 'F')
-
-      // ─── Header: NeoScout branding ────────────────────────────
-      pdf.setFontSize(8); txt(C.s400)
-      pdf.text('NEOSCOUT', M, 7)
-      pdf.setFontSize(5.5); txt(C.s600)
-      pdf.text('neoscout.es', M + 22, 7)
-
       const today = new Date()
       const dateStr = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`
-      pdf.setFontSize(5.5); txt(C.s500)
-      pdf.text(dateStr, W - M, 7, { align: 'right' })
 
-      // ─── Title: "INFORME PRE-PARTIT" ──────────────────────────
-      let y = 14
-      pdf.setFontSize(6); txt(C.green)
-      pdf.text('INFORME PRE-PARTIT', W / 2, y, { align: 'center' })
-      y += 4
+      // ─── Page chrome (background, header, footer) ─────────────
+      const drawPageChrome = (isFirstPage: boolean) => {
+        // Full page background
+        fill(C.bg); pdf.rect(0, 0, W, H, 'F')
+
+        // Top accent line
+        fill(C.green); pdf.rect(0, 0, W, 1.5, 'F')
+
+        // Header
+        pdf.setFontSize(7); txt(C.s400)
+        pdf.text('NEOSCOUT', M, 7)
+        pdf.setFontSize(5); txt(C.s600)
+        pdf.text('neoscout.es', M + 20, 7)
+        pdf.setFontSize(5); txt(C.s500)
+        pdf.text(dateStr, W - M, 7, { align: 'right' })
+
+        if (isFirstPage) {
+          pdf.setFontSize(5.5); txt(C.green)
+          pdf.text('INFORME PRE-PARTIT', W / 2, 7, { align: 'center' })
+        }
+
+        // Footer bar
+        fill([10, 16, 30]); pdf.rect(0, H - FOOTER_H, W, FOOTER_H, 'F')
+        fill(C.green); pdf.rect(0, H - FOOTER_H, W, 0.4, 'F')
+        pdf.setFontSize(5); txt(C.s500)
+        pdf.text('Generat amb NeoScout', M, H - 4)
+        txt(C.s600)
+        pdf.text(`neoscout.es/equip/${teamSlug}`, W - M, H - 4, { align: 'right' })
+      }
+
+      // ─── Page break system ─────────────────────────────────────
+      // Check if a block of `neededH` mm fits. If not, finalize
+      // current page and start a new one.
+      const ensureSpace = (neededH: number, curY: number): number => {
+        if (curY + neededH <= CONTENT_BOTTOM) return curY
+        // Start new page
+        pageNum++
+        pdf.addPage()
+        drawPageChrome(false)
+        return CONTENT_TOP
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      // PAGE 1 — Chrome + Match Banner
+      // ═══════════════════════════════════════════════════════════════
+      drawPageChrome(true)
+
+      let y = CONTENT_TOP + 2
 
       // ─── Match banner: TEAM vs RIVAL ──────────────────────────
-      rr(M, y, CW, 28, 3, C.bgCard)
+      const BANNER_H = 28
+      rr(M, y, CW, BANNER_H, 3, C.bgCard)
+      // Subtle left/right gradient accents
+      rr(M, y, 3, BANNER_H, 1.5, C.greenDk)
+      rr(W - M - 3, y, 3, BANNER_H, 1.5, [30, 40, 60])
 
       // Team side (left)
-      const halfW = CW / 2 - 12
       pdf.setFontSize(9); txt(C.white)
-      const teamDisplay = r.name.length > 24 ? r.name.slice(0, 24) + '...' : r.name
-      pdf.text(teamDisplay, M + 5, y + 10)
+      const teamDisplay = r.name.length > 22 ? r.name.slice(0, 22) + '...' : r.name
+      pdf.text(teamDisplay, M + 8, y + 10)
       pdf.setFontSize(6); txt(C.s400)
-      pdf.text(`#${r.position || '–'} · ${r.points} pts`, M + 5, y + 16)
+      pdf.text(`#${r.position || '-'} | ${r.points} pts`, M + 8, y + 16)
 
       // Form dots (our team)
       const ourForm = r.form.slice(0, 5).reverse()
       ourForm.forEach((f, i) => {
-        const cx = M + 5 + i * 7
+        const cx = M + 8 + i * 7
         const dotColor = f.result === 'W' ? C.green : f.result === 'D' ? C.amber : f.result === 'L' ? C.red : C.s600
         rr(cx, y + 19, 5.5, 5.5, 2.75, dotColor)
         pdf.setFontSize(4.5); txt(C.white)
@@ -164,348 +202,423 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
 
       // VS badge (center)
       const vsX = W / 2
-      rr(vsX - 6, y + 5, 12, 12, 6, C.greenDk)
-      pdf.setFontSize(8); txt(C.white)
+      rr(vsX - 7, y + 4, 14, 14, 7, C.greenDk)
+      pdf.setFontSize(9); txt(C.white)
       pdf.text('VS', vsX, y + 13, { align: 'center' })
+
+      // Venue badge above VS
+      const venue = nm.isHome ? 'LOCAL' : 'VISITANT'
+      rr(vsX - 10, y + 1, 20, 3.5, 1.5, nm.isHome ? [22, 80, 45] as RGB : [20, 50, 80] as RGB)
+      pdf.setFontSize(3.5); txt(nm.isHome ? C.green : C.cyan)
+      pdf.text(venue, vsX, y + 3.5, { align: 'center' })
 
       // Jornada + date under VS
       pdf.setFontSize(5); txt(C.s400)
       pdf.text(`J${nm.jornada}`, vsX, y + 21, { align: 'center' })
       const matchDate = nm.date || ''
-      const timeStr = nm.time ? ` · ${nm.time}h` : ''
+      const timeStr = nm.time ? ` | ${nm.time}h` : ''
       pdf.setFontSize(4.5); txt(C.s500)
       pdf.text(`${matchDate}${timeStr}`, vsX, y + 25, { align: 'center' })
 
       // Rival side (right)
       pdf.setFontSize(9); txt(C.white)
-      const rivalDisplay = rival.name.length > 24 ? rival.name.slice(0, 24) + '...' : rival.name
-      pdf.text(rivalDisplay, W - M - 5, y + 10, { align: 'right' })
+      const rivalDisplay = rival.name.length > 22 ? rival.name.slice(0, 22) + '...' : rival.name
+      pdf.text(rivalDisplay, W - M - 8, y + 10, { align: 'right' })
       pdf.setFontSize(6); txt(C.s400)
-      pdf.text(`#${rival.position || '–'} · ${rival.points} pts`, W - M - 5, y + 16, { align: 'right' })
+      pdf.text(`#${rival.position || '-'} | ${rival.points} pts`, W - M - 8, y + 16, { align: 'right' })
 
       // Form dots (rival)
       const rivalForm = rival.form.slice(0, 5).reverse()
       rivalForm.forEach((f, i) => {
-        const cx = W - M - 5 - (4 - i) * 7
+        const cx = W - M - 8 - (4 - i) * 7
         const dotColor = f.result === 'W' ? C.green : f.result === 'D' ? C.amber : f.result === 'L' ? C.red : C.s600
         rr(cx, y + 19, 5.5, 5.5, 2.75, dotColor)
         pdf.setFontSize(4.5); txt(C.white)
         pdf.text(f.result ? RESULT_LABEL[f.result] : '?', cx + 2.75, y + 23, { align: 'center' })
       })
 
-      // Venue badge
-      const venue = nm.isHome ? 'LOCAL' : 'VISITANT'
-      rr(vsX - 10, y + 1, 20, 4, 1.5, nm.isHome ? [22, 80, 45] as RGB : [20, 50, 80] as RGB)
-      pdf.setFontSize(4); txt(nm.isHome ? C.green : C.cyan)
-      pdf.text(venue, vsX, y + 3.8, { align: 'center' })
-
-      y += 33
+      y += BANNER_H + 5
 
       // ═══════════════════════════════════════════════════════════════
-      // COMPARISON BARS (Veo-style)
+      // COMPARISON BARS — atomic block (~85mm)
       // ═══════════════════════════════════════════════════════════════
-      rr(M, y, CW, 6, 0, C.bgCard)
+      const COMP_ROWS = 6
+      const COMP_BLOCK_H = 9 + COMP_ROWS * 12 + 6
+      y = ensureSpace(COMP_BLOCK_H, y)
+
+      rr(M, y, CW, 7, 2, C.bgCard)
       pdf.setFontSize(6); txt(C.green)
-      pdf.text('COMPARATIVA DE TEMPORADA', M + 4, y + 4.5)
-      y += 9
+      pdf.text('COMPARATIVA DE TEMPORADA', M + 5, y + 5)
+      // Team name labels in header
+      pdf.setFontSize(4); txt(C.s400)
+      pdf.text(r.name.length > 18 ? r.name.slice(0, 18) + '...' : r.name, M + CW * 0.25, y + 5, { align: 'center' })
+      pdf.text(rival.name.length > 18 ? rival.name.slice(0, 18) + '...' : rival.name, M + CW * 0.75, y + 5, { align: 'center' })
+      y += 10
 
       const drawCompRow = (label: string, leftVal: number | string, rightVal: number | string, leftNum: number, rightNum: number, yy: number) => {
+        // Alternating row background
         pdf.setFontSize(5); txt(C.s400)
         pdf.text(label, W / 2, yy, { align: 'center' })
 
-        const barW = (CW / 2) - 20
-        // Left bar (our team) — right aligned
-        const lbX = M + 2
-        const rbX = W / 2 + 16
+        const barW = (CW / 2) - 22
+        const lbX = M + 4
+        const rbX = W / 2 + 18
 
         // Values
         pdf.setFontSize(7); txt(C.white)
-        pdf.text(String(leftVal), M + 2 + barW + 3, yy + 7, { align: 'right' })
-        pdf.text(String(rightVal), rbX + barW + 3, yy + 7, { align: 'right' })
+        pdf.text(String(leftVal), lbX + barW + 4, yy + 7, { align: 'right' })
+        pdf.text(String(rightVal), rbX + barW + 4, yy + 7, { align: 'right' })
 
         // Bars
-        const lTotal = leftNum + rightNum || 1
-        compBar(lbX, yy + 3.5, barW, 3, leftNum, rightNum, C.green, C.bgBar)
-        compBar(rbX, yy + 3.5, barW, 3, rightNum, leftNum, C.s400, C.bgBar)
+        compBar(lbX, yy + 3.5, barW, 3.5, leftNum, rightNum, C.green, C.bgBar)
+        compBar(rbX, yy + 3.5, barW, 3.5, rightNum, leftNum, C.s400, C.bgBar)
 
         return yy + 12
       }
 
       y = drawCompRow('PARTITS JUGATS', r.played, rival.played, r.played, rival.played, y)
-      y = drawCompRow('VICTÒRIES', r.wins, rival.wins, r.wins, rival.wins, y)
+      y = drawCompRow('VICTORIES', r.wins, rival.wins, r.wins, rival.wins, y)
       y = drawCompRow('GOLS A FAVOR', r.gf, rival.gf, r.gf, rival.gf, y)
       y = drawCompRow('GOLS EN CONTRA', r.ga, rival.ga, r.ga, rival.ga, y)
 
       const rWinRate = pct(rival.wins, rival.played)
       const tWinRate = pct(r.wins, r.played)
-      y = drawCompRow('% VICTÒRIES', `${tWinRate}%`, `${rWinRate}%`, tWinRate, rWinRate, y)
+      y = drawCompRow('% VICTORIES', `${tWinRate}%`, `${rWinRate}%`, tWinRate, rWinRate, y)
 
       const tAvgGF = r.played > 0 ? (r.gf / r.played).toFixed(1) : '0'
       const rAvgGF = rival.played > 0 ? (rival.gf / rival.played).toFixed(1) : '0'
       y = drawCompRow('GOLS/PARTIT', tAvgGF, rAvgGF, parseFloat(tAvgGF) * 10, parseFloat(rAvgGF) * 10, y)
 
-      // Labels under bars
-      pdf.setFontSize(4.5); txt(C.green)
-      pdf.text(r.name.length > 20 ? r.name.slice(0, 20) + '…' : r.name, M + 2, y - 1)
-      txt(C.s400)
-      pdf.text(rival.name.length > 20 ? rival.name.slice(0, 20) + '…' : rival.name, W - M - 2, y - 1, { align: 'right' })
-      y += 3
+      y += 4
 
       // ═══════════════════════════════════════════════════════════════
-      // RIVAL HOME/AWAY + INSIGHTS (two columns)
+      // RIVAL HOME/AWAY — atomic block (~50mm)
       // ═══════════════════════════════════════════════════════════════
+      const HOME_AWAY_H = 50
+      y = ensureSpace(HOME_AWAY_H, y)
+
       const col1X = M
       const col2X = M + CW / 2 + 2
       const colW = CW / 2 - 2
 
-      // Left column: Rival rendiment local/visitant
-      rr(col1X, y, colW, 6, 0, C.bgCard)
+      const miniRow = (label: string, val: string, yy: number, x: number) => {
+        pdf.setFontSize(5); txt(C.s400); pdf.text(label, x + 4, yy)
+        pdf.setFontSize(5.5); txt(C.white); pdf.text(val, x + colW - 4, yy, { align: 'right' })
+        return yy + 5.5
+      }
+
+      // Left column: Home
+      rr(col1X, y, colW, 7, 2, C.bgCard)
       pdf.setFontSize(5.5); txt(C.cyan)
-      pdf.text('RIVAL COM A LOCAL', col1X + 3, y + 4.5)
-      let yL = y + 9
+      pdf.text('RIVAL COM A LOCAL', col1X + 4, y + 5)
+      let yL = y + 10
 
       const rHome = rival.home
       const homeWR = pct(rHome.wins, rHome.played)
-      const miniRow = (label: string, val: string, yy: number, x: number) => {
-        pdf.setFontSize(5); txt(C.s400); pdf.text(label, x + 3, yy)
-        pdf.setFontSize(5.5); txt(C.white); pdf.text(val, x + colW - 3, yy, { align: 'right' })
-        return yy + 5
-      }
       yL = miniRow('Partits', String(rHome.played), yL, col1X)
       yL = miniRow('V / E / D', `${rHome.wins} / ${rHome.draws} / ${rHome.losses}`, yL, col1X)
-      yL = miniRow('Gols', `${rHome.gf} – ${rHome.ga}`, yL, col1X)
-      yL = miniRow('% Victòries', `${homeWR}%`, yL, col1X)
-      compBar(col1X + 3, yL, colW - 6, 2.5, homeWR, 100 - homeWR, C.green, C.bgBar)
-      yL += 5
+      yL = miniRow('Gols', `${rHome.gf} - ${rHome.ga}`, yL, col1X)
+      yL = miniRow('% Victories', `${homeWR}%`, yL, col1X)
+      compBar(col1X + 4, yL, colW - 8, 3, homeWR, 100 - homeWR, C.green, C.bgBar)
 
-      rr(col1X, yL, colW, 6, 0, C.bgCard)
+      // Right column: Away
+      rr(col2X, y, colW, 7, 2, C.bgCard)
       pdf.setFontSize(5.5); txt(C.cyan)
-      pdf.text('RIVAL COM A VISITANT', col1X + 3, yL + 4.5)
-      yL += 9
+      pdf.text('RIVAL COM A VISITANT', col2X + 4, y + 5)
+      let yR = y + 10
 
       const rAway = rival.away
       const awayWR = pct(rAway.wins, rAway.played)
-      yL = miniRow('Partits', String(rAway.played), yL, col1X)
-      yL = miniRow('V / E / D', `${rAway.wins} / ${rAway.draws} / ${rAway.losses}`, yL, col1X)
-      yL = miniRow('Gols', `${rAway.gf} – ${rAway.ga}`, yL, col1X)
-      yL = miniRow('% Victòries', `${awayWR}%`, yL, col1X)
-      compBar(col1X + 3, yL, colW - 6, 2.5, awayWR, 100 - awayWR, C.cyan, C.bgBar)
+      yR = miniRow('Partits', String(rAway.played), yR, col2X)
+      yR = miniRow('V / E / D', `${rAway.wins} / ${rAway.draws} / ${rAway.losses}`, yR, col2X)
+      yR = miniRow('Gols', `${rAway.gf} - ${rAway.ga}`, yR, col2X)
+      yR = miniRow('% Victories', `${awayWR}%`, yR, col2X)
+      compBar(col2X + 4, yR, colW - 8, 3, awayWR, 100 - awayWR, C.cyan, C.bgBar)
 
-      // Right column: Insights
-      rr(col2X, y, colW, 6, 0, C.bgCard)
-      pdf.setFontSize(5.5); txt(C.amber)
-      pdf.text('PATRONS DEL RIVAL', col2X + 3, y + 4.5)
-      let yR = y + 9
-
-      if (rival.insights) {
-        const ins = rival.insights
-        const insightRow = (label: string, val: string | null, yy: number) => {
-          if (val === null) return yy
-          pdf.setFontSize(5); txt(C.s400); pdf.text(label, col2X + 3, yy)
-          pdf.setFontSize(6); txt(C.white); pdf.text(val, col2X + colW - 3, yy, { align: 'right' })
-          return yy + 5.5
-        }
-        yR = insightRow('Porteria a zero', ins.cleanSheetRate !== null ? `${ins.cleanSheetRate}%` : null, yR)
-        yR = insightRow('Marca primer i guanya', ins.scoreFirstWinRate !== null ? `${ins.scoreFirstWinRate}%` : null, yR)
-        yR = insightRow('Remuntades', ins.comebackRate !== null ? `${ins.comebackRate}%` : null, yR)
-        yR = insightRow('Gols tardans (75+)', ins.lateGoalRate !== null ? `${ins.lateGoalRate}%` : null, yR)
-        yR = insightRow('Gols 1a part', String(ins.firstHalfGoals), yR)
-        yR = insightRow('Gols 2a part', String(ins.secondHalfGoals), yR)
-
-        // Visual: 1st half vs 2nd half bar
-        if (ins.firstHalfGoals + ins.secondHalfGoals > 0) {
-          yR += 1
-          compBar(col2X + 3, yR, colW - 6, 2.5, ins.firstHalfGoals, ins.secondHalfGoals, C.amber, C.s600)
-          yR += 4
-          pdf.setFontSize(3.5); txt(C.s500)
-          pdf.text('1a part', col2X + 3, yR)
-          pdf.text('2a part', col2X + colW - 3, yR, { align: 'right' })
-        }
-      } else {
-        pdf.setFontSize(5); txt(C.s600)
-        pdf.text('Sense dades avançades', col2X + 3, yR)
-      }
-
-      // Goal buckets (below insights if space)
-      if (rival.goalBuckets.length > 0) {
-        yR += 5
-        rr(col2X, yR, colW, 6, 0, C.bgCard)
-        pdf.setFontSize(5.5); txt(C.green)
-        pdf.text('MINUTS DE GOL', col2X + 3, yR + 4.5)
-        yR += 9
-
-        const maxBucket = Math.max(...rival.goalBuckets.map(b => Math.max(b.scored, b.conceded)), 1)
-        rival.goalBuckets.forEach(b => {
-          const bw = colW - 6
-          const scoredW = (b.scored / maxBucket) * (bw / 2 - 2)
-          const concededW = (b.conceded / maxBucket) * (bw / 2 - 2)
-
-          pdf.setFontSize(4); txt(C.s500)
-          pdf.text(b.label, col2X + 3, yR + 2.5)
-
-          // Scored bar (green)
-          if (b.scored > 0) rr(col2X + 16, yR, scoredW, 3, 1, C.green)
-          // Conceded bar (red)
-          if (b.conceded > 0) rr(col2X + 16 + bw / 2, yR, concededW, 3, 1, C.red)
-
-          pdf.setFontSize(3.5); txt(C.s400)
-          if (b.scored > 0) pdf.text(String(b.scored), col2X + 17 + scoredW, yR + 2.5)
-          if (b.conceded > 0) pdf.text(String(b.conceded), col2X + 17 + bw / 2 + concededW, yR + 2.5)
-
-          yR += 5
-        })
-        pdf.setFontSize(3.5)
-        rr(col2X + 3, yR - 1.5, 3, 2, 1, C.green)
-        pdf.setFontSize(3.5); txt(C.s400); pdf.text('A favor', col2X + 7.5, yR)
-        rr(col2X + 20, yR - 1.5, 3, 2, 1, C.red)
-        pdf.text('En contra', col2X + 24.5, yR)
-      }
-
-      y = Math.max(yL, yR) + 7
+      y = Math.max(yL, yR) + 8
 
       // ═══════════════════════════════════════════════════════════════
-      // RIVAL TOP SCORERS + DANGER PLAYERS (two columns)
+      // INSIGHTS — atomic block
+      // ═══════════════════════════════════════════════════════════════
+      if (rival.insights) {
+        const ins = rival.insights
+        const insightLines = [
+          ins.cleanSheetRate !== null ? ['Porteria a zero', `${ins.cleanSheetRate}%`] : null,
+          ins.scoreFirstWinRate !== null ? ['Marca primer i guanya', `${ins.scoreFirstWinRate}%`] : null,
+          ins.comebackRate !== null ? ['Remuntades', `${ins.comebackRate}%`] : null,
+          ins.lateGoalRate !== null ? ['Gols tardans (75+)', `${ins.lateGoalRate}%`] : null,
+          ['Gols 1a part', String(ins.firstHalfGoals)],
+          ['Gols 2a part', String(ins.secondHalfGoals)],
+        ].filter(Boolean) as string[][]
+
+        const INSIGHTS_H = 10 + insightLines.length * 6 + 8
+        y = ensureSpace(INSIGHTS_H, y)
+
+        rr(M, y, CW, 7, 2, C.bgCard)
+        pdf.setFontSize(6); txt(C.amber)
+        pdf.text('PATRONS DEL RIVAL', M + 5, y + 5)
+        y += 10
+
+        insightLines.forEach((row, i) => {
+          // Alternating subtle row bg
+          if (i % 2 === 0) rr(M + 1, y - 2, CW - 2, 5.5, 1, [18, 28, 48])
+          pdf.setFontSize(5); txt(C.s300); pdf.text(row[0], M + 5, y + 1)
+          pdf.setFontSize(6); txt(C.white); pdf.text(row[1], W - M - 5, y + 1, { align: 'right' })
+          y += 6
+        })
+
+        // 1st half vs 2nd half visual bar
+        if (ins.firstHalfGoals + ins.secondHalfGoals > 0) {
+          compBar(M + 5, y, CW - 10, 3, ins.firstHalfGoals, ins.secondHalfGoals, C.amber, C.s600)
+          y += 5
+          pdf.setFontSize(3.5); txt(C.s500)
+          pdf.text('1a part', M + 5, y)
+          pdf.text('2a part', W - M - 5, y, { align: 'right' })
+        }
+        y += 5
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      // GOAL BUCKETS — atomic block
+      // ═══════════════════════════════════════════════════════════════
+      if (rival.goalBuckets.length > 0) {
+        const BUCKETS_H = 10 + rival.goalBuckets.length * 5.5 + 6
+        y = ensureSpace(BUCKETS_H, y)
+
+        rr(M, y, CW, 7, 2, C.bgCard)
+        pdf.setFontSize(6); txt(C.green)
+        pdf.text('MINUTS DE GOL DEL RIVAL', M + 5, y + 5)
+        y += 10
+
+        const maxBucket = Math.max(...rival.goalBuckets.map(b => Math.max(b.scored, b.conceded)), 1)
+        const bucketBarW = CW - 30
+
+        rival.goalBuckets.forEach(b => {
+          const scoredW = (b.scored / maxBucket) * (bucketBarW / 2 - 4)
+          const concededW = (b.conceded / maxBucket) * (bucketBarW / 2 - 4)
+
+          pdf.setFontSize(4.5); txt(C.s400)
+          pdf.text(b.label, M + 5, y + 2.5)
+
+          const barStartX = M + 22
+          if (b.scored > 0) rr(barStartX, y, scoredW, 3.5, 1.5, C.green)
+          if (b.conceded > 0) rr(barStartX + bucketBarW / 2 + 2, y, concededW, 3.5, 1.5, C.red)
+
+          pdf.setFontSize(3.5); txt(C.s300)
+          if (b.scored > 0) pdf.text(String(b.scored), barStartX + scoredW + 2, y + 2.5)
+          if (b.conceded > 0) pdf.text(String(b.conceded), barStartX + bucketBarW / 2 + 2 + concededW + 2, y + 2.5)
+
+          y += 5.5
+        })
+        // Legend
+        rr(M + 5, y, 3, 2.5, 1, C.green)
+        pdf.setFontSize(3.5); txt(C.s400); pdf.text('A favor', M + 10, y + 2)
+        rr(M + 28, y, 3, 2.5, 1, C.red)
+        pdf.text('En contra', M + 33, y + 2)
+        y += 6
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      // TOP SCORERS + APERCEBITS — atomic block
       // ═══════════════════════════════════════════════════════════════
       const scorers = rival.topScorers.filter(p => p.goals > 0).slice(0, 6)
       const danger = rival.apercibits.slice(0, 5)
 
-      if (scorers.length > 0) {
-        rr(col1X, y, colW, 6, 0, C.bgCard)
-        pdf.setFontSize(5.5); txt(C.green)
-        pdf.text('GOLEJADORS RIVAL', col1X + 3, y + 4.5)
-        let ys = y + 9
+      if (scorers.length > 0 || danger.length > 0) {
+        const maxRows = Math.max(scorers.length, danger.length)
+        const PLAYERS_H = 10 + maxRows * 5.5 + 2
+        y = ensureSpace(PLAYERS_H, y)
 
-        scorers.forEach((p, i) => {
-          if (i % 2 === 0) rr(col1X + 1, ys - 1, colW - 2, 5, 0.5, [18, 28, 48])
-          pdf.setFontSize(5); txt(C.s300)
-          const pName = p.name.length > 22 ? p.name.slice(0, 22) + '…' : p.name
-          pdf.text(pName, col1X + 3, ys + 2)
-          pdf.setFontSize(6); txt(C.green)
-          pdf.text(String(p.goals), col1X + colW - 5, ys + 2, { align: 'right' })
-          pdf.setFontSize(4); txt(C.s600)
-          pdf.text(`${p.appearances} PJ`, col1X + colW - 12, ys + 2, { align: 'right' })
-          ys += 5
-        })
+        if (scorers.length > 0) {
+          rr(col1X, y, colW, 7, 2, C.bgCard)
+          pdf.setFontSize(5.5); txt(C.green)
+          pdf.text('GOLEJADORS RIVAL', col1X + 4, y + 5)
+          let ys = y + 10
+
+          scorers.forEach((p, i) => {
+            if (i % 2 === 0) rr(col1X + 1, ys - 2, colW - 2, 5, 1, [18, 28, 48])
+            pdf.setFontSize(5); txt(C.s300)
+            const pName = p.name.length > 20 ? p.name.slice(0, 20) + '...' : p.name
+            pdf.text(pName, col1X + 4, ys + 1)
+            pdf.setFontSize(6); txt(C.green)
+            pdf.text(String(p.goals), col1X + colW - 6, ys + 1, { align: 'right' })
+            pdf.setFontSize(4); txt(C.s600)
+            pdf.text(`${p.appearances} PJ`, col1X + colW - 14, ys + 1, { align: 'right' })
+            ys += 5.5
+          })
+        }
+
+        if (danger.length > 0) {
+          rr(col2X, y, colW, 7, 2, [45, 35, 15])
+          pdf.setFontSize(5.5); txt(C.amber)
+          pdf.text('APERCEBITS', col2X + 4, y + 5)
+          let yd = y + 10
+
+          danger.forEach((p, i) => {
+            if (i % 2 === 0) rr(col2X + 1, yd - 2, colW - 2, 5, 1, [35, 30, 18])
+            pdf.setFontSize(5); txt(C.s300)
+            const pName = p.name.length > 18 ? p.name.slice(0, 18) + '...' : p.name
+            pdf.text(pName, col2X + 4, yd + 1)
+            pdf.setFontSize(5); txt(C.amber)
+            pdf.text(`${p.yellow_cards} grg.`, col2X + colW - 6, yd + 1, { align: 'right' })
+            yd += 5.5
+          })
+        }
+
+        y += 10 + maxRows * 5.5 + 2
       }
-
-      if (danger.length > 0) {
-        rr(col2X, y, colW, 6, 0, [45, 35, 15])
-        pdf.setFontSize(5.5); txt(C.amber)
-        pdf.text('APERCEBITS', col2X + 3, y + 4.5)
-        let yd = y + 9
-
-        danger.forEach((p, i) => {
-          if (i % 2 === 0) rr(col2X + 1, yd - 1, colW - 2, 5, 0.5, [35, 30, 18])
-          pdf.setFontSize(5); txt(C.s300)
-          const pName = p.name.length > 20 ? p.name.slice(0, 20) + '…' : p.name
-          pdf.text(pName, col2X + 3, yd + 2)
-          pdf.setFontSize(5); txt(C.amber)
-          pdf.text(`${p.yellow_cards} grg.`, col2X + colW - 5, yd + 2, { align: 'right' })
-          yd += 5
-        })
-      }
-
-      const yScorerEnd = y + 9 + scorers.length * 5
-      const yDangerEnd = y + 9 + danger.length * 5
-      y = Math.max(yScorerEnd, yDangerEnd) + 4
 
       // ═══════════════════════════════════════════════════════════════
-      // HEAD TO HEAD
+      // HEAD TO HEAD — atomic block
       // ═══════════════════════════════════════════════════════════════
       if (r.headToHead.length > 0) {
-        rr(M, y, CW, 6, 0, C.bgCard)
-        pdf.setFontSize(5.5); txt(C.white)
-        pdf.text('ENFRONTAMENTS DIRECTES', M + 4, y + 4.5)
-        y += 9
+        const h2hCount = Math.min(r.headToHead.length, 5)
+        const H2H_H = 10 + h2hCount * 6 + 2
+        y = ensureSpace(H2H_H, y)
 
-        r.headToHead.slice(0, 5).forEach(m => {
+        rr(M, y, CW, 7, 2, C.bgCard)
+        pdf.setFontSize(6); txt(C.white)
+        pdf.text('ENFRONTAMENTS DIRECTES', M + 5, y + 5)
+        y += 10
+
+        r.headToHead.slice(0, 5).forEach((m, i) => {
+          if (i % 2 === 0) rr(M + 1, y - 2, CW - 2, 5.5, 1, [18, 28, 48])
+
           const dotColor = m.result === 'W' ? C.green : m.result === 'D' ? C.amber : m.result === 'L' ? C.red : C.s600
-          rr(M + 2, y, 4, 4, 2, dotColor)
+          rr(M + 4, y - 0.5, 4, 4, 2, dotColor)
           pdf.setFontSize(4); txt(C.white)
-          pdf.text(m.result ? RESULT_LABEL[m.result] : '?', M + 4, y + 3, { align: 'center' })
+          pdf.text(m.result ? RESULT_LABEL[m.result] : '?', M + 6, y + 2, { align: 'center' })
 
           if (m.goalsFor !== null && m.goalsAgainst !== null) {
             pdf.setFontSize(6); txt(C.white)
-            pdf.text(`${m.goalsFor} – ${m.goalsAgainst}`, M + 14, y + 3, { align: 'center' })
+            pdf.text(`${m.goalsFor} - ${m.goalsAgainst}`, M + 16, y + 2, { align: 'center' })
           }
 
-          pdf.setFontSize(4.5); txt(C.s500)
-          pdf.text(m.isHome ? 'LOCAL' : 'VISITANT', M + 24, y + 3)
+          pdf.setFontSize(4.5); txt(C.s400)
+          pdf.text(m.isHome ? 'LOCAL' : 'VISITANT', M + 26, y + 2)
 
           pdf.setFontSize(4.5); txt(C.s600)
-          pdf.text(m.date, W - M - 2, y + 3, { align: 'right' })
+          pdf.text(m.date, W - M - 4, y + 2, { align: 'right' })
 
-          y += 5.5
+          y += 6
         })
         y += 2
       }
 
       // ═══════════════════════════════════════════════════════════════
-      // RIVAL RECENT FORM
+      // RIVAL RECENT FORM — atomic block
       // ═══════════════════════════════════════════════════════════════
       if (rival.form.length > 0) {
-        rr(M, y, CW, 6, 0, C.bgCard)
-        pdf.setFontSize(5.5); txt(C.white)
-        pdf.text('ULTIMS PARTITS DEL RIVAL', M + 4, y + 4.5)
-        y += 9
+        const formCount = Math.min(rival.form.length, 6)
+        const FORM_H = 10 + formCount * 6 + 2
+        y = ensureSpace(FORM_H, y)
 
-        rival.form.slice(0, 6).forEach(m => {
+        rr(M, y, CW, 7, 2, C.bgCard)
+        pdf.setFontSize(6); txt(C.white)
+        pdf.text('ULTIMS PARTITS DEL RIVAL', M + 5, y + 5)
+        y += 10
+
+        rival.form.slice(0, 6).forEach((m, i) => {
+          if (i % 2 === 0) rr(M + 1, y - 2, CW - 2, 5.5, 1, [18, 28, 48])
+
           const dotColor = m.result === 'W' ? C.green : m.result === 'D' ? C.amber : m.result === 'L' ? C.red : C.s600
-          rr(M + 2, y, 4, 4, 2, dotColor)
+          rr(M + 4, y - 0.5, 4, 4, 2, dotColor)
           pdf.setFontSize(4); txt(C.white)
-          pdf.text(m.result ? RESULT_LABEL[m.result] : '?', M + 4, y + 3, { align: 'center' })
+          pdf.text(m.result ? RESULT_LABEL[m.result] : '?', M + 6, y + 2, { align: 'center' })
 
           pdf.setFontSize(4); txt(C.s500)
-          pdf.text(m.isHome ? 'LOC' : 'VIS', M + 9, y + 3)
+          pdf.text(m.isHome ? 'LOC' : 'VIS', M + 12, y + 2)
 
           if (m.goalsFor !== null && m.goalsAgainst !== null) {
             pdf.setFontSize(5.5); txt(C.white)
-            pdf.text(`${m.goalsFor}–${m.goalsAgainst}`, M + 19, y + 3)
+            pdf.text(`${m.goalsFor}-${m.goalsAgainst}`, M + 22, y + 2)
           }
 
           pdf.setFontSize(4.5); txt(C.s300)
-          const opp = m.opponent.length > 30 ? m.opponent.slice(0, 30) + '…' : m.opponent
-          pdf.text(opp, M + 28, y + 3)
+          const opp = m.opponent.length > 28 ? m.opponent.slice(0, 28) + '...' : m.opponent
+          pdf.text(opp, M + 30, y + 2)
 
           pdf.setFontSize(4); txt(C.s600)
-          pdf.text(m.date, W - M - 2, y + 3, { align: 'right' })
+          pdf.text(m.date, W - M - 4, y + 2, { align: 'right' })
 
-          y += 5.5
+          y += 6
         })
+        y += 2
       }
 
       // ═══════════════════════════════════════════════════════════════
-      // REFEREE (if available)
+      // PITCH DIMENSIONS — atomic block (if available)
+      // ═══════════════════════════════════════════════════════════════
+      if (r.homePitch && r.rivalPitch) {
+        const PITCH_H = 55
+        y = ensureSpace(PITCH_H, y)
+
+        rr(M, y, CW, 7, 2, C.bgCard)
+        pdf.setFontSize(6); txt(C.cyan)
+        pdf.text('DIMENSIONS DEL CAMP', M + 5, y + 5)
+        y += 10
+
+        const pitchAreaW = CW - 10
+        const pitchAreaH = 35
+        const pitchCenterX = M + 5 + pitchAreaW / 2
+        const pitchCenterY = y + pitchAreaH / 2
+
+        // Draw home pitch (larger, green outline)
+        const maxLen = Math.max(r.homePitch.length_m, r.rivalPitch.length_m)
+        const scaleW = pitchAreaW / maxLen
+        const scaleH = pitchAreaH / maxLen
+
+        const hpW = r.homePitch.length_m * scaleW
+        const hpH = r.homePitch.width_m * scaleH
+        fill(C.greenDk); pdf.setDrawColor(C.green[0], C.green[1], C.green[2]); pdf.setLineWidth(0.4)
+        pdf.roundedRect(pitchCenterX - hpW / 2, pitchCenterY - hpH / 2, hpW, hpH, 1, 1, 'S')
+
+        // Draw rival pitch (red outline, overlaid)
+        const rpW = r.rivalPitch.length_m * scaleW
+        const rpH = r.rivalPitch.width_m * scaleH
+        pdf.setDrawColor(C.red[0], C.red[1], C.red[2]); pdf.setLineWidth(0.3)
+        pdf.roundedRect(pitchCenterX - rpW / 2, pitchCenterY - rpH / 2, rpW, rpH, 1, 1, 'S')
+
+        // Labels
+        pdf.setFontSize(4); txt(C.green)
+        pdf.text(`${r.homePitch.length_m}x${r.homePitch.width_m}m`, pitchCenterX - hpW / 2 + 2, pitchCenterY - hpH / 2 + 3)
+        if (r.homePitch.field_name) {
+          pdf.setFontSize(3.5); txt(C.s400)
+          pdf.text(r.homePitch.field_name, pitchCenterX - hpW / 2 + 2, pitchCenterY - hpH / 2 + 6)
+        }
+
+        pdf.setFontSize(4); txt(C.red)
+        pdf.text(`${r.rivalPitch.length_m}x${r.rivalPitch.width_m}m`, pitchCenterX + rpW / 2 - 2, pitchCenterY + rpH / 2 - 2, { align: 'right' })
+        if (r.rivalPitch.field_name) {
+          pdf.setFontSize(3.5); txt(C.s400)
+          pdf.text(r.rivalPitch.field_name, pitchCenterX + rpW / 2 - 2, pitchCenterY + rpH / 2 + 1, { align: 'right' })
+        }
+
+        // Legend
+        y += pitchAreaH + 3
+        rr(M + 5, y, 3, 2.5, 1, C.green)
+        pdf.setFontSize(3.5); txt(C.s400); pdf.text('El nostre camp', M + 10, y + 2)
+        rr(M + 35, y, 3, 2.5, 1, C.red)
+        pdf.text('Camp rival', M + 40, y + 2)
+        y += 5
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      // REFEREE — atomic block
       // ═══════════════════════════════════════════════════════════════
       if (nm.referee) {
-        y += 3
-        rr(M, y, CW, 8, 2, C.bgCard)
+        y = ensureSpace(12, y)
+        rr(M, y, CW, 9, 2, C.bgCard)
         pdf.setFontSize(5); txt(C.s400)
-        pdf.text('ÀRBITRE DESIGNAT', M + 4, y + 5.5)
+        pdf.text('ARBITRE DESIGNAT', M + 5, y + 6)
         pdf.setFontSize(6); txt(C.white)
-        pdf.text(nm.referee, W - M - 4, y + 5.5, { align: 'right' })
+        pdf.text(nm.referee, W - M - 5, y + 6, { align: 'right' })
+        y += 12
       }
 
       // ═══════════════════════════════════════════════════════════════
-      // WATERMARKS + CHROME
+      // LOGO WATERMARK (on every page, very subtle)
       // ═══════════════════════════════════════════════════════════════
-      // Subtle corner watermark
-      pdf.saveGraphicsState()
-      // @ts-ignore
-      pdf.setGState(new (pdf as any).GState({ opacity: 0.06 }))
-      pdf.setFontSize(7); txt(C.white)
-      pdf.text('neoscout.es', W - M - 1, 7, { align: 'right' })
-      pdf.restoreGraphicsState()
-
-      // Bottom footer
-      fill([10, 16, 30]); pdf.rect(0, H - 8, W, 8, 'F')
-      fill(C.green); pdf.rect(0, H - 8, W, 0.4, 'F')
-      pdf.setFontSize(5.5); txt(C.s500)
-      pdf.text('Generat amb NeoScout — neoscout.es', M, H - 3.5)
-      txt(C.s600)
-      pdf.text(`neoscout.es/equip/${teamSlug}`, W - M, H - 3.5, { align: 'right' })
-
-      // Logo watermark (center, very subtle)
       try {
         const logoImg = new Image()
         logoImg.crossOrigin = 'anonymous'
@@ -519,15 +632,29 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
         const lctx = logoCanvas.getContext('2d')!
         lctx.drawImage(logoImg, 0, 0)
         const logoData = logoCanvas.toDataURL('image/png')
-        pdf.saveGraphicsState()
-        // @ts-ignore
-        pdf.setGState(new (pdf as any).GState({ opacity: 0.035 }))
-        const logoW = 55, logoH = (logoImg.height / logoImg.width) * logoW
-        pdf.addImage(logoData, 'PNG', (W - logoW) / 2, (H - logoH) / 2 + 15, logoW, logoH)
-        pdf.restoreGraphicsState()
-      } catch { /* logo load failed */ }
+        const logoW = 40, logoH = (logoImg.height / logoImg.width) * logoW
 
-      const filename = `NeoScout_Rival_${rival.name.replace(/[^a-zA-Z0-9àáèéíòóúïüçñ ]/gi, '').replace(/\s+/g, '_')}.pdf`
+        // Apply watermark to all pages
+        for (let p = 1; p <= pageNum; p++) {
+          pdf.setPage(p)
+          pdf.saveGraphicsState()
+          // @ts-ignore
+          pdf.setGState(new (pdf as any).GState({ opacity: 0.03 }))
+          pdf.addImage(logoData, 'PNG', (W - logoW) / 2, (H - logoH) / 2, logoW, logoH)
+          pdf.restoreGraphicsState()
+        }
+      } catch { /* logo load failed, skip */ }
+
+      // ═══════════════════════════════════════════════════════════════
+      // ADD PAGE NUMBERS to all pages
+      // ═══════════════════════════════════════════════════════════════
+      for (let p = 1; p <= pageNum; p++) {
+        pdf.setPage(p)
+        pdf.setFontSize(4); txt(C.s600)
+        pdf.text(`${p}/${pageNum}`, W / 2, H - 4, { align: 'center' })
+      }
+
+      const filename = `NeoScout_Rival_${rival.name.replace(/[^a-zA-Z0-9 ]/gi, '').replace(/\s+/g, '_')}.pdf`
       pdf.save(filename)
     } catch (err) {
       console.error('PDF export failed:', err)

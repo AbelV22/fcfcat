@@ -28,6 +28,8 @@ function slugify(s: string) {
     .replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
 }
 
+const RESULT_LABEL: Record<string, string> = { W: 'V', D: 'E', L: 'D' }
+
 function FormDot({ result }: { result: 'W' | 'D' | 'L' | null }) {
   const cls =
     result === 'W' ? 'bg-green-500 text-white' :
@@ -35,7 +37,7 @@ function FormDot({ result }: { result: 'W' | 'D' | 'L' | null }) {
     result === 'L' ? 'bg-red-500 text-white' : 'bg-white/10 text-slate-500'
   return (
     <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-[10px] font-black ${cls}`}>
-      {result ?? '?'}
+      {result ? RESULT_LABEL[result] : '?'}
     </span>
   )
 }
@@ -149,9 +151,9 @@ function SplitBlock({
       <div className="grid grid-cols-4 gap-1 mb-2">
         {[
           { v: record.played, l: 'PJ', c: 'text-white' },
-          { v: record.wins, l: 'G', c: 'text-green-400' },
+          { v: record.wins, l: 'V', c: 'text-green-400' },
           { v: record.draws, l: 'E', c: 'text-amber-400' },
-          { v: record.losses, l: 'P', c: 'text-red-400' },
+          { v: record.losses, l: 'D', c: 'text-red-400' },
         ].map(s => (
           <div key={s.l} className="text-center">
             <div className={`text-sm font-black ${s.c}`}>{s.v}</div>
@@ -370,7 +372,7 @@ function RivalInsightsBlock({ insights }: { insights: RivalInsights | null }) {
   return (
     <div className="mt-3 bg-black/20 rounded-xl px-4 py-3 border border-white/5">
       <div className="flex items-center gap-1.5 mb-2">
-        <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Tendències del rival</span>
+        <span className="text-[10px] font-black text-slate-200 uppercase tracking-wider">Tendències del rival</span>
         <span className="text-[9px] text-slate-500">· {insights.matchesAnalyzed} partits</span>
       </div>
       <div className="grid grid-cols-2 gap-1.5">
@@ -378,7 +380,7 @@ function RivalInsightsBlock({ insights }: { insights: RivalInsights | null }) {
           <div key={i} className="flex items-center gap-1.5 bg-white/4 rounded-lg px-2.5 py-1.5 border border-white/5">
             <span className="text-sm shrink-0">{p.icon}</span>
             <div className="min-w-0">
-              <div className="text-[9px] text-slate-400 truncate">{p.label}</div>
+              <div className="text-[9px] text-slate-200 truncate">{p.label}</div>
               <div className={`text-xs font-black ${p.color}`}>{p.value}</div>
             </div>
           </div>
