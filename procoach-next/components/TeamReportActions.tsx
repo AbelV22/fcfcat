@@ -194,7 +194,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       })
 
       // Venue badge
-      const venue = nm.isHome ? '🏠 LOCAL' : '✈️ VISITANT'
+      const venue = nm.isHome ? 'LOCAL' : 'VISITANT'
       rr(vsX - 10, y + 1, 20, 4, 1.5, nm.isHome ? [22, 80, 45] as RGB : [20, 50, 80] as RGB)
       pdf.setFontSize(4); txt(nm.isHome ? C.green : C.cyan)
       pdf.text(venue, vsX, y + 3.8, { align: 'center' })
@@ -206,7 +206,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       // ═══════════════════════════════════════════════════════════════
       rr(M, y, CW, 6, 0, C.bgCard)
       pdf.setFontSize(6); txt(C.green)
-      pdf.text('📊 COMPARATIVA DE TEMPORADA', M + 4, y + 4.5)
+      pdf.text('COMPARATIVA DE TEMPORADA', M + 4, y + 4.5)
       y += 9
 
       const drawCompRow = (label: string, leftVal: number | string, rightVal: number | string, leftNum: number, rightNum: number, yy: number) => {
@@ -261,7 +261,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       // Left column: Rival rendiment local/visitant
       rr(col1X, y, colW, 6, 0, C.bgCard)
       pdf.setFontSize(5.5); txt(C.cyan)
-      pdf.text('🏠 RIVAL COM A LOCAL', col1X + 3, y + 4.5)
+      pdf.text('RIVAL COM A LOCAL', col1X + 3, y + 4.5)
       let yL = y + 9
 
       const rHome = rival.home
@@ -280,7 +280,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
 
       rr(col1X, yL, colW, 6, 0, C.bgCard)
       pdf.setFontSize(5.5); txt(C.cyan)
-      pdf.text('✈️ RIVAL COM A VISITANT', col1X + 3, yL + 4.5)
+      pdf.text('RIVAL COM A VISITANT', col1X + 3, yL + 4.5)
       yL += 9
 
       const rAway = rival.away
@@ -294,7 +294,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       // Right column: Insights
       rr(col2X, y, colW, 6, 0, C.bgCard)
       pdf.setFontSize(5.5); txt(C.amber)
-      pdf.text('🧠 PATRONS DEL RIVAL', col2X + 3, y + 4.5)
+      pdf.text('PATRONS DEL RIVAL', col2X + 3, y + 4.5)
       let yR = y + 9
 
       if (rival.insights) {
@@ -331,7 +331,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
         yR += 5
         rr(col2X, yR, colW, 6, 0, C.bgCard)
         pdf.setFontSize(5.5); txt(C.green)
-        pdf.text('⏱️ MINUTS DE GOL', col2X + 3, yR + 4.5)
+        pdf.text('MINUTS DE GOL', col2X + 3, yR + 4.5)
         yR += 9
 
         const maxBucket = Math.max(...rival.goalBuckets.map(b => Math.max(b.scored, b.conceded)), 1)
@@ -355,8 +355,10 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
           yR += 5
         })
         pdf.setFontSize(3.5)
-        txt(C.green); pdf.text('● A favor', col2X + 3, yR)
-        txt(C.red); pdf.text('● En contra', col2X + 20, yR)
+        rr(col2X + 3, yR - 1.5, 3, 2, 1, C.green)
+        pdf.setFontSize(3.5); txt(C.s400); pdf.text('A favor', col2X + 7.5, yR)
+        rr(col2X + 20, yR - 1.5, 3, 2, 1, C.red)
+        pdf.text('En contra', col2X + 24.5, yR)
       }
 
       y = Math.max(yL, yR) + 7
@@ -370,7 +372,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       if (scorers.length > 0) {
         rr(col1X, y, colW, 6, 0, C.bgCard)
         pdf.setFontSize(5.5); txt(C.green)
-        pdf.text('⚽ GOLEJADORS RIVAL', col1X + 3, y + 4.5)
+        pdf.text('GOLEJADORS RIVAL', col1X + 3, y + 4.5)
         let ys = y + 9
 
         scorers.forEach((p, i) => {
@@ -389,7 +391,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       if (danger.length > 0) {
         rr(col2X, y, colW, 6, 0, [45, 35, 15])
         pdf.setFontSize(5.5); txt(C.amber)
-        pdf.text('⚠️ APERCEBITS', col2X + 3, y + 4.5)
+        pdf.text('APERCEBITS', col2X + 3, y + 4.5)
         let yd = y + 9
 
         danger.forEach((p, i) => {
@@ -398,7 +400,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
           const pName = p.name.length > 20 ? p.name.slice(0, 20) + '…' : p.name
           pdf.text(pName, col2X + 3, yd + 2)
           pdf.setFontSize(5); txt(C.amber)
-          pdf.text(`🟨 ${p.yellow_cards}`, col2X + colW - 5, yd + 2, { align: 'right' })
+          pdf.text(`${p.yellow_cards} grg.`, col2X + colW - 5, yd + 2, { align: 'right' })
           yd += 5
         })
       }
@@ -413,7 +415,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       if (r.headToHead.length > 0) {
         rr(M, y, CW, 6, 0, C.bgCard)
         pdf.setFontSize(5.5); txt(C.white)
-        pdf.text('🔄 ENFRONTAMENTS DIRECTES', M + 4, y + 4.5)
+        pdf.text('ENFRONTAMENTS DIRECTES', M + 4, y + 4.5)
         y += 9
 
         r.headToHead.slice(0, 5).forEach(m => {
@@ -444,7 +446,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       if (rival.form.length > 0) {
         rr(M, y, CW, 6, 0, C.bgCard)
         pdf.setFontSize(5.5); txt(C.white)
-        pdf.text('📅 ÚLTIMS PARTITS DEL RIVAL', M + 4, y + 4.5)
+        pdf.text('ULTIMS PARTITS DEL RIVAL', M + 4, y + 4.5)
         y += 9
 
         rival.form.slice(0, 6).forEach(m => {
@@ -487,16 +489,12 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       // ═══════════════════════════════════════════════════════════════
       // WATERMARKS + CHROME
       // ═══════════════════════════════════════════════════════════════
-      // Diagonal watermarks
+      // Subtle corner watermark
       pdf.saveGraphicsState()
       // @ts-ignore
-      pdf.setGState(new (pdf as any).GState({ opacity: 0.025 }))
-      pdf.setFontSize(55); txt(C.white)
-      for (let yw = 30; yw < H + 40; yw += 65) {
-        for (let xw = -40; xw < W + 40; xw += 110) {
-          pdf.text('NEOSCOUT', xw, yw, { angle: 30 })
-        }
-      }
+      pdf.setGState(new (pdf as any).GState({ opacity: 0.06 }))
+      pdf.setFontSize(7); txt(C.white)
+      pdf.text('neoscout.es', W - M - 1, 7, { align: 'right' })
       pdf.restoreGraphicsState()
 
       // Bottom footer

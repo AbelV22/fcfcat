@@ -79,18 +79,13 @@ export default function ExportRivalPdf({
           imgHeight
         )
 
-        // Watermark on every page — diagonal repeated pattern
+        // Subtle corner branding
         pdf.saveGraphicsState()
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        pdf.setGState(new (pdf as any).GState({ opacity: 0.06 }))
-        pdf.setFontSize(48)
+        pdf.setGState(new (pdf as any).GState({ opacity: 0.08 }))
+        pdf.setFontSize(8)
         pdf.setTextColor(255, 255, 255)
-        // Place watermarks in a grid pattern
-        for (let wy = 40; wy < pageHeight; wy += 80) {
-          for (let wx = 20; wx < imgWidth + 40; wx += 90) {
-            pdf.text('NeoScout', wx, wy, { angle: -35 })
-          }
-        }
+        pdf.text('neoscout.es', imgWidth - 8, 8, { align: 'right' })
         pdf.restoreGraphicsState()
 
         // Header bar on first page
