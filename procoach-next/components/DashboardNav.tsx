@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import {
   BarChart3, Users, Shield, Calendar, ListOrdered,
@@ -50,9 +51,7 @@ export function DashboardSidebar({
     >
       {/* Logo */}
       <div className="h-16 flex items-center gap-2.5 px-4 border-b border-white/8 shrink-0">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center shrink-0">
-          <ListOrdered size={14} className="text-white" />
-        </div>
+        <Image src="/logo_neoscout.png" alt="NeoScout" width={32} height={32} className="rounded-lg shrink-0" />
         {!collapsed && (
           <span className="font-bold text-white text-sm truncate">
             Neo<span className="text-green-400">Scout</span>
@@ -226,9 +225,7 @@ export function DashboardTopBar({
     <header className="lg:hidden border-b border-white/8 bg-[#0a1628]/90 backdrop-blur-xl sticky top-0 z-40">
       <div className="px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center">
-            <ListOrdered size={12} className="text-white" />
-          </div>
+          <Image src="/logo_neoscout.png" alt="NeoScout" width={28} height={28} className="rounded-lg" />
           <span className="font-bold text-white text-sm">
             Neo<span className="text-green-400">Scout</span>
           </span>
