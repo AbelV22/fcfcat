@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, ChevronDown, X, CheckCircle, Trophy } from 'lucide-react'
+import { Search, ChevronDown, X, CheckCircle } from 'lucide-react'
+import Image from 'next/image'
 
 function slugify(text: string): string {
   return text
@@ -95,9 +96,7 @@ export default function SetupPage() {
   return (
     <div className="max-w-lg mx-auto px-4 py-6 lg:py-8">
         <div className="text-center mb-10">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center mx-auto mb-4">
-            <Trophy size={28} className="text-white" />
-          </div>
+          <Image src="/logo_neoscout.png" alt="NeoScout" width={64} height={64} className="mx-auto mb-4 rounded-2xl" />
           <h1 className="text-2xl font-black text-white mb-2">Configura el teu equip</h1>
           <p className="text-slate-400 text-sm">Selecciona competicio i equip per activar totes les funcionalitats del dashboard.</p>
         </div>

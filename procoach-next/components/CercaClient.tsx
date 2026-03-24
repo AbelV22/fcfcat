@@ -3,7 +3,7 @@
 import { useState, useMemo, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { Search, Shield, Users, Trophy } from 'lucide-react'
+import { Search, Shield, Users, Layers } from 'lucide-react'
 
 type TabType = 'all' | 'arbitre' | 'jugador' | 'equip'
 
@@ -104,7 +104,7 @@ function CercaInner({ referees, players, teams }: CercaClientProps) {
             { key: 'all' as TabType, label: 'Tot', icon: <Search size={13} /> },
             { key: 'arbitre' as TabType, label: 'Àrbitres', icon: <Shield size={13} /> },
             { key: 'jugador' as TabType, label: 'Jugadors', icon: <Users size={13} /> },
-            { key: 'equip' as TabType, label: 'Equips', icon: <Trophy size={13} /> },
+            { key: 'equip' as TabType, label: 'Equips', icon: <Layers size={13} /> },
           ].map(tab => (
             <button
               key={tab.key}
@@ -134,7 +134,7 @@ function CercaInner({ referees, players, teams }: CercaClientProps) {
           {filteredTeams.length > 0 && (
             <section>
               <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-                <Trophy size={14} className="text-green-400" />
+                <Layers size={14} className="text-green-400" />
                 Equips {!browsing && `(${filteredTeams.length})`}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">

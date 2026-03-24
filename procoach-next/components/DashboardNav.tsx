@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  BarChart3, Users, Shield, Calendar, Trophy,
+  BarChart3, Users, Shield, Calendar, ListOrdered,
   ClipboardList, Settings, Home, MoreHorizontal,
   X, ChevronLeft, ChevronRight, RefreshCw,
 } from 'lucide-react'
@@ -23,7 +23,7 @@ const NAV_ITEMS: NavItem[] = [
   { icon: Users, label: 'Rival', shortLabel: 'Rival', href: '/dashboard/rival', color: 'text-cyan-400' },
   { icon: Shield, label: 'Arbitre', shortLabel: 'Arbit.', href: '/dashboard/arbitre-pro', color: 'text-purple-400' },
   { icon: Calendar, label: 'Calendari', shortLabel: 'Calen.', href: '/dashboard/calendari', color: 'text-amber-400' },
-  { icon: Trophy, label: 'Classificacio', shortLabel: 'Class.', href: '/dashboard/classificacio', color: 'text-yellow-400' },
+  { icon: ListOrdered, label: 'Classificacio', shortLabel: 'Class.', href: '/dashboard/classificacio', color: 'text-yellow-400' },
   { icon: ClipboardList, label: 'Apunts', shortLabel: 'Apunts', href: '/dashboard/apunts', color: 'text-emerald-400' },
   { icon: Settings, label: 'Plantilla', shortLabel: 'Plant.', href: '/dashboard/equip-gestio', color: 'text-slate-400' },
 ]
@@ -51,7 +51,7 @@ export function DashboardSidebar({
       {/* Logo */}
       <div className="h-16 flex items-center gap-2.5 px-4 border-b border-white/8 shrink-0">
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center shrink-0">
-          <Trophy size={14} className="text-white" />
+          <ListOrdered size={14} className="text-white" />
         </div>
         {!collapsed && (
           <span className="font-bold text-white text-sm truncate">
@@ -227,7 +227,7 @@ export function DashboardTopBar({
       <div className="px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center">
-            <Trophy size={12} className="text-white" />
+            <ListOrdered size={12} className="text-white" />
           </div>
           <span className="font-bold text-white text-sm">
             Neo<span className="text-green-400">Scout</span>

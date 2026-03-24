@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Trophy, Target, Shield, Users, BarChart3 } from 'lucide-react'
+import { CalendarCheck, Target, Shield, Users, BarChart3 } from 'lucide-react'
 import type { MatchNote } from '@/lib/match-notes-types'
 import { computeTeamSummary, fetchPlayerAggregations, type TeamSummary, type PlayerAgg } from '@/lib/match-notes-aggregations'
 
@@ -30,7 +30,7 @@ export default function DashboardTeamSummary({ notes }: { notes: MatchNote[] }) 
     <div className="space-y-4">
       {/* Season summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        <StatCard icon={Trophy} label="Partits" value={summary.totalMatches} color="green" />
+        <StatCard icon={CalendarCheck} label="Partits" value={summary.totalMatches} color="green" />
         <StatCard
           icon={Target}
           label="V / E / D"
@@ -124,7 +124,7 @@ export default function DashboardTeamSummary({ notes }: { notes: MatchNote[] }) 
   )
 }
 
-function StatCard({ icon: Icon, label, value, color }: { icon: typeof Trophy; label: string; value: string | number; color: string }) {
+function StatCard({ icon: Icon, label, value, color }: { icon: typeof CalendarCheck; label: string; value: string | number; color: string }) {
   return (
     <div className="glass-card rounded-xl p-4 text-center">
       <Icon size={14} className="mx-auto mb-1.5" style={{ color: `var(--color-${color}-400, #4ade80)` }} />

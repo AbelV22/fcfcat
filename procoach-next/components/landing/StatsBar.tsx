@@ -1,4 +1,4 @@
-import { Trophy, TrendingUp, Shield, Users } from 'lucide-react'
+import { Layers, TrendingUp, Shield, Users } from 'lucide-react'
 
 interface Props {
   refereeCount: number
@@ -9,7 +9,7 @@ interface Props {
 export default function StatsBar({ refereeCount, matchCount, teamCount }: Props) {
   const stats = [
     {
-      icon: <Trophy size={14} />,
+      icon: <Layers size={14} />,
       iconColor: 'text-amber-400',
       value: '14',
       label: 'Categories FCF',

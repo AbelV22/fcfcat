@@ -10,7 +10,7 @@ import { AdminGate, AdminBadge, AdminBlurValue, AdminUpgradeLink } from '@/compo
 import ScrapeProgressBanner from '@/components/ScrapeProgressBanner'
 import TeamReportActions, { type PDFReportData } from '@/components/TeamReportActions'
 import {
-  Users, Trophy, Shield, ChevronRight, AlertTriangle,
+  Users, ListOrdered, Shield, ChevronRight, AlertTriangle,
   Calendar, Target, Clock, Home, Plane, BarChart2,
   ArrowRight, Crosshair, Ban, Lock, Star, TrendingUp,
 } from 'lucide-react'
@@ -155,7 +155,7 @@ function MiniTable({ standings, teamSlug }: { standings: FullTeamReportDB['stand
   return (
     <div className="bg-white/4 border border-white/8 rounded-2xl p-5">
       <div className="flex items-center gap-2 mb-4">
-        <Trophy size={16} className="text-yellow-400" />
+        <ListOrdered size={16} className="text-yellow-400" />
         <h3 className="font-bold text-white text-sm">Classificació</h3>
       </div>
       <div className="space-y-1">

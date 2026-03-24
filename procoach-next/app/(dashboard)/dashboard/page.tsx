@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase-server'
 import Link from 'next/link'
-import { BarChart3, Shield, Users, Trophy, ArrowRight, Settings, ClipboardList, RefreshCw } from 'lucide-react'
+import { BarChart3, Shield, Users, ListOrdered, ArrowRight, Settings, ClipboardList, RefreshCw } from 'lucide-react'
 import { getDashboardTeam, isAdminUser } from '@/lib/dashboard-auth'
 
 export const dynamic = 'force-dynamic'
@@ -100,7 +100,7 @@ export default async function DashboardPage() {
               badge: null,
             },
             {
-              icon: <Trophy size={22} className="text-yellow-400" />,
+              icon: <ListOrdered size={22} className="text-yellow-400" />,
               title: 'Classificació',
               desc: 'La taula de classificació del teu grup en temps real.',
               href: '/dashboard/classificacio',

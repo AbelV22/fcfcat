@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import {
-  ArrowRight, Trophy, Crosshair, AlertTriangle, Clock, Home,
+  ArrowRight, ListOrdered, Crosshair, AlertTriangle, Clock, Home,
   Target, FileText, Calendar,
 } from 'lucide-react'
 
@@ -125,7 +125,7 @@ export default function FeaturedSection() {
       {/* ─── Competitions ─── */}
       <div className="reveal">
         <div className="flex items-center gap-2 mb-4 section-accent">
-          <Trophy size={16} className="text-emerald-400" />
+          <ListOrdered size={16} className="text-emerald-400" />
           <h2 className="font-headline text-lg font-bold text-white">Competicions del futbol català — Temporada 2025/26</h2>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">

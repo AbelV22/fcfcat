@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, ArrowRight, Trophy, Save, Check, Zap } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ClipboardList, Save, Check, Zap } from 'lucide-react'
 import type { WizardState } from '@/lib/match-notes-types'
 import { saveFullMatchNote, fetchActaDataForMatch, actaToWizardEvents, actaToWizardLineups } from '@/lib/match-notes-data'
 import StepSelectMatch from './StepSelectMatch'
@@ -219,7 +219,7 @@ export default function WizardShell({
             Apunts
           </button>
           <div className="flex items-center gap-2">
-            <Trophy size={14} className="text-green-400" />
+            <ClipboardList size={14} className="text-green-400" />
             <span className="text-sm font-semibold text-white">Nous apunts</span>
             {loadingActa && (
               <div className="flex items-center gap-1 text-amber-400">

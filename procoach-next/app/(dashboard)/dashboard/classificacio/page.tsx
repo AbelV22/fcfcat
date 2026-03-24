@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getDashboardTeam, isAdminUser } from '@/lib/dashboard-auth'
 import { getFullTeamReportDB } from '@/lib/supabase-data'
-import { Trophy } from 'lucide-react'
+import { ListOrdered } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,7 +29,7 @@ export default async function ClassificacioPage() {
 
         {standings.length === 0 ? (
           <div className="glass-card rounded-2xl p-12 text-center">
-            <Trophy size={40} className="text-slate-600 mx-auto mb-4" />
+            <ListOrdered size={40} className="text-slate-600 mx-auto mb-4" />
             <p className="text-slate-400">No s&apos;ha trobat la classificacio.</p>
           </div>
         ) : (

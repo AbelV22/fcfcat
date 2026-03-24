@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import {
-  Users, Trophy, Shield, ArrowRight, Target, Clock,
+  Users, ListOrdered, Shield, ArrowRight, Target, Clock,
   AlertTriangle, User, Footprints, Ruler, Weight,
   Instagram, Phone, Mail, CheckCircle2, Search,
 } from 'lucide-react'
@@ -146,7 +146,7 @@ export default async function JugadorPage({ params }: Props) {
                     href={`/equip/${currentTeam.teamSlug}`}
                     className="text-xs text-slate-400 hover:text-green-400 transition-colors flex items-center gap-1"
                   >
-                    <Trophy size={11} className="text-green-400" />
+                    <ListOrdered size={11} className="text-green-400" />
                     {currentTeam.teamName}
                   </Link>
                 )}
@@ -222,7 +222,7 @@ export default async function JugadorPage({ params }: Props) {
             {seasons.length > 0 && (
               <div className="glass-card rounded-2xl p-5">
                 <div className="flex items-center gap-2 mb-4">
-                  <Trophy size={16} className="text-green-400" />
+                  <ListOrdered size={16} className="text-green-400" />
                   <h2 className="font-bold text-white text-sm">Historial per temporada</h2>
                 </div>
                 <div className="overflow-x-auto -mx-5 px-5">

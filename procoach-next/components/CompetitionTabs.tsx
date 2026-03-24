@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import {
-  Trophy, Users, Calendar, Shield, AlertTriangle,
+  ListOrdered, Users, Calendar, Shield, AlertTriangle,
   TrendingUp, Zap, LogIn, BarChart2, Target, Clock,
 } from 'lucide-react'
 import { slugify } from '@/lib/utils'
@@ -91,7 +91,7 @@ export default function CompetitionTabs({
 
   const tabs: { id: TabId; label: string; icon: React.ReactNode; count?: number }[] = [
     { id: 'resultats', label: 'Resultats', icon: <Calendar size={14} />, count: playedMatches.length },
-    { id: 'classificacio', label: 'Classificació', icon: <Trophy size={14} />, count: standings.length },
+    { id: 'classificacio', label: 'Classificació', icon: <ListOrdered size={14} />, count: standings.length },
     { id: 'golejadors', label: 'Golejadors', icon: <Target size={14} />, count: scorers.length > 0 ? scorers.length : undefined },
     { id: 'disciplina', label: 'Disciplina', icon: <AlertTriangle size={14} />, count: discipline.riskPlayers.length > 0 ? discipline.riskPlayers.length : undefined },
     { id: 'arbitres', label: 'Àrbitres', icon: <Shield size={14} />, count: refereeRanking.length },
@@ -259,7 +259,7 @@ export default function CompetitionTabs({
             <>
               {fcfStandings.length > 0 && (
                 <div className="flex items-center gap-2 mb-3 text-xs text-green-400">
-                  <Trophy size={12} />
+                  <ListOrdered size={12} />
                   <span>Classificació oficial FCF</span>
                 </div>
               )}

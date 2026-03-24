@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
-  Plus, ArrowLeft, Trophy, ClipboardList, Calendar,
+  Plus, ArrowLeft, ListOrdered, ClipboardList, Calendar,
   Users, TrendingUp, BarChart3, Trash2, CheckCircle2,
   FileEdit, CircleDot, Home, Plane, ChevronRight,
 } from 'lucide-react'
@@ -221,7 +221,7 @@ export default function ApuntsPage() {
             Dashboard
           </Link>
           <div className="flex items-center gap-2">
-            <Trophy size={14} className="text-green-400" />
+            <ListOrdered size={14} className="text-green-400" />
             <span className="text-sm font-semibold text-white">Apunts de Partit</span>
           </div>
           <Link

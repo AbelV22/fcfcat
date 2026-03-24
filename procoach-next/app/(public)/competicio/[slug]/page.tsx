@@ -15,7 +15,7 @@ import {
   getCompetitionDisciplineDB,
   getCompetitionRefereeRankingDB,
 } from '@/lib/supabase-data'
-import { Trophy, AlertTriangle, LogIn, ChevronRight } from 'lucide-react'
+import { ListOrdered, AlertTriangle, LogIn, ChevronRight } from 'lucide-react'
 
 // SSR — rendered on each request so data is always fresh
 export const dynamic = 'force-dynamic'
@@ -164,7 +164,7 @@ export default async function CompeticionPage({
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6">
             <div className="flex items-center gap-3 sm:gap-4">
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-green-500/20 to-cyan-500/20 border border-green-500/30 flex items-center justify-center shrink-0">
-                <Trophy size={22} className="text-green-400" />
+                <ListOrdered size={22} className="text-green-400" />
               </div>
               <div>
                 <p className="text-xs text-slate-500 uppercase tracking-wider font-medium mb-0.5">{CATEGORY_LABEL[category]}</p>

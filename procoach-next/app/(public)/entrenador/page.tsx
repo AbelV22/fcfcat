@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import PublicHeader from '@/components/PublicHeader'
-import { Trophy, Shield, TrendingUp, Users, CheckCircle, Star, Zap } from 'lucide-react'
+import { ListOrdered, Shield, TrendingUp, Users, CheckCircle, Star, Zap } from 'lucide-react'
 
 const COMPETITIONS = [
   'Primera Catalana', 'Segona Catalana', 'Tercera Catalana', 'Quarta Catalana',
@@ -17,7 +17,7 @@ const FREE_FEATURES = [
   { icon: Shield, text: 'Informes bàsics dels àrbitres que us arbitren' },
   { icon: TrendingUp, text: 'Estadístiques de la temporada del teu equip' },
   { icon: Users, text: 'Perfil públic dels teus jugadors' },
-  { icon: Trophy, text: 'Resultats i classificació en temps real' },
+  { icon: ListOrdered, text: 'Resultats i classificació en temps real' },
 ]
 
 const PRO_FEATURES = [
