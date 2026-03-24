@@ -2,9 +2,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@supabase/supabase-js'
 import { isAdminUser } from '@/lib/admin-auth'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '@/lib/supabase-config'
 
 export async function saveField(
   _prevState: { error?: string; success?: string } | undefined,
@@ -32,7 +30,7 @@ export async function saveField(
   }
 
   try {
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON)
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
     const { error } = await supabase
       .from('fields')
       .upsert(entry, { onConflict: 'name' })
@@ -54,7 +52,7 @@ export async function deleteField(_prevState: unknown, formData: FormData) {
   if (!name) return { error: 'Nom obligatori' }
 
   try {
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON)
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
     const { error } = await supabase.from('fields').delete().eq('name', name)
     if (error) throw new Error(error.message)
     revalidatePath('/admin/camps')

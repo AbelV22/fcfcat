@@ -1378,7 +1378,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       ? supabase.from('fcf_referee_matches').select('jornada, match_date, home_team, away_team, home_score, away_score, main_referee').eq('home_team', rivalName).eq('away_team', teamName).not('home_score', 'is', null).order('match_date', { ascending: false }).limit(5)
       : Promise.resolve({ data: [] as any[] }),
     // Field dimensions for PitchCompare (team + rival)
-    supabase.from('fields').select('name, team, length_m, width_m').order('name'),
+    supabase.from('fields').select('name, team, fcf_venue, length_m, width_m').order('name'),
     // Global referee stats for percentile computation — senior-level only
     refereeName
       ? supabase.from('fcf_referee_matches').select('main_referee, competition, yellow_cards, red_cards, home_score, away_score').in('competition', SENIOR_LEVEL_COMPETITIONS).not('main_referee', 'is', null).limit(5000)
@@ -1629,12 +1629,20 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
   }
 
   // ── Field dimensions lookup ─────────────────────────────────────────────────
-  const allFields = (fieldsRes.data || []) as Array<{ name: string; team: string | null; length_m: number; width_m: number }>
-  function findPitch(name: string): FieldDimsDB | null {
-    // Match by team name (case-insensitive prefix match)
+  const allFields = (fieldsRes.data || []) as Array<{ name: string; team: string | null; fcf_venue: string | null; length_m: number; width_m: number }>
+  function findPitch(name: string, venueHint?: string): FieldDimsDB | null {
+    // 1. Exact team name match
     const upper = name.toUpperCase()
-    const field = allFields.find(f => f.team && f.team.toUpperCase() === upper)
-      || allFields.find(f => f.team && upper.startsWith(f.team.toUpperCase()))
+    let field = allFields.find(f => f.team && f.team.toUpperCase() === upper)
+    // 2. Prefix match (e.g. "CLUB B" matches field saved for "CLUB")
+    if (!field) field = allFields.find(f => f.team && upper.startsWith(f.team.toUpperCase()))
+    // 3. Reverse prefix (field saved for "CLUB B", searching "CLUB")
+    if (!field) field = allFields.find(f => f.team && f.team.toUpperCase().startsWith(upper))
+    // 4. Match by FCF venue (same stadium = same club)
+    if (!field && venueHint) {
+      const vn = venueHint.split('  ')[0].trim().toUpperCase()
+      if (vn) field = allFields.find(f => f.fcf_venue && f.fcf_venue.split('  ')[0].trim().toUpperCase() === vn)
+    }
     if (field && field.length_m > 0 && field.width_m > 0) {
       return { length_m: field.length_m, width_m: field.width_m, field_name: field.name }
     }

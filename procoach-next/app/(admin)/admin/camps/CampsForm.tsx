@@ -67,6 +67,15 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
     ? teams.filter(t => t.name.toLowerCase().includes(teamQuery.toLowerCase())).slice(0, 8)
     : []
 
+  // Find all teams that share the same FCF venue (same club, same field)
+  function getClubMates(venue: string | null): string[] {
+    if (!venue) return []
+    const venueNorm = venue.split('  ')[0].trim().toLowerCase()
+    return Object.entries(teamVenueMap)
+      .filter(([, v]) => v.split('  ')[0].trim().toLowerCase() === venueNorm)
+      .map(([name]) => name)
+  }
+
   function selectTeam(t: TeamOption) {
     // Check if this team already has a field saved
     const existingField = fields.find(f => f.team?.toLowerCase() === t.name.toLowerCase())
@@ -85,16 +94,38 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
     } else {
       // Auto-fill from FCF venue map
       const detectedVenue = teamVenueMap[t.name] ?? ''
-      const city = detectedVenue ? extractCity(detectedVenue) : ''
-      const suggestedName = detectedVenue ? venueToName(detectedVenue) : ''
-      setForm({
-        ...EMPTY,
-        team: t.name,
-        fcf_venue: detectedVenue,
-        city,
-        name: suggestedName,
-      })
-      setEditingName(null)
+
+      // Check if another team from the same club already has a field saved (same venue)
+      const clubMates = getClubMates(detectedVenue)
+      const sharedField = clubMates.length > 0
+        ? fields.find(f => clubMates.some(mate => f.team?.toLowerCase() === mate.toLowerCase()))
+        : null
+
+      if (sharedField) {
+        // Same club — reuse the existing field data
+        setForm({
+          name: sharedField.name,
+          fcf_venue: sharedField.fcf_venue ?? detectedVenue,
+          team: t.name,
+          city: sharedField.city ?? '',
+          length_m: String(sharedField.length_m),
+          width_m: String(sharedField.width_m),
+          confirmed: sharedField.confirmed,
+          notes: sharedField.notes ?? '',
+        })
+        setEditingName(sharedField.name)
+      } else {
+        const city = detectedVenue ? extractCity(detectedVenue) : ''
+        const suggestedName = detectedVenue ? venueToName(detectedVenue) : ''
+        setForm({
+          ...EMPTY,
+          team: t.name,
+          fcf_venue: detectedVenue,
+          city,
+          name: suggestedName,
+        })
+        setEditingName(null)
+      }
     }
     setTeamQuery(t.name)
     setShowSuggestions(false)
@@ -134,6 +165,10 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
   const hasTeamSelected = !!form.team
   const hasDetectedVenue = hasTeamSelected && !!form.fcf_venue
   const hasNoVenueData = hasTeamSelected && !teamVenueMap[form.team]
+
+  // Club mates: other teams sharing the same venue
+  const clubMates = hasDetectedVenue ? getClubMates(form.fcf_venue).filter(n => n !== form.team) : []
+  const sharedFieldFrom = clubMates.find(mate => fields.some(f => f.team?.toLowerCase() === mate.toLowerCase()))
 
   return (
     <div className="space-y-6">
@@ -259,6 +294,9 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
                   {filteredTeams.map(t => {
                     const hasField = fields.some(f => f.team?.toLowerCase() === t.name.toLowerCase())
                     const hasVenue = !!teamVenueMap[t.name]
+                    // Check if a club mate already has a field saved
+                    const mates = getClubMates(teamVenueMap[t.name] ?? null).filter(n => n !== t.name)
+                    const mateHasField = !hasField && mates.some(mate => fields.some(f => f.team?.toLowerCase() === mate.toLowerCase()))
                     return (
                       <button
                         key={t.slug}
@@ -270,7 +308,8 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
                         <div className="flex items-center gap-1.5 shrink-0">
                           <span className="text-[10px] text-slate-600">{t.competitionName}</span>
                           {hasField && <span className="text-[10px] px-1.5 py-0.5 bg-green-500/20 text-green-400 rounded font-semibold">camp ✓</span>}
-                          {hasVenue && !hasField && <span className="text-[10px] px-1.5 py-0.5 bg-cyan-500/20 text-cyan-400 rounded font-semibold">venue ✓</span>}
+                          {mateHasField && <span className="text-[10px] px-1.5 py-0.5 bg-purple-500/20 text-purple-400 rounded font-semibold">mateix club ✓</span>}
+                          {hasVenue && !hasField && !mateHasField && <span className="text-[10px] px-1.5 py-0.5 bg-cyan-500/20 text-cyan-400 rounded font-semibold">venue ✓</span>}
                         </div>
                       </button>
                     )
@@ -313,6 +352,31 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
                   </div>
                 )}
                 {hasDetectedVenue && <input type="hidden" name="fcf_venue" value={form.fcf_venue} />}
+
+                {/* Club mates indicator */}
+                {clubMates.length > 0 && (
+                  <div className="mt-2 px-3 py-2.5 bg-purple-500/8 border border-purple-500/20 rounded-xl">
+                    <p className="text-xs font-semibold text-purple-400 mb-1">
+                      Mateix club — {clubMates.length + 1} equips comparteixen aquest camp:
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="text-[11px] px-2 py-0.5 bg-purple-500/15 text-purple-300 rounded-md font-medium">{form.team}</span>
+                      {clubMates.map(mate => {
+                        const hasSaved = fields.some(f => f.team?.toLowerCase() === mate.toLowerCase())
+                        return (
+                          <span key={mate} className={`text-[11px] px-2 py-0.5 rounded-md font-medium ${hasSaved ? 'bg-green-500/15 text-green-300' : 'bg-purple-500/10 text-purple-400/70'}`}>
+                            {mate} {hasSaved && '✓'}
+                          </span>
+                        )
+                      })}
+                    </div>
+                    {sharedFieldFrom && (
+                      <p className="text-[11px] text-purple-400/60 mt-1.5">
+                        Dimensions copiades de {sharedFieldFrom}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
