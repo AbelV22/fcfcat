@@ -2,15 +2,12 @@
 import { redirect } from 'next/navigation'
 import { setAdminCookie } from '@/lib/admin-auth'
 
+const ADMIN_PASSWORD = 'nsICO2620'
+
 export async function loginAdmin(_prevState: unknown, formData: FormData) {
   const password = formData.get('password') as string
-  const secret = process.env.ADMIN_SECRET
 
-  if (!secret || secret.length < 12) {
-    return { error: 'ADMIN_SECRET no configurat al servidor' }
-  }
-
-  if (password === secret) {
+  if (password === ADMIN_PASSWORD) {
     await setAdminCookie()
     redirect('/admin')
   }
