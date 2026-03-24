@@ -321,7 +321,7 @@ function RivalInsightsBlock({ insights }: { insights: RivalInsights | null }) {
   if (insights.matchesAnalyzed < 3) {
     return (
       <div className="mt-3 bg-black/20 rounded-xl px-4 py-3 border border-white/5">
-        <div className="text-[10px] text-slate-600 italic">Sense prou dades per calcular insights</div>
+        <div className="text-[10px] text-slate-400 italic">Sense prou dades per calcular insights</div>
       </div>
     )
   }
@@ -371,14 +371,14 @@ function RivalInsightsBlock({ insights }: { insights: RivalInsights | null }) {
     <div className="mt-3 bg-black/20 rounded-xl px-4 py-3 border border-white/5">
       <div className="flex items-center gap-1.5 mb-2">
         <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Tendències del rival</span>
-        <span className="text-[9px] text-slate-700">· {insights.matchesAnalyzed} partits</span>
+        <span className="text-[9px] text-slate-500">· {insights.matchesAnalyzed} partits</span>
       </div>
       <div className="grid grid-cols-2 gap-1.5">
         {pills.map((p, i) => (
           <div key={i} className="flex items-center gap-1.5 bg-white/4 rounded-lg px-2.5 py-1.5 border border-white/5">
             <span className="text-sm shrink-0">{p.icon}</span>
             <div className="min-w-0">
-              <div className="text-[9px] text-slate-600 truncate">{p.label}</div>
+              <div className="text-[9px] text-slate-400 truncate">{p.label}</div>
               <div className={`text-xs font-black ${p.color}`}>{p.value}</div>
             </div>
           </div>

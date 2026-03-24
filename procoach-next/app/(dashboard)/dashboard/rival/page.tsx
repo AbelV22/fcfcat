@@ -32,12 +32,12 @@ function FormDot({ result }: { result: 'W' | 'D' | 'L' | null }) {
 function ProgressBar({ value, max, color, label, showPct }: { value: number; max: number; color: string; label: string; showPct?: boolean }) {
   const pct = max > 0 ? Math.round((value / max) * 100) : 0
   return (
-    <div className="space-y-1">
-      <div className="flex justify-between text-xs">
-        <span className="text-slate-400">{label}</span>
-        <span className={`font-bold ${color}`}>{showPct ? `${pct}%` : value}</span>
+    <div className="space-y-1.5">
+      <div className="flex justify-between items-baseline">
+        <span className="text-sm text-slate-300 font-medium">{label}</span>
+        <span className={`text-sm font-black ${color}`}>{showPct ? `${pct}%` : value}</span>
       </div>
-      <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+      <div className="h-3 bg-white/[0.06] rounded-full overflow-hidden">
         <div className={`h-full rounded-full transition-all duration-700 ${color.replace('text-', 'bg-')}`} style={{ width: `${pct}%` }} />
       </div>
     </div>
@@ -378,7 +378,7 @@ export default async function RivalPage() {
                         <div className={`absolute bottom-0 left-0 right-0 ${item.bg}/10`} style={{ height: `${item.v}%` }} />
                       )}
                       <div className={`text-2xl font-black ${item.color} relative`}>{item.v !== null ? `${item.v}${item.s}` : '-'}</div>
-                      <div className="text-[10px] text-slate-500 mt-1 relative">{item.l}</div>
+                      <div className="text-[10px] text-slate-300 mt-1 relative">{item.l}</div>
                     </div>
                   ))}
                 </div>
