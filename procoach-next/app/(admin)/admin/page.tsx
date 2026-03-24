@@ -1,17 +1,15 @@
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { isAdminUser, clearAdminCookie } from '@/lib/admin-auth'
 
 async function logoutAdmin() {
   'use server'
-  const cookieStore = await cookies()
-  cookieStore.delete('ns_admin')
+  await clearAdminCookie()
   redirect('/admin/login')
 }
 
 export default async function AdminPage() {
-  const cookieStore = await cookies()
-  const isAdmin = cookieStore.get('ns_admin')?.value === '1'
+  const isAdmin = await isAdminUser()
   if (!isAdmin) redirect('/admin/login')
 
   const now = new Date()

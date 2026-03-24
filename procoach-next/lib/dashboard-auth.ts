@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase-server'
 import { slugify } from '@/lib/utils'
+import { isAdminUser as isAdminVerified } from '@/lib/admin-auth'
 
 export type DashboardTeam = {
   slug: string
@@ -25,7 +26,7 @@ export async function getDashboardTeam(): Promise<DashboardTeam | null> {
   }
 
   // 2. Check Supabase user metadata
-  const isAdmin = cookieStore.get('ns_admin')?.value === '1'
+  const isAdmin = await isAdminVerified()
   if (!isAdmin) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -43,9 +44,8 @@ export async function getDashboardTeam(): Promise<DashboardTeam | null> {
 }
 
 /**
- * Check if the current request is from an admin (ns_admin cookie).
+ * Check if the current request is from a verified admin (HMAC-signed token).
  */
 export async function isAdminUser(): Promise<boolean> {
-  const cookieStore = await cookies()
-  return cookieStore.get('ns_admin')?.value === '1'
+  return isAdminVerified()
 }

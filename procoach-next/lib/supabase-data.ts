@@ -1305,23 +1305,35 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
   // Form (last 8 played, most recent first)
   const form: MatchEntry[] = allPlayed.slice(0, 8).map(m => _toMatchEntry(m, m.isHome, teamName))
 
-  // Home/away split using standing data (most accurate)
+  // Home/away split using standing data (most accurate).
+  // GF/GA: use referee_matches sums ONLY when we have all actas (totals match standings).
+  // If any actas are missing, the home/away goal split would be wrong — use standings totals
+  // for overall GF/GA and leave home/away GF/GA as the sum from available actas.
+  const homePlayedCount = (standing.home_won || 0) + (standing.home_drawn || 0) + (standing.home_lost || 0)
+  const awayPlayedCount = (standing.away_won || 0) + (standing.away_drawn || 0) + (standing.away_lost || 0)
+  const allActasPresent = homePlayed.length === homePlayedCount && awayPlayed.length === awayPlayedCount
+
+  const homeGfFromActas = homePlayed.reduce((s, m) => s + (m.goalsFor || 0), 0)
+  const homeGaFromActas = homePlayed.reduce((s, m) => s + (m.goalsAgainst || 0), 0)
+  const awayGfFromActas = awayPlayed.reduce((s, m) => s + (m.goalsFor || 0), 0)
+  const awayGaFromActas = awayPlayed.reduce((s, m) => s + (m.goalsAgainst || 0), 0)
+
   const home: SplitStats = {
-    played: (standing.home_won || 0) + (standing.home_drawn || 0) + (standing.home_lost || 0),
+    played: homePlayedCount,
     wins: standing.home_won || 0,
     draws: standing.home_drawn || 0,
     losses: standing.home_lost || 0,
-    gf: homePlayed.reduce((s, m) => s + (m.goalsFor || 0), 0),
-    ga: homePlayed.reduce((s, m) => s + (m.goalsAgainst || 0), 0),
+    gf: allActasPresent ? homeGfFromActas : homeGfFromActas,
+    ga: allActasPresent ? homeGaFromActas : homeGaFromActas,
     points: (standing.home_won || 0) * 3 + (standing.home_drawn || 0),
   }
   const away: SplitStats = {
-    played: (standing.away_won || 0) + (standing.away_drawn || 0) + (standing.away_lost || 0),
+    played: awayPlayedCount,
     wins: standing.away_won || 0,
     draws: standing.away_drawn || 0,
     losses: standing.away_lost || 0,
-    gf: awayPlayed.reduce((s, m) => s + (m.goalsFor || 0), 0),
-    ga: awayPlayed.reduce((s, m) => s + (m.goalsAgainst || 0), 0),
+    gf: allActasPresent ? awayGfFromActas : awayGfFromActas,
+    ga: allActasPresent ? awayGaFromActas : awayGaFromActas,
     points: (standing.away_won || 0) * 3 + (standing.away_drawn || 0),
   }
 
@@ -1403,6 +1415,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       risk: [4, 9, 14].includes(p.yellow_cards || 0),
     }))
 
+    // Rival home/away GF/GA: use acta sums (real data from available matches)
     const rHome: SplitStats = rs
       ? { played: (rs.home_won||0)+(rs.home_drawn||0)+(rs.home_lost||0), wins: rs.home_won||0, draws: rs.home_drawn||0, losses: rs.home_lost||0, gf: rHomePlayed.reduce((s:number,m:any)=>s+(m.goalsFor||0),0), ga: rHomePlayed.reduce((s:number,m:any)=>s+(m.goalsAgainst||0),0), points: (rs.home_won||0)*3+(rs.home_drawn||0) }
       : _splitStats(rAllPlayed, 'home')

@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Trophy, Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, User, Search, ChevronDown, X } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, User, Search, ChevronDown, X } from 'lucide-react'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase-client'
 import { SITE_URL } from '@/lib/supabase-config'
 import { Suspense } from 'react'
@@ -365,9 +366,7 @@ export default function RegistrePage() {
         <div className="w-full max-w-md">
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center mx-auto mb-4">
-              <Trophy size={28} className="text-white" />
-            </div>
+            <Image src="/logo_neoscout.png" alt="NeoScout" width={64} height={64} className="mx-auto mb-4 rounded-2xl" />
             <h1 className="text-2xl font-black text-white mb-1">Crea el teu compte</h1>
             <p className="text-slate-400 text-sm">Gratuït. Accés immediat al teu panell d&apos;entrenador.</p>
           </div>

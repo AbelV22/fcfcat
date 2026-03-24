@@ -20,6 +20,33 @@ const SUPABASE_ANON_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54Z3lkdXFwcnhiaHRwcXNlcGdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5OTc5NjcsImV4cCI6MjA4ODU3Mzk2N30.qb-T1ja19sGFyDIOLU6C8SM1OBOa9RnmzEakc9g2Y2U'
 
+// ── Rate limiting (in-memory, per-instance) ──────────────────────────────────
+const RATE_LIMIT_WINDOW_MS = 60_000 // 1 minute
+const RATE_LIMIT_MAX_POST = 5       // max 5 scrape triggers per IP per minute
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const entry = rateLimitMap.get(ip)
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS })
+    return false
+  }
+  entry.count++
+  return entry.count > RATE_LIMIT_MAX_POST
+}
+
+// Allowed competition slugs to prevent arbitrary scraping
+const ALLOWED_COMPETITIONS = new Set([
+  'segona-catalana', 'tercera-catalana', 'preferent-juvenils',
+  'juvenil-primera-divisio', 'primera-catalana', 'quarta-catalana',
+])
+
+// Validate group format: grup-1 through grup-20
+function isValidGroup(g: string): boolean {
+  return /^grup-([1-9]|1\d|20)$/.test(g)
+}
+
 function sbHeaders() {
   return {
     apikey: SUPABASE_ANON_KEY,
@@ -76,6 +103,17 @@ export async function GET(req: NextRequest) {
 // ── POST /api/scrape ──────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
+  // Rate limit by IP
+  const ip = req.headers.get('cf-connecting-ip')
+    || req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+    || 'unknown'
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { error: 'Too many requests. Try again in a minute.' },
+      { status: 429 },
+    )
+  }
+
   let body: {
     slug: string
     competition: string
@@ -95,6 +133,28 @@ export async function POST(req: NextRequest) {
   if (!slug || !competition || !group) {
     return NextResponse.json(
       { error: 'Missing required fields: slug, competition, group' },
+      { status: 400 },
+    )
+  }
+
+  // Validate competition and group to prevent arbitrary scraping
+  if (!ALLOWED_COMPETITIONS.has(competition)) {
+    return NextResponse.json(
+      { error: 'Invalid competition' },
+      { status: 400 },
+    )
+  }
+  if (!isValidGroup(group)) {
+    return NextResponse.json(
+      { error: 'Invalid group format' },
+      { status: 400 },
+    )
+  }
+
+  // Validate slug format (kebab-case, reasonable length)
+  if (!/^[a-z0-9-]{2,80}$/.test(slug)) {
+    return NextResponse.json(
+      { error: 'Invalid slug format' },
       { status: 400 },
     )
   }

@@ -1,14 +1,17 @@
 'use server'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@supabase/supabase-js'
+import { isAdminUser } from '@/lib/admin-auth'
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://nxgyduqprxbhtpqsepgj.supabase.co'
-const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54Z3lkdXFwcnhiaHRwcXNlcGdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5OTc5NjcsImV4cCI6MjA4ODU3Mzk2N30.qb-T1ja19sGFyDIOLU6C8SM1OBOa9RnmzEakc9g2Y2U'
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export async function saveField(
   _prevState: { error?: string; success?: string } | undefined,
   formData: FormData
 ) {
+  if (!(await isAdminUser())) return { error: 'No autoritzat' }
+
   const entry = {
     name: (formData.get('name') as string)?.trim(),
     fcf_venue: (formData.get('fcf_venue') as string)?.trim() || null,
@@ -45,6 +48,8 @@ export async function saveField(
 }
 
 export async function deleteField(_prevState: unknown, formData: FormData) {
+  if (!(await isAdminUser())) return { error: 'No autoritzat' }
+
   const name = (formData.get('name') as string)?.trim()
   if (!name) return { error: 'Nom obligatori' }
 

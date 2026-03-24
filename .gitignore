@@ -18,6 +18,9 @@ pip-wheel-metadata/
 # Scraper cache (local only - never commit)
 .scraper_cache/
 
+# SQLite database (too large for GitHub)
+data/fcf.db
+
 # Node / frontend
 node_modules/
 procoach/node_modules/

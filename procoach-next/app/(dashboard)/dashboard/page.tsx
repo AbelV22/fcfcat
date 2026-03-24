@@ -1,27 +1,23 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase-server'
-import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { BarChart3, Shield, Users, Trophy, ArrowRight, Settings, ClipboardList, RefreshCw } from 'lucide-react'
-import { getDashboardTeam } from '@/lib/dashboard-auth'
+import { getDashboardTeam, isAdminUser } from '@/lib/dashboard-auth'
 
 export const dynamic = 'force-dynamic'
 
 export default async function DashboardPage() {
-  const cookieStore = await cookies()
-  const isAdmin = cookieStore.get('ns_admin')?.value === '1'
+  const isAdmin = await isAdminUser()
 
-  let userName = 'Entrenador'
   const team = await getDashboardTeam()
 
-  if (!isAdmin) {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) redirect('/login')
-    userName = user.user_metadata?.name || user.email?.split('@')[0] || 'Entrenador'
-  } else {
-    userName = 'Admin'
-  }
+  // Try to get real user name from Supabase session (works for both admin and regular users)
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!isAdmin && !user) redirect('/login')
+
+  const userName = user?.user_metadata?.name || user?.email?.split('@')[0] || (isAdmin ? 'Admin' : 'Entrenador')
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 lg:py-12">

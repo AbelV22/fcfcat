@@ -151,6 +151,10 @@ export async function runScrapeInBackground(opts: {
       referees: m.referees,
       yellow_cards: m.yellow_cards,
       red_cards: m.red_cards,
+      goals: m.goals || [],
+      substitutions: [...(m.homeSubs || []).map((s: any) => ({ ...s, team: 'home' })), ...(m.awaySubs || []).map((s: any) => ({ ...s, team: 'away' }))],
+      home_lineup: (m.homePlayers || []).map((p: any) => p.name || p),
+      away_lineup: (m.awayPlayers || []).map((p: any) => p.name || p),
       updated_at: new Date().toISOString(),
     }))
 
@@ -643,11 +647,60 @@ function extractGoals(html: string, _homeTeam: string, _awayTeam: string): Array
   const golsIdx = html.toLowerCase().indexOf('gols')
   if (golsIdx === -1) return goals
 
+  // Cut the section from "Gols" to the next major section (Targetes, Substitucions, etc.)
   const golsSection = html.slice(golsIdx)
-  const blocks = golsSection.split(/class="acta-marcador-gol"/i)
+  const sectionEnd = golsSection.search(/(?:Targetes|Substitucions|Alineacions|rbitr)/i)
+  const golsSlice = sectionEnd > 0 ? golsSection.slice(0, sectionEnd) : golsSection.slice(0, 5000)
 
+  // Strategy 1: Split by "acta-marcador-gol" class (old format)
+  let blocks = golsSlice.split(/class="acta-marcador-gol"/i)
+
+  // Strategy 2: If no class found, split by score pattern (N - N) which marks each goal
+  // The FCF actas show progressive scores: 0-1, 1-1, 1-2, etc.
+  if (blocks.length <= 1) {
+    // Split on score patterns that appear as standalone text (not inside other elements)
+    blocks = golsSlice.split(/(?=(?:<[^>]*>|\s)*\b(\d+)\s*[-–]\s*(\d+)\b)/)
+    // Re-join into meaningful blocks: find each score occurrence
+    const scoreRegex = /\b(\d+)\s*[-–]\s*(\d+)\b/g
+    const scores: Array<{ index: number; hs: number; as: number }> = []
+    let m
+    while ((m = scoreRegex.exec(golsSlice)) !== null) {
+      scores.push({ index: m.index, hs: parseInt(m[1]), as: parseInt(m[2]) })
+    }
+
+    // Filter to only progressive scores (each score differs from previous by exactly 1 goal)
+    const progressiveScores: typeof scores = []
+    let prevH = 0, prevA = 0
+    for (const s of scores) {
+      const diffH = s.hs - prevH
+      const diffA = s.as - prevA
+      if ((diffH === 1 && diffA === 0) || (diffH === 0 && diffA === 1)) {
+        progressiveScores.push(s)
+        prevH = s.hs
+        prevA = s.as
+      }
+    }
+
+    let prevHs2 = 0, prevAs2 = 0
+    for (const s of progressiveScores) {
+      const team: 'home' | 'away' = s.hs > prevHs2 ? 'home' : 'away'
+      // Extract player and minute from the surrounding text (up to 500 chars after the score)
+      const after = golsSlice.slice(s.index, s.index + 500)
+      const playerMatch = after.match(/<a[^>]+href="[^"]*jugador[^"]*"[^>]*>([\s\S]*?)<\/a>/i)
+      const player = playerMatch ? stripTags(playerMatch[1]).trim() : 'Desconegut'
+      // Match minute: look for N' pattern in spans, tds, or standalone
+      const minMatch = after.match(/(?:<(?:td|span|div)[^>]*>\s*)?(\d{1,3})['′]\s*(?:<\/(?:td|span|div)>)?/i)
+      const minute = minMatch ? parseInt(minMatch[1]) : 0
+      goals.push({ player, team, minute })
+      prevHs2 = s.hs
+      prevAs2 = s.as
+    }
+
+    return goals
+  }
+
+  // Strategy 1 path: original logic for acta-marcador-gol format
   let prevHs = 0, prevAs = 0
-
   for (let i = 1; i < blocks.length; i++) {
     const block = blocks[i]
     const scoreMatch = block.match(/(\d+)\s*[-–]\s*(\d+)/)
