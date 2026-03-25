@@ -1909,3 +1909,145 @@ export async function getAllPlayersDB() {
     }
   }).sort((a, b) => b.appearances - a.appearances)
 }
+
+// ─── Featured Players (homepage) ──────────────────────────────────────────────
+
+/** Divisions to feature on the homepage */
+const FEATURED_COMPETITIONS = [
+  'primera-catalana',
+  'segona-catalana',
+  'tercera-catalana',
+  'quarta-catalana',
+  'preferent-juvenils',
+  'lliga-elit',
+]
+
+/** Divisions where we have minutes_played data (exclude quarta-catalana) */
+const COMPETITIONS_WITH_MINUTES = FEATURED_COMPETITIONS.filter(c => c !== 'quarta-catalana')
+
+export interface FeaturedPlayer {
+  slug: string
+  name: string
+  team: string
+  teamSlug: string
+  competition: string
+  competitionName: string
+  goals: number
+  appearances: number
+  minutesPlayed: number
+  goalsPerMinute: number | null
+}
+
+export interface FeaturedPlayersData {
+  topScorersByCompetition: Record<string, FeaturedPlayer[]>
+  topGoalsPerMinuteByCompetition: Record<string, FeaturedPlayer[]>
+}
+
+/** Minimum minutes to qualify for goals-per-minute ranking */
+const MIN_MINUTES_FOR_RATIO = 200
+
+export async function getFeaturedPlayersDB(): Promise<FeaturedPlayersData> {
+  const supabase = getSupabase()
+  const empty: FeaturedPlayersData = { topScorersByCompetition: {}, topGoalsPerMinuteByCompetition: {} }
+  if (!supabase) return empty
+
+  // Fetch player stats for featured competitions with goals > 0
+  const { data: stats, error } = await supabase
+    .from('fcf_player_stats')
+    .select('player_slug, team_name, team_slug, competition, appearances, goals, minutes_played')
+    .in('competition', FEATURED_COMPETITIONS)
+    .gt('goals', 0)
+    .order('goals', { ascending: false })
+
+  if (error || !stats) return empty
+
+  // Group by competition → top 5 scorers
+  const topScorersByCompetition: Record<string, FeaturedPlayer[]> = {}
+  const countByComp: Record<string, number> = {}
+
+  for (const s of stats) {
+    const comp = s.competition
+    if (!countByComp[comp]) countByComp[comp] = 0
+    if (countByComp[comp] >= 5) continue
+    countByComp[comp]++
+
+    if (!topScorersByCompetition[comp]) topScorersByCompetition[comp] = []
+    topScorersByCompetition[comp].push({
+      slug: s.player_slug,
+      name: s.player_slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+      team: s.team_name,
+      teamSlug: s.team_slug,
+      competition: comp,
+      competitionName: COMPETITION_NAMES[comp] || comp,
+      goals: s.goals || 0,
+      appearances: s.appearances || 0,
+      minutesPlayed: s.minutes_played || 0,
+      goalsPerMinute: null,
+    })
+  }
+
+  // Enrich names from player_profiles
+  const allSlugs = stats.map(s => s.player_slug).filter(Boolean)
+  const uniqueSlugs = [...new Set(allSlugs)]
+
+  // Fetch display names in batches
+  const namesMap: Record<string, string> = {}
+  for (let i = 0; i < uniqueSlugs.length; i += 500) {
+    const batch = uniqueSlugs.slice(i, i + 500)
+    const { data: profiles } = await supabase
+      .from('player_profiles')
+      .select('canonical_slug, display_name')
+      .in('canonical_slug', batch)
+    for (const p of profiles || []) {
+      namesMap[p.canonical_slug] = p.display_name
+    }
+  }
+
+  // Apply display names
+  for (const players of Object.values(topScorersByCompetition)) {
+    for (const p of players) {
+      if (namesMap[p.slug]) p.name = namesMap[p.slug]
+    }
+  }
+
+  // Goals per minute ratio — only competitions with minutes data
+  const topGoalsPerMinuteByCompetition: Record<string, FeaturedPlayer[]> = {}
+
+  const withMinutes = stats.filter(
+    s => COMPETITIONS_WITH_MINUTES.includes(s.competition) &&
+      (s.minutes_played || 0) >= MIN_MINUTES_FOR_RATIO &&
+      (s.goals || 0) > 0
+  )
+
+  // Sort by goals/minute ratio (desc)
+  withMinutes.sort((a, b) => {
+    const ratioA = (a.goals || 0) / (a.minutes_played || 1)
+    const ratioB = (b.goals || 0) / (b.minutes_played || 1)
+    return ratioB - ratioA
+  })
+
+  const countByComp2: Record<string, number> = {}
+  for (const s of withMinutes) {
+    const comp = s.competition
+    if (!countByComp2[comp]) countByComp2[comp] = 0
+    if (countByComp2[comp] >= 5) continue
+    countByComp2[comp]++
+
+    if (!topGoalsPerMinuteByCompetition[comp]) topGoalsPerMinuteByCompetition[comp] = []
+    const ratio = (s.goals || 0) / (s.minutes_played || 1)
+    topGoalsPerMinuteByCompetition[comp].push({
+      slug: s.player_slug,
+      name: namesMap[s.player_slug] || s.player_slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+      team: s.team_name,
+      teamSlug: s.team_slug,
+      competition: comp,
+      competitionName: COMPETITION_NAMES[comp] || comp,
+      goals: s.goals || 0,
+      appearances: s.appearances || 0,
+      minutesPlayed: s.minutes_played || 0,
+      goalsPerMinute: ratio,
+    })
+  }
+
+  return { topScorersByCompetition, topGoalsPerMinuteByCompetition }
+}
