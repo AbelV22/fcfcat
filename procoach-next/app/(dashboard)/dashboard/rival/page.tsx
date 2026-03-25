@@ -117,13 +117,16 @@ function PitchCompareOverlay({ homePitch, rivalPitch, homeLabel, rivalLabel }: {
   rivalLabel: string
 }) {
   const bothMissing = !homePitch && !rivalPitch
-  const DISPLAY_H = 220
+
+  // Horizontal layout: length → X axis, width → Y axis
   const maxL = Math.max(homePitch?.length_m ?? 1, rivalPitch?.length_m ?? 1)
   const maxW = Math.max(homePitch?.width_m ?? 1, rivalPitch?.width_m ?? 1)
-  const scale = Math.min(DISPLAY_H / maxL, 300 / maxW)
-
-  const canvasH = Math.ceil(maxL * scale) + 8
-  const canvasW = Math.ceil(maxW * scale) + 8
+  // Use a wide canvas that fills the card; aspect ratio driven by pitch proportions
+  const CANVAS_W = 560
+  const PAD = 8
+  const scale = (CANVAS_W - PAD * 2) / maxL
+  const canvasW = CANVAS_W
+  const canvasH = Math.ceil(maxW * scale) + PAD * 2
 
   const homeArea = homePitch ? homePitch.length_m * homePitch.width_m : null
   const rivalArea = rivalPitch ? rivalPitch.length_m * rivalPitch.width_m : null
@@ -153,39 +156,46 @@ function PitchCompareOverlay({ homePitch, rivalPitch, homeLabel, rivalLabel }: {
 
   const homeIsBigger = (homeArea ?? 0) >= (rivalArea ?? 0)
 
+  // Horizontal pitch: length on X, width on Y
   function pitchSVG(lengthM: number, widthM: number, color: string, fillColor: string, fillOpacity: number, strokeW: number) {
-    const pW = widthM * scale
-    const pH = lengthM * scale
+    const pW = lengthM * scale   // pitch length → horizontal
+    const pH = widthM * scale    // pitch width → vertical
     const ox = (canvasW - pW) / 2
     const oy = (canvasH - pH) / 2
     const cx = canvasW / 2
     const cy = canvasH / 2
-    const penD = Math.min(16.5 * scale, pH * 0.18)
-    const penW = Math.min(40.32 * scale, pW * 0.95)
-    const goalD = Math.min(5.5 * scale, pH * 0.06)
-    const goalW = Math.min(18.32 * scale, pW * 0.6)
-    const cr = Math.min(9.15 * scale, pW * 0.15)
+    // Penalty areas on left/right sides
+    const penD = Math.min(16.5 * scale, pW * 0.18)
+    const penW = Math.min(40.32 * scale, pH * 0.95)
+    const goalD = Math.min(5.5 * scale, pW * 0.06)
+    const goalW = Math.min(18.32 * scale, pH * 0.6)
+    const cr = Math.min(9.15 * scale, pH * 0.15)
 
     return (
       <g>
         <rect x={ox} y={oy} width={pW} height={pH} fill={fillColor} fillOpacity={fillOpacity} rx={3} />
         <rect x={ox} y={oy} width={pW} height={pH} fill="none" stroke={color} strokeWidth={strokeW} rx={3} />
-        <line x1={ox} y1={cy} x2={ox + pW} y2={cy} stroke={color} strokeWidth={strokeW * 0.6} strokeOpacity={0.6} />
+        {/* Center line (vertical) */}
+        <line x1={cx} y1={oy} x2={cx} y2={oy + pH} stroke={color} strokeWidth={strokeW * 0.6} strokeOpacity={0.6} />
         <circle cx={cx} cy={cy} r={cr} fill="none" stroke={color} strokeWidth={strokeW * 0.6} strokeOpacity={0.6} />
         <circle cx={cx} cy={cy} r={strokeW * 1.5} fill={color} fillOpacity={0.6} />
-        <rect x={cx - penW / 2} y={oy} width={penW} height={penD} fill="none" stroke={color} strokeWidth={strokeW * 0.5} strokeOpacity={0.5} />
-        <rect x={cx - goalW / 2} y={oy} width={goalW} height={goalD} fill="none" stroke={color} strokeWidth={strokeW * 0.4} strokeOpacity={0.4} />
-        <rect x={cx - penW / 2} y={oy + pH - penD} width={penW} height={penD} fill="none" stroke={color} strokeWidth={strokeW * 0.5} strokeOpacity={0.5} />
-        <rect x={cx - goalW / 2} y={oy + pH - goalD} width={goalW} height={goalD} fill="none" stroke={color} strokeWidth={strokeW * 0.4} strokeOpacity={0.4} />
+        {/* Left penalty + goal area */}
+        <rect x={ox} y={cy - penW / 2} width={penD} height={penW} fill="none" stroke={color} strokeWidth={strokeW * 0.5} strokeOpacity={0.5} />
+        <rect x={ox} y={cy - goalW / 2} width={goalD} height={goalW} fill="none" stroke={color} strokeWidth={strokeW * 0.4} strokeOpacity={0.4} />
+        {/* Right penalty + goal area */}
+        <rect x={ox + pW - penD} y={cy - penW / 2} width={penD} height={penW} fill="none" stroke={color} strokeWidth={strokeW * 0.5} strokeOpacity={0.5} />
+        <rect x={ox + pW - goalD} y={cy - goalW / 2} width={goalD} height={goalW} fill="none" stroke={color} strokeWidth={strokeW * 0.4} strokeOpacity={0.4} />
       </g>
     )
   }
 
-  const stripeCount = Math.ceil(canvasH / 14)
+  // Vertical grass stripes for horizontal pitch
+  const stripeW = 28
+  const stripeCount = Math.ceil(canvasW / stripeW)
 
   return (
     <div className="glass-card rounded-2xl p-6">
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center justify-between mb-5 flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <Ruler size={18} className="text-emerald-400" />
           <h2 className="text-lg font-bold text-white">Comparacio de camps</h2>
@@ -202,7 +212,6 @@ function PitchCompareOverlay({ homePitch, rivalPitch, homeLabel, rivalLabel }: {
       </div>
 
       {bothMissing ? (
-        /* Both pitches missing */
         <div className="text-center py-8">
           <Ruler size={32} className="text-slate-600 mx-auto mb-3" />
           <p className="text-sm text-slate-400 mb-1">Dimensions dels camps no disponibles</p>
@@ -227,19 +236,17 @@ function PitchCompareOverlay({ homePitch, rivalPitch, homeLabel, rivalLabel }: {
             </span>
           </div>
 
-          {/* Overlay SVG */}
-          <div className="flex justify-center mb-5">
+          {/* Horizontal overlay SVG — fills full width */}
+          <div className="w-full mb-5">
             <svg
-              width={canvasW}
-              height={canvasH}
               viewBox={`0 0 ${canvasW} ${canvasH}`}
-              style={{ maxWidth: '100%', height: 'auto' }}
+              className="w-full h-auto"
               aria-label="Comparativa visual de camps superposats"
             >
               <rect width={canvasW} height={canvasH} fill="#0a1628" rx={8} />
-              {/* Grass stripes */}
+              {/* Vertical grass stripes */}
               {Array.from({ length: stripeCount }).map((_, i) => (
-                <rect key={i} x={0} y={i * 28} width={canvasW} height={14} fill="#0d2010" />
+                <rect key={i} x={i * stripeW * 2} y={0} width={stripeW} height={canvasH} fill="#0d2010" />
               ))}
               {/* Draw bigger pitch behind, smaller on top */}
               {homeIsBigger ? (
