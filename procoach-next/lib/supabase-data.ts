@@ -1974,7 +1974,7 @@ export async function getFeaturedPlayersDB(): Promise<FeaturedPlayersData> {
     if (!topScorersByCompetition[comp]) topScorersByCompetition[comp] = []
     topScorersByCompetition[comp].push({
       slug: s.player_slug,
-      name: s.player_slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+      name: s.player_slug.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()),
       team: s.team_name,
       teamSlug: s.team_slug,
       competition: comp,
@@ -2037,7 +2037,7 @@ export async function getFeaturedPlayersDB(): Promise<FeaturedPlayersData> {
     const ratio = (s.goals || 0) / (s.minutes_played || 1)
     topGoalsPerMinuteByCompetition[comp].push({
       slug: s.player_slug,
-      name: namesMap[s.player_slug] || s.player_slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+      name: namesMap[s.player_slug] || s.player_slug.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()),
       team: s.team_name,
       teamSlug: s.team_slug,
       competition: comp,
