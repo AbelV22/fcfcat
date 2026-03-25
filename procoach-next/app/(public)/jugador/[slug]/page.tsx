@@ -15,8 +15,7 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug: rawSlug } = await params
-  const slug = rawSlug.split('--')[0]
+  const { slug } = await params
   const player = await getPlayerProfile(slug)
   if (!player) return { title: 'Jugador no trobat — NeoScout' }
 
@@ -65,8 +64,7 @@ function StatCard({ value, label, color }: { value: string | number; label: stri
 }
 
 export default async function JugadorPage({ params }: Props) {
-  const { slug: rawSlug } = await params
-  const slug = rawSlug.split('--')[0]
+  const { slug } = await params
   const player = await getPlayerProfile(slug)
 
   if (!player) notFound()

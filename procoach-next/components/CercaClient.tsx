@@ -195,7 +195,7 @@ function CercaInner({ referees, players, teams }: CercaClientProps) {
                 {filteredPlayers.map((player, i) => (
                   <Link
                     key={`${player.slug}-${player.teamSlug}-${i}`}
-                    href={`/jugador/${player.slug}--${player.teamSlug}`}
+                    href={`/jugador/${player.slug}`}
                     className="glass-card rounded-xl p-3.5 hover:border-blue-500/30 transition-all flex items-center gap-3"
                   >
                     <div className="w-9 h-9 rounded-lg bg-blue-600/20 flex items-center justify-center text-blue-400 font-bold text-sm shrink-0">
