@@ -86,8 +86,6 @@ export default function WizardShell({
 
     if (prefill?.matchData) {
       setState((prev) => ({ ...prev, ...prefill }))
-      // Auto-load acta data when coming from calendar with prefill
-      tryLoadActa(prefill.matchData)
       return
     }
 
@@ -102,6 +100,15 @@ export default function WizardShell({
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editNoteId, prefillOpponent])
+
+  // Auto-load acta data whenever matchData is set and not yet prefilled
+  const matchOpponent = state.matchData?.opponent || null
+  const matchDate = state.matchData?.match_date || null
+  useEffect(() => {
+    if (editNoteId || !state.matchData || state.actaPrefilled) return
+    tryLoadActa(state.matchData)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [matchOpponent, matchDate, editNoteId])
 
   // Auto-save to localStorage on every change
   useEffect(() => {
@@ -159,10 +166,6 @@ export default function WizardShell({
 
   const goNext = () => {
     if (state.step < STEPS.length - 1 && canAdvance()) {
-      // When advancing from step 0 (match selection), try to load acta
-      if (state.step === 0 && state.matchData && !state.actaPrefilled) {
-        tryLoadActa(state.matchData)
-      }
       updateState({ step: state.step + 1 })
     }
   }

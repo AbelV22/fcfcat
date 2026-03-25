@@ -67,14 +67,16 @@ export default function ApuntsPage() {
         if (!user) { router.replace('/login'); return }
         name = user.user_metadata?.club_name || ''
       } else {
-        name = 'Admin Demo'
+        // In admin mode, use real team name from cookie set in /dashboard/setup
+        const teamCookie = document.cookie.match(/(?:^|;\s*)ns_team_name=([^;]+)/)
+        name = teamCookie ? decodeURIComponent(teamCookie[1]) : ''
       }
       setClubName(name)
 
       try {
         const [notesData, matchesData] = await Promise.all([
           fetchUserMatchNotes(),
-          name && name !== 'Admin Demo' ? fetchTeamMatches(name) : Promise.resolve([]),
+          name ? fetchTeamMatches(name) : Promise.resolve([]),
         ])
         setNotes(notesData)
         setCalendarMatches(matchesData)

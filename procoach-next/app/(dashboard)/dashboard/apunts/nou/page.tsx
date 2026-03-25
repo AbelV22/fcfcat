@@ -50,8 +50,11 @@ function NouApuntInner() {
     async function checkAuth() {
       const isAdmin = getCookie('ns_admin') === '1'
       if (isAdmin) {
-        setClubName('Admin Demo')
-        setTeamSlug('admin-demo')
+        // In admin mode, use real team name from cookie set in /dashboard/setup
+        const teamName = getCookie('ns_team_name')
+        const teamSlugCookie = getCookie('ns_team_slug')
+        setClubName(teamName ? decodeURIComponent(teamName) : '')
+        setTeamSlug(teamSlugCookie ? decodeURIComponent(teamSlugCookie) : '')
       } else {
         const supabase = createClient()
         const { data: { user } } = await supabase.auth.getUser()
