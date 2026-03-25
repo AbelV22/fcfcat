@@ -1643,13 +1643,20 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       const vn = venueHint.split('  ')[0].trim().toUpperCase()
       if (vn) field = allFields.find(f => f.fcf_venue && f.fcf_venue.split('  ')[0].trim().toUpperCase() === vn)
     }
-    if (field && field.length_m > 0 && field.width_m > 0) {
-      return { length_m: field.length_m, width_m: field.width_m, field_name: field.name }
+    if (field) {
+      const l = Number(field.length_m)
+      const w = Number(field.width_m)
+      if (l > 0 && w > 0) {
+        return { length_m: l, width_m: w, field_name: field.name }
+      }
     }
     return null
   }
   const homePitch = findPitch(teamName)
   const rivalPitch = rivalName ? findPitch(rivalName) : null
+  if (!homePitch || !rivalPitch) {
+    console.log('[PitchLookup]', { teamName, rivalName, homePitchFound: !!homePitch, rivalPitchFound: !!rivalPitch, totalFields: allFields.length, fieldTeams: allFields.map(f => f.team).join(' | ') })
+  }
 
   return {
     name: teamName,

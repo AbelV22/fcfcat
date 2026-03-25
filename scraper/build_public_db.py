@@ -115,16 +115,52 @@ def scrape_group(
 
 
 def push_referee_db(push: bool = True) -> int:
-    """Push existing global_referees.json to Supabase."""
+    """Push referee matches to Supabase.
+
+    Merges two sources:
+      1. global_referees.json  (legacy standalone scraper)
+      2. SQLite referees table (populated by the weekly updater for ALL competitions)
+    The SQLite DB often has data for competitions (quarta-catalana, tercera-catalana…)
+    that were never scraped via build_referee_db, so we merge both to get full coverage.
+    """
+    refs: dict = {}
+
+    # Source 1: global_referees.json
     refs_path = DATA_DIR / "global_referees.json"
-    if not refs_path.exists():
-        logger.warning("global_referees.json not found, skipping referee push")
+    if refs_path.exists():
+        try:
+            with open(refs_path, encoding="utf-8") as f:
+                refs = json.load(f)
+            logger.info(f"Loaded {len(refs)} referee matches from global_referees.json")
+        except Exception as e:
+            logger.warning(f"Could not load global_referees.json: {e}")
+
+    # Source 2: SQLite referees table (weekly updater data — may include more competitions)
+    try:
+        from .database import Database
+        db = Database()
+        sqlite_refs = db.load_referees_as_dict()
+        before = len(refs)
+        for ref_id, ref_data in sqlite_refs.items():
+            if ref_id not in refs:
+                refs[ref_id] = ref_data
+            else:
+                # Prefer SQLite version if it has goals and the JSON version doesn't
+                existing_goals = refs[ref_id].get("goals") or []
+                new_goals = ref_data.get("goals") or []
+                if not existing_goals and new_goals:
+                    refs[ref_id] = ref_data
+        added = len(refs) - before
+        if added > 0:
+            logger.info(f"Merged {added} extra referee matches from SQLite DB (total now: {len(refs)})")
+    except Exception as e:
+        logger.warning(f"Could not load SQLite referees: {e}")
+
+    if not refs:
+        logger.warning("No referee data found from any source, skipping")
         return 0
 
-    with open(refs_path, encoding="utf-8") as f:
-        refs = json.load(f)
-
-    logger.info(f"Loaded {len(refs)} referee matches from global_referees.json")
+    logger.info(f"Total referee matches to push: {len(refs)}")
 
     if push:
         try:
