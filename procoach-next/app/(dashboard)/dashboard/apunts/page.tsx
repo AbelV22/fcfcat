@@ -176,6 +176,7 @@ export default function ApuntsPage() {
         home: m.isHome ? '1' : '0',
         ...(m.goalsFor !== null ? { gf: String(m.goalsFor) } : {}),
         ...(m.goalsAgainst !== null ? { ga: String(m.goalsAgainst) } : {}),
+        ...(m.jornada !== null ? { jornada: String(m.jornada) } : {}),
       })
       router.push(`/dashboard/apunts/nou?${params.toString()}`)
     }

@@ -86,6 +86,8 @@ export default function WizardShell({
 
     if (prefill?.matchData) {
       setState((prev) => ({ ...prev, ...prefill }))
+      // Auto-load acta data when coming from calendar with prefill
+      tryLoadActa(prefill.matchData)
       return
     }
 
@@ -117,7 +119,7 @@ export default function WizardShell({
 
   // Auto-load acta data when match is selected
   const tryLoadActa = useCallback(async (matchData: WizardState['matchData']) => {
-    if (!matchData || !matchData.goals_for === undefined) return
+    if (!matchData) return
 
     setLoadingActa(true)
     try {
