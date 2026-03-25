@@ -95,7 +95,7 @@ export default async function JugadorPage({ params }: Props) {
   const posText = POSITION_TEXT[player.position || ''] || 'text-slate-400'
 
   const minutesPerGoal = career.goals > 0 ? Math.round(career.minutesPlayed / career.goals) : null
-  const goalsPerMatch = career.appearances > 0 ? (career.goals / career.appearances).toFixed(2) : null
+  const goalsPer90 = career.minutesPlayed > 0 ? (career.goals / career.minutesPlayed * 90).toFixed(2) : null
 
   return (
     <div className="min-h-screen bg-[#0f172a]">
@@ -202,15 +202,17 @@ export default async function JugadorPage({ params }: Props) {
           <StatCard value={career.appearances} label="Partits" color="text-white" />
           <StatCard value={career.goals} label="Gols" color="text-green-400" />
           <StatCard
-            value={career.minutesPlayed > 0 ? `${Math.round(career.minutesPlayed / 60)}h` : '0'}
-            label="Hores jugades"
+            value={career.appearances > 0 && career.minutesPlayed > 0
+              ? `${Math.round(career.minutesPlayed / (career.appearances * 90) * 100)}%`
+              : '–'}
+            label="% Minuts"
             color="text-cyan-400"
           />
           <StatCard value={career.yellowCards} label="Grogues" color="text-yellow-400" />
           <StatCard value={career.redCards} label="Vermelles" color="text-red-400" />
           <StatCard
-            value={goalsPerMatch || '–'}
-            label="Gols/Partit"
+            value={goalsPer90 || '–'}
+            label="Gols/90'"
             color="text-emerald-400"
           />
         </div>
