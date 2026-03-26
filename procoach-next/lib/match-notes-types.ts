@@ -12,7 +12,7 @@ export type EventType =
   | 'red_card'
   | 'substitution'
   | 'injury'
-  // New Tier 2 events
+  // Tier 2 events
   | 'shot_on_target'
   | 'shot_off_target'
   | 'shot_woodwork'
@@ -22,6 +22,13 @@ export type EventType =
   | 'save'
   | 'offside'
   | 'chance_created'
+  // Individual stats
+  | 'recovery'
+  | 'turnover'
+  | 'duel_won'
+  | 'duel_lost'
+  | 'accurate_pass'
+  | 'cross'
 
 export type GoalType =
   | 'right_foot'
@@ -339,6 +346,12 @@ export const EVENT_LABELS: Record<EventType, string> = {
   save: 'Parada',
   offside: 'Fora de joc',
   chance_created: 'Ocasio creada',
+  recovery: 'Recuperacio',
+  turnover: 'Perdua',
+  duel_won: 'Duel guanyat',
+  duel_lost: 'Duel perdut',
+  accurate_pass: 'Passada clau',
+  cross: 'Centrada',
 }
 
 export const GOAL_TYPE_LABELS: Record<GoalType, string> = {
@@ -394,4 +407,5 @@ export const EVENT_CATEGORIES = {
   discipline: ['yellow_card', 'red_card', 'foul_committed', 'foul_suffered'] as EventType[],
   shots: ['shot_on_target', 'shot_off_target', 'shot_woodwork'] as EventType[],
   other: ['corner', 'save', 'offside', 'chance_created', 'substitution', 'injury'] as EventType[],
+  individual: ['recovery', 'turnover', 'duel_won', 'duel_lost', 'accurate_pass', 'cross'] as EventType[],
 }

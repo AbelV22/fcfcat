@@ -21,6 +21,12 @@ const EVENT_COLORS: Record<EventType, string> = {
   save: '#14b8a6',
   offside: '#8b5cf6',
   chance_created: '#84cc16',
+  recovery: '#10b981',
+  turnover: '#ef4444',
+  duel_won: '#22c55e',
+  duel_lost: '#f43f5e',
+  accurate_pass: '#06b6d4',
+  cross: '#0ea5e9',
 }
 
 export default function EventTimeline({

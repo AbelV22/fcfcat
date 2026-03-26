@@ -334,80 +334,73 @@ export async function fetchActaDataForMatch(
   }
 }
 
-/** Convert acta data into wizard events (pre-fill) */
+/** Convert acta data into wizard events (pre-fill) — includes both teams */
 export function actaToWizardEvents(
   acta: ActaData,
   isHome: boolean,
 ): Omit<MatchNoteEvent, 'id' | 'match_note_id'>[] {
   const events: Omit<MatchNoteEvent, 'id' | 'match_note_id'>[] = []
   const myTeam = isHome ? 'home' : 'away'
+  const rivalTeam = isHome ? 'away' : 'home'
 
-  // Goals (our team only)
+  // Goals (both teams)
   for (const g of acta.goals) {
-    if (g.team === myTeam) {
-      events.push({
-        event_type: 'goal',
-        minute: parseInt(g.minute) || 0,
-        player_name: formatPlayerName(g.player),
-        secondary_player: null,
-        goal_type: null,
-        goal_origin: null,
-        shot_zone: null,
-        note: 'Pre-carregat des de l\'acta FCF',
-        is_opponent: false,
-      })
-    }
+    events.push({
+      event_type: 'goal',
+      minute: parseInt(g.minute) || 0,
+      player_name: formatPlayerName(g.player),
+      secondary_player: null,
+      goal_type: null,
+      goal_origin: null,
+      shot_zone: null,
+      note: 'Pre-carregat des de l\'acta FCF',
+      is_opponent: g.team === rivalTeam,
+    })
   }
 
-  // Yellow cards (our team)
+  // Yellow cards (both teams)
   for (const c of acta.yellow_cards) {
-    if (c.team === myTeam) {
-      events.push({
-        event_type: c.is_double_yellow_dismissal ? 'red_card' : 'yellow_card',
-        minute: parseInt(c.minute) || 0,
-        player_name: formatPlayerName(c.player),
-        secondary_player: null,
-        goal_type: null,
-        goal_origin: null,
-        shot_zone: null,
-        note: c.is_double_yellow_dismissal ? 'Doble groga' : null,
-        is_opponent: false,
-      })
-    }
+    events.push({
+      event_type: c.is_double_yellow_dismissal ? 'red_card' : 'yellow_card',
+      minute: parseInt(c.minute) || 0,
+      player_name: formatPlayerName(c.player),
+      secondary_player: null,
+      goal_type: null,
+      goal_origin: null,
+      shot_zone: null,
+      note: c.is_double_yellow_dismissal ? 'Doble groga' : (c.team === rivalTeam ? 'Rival' : null),
+      is_opponent: c.team === rivalTeam,
+    })
   }
 
-  // Red cards (our team)
+  // Red cards (both teams)
   for (const c of acta.red_cards) {
-    if (c.team === myTeam) {
-      events.push({
-        event_type: 'red_card',
-        minute: parseInt(c.minute) || 0,
-        player_name: formatPlayerName(c.player),
-        secondary_player: null,
-        goal_type: null,
-        goal_origin: null,
-        shot_zone: null,
-        note: null,
-        is_opponent: false,
-      })
-    }
+    events.push({
+      event_type: 'red_card',
+      minute: parseInt(c.minute) || 0,
+      player_name: formatPlayerName(c.player),
+      secondary_player: null,
+      goal_type: null,
+      goal_origin: null,
+      shot_zone: null,
+      note: c.team === rivalTeam ? 'Rival' : null,
+      is_opponent: c.team === rivalTeam,
+    })
   }
 
-  // Substitutions (our team)
+  // Substitutions (both teams)
   for (const s of acta.substitutions) {
-    if (s.team === myTeam) {
-      events.push({
-        event_type: 'substitution',
-        minute: parseInt(s.minute) || 0,
-        player_name: formatPlayerName(s.player_in),
-        secondary_player: formatPlayerName(s.player_out),
-        goal_type: null,
-        goal_origin: null,
-        shot_zone: null,
-        note: null,
-        is_opponent: false,
-      })
-    }
+    events.push({
+      event_type: 'substitution',
+      minute: parseInt(s.minute) || 0,
+      player_name: formatPlayerName(s.player_in),
+      secondary_player: formatPlayerName(s.player_out),
+      goal_type: null,
+      goal_origin: null,
+      shot_zone: null,
+      note: s.team === rivalTeam ? 'Rival' : null,
+      is_opponent: s.team === rivalTeam,
+    })
   }
 
   return events.sort((a, b) => a.minute - b.minute)

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import {
   Plus, X, Target, ArrowRightLeft, AlertTriangle,
   Zap, Circle, Trash2, Flag, Shield, Hand, Eye, Crosshair,
+  ShieldCheck, TrendingDown, Swords, Waypoints, User,
 } from 'lucide-react'
 import type { MatchNoteEvent, MatchNoteLineup, EventType, GoalType, GoalOrigin, ShotZone } from '@/lib/match-notes-types'
 import { EVENT_LABELS, GOAL_TYPE_LABELS, GOAL_ORIGIN_LABELS, EVENT_CATEGORIES } from '@/lib/match-notes-types'
@@ -29,6 +30,12 @@ const EVENT_ICONS: Record<EventType, typeof Target> = {
   save: Shield,
   offside: Eye,
   chance_created: Zap,
+  recovery: ShieldCheck,
+  turnover: TrendingDown,
+  duel_won: Swords,
+  duel_lost: Swords,
+  accurate_pass: Waypoints,
+  cross: Waypoints,
 }
 
 const EVENT_COLORS: Record<EventType, string> = {
@@ -48,6 +55,12 @@ const EVENT_COLORS: Record<EventType, string> = {
   save: 'teal',
   offside: 'violet',
   chance_created: 'lime',
+  recovery: 'emerald',
+  turnover: 'red',
+  duel_won: 'green',
+  duel_lost: 'rose',
+  accurate_pass: 'cyan',
+  cross: 'sky',
 }
 
 const GOAL_TYPES: GoalType[] = ['right_foot', 'left_foot', 'header', 'penalty', 'free_kick', 'own_goal']
@@ -56,15 +69,18 @@ const SHOT_ZONES: ShotZone[] = ['inside_box', 'outside_box']
 const SHOT_ZONE_LABELS: Record<ShotZone, string> = { inside_box: 'Dins area', outside_box: 'Fora area' }
 
 // Which events need a player selector
-const NEEDS_PLAYER: EventType[] = ['goal', 'assist', 'pre_assist', 'yellow_card', 'red_card', 'substitution', 'injury', 'shot_on_target', 'shot_off_target', 'shot_woodwork', 'foul_committed', 'foul_suffered', 'save', 'chance_created']
+const NEEDS_PLAYER: EventType[] = ['goal', 'assist', 'pre_assist', 'yellow_card', 'red_card', 'substitution', 'injury', 'shot_on_target', 'shot_off_target', 'shot_woodwork', 'foul_committed', 'foul_suffered', 'save', 'chance_created', 'recovery', 'turnover', 'duel_won', 'duel_lost', 'accurate_pass', 'cross']
 // Which events are quick-counter (no player needed, just tally)
 const QUICK_COUNTER: EventType[] = ['corner', 'offside']
+// Individual stats — always quick-add with selected player, no modal
+const INDIVIDUAL_STATS: EventType[] = ['recovery', 'turnover', 'duel_won', 'duel_lost', 'accurate_pass', 'cross']
 
 const CATEGORY_LABELS: Record<string, string> = {
   key: 'Clau',
   discipline: 'Disciplina',
   shots: 'Tirs',
   other: 'Altres',
+  individual: 'Individual',
 }
 
 export default function StepEvents({
@@ -82,6 +98,8 @@ export default function StepEvents({
   const [editIndex, setEditIndex] = useState<number | null>(null)
   const [activeCategory, setActiveCategory] = useState<string>('key')
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null)
+  const [viewMode, setViewMode] = useState<'events' | 'playerStats'>('events')
+  const [statsPlayer, setStatsPlayer] = useState<string | null>(null)
   const [form, setForm] = useState<EventEntry>({
     event_type: 'goal',
     minute: 1,
@@ -177,11 +195,37 @@ export default function StepEvents({
   return (
     <div>
       <h2 className="text-xl font-bold text-white mb-1">Esdeveniments del partit</h2>
-      <p className="text-sm text-slate-400 mb-2">
+      <p className="text-sm text-slate-400 mb-3">
         Afegeix els esdeveniments clau i estadistiques del partit.
       </p>
 
-      {prefilledCount > 0 && (
+      {/* View mode toggle */}
+      <div className="flex gap-1 mb-4 p-1 bg-white/3 rounded-xl border border-white/5">
+        <button
+          onClick={() => setViewMode('events')}
+          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all ${
+            viewMode === 'events'
+              ? 'bg-white/10 text-white'
+              : 'text-slate-500 hover:text-slate-300'
+          }`}
+        >
+          <Flag size={12} />
+          Esdeveniments
+        </button>
+        <button
+          onClick={() => setViewMode('playerStats')}
+          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all ${
+            viewMode === 'playerStats'
+              ? 'bg-white/10 text-white'
+              : 'text-slate-500 hover:text-slate-300'
+          }`}
+        >
+          <User size={12} />
+          Stats individuals
+        </button>
+      </div>
+
+      {prefilledCount > 0 && viewMode === 'events' && (
         <div className="mb-4 px-3 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center gap-2">
           <Zap size={13} className="text-amber-400 shrink-0" />
           <span className="text-xs text-amber-300">
@@ -300,6 +344,7 @@ export default function StepEvents({
         <EventTimeline events={events} onSelectMinute={(m) => openNew(m)} />
       </div>
 
+      {viewMode === 'events' && (<>
       {/* Quick counter buttons (corners, offsides) */}
       <div className="mb-4">
         <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Comptador rapid</p>
@@ -454,6 +499,188 @@ export default function StepEvents({
         <Plus size={14} />
         Afegir esdeveniment
       </button>
+      </>)}
+
+      {/* ─── Player Stats Panel ─────────────────────────────── */}
+      {viewMode === 'playerStats' && (
+        <div>
+          {playerNames.length === 0 ? (
+            <div className="text-center py-12">
+              <User size={24} className="text-slate-600 mx-auto mb-3" />
+              <p className="text-sm text-slate-400">
+                Cap jugador disponible. Selecciona un partit amb acta.
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* Player list */}
+              <div className="flex flex-wrap gap-1.5 mb-4">
+                {playerNames.map((name) => {
+                  const isActive = statsPlayer === name
+                  const playerIndividualCount = events.filter(
+                    (e) => e.player_name === name && INDIVIDUAL_STATS.includes(e.event_type)
+                  ).length
+                  return (
+                    <button
+                      key={name}
+                      onClick={() => setStatsPlayer(isActive ? null : name)}
+                      className={`inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-[11px] font-medium transition-all ${
+                        isActive
+                          ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 ring-1 ring-cyan-500/20'
+                          : 'bg-white/5 text-slate-300 border border-white/8 hover:border-white/20 hover:bg-white/8'
+                      }`}
+                    >
+                      {name.split(' ')[0]}
+                      {playerIndividualCount > 0 && (
+                        <span className={`text-[9px] font-bold px-1 rounded-full ${
+                          isActive ? 'bg-cyan-500/30 text-cyan-300' : 'bg-white/10 text-slate-500'
+                        }`}>
+                          {playerIndividualCount}
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+
+              {/* Selected player stats */}
+              {statsPlayer ? (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 rounded-full bg-cyan-500/15 flex items-center justify-center">
+                      <User size={14} className="text-cyan-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-white">{statsPlayer}</p>
+                      <p className="text-[10px] text-slate-500">Toca per sumar, mantingues per restar</p>
+                    </div>
+                  </div>
+
+                  {/* Stat counters grid */}
+                  <div className="grid grid-cols-3 gap-2">
+                    {INDIVIDUAL_STATS.map((type) => {
+                      const Icon = EVENT_ICONS[type]
+                      const color = EVENT_COLORS[type]
+                      const count = events.filter(
+                        (e) => e.player_name === statsPlayer && e.event_type === type && !e.is_opponent
+                      ).length
+                      return (
+                        <button
+                          key={type}
+                          onClick={() => {
+                            const evt: EventEntry = {
+                              event_type: type,
+                              minute: 0,
+                              player_name: statsPlayer,
+                              secondary_player: null,
+                              goal_type: null,
+                              goal_origin: null,
+                              shot_zone: null,
+                              note: null,
+                              is_opponent: false,
+                            }
+                            onChange([...events, evt])
+                          }}
+                          onContextMenu={(e) => {
+                            e.preventDefault()
+                            // Remove last event of this type for this player
+                            const idx = [...events].reverse().findIndex(
+                              (ev) => ev.player_name === statsPlayer && ev.event_type === type && !ev.is_opponent
+                            )
+                            if (idx >= 0) {
+                              const realIdx = events.length - 1 - idx
+                              onChange(events.filter((_, i) => i !== realIdx))
+                            }
+                          }}
+                          className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl bg-white/3 border border-white/5 hover:border-white/15 hover:bg-white/8 transition-all active:scale-95"
+                        >
+                          <Icon size={16} style={{ color: `var(--color-${color}-400, #4ade80)` }} />
+                          <span className="text-[9px] text-slate-400 font-medium text-center leading-tight">
+                            {EVENT_LABELS[type]}
+                          </span>
+                          <span
+                            className="text-lg font-black"
+                            style={{ color: count > 0 ? `var(--color-${color}-400, #4ade80)` : '#334155' }}
+                          >
+                            {count}
+                          </span>
+                        </button>
+                      )
+                    })}
+                  </div>
+
+                  {/* Also show key events for this player */}
+                  {(() => {
+                    const keyEvents = events.filter(
+                      (e) => e.player_name === statsPlayer && !INDIVIDUAL_STATS.includes(e.event_type) && !QUICK_COUNTER.includes(e.event_type) && !e.is_opponent
+                    )
+                    if (keyEvents.length === 0) return null
+                    return (
+                      <div>
+                        <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Esdeveniments clau</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {keyEvents.map((e, i) => (
+                            <span
+                              key={i}
+                              className="text-[10px] px-2 py-1 rounded-lg bg-white/5 text-slate-300 border border-white/5"
+                            >
+                              {e.minute > 0 ? `${e.minute}' ` : ''}{EVENT_LABELS[e.event_type]}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  })()}
+
+                  {/* Quick add key events for this player */}
+                  <div>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Afegir esdeveniment</p>
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {(['shot_on_target', 'shot_off_target', 'foul_committed', 'foul_suffered', 'chance_created', 'save', 'assist', 'pre_assist'] as EventType[]).map((type) => {
+                        const Icon = EVENT_ICONS[type]
+                        const color = EVENT_COLORS[type]
+                        return (
+                          <button
+                            key={type}
+                            onClick={() => {
+                              if (type === 'goal' || type === 'substitution') {
+                                openNew(undefined, type, statsPlayer)
+                              } else {
+                                const evt: EventEntry = {
+                                  event_type: type,
+                                  minute: 0,
+                                  player_name: statsPlayer,
+                                  secondary_player: null,
+                                  goal_type: null,
+                                  goal_origin: null,
+                                  shot_zone: ['shot_on_target', 'shot_off_target', 'shot_woodwork'].includes(type) ? 'inside_box' : null,
+                                  note: null,
+                                  is_opponent: false,
+                                }
+                                onChange([...events, evt])
+                              }
+                            }}
+                            className="flex flex-col items-center gap-1 py-2 px-1 rounded-xl bg-white/3 border border-white/5 hover:border-white/15 hover:bg-white/5 transition-all"
+                          >
+                            <Icon size={12} style={{ color: `var(--color-${color}-400, #4ade80)` }} />
+                            <span className="text-[8px] text-slate-500 font-medium text-center leading-tight">
+                              {EVENT_LABELS[type].split(' ')[0]}
+                            </span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-sm text-slate-500">Selecciona un jugador per veure i anotar les seves estadistiques</p>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
 
       {/* Add/Edit Modal */}
       {showModal && (
