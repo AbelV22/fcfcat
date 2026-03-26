@@ -186,6 +186,8 @@ export interface WizardState {
   }
   // Pre-filled acta data (from Supabase)
   actaPrefilled: boolean
+  // Players from acta (available for events/ratings without needing lineup step)
+  actaPlayers: string[]
 }
 
 // Acta data from fcf_referee_matches for pre-filling

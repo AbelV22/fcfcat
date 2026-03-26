@@ -71,14 +71,17 @@ export default function StepEvents({
   lineups,
   events,
   onChange,
+  actaPlayers = [],
 }: {
   lineups: LineupEntry[]
   events: EventEntry[]
   onChange: (events: EventEntry[]) => void
+  actaPlayers?: string[]
 }) {
   const [showModal, setShowModal] = useState(false)
   const [editIndex, setEditIndex] = useState<number | null>(null)
   const [activeCategory, setActiveCategory] = useState<string>('key')
+  const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null)
   const [form, setForm] = useState<EventEntry>({
     event_type: 'goal',
     minute: 1,
@@ -91,15 +94,22 @@ export default function StepEvents({
     is_opponent: false,
   })
 
-  const playerNames = lineups
+  // Use lineup players if available, otherwise fall back to actaPlayers
+  const lineupPlayers = lineups
     .filter((l) => l.player_name && l.attendance === 'present')
     .map((l) => l.player_name)
+  const playerNames = lineupPlayers.length > 0 ? lineupPlayers : actaPlayers
 
-  function openNew(minute?: number, eventType?: EventType) {
+  // Split acta players into starters and bench for display
+  const starterCount = lineups.filter((l) => l.is_starter && l.player_name).length
+  const actaStarters = actaPlayers.slice(0, Math.max(starterCount, 11))
+  const actaBench = actaPlayers.slice(Math.max(starterCount, 11))
+
+  function openNew(minute?: number, eventType?: EventType, playerName?: string) {
     setForm({
       event_type: eventType || 'goal',
       minute: minute ?? 1,
-      player_name: playerNames[0] || '',
+      player_name: playerName || selectedPlayer || '',
       secondary_player: null,
       goal_type: eventType === 'goal' ? 'right_foot' : null,
       goal_origin: eventType === 'goal' ? 'open_play' : null,
@@ -177,6 +187,84 @@ export default function StepEvents({
           <span className="text-xs text-amber-300">
             {prefilledCount} esdeveniments pre-carregats des de l&apos;acta FCF. Pots editar-los o afegir-ne mes.
           </span>
+        </div>
+      )}
+
+      {/* Player quick-pick chips */}
+      {playerNames.length > 0 && (
+        <div className="mb-4">
+          <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">
+            Selecciona jugador i després l&apos;esdeveniment
+          </p>
+          {/* Starters */}
+          <div className="flex flex-wrap gap-1.5 mb-1.5">
+            {(lineupPlayers.length > 0 ? lineupPlayers.filter((_, i) => lineups[i]?.is_starter) : actaStarters).map((name) => {
+              const isSelected = selectedPlayer === name
+              const playerEventCount = events.filter((e) => e.player_name === name && !e.is_opponent).length
+              return (
+                <button
+                  key={name}
+                  onClick={() => setSelectedPlayer(isSelected ? null : name)}
+                  className={`relative inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+                    isSelected
+                      ? 'bg-green-500/20 text-green-300 border border-green-500/40 ring-1 ring-green-500/20'
+                      : 'bg-white/5 text-slate-300 border border-white/8 hover:border-white/20 hover:bg-white/8'
+                  }`}
+                >
+                  {name.split(' ')[0]}
+                  {playerEventCount > 0 && (
+                    <span className={`text-[9px] font-bold px-1 rounded-full ${
+                      isSelected ? 'bg-green-500/30 text-green-300' : 'bg-white/10 text-slate-500'
+                    }`}>
+                      {playerEventCount}
+                    </span>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+          {/* Bench */}
+          {(lineupPlayers.length > 0 ? lineupPlayers.filter((_, i) => !lineups[i]?.is_starter) : actaBench).length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {(lineupPlayers.length > 0
+                ? lineupPlayers.filter((_, i) => !lineups[i]?.is_starter)
+                : actaBench
+              ).map((name) => {
+                const isSelected = selectedPlayer === name
+                const playerEventCount = events.filter((e) => e.player_name === name && !e.is_opponent).length
+                return (
+                  <button
+                    key={name}
+                    onClick={() => setSelectedPlayer(isSelected ? null : name)}
+                    className={`relative inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+                      isSelected
+                        ? 'bg-green-500/20 text-green-300 border border-green-500/40 ring-1 ring-green-500/20'
+                        : 'bg-white/3 text-slate-500 border border-dashed border-white/8 hover:border-white/15 hover:text-slate-300'
+                    }`}
+                  >
+                    {name.split(' ')[0]}
+                    {playerEventCount > 0 && (
+                      <span className={`text-[9px] font-bold px-1 rounded-full ${
+                        isSelected ? 'bg-green-500/30 text-green-300' : 'bg-white/10 text-slate-500'
+                      }`}>
+                        {playerEventCount}
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+          {selectedPlayer && (
+            <div className="mt-2 px-2 py-1.5 bg-green-500/8 border border-green-500/15 rounded-lg flex items-center gap-2">
+              <span className="text-[10px] text-green-400">
+                Jugador actiu: <strong>{selectedPlayer}</strong> — toca un esdeveniment per registrar-lo
+              </span>
+              <button onClick={() => setSelectedPlayer(null)} className="text-green-400/60 hover:text-green-300 ml-auto">
+                <X size={12} />
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -268,8 +356,33 @@ export default function StepEvents({
           return (
             <button
               key={type}
-              onClick={() => QUICK_COUNTER.includes(type) ? quickAdd(type) : openNew(undefined, type)}
-              className="flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl bg-white/3 border border-white/5 hover:border-white/15 hover:bg-white/5 transition-all"
+              onClick={() => {
+                if (QUICK_COUNTER.includes(type)) {
+                  quickAdd(type)
+                } else if (selectedPlayer && NEEDS_PLAYER.includes(type) && type !== 'goal' && type !== 'substitution') {
+                  // Quick-add with selected player (no modal needed for simple events)
+                  const evt: EventEntry = {
+                    event_type: type,
+                    minute: 0,
+                    player_name: selectedPlayer,
+                    secondary_player: null,
+                    goal_type: null,
+                    goal_origin: null,
+                    shot_zone: ['shot_on_target', 'shot_off_target', 'shot_woodwork'].includes(type) ? 'inside_box' : null,
+                    note: null,
+                    is_opponent: false,
+                  }
+                  const updated = [...events, evt].sort((a, b) => a.minute - b.minute)
+                  onChange(updated)
+                } else {
+                  openNew(undefined, type, selectedPlayer || undefined)
+                }
+              }}
+              className={`flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl border transition-all ${
+                selectedPlayer && NEEDS_PLAYER.includes(type) && !QUICK_COUNTER.includes(type)
+                  ? 'bg-green-500/5 border-green-500/15 hover:border-green-500/30 hover:bg-green-500/10'
+                  : 'bg-white/3 border-white/5 hover:border-white/15 hover:bg-white/5'
+              }`}
             >
               <Icon size={14} style={{ color: `var(--color-${color}-400, #4ade80)` }} />
               <span className="text-[9px] text-slate-400 font-medium text-center leading-tight">

@@ -24,17 +24,21 @@ export default function StepRatings({
   events,
   ratings,
   onChange,
+  actaPlayers = [],
 }: {
   lineups: LineupEntry[]
   events: EventEntry[]
   ratings: RatingEntry[]
   onChange: (ratings: RatingEntry[]) => void
+  actaPlayers?: string[]
 }) {
   const [expandedPlayer, setExpandedPlayer] = useState<string | null>(null)
 
-  const attendingPlayers = lineups
+  // Use lineup players if available, otherwise fall back to actaPlayers
+  const lineupAttending = lineups
     .filter((l) => l.player_name && l.attendance === 'present')
     .map((l) => l.player_name)
+  const attendingPlayers = lineupAttending.length > 0 ? lineupAttending : actaPlayers
 
   const getRating = (name: string): RatingEntry => {
     const existing = ratings.find((r) => r.player_name === name)
@@ -234,7 +238,7 @@ export default function StepRatings({
         <div className="text-center py-12">
           <AlertTriangle size={24} className="text-amber-400 mx-auto mb-3" />
           <p className="text-sm text-slate-400">
-            Cap jugador a la convocatoria. Torna al pas 2 per afegir jugadors.
+            Cap jugador disponible. Selecciona un partit amb acta o afegeix l&apos;alineacio al final.
           </p>
         </div>
       )}

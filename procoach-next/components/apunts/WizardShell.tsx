@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, ArrowRight, ClipboardList, Save, Check, Zap } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ClipboardList, Save, Check, Zap, SkipForward } from 'lucide-react'
 import type { WizardState } from '@/lib/match-notes-types'
 import { saveFullMatchNote, fetchActaDataForMatch, actaToWizardEvents, actaToWizardLineups } from '@/lib/match-notes-data'
 import StepSelectMatch from './StepSelectMatch'
@@ -15,10 +15,10 @@ const STORAGE_KEY = 'neoscout_match_note_draft'
 
 const STEPS = [
   { label: 'Partit', short: 'Partit' },
-  { label: 'Alineacio', short: 'Lineup' },
   { label: 'Esdeveniments', short: 'Events' },
   { label: 'Valoracions', short: 'Ratings' },
   { label: 'Resum', short: 'Resum' },
+  { label: 'Alineacio', short: 'Lineup', optional: true },
 ]
 
 function getInitialState(): WizardState {
@@ -59,6 +59,7 @@ function getInitialState(): WizardState {
       captain: null,
     },
     actaPrefilled: false,
+    actaPlayers: [],
   }
 }
 
@@ -145,11 +146,39 @@ export default function WizardShell({
         const events = actaToWizardEvents(acta, isHome)
         const hasLineups = (isHome ? acta.home_lineup : acta.away_lineup).length > 0
 
+        // Extract all player names from acta (starters + bench)
+        const lineup = isHome ? acta.home_lineup : acta.away_lineup
+        const bench = isHome ? acta.home_bench : acta.away_bench
+        const allActaPlayers = [...lineup, ...bench]
+          .map((p) => {
+            // Format names from "SURNAME, NAME" to "Name Surname"
+            const parts = p.name.split(',').map((s: string) => s.trim())
+            if (parts.length === 2) {
+              const [surname, name] = parts
+              return name.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') + ' ' +
+                surname.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
+            }
+            return p.name.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
+          })
+          .filter(Boolean)
+
+        // Separate starters and bench for ordering (starters first)
+        const starterNames = lineup.map((p) => {
+          const parts = p.name.split(',').map((s: string) => s.trim())
+          if (parts.length === 2) {
+            const [surname, name] = parts
+            return name.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') + ' ' +
+              surname.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
+          }
+          return p.name.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
+        }).filter(Boolean)
+
         setState((prev) => ({
           ...prev,
           events: events.length > 0 ? events : prev.events,
           lineups: hasLineups ? actaToWizardLineups(acta, isHome, prev.formation || '4-3-3') : prev.lineups,
           actaPrefilled: events.length > 0 || hasLineups,
+          actaPlayers: allActaPlayers.length > 0 ? allActaPlayers : prev.actaPlayers,
         }))
       }
     } catch (err) {
@@ -271,6 +300,9 @@ export default function WizardShell({
                   {i < state.step ? <Check size={12} /> : i + 1}
                 </div>
                 <span className="hidden sm:inline">{s.label}</span>
+                {'optional' in s && s.optional && (
+                  <span className="hidden sm:inline text-[8px] text-slate-600 font-normal">(opcional)</span>
+                )}
               </button>
               {i < STEPS.length - 1 && (
                 <div className={`flex-1 h-px ${i < state.step ? 'bg-green-500/40' : 'bg-white/8'}`} />
@@ -300,35 +332,37 @@ export default function WizardShell({
               />
             )}
             {state.step === 1 && (
+              <StepEvents
+                lineups={state.lineups}
+                events={state.events}
+                onChange={(events) => updateState({ events })}
+                actaPlayers={state.actaPlayers}
+              />
+            )}
+            {state.step === 2 && (
+              <StepRatings
+                lineups={state.lineups}
+                events={state.events}
+                ratings={state.ratings}
+                onChange={(ratings) => updateState({ ratings })}
+                actaPlayers={state.actaPlayers}
+              />
+            )}
+            {state.step === 3 && (
+              <StepSummary
+                state={state}
+                onChange={(summary) => updateState({ summary })}
+                onSave={handleSave}
+                saving={saving}
+              />
+            )}
+            {state.step === 4 && (
               <StepLineup
                 teamSlug={teamSlug}
                 formation={state.formation || '4-3-3'}
                 lineups={state.lineups}
                 onFormationChange={(formation) => updateState({ formation })}
                 onLineupsChange={(lineups) => updateState({ lineups })}
-              />
-            )}
-            {state.step === 2 && (
-              <StepEvents
-                lineups={state.lineups}
-                events={state.events}
-                onChange={(events) => updateState({ events })}
-              />
-            )}
-            {state.step === 3 && (
-              <StepRatings
-                lineups={state.lineups}
-                events={state.events}
-                ratings={state.ratings}
-                onChange={(ratings) => updateState({ ratings })}
-              />
-            )}
-            {state.step === 4 && (
-              <StepSummary
-                state={state}
-                onChange={(summary) => updateState({ summary })}
-                onSave={handleSave}
-                saving={saving}
               />
             )}
 
@@ -343,34 +377,66 @@ export default function WizardShell({
                 Anterior
               </button>
 
-              {state.step < STEPS.length - 1 ? (
-                <button
-                  onClick={goNext}
-                  disabled={!canAdvance()}
-                  className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 disabled:opacity-30 rounded-xl transition-all"
-                >
-                  Seguent
-                  <ArrowRight size={16} />
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleSave('completed')}
-                  disabled={saving || !state.matchData}
-                  className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 disabled:opacity-30 rounded-xl transition-all"
-                >
-                  {saving ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Desant...
-                    </>
-                  ) : (
-                    <>
-                      <Check size={16} />
-                      Desar apunts
-                    </>
-                  )}
-                </button>
-              )}
+              <div className="flex items-center gap-2">
+                {/* On Resum step (3): show Save button + optional "Continuar a Alineació" */}
+                {state.step === 3 ? (
+                  <>
+                    <button
+                      onClick={() => handleSave('completed')}
+                      disabled={saving || !state.matchData}
+                      className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 disabled:opacity-30 rounded-xl transition-all"
+                    >
+                      {saving ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          Desant...
+                        </>
+                      ) : (
+                        <>
+                          <Check size={16} />
+                          Desar apunts
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={goNext}
+                      className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-400 hover:text-white transition-colors rounded-xl hover:bg-white/5 border border-white/10"
+                    >
+                      Alineacio
+                      <ArrowRight size={14} />
+                    </button>
+                  </>
+                ) : state.step === 4 ? (
+                  /* On Lineup step (4): show Save button */
+                  <button
+                    onClick={() => handleSave('completed')}
+                    disabled={saving || !state.matchData}
+                    className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 disabled:opacity-30 rounded-xl transition-all"
+                  >
+                    {saving ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Desant...
+                      </>
+                    ) : (
+                      <>
+                        <Check size={16} />
+                        Desar apunts
+                      </>
+                    )}
+                  </button>
+                ) : (
+                  /* Normal navigation */
+                  <button
+                    onClick={goNext}
+                    disabled={!canAdvance()}
+                    className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 disabled:opacity-30 rounded-xl transition-all"
+                  >
+                    Seguent
+                    <ArrowRight size={16} />
+                  </button>
+                )}
+              </div>
             </div>
           </>
         )}
