@@ -1089,6 +1089,7 @@ export type FullTeamReportDB = {
   referee: RefereeStatsDB | null
   homePitch: FieldDimsDB | null
   rivalPitch: FieldDimsDB | null
+  fieldSizeRecord: Record<string, { played: number; wins: number; draws: number; losses: number; gf: number; ga: number }> | null
 }
 
 function _splitStats(matches: Array<{ isHome: boolean; goalsFor: number; goalsAgainst: number }>, filter?: 'home' | 'away'): SplitStats {
@@ -1658,6 +1659,28 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     console.log('[PitchLookup]', { teamName, rivalName, homePitchFound: !!homePitch, rivalPitchFound: !!rivalPitch, totalFields: allFields.length, fieldTeams: allFields.map(f => f.team).join(' | ') })
   }
 
+  // ── Team record by field size category ────────────────────────────────────
+  // For each match the team played, look up the home team's field dimensions
+  // and classify it as petit/mitjà/gran. Then tally W/D/L per category.
+  const fieldSizeRecord: Record<string, { played: number; wins: number; draws: number; losses: number; gf: number; ga: number }> = {}
+  let hasFieldSizeData = false
+  for (const m of allPlayed) {
+    const homeTeam = m.isHome ? teamName : (m.home_team || m.away_team || '')
+    const pitch = findPitch(homeTeam)
+    if (!pitch) continue
+    const area = pitch.length_m * pitch.width_m
+    const cat = area < 5500 ? 'petit' : area < 6300 ? 'mitja' : 'gran'
+    if (!fieldSizeRecord[cat]) fieldSizeRecord[cat] = { played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0 }
+    const s = fieldSizeRecord[cat]
+    s.played++
+    s.gf += m.goalsFor
+    s.ga += m.goalsAgainst
+    if (m.goalsFor > m.goalsAgainst) s.wins++
+    else if (m.goalsFor === m.goalsAgainst) s.draws++
+    else s.losses++
+    hasFieldSizeData = true
+  }
+
   return {
     name: teamName,
     slug,
@@ -1684,6 +1707,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     referee,
     homePitch,
     rivalPitch,
+    fieldSizeRecord: hasFieldSizeData ? fieldSizeRecord : null,
   }
 }
 

@@ -589,36 +589,19 @@ export default async function RivalPage() {
               rivalLabel={rival.name.split(' ').slice(0, 2).join(' ')}
             />
 
-            {/* ═══ FIELD SIZE TACTICAL INSIGHT ═══ */}
+            {/* ═══ FIELD SIZE — TEAM RECORD ═══ */}
             {(() => {
               // Determine venue pitch (where the match will be played)
               const matchPitch = nextMatch.isHome ? report?.homePitch : report?.rivalPitch
               if (!matchPitch) return null
               const area = matchPitch.length_m * matchPitch.width_m
+              const cat = area < 5500 ? 'petit' : area < 6300 ? 'mitja' : 'gran'
               const sizeLabel = area < 5500 ? 'petit' : area < 6300 ? 'mitjà' : 'gran'
               const sizeColor = area < 5500 ? 'text-red-400' : area < 6300 ? 'text-amber-400' : 'text-green-400'
               const sizeBg = area < 5500 ? 'bg-red-500/10 border-red-500/20' : area < 6300 ? 'bg-amber-500/10 border-amber-500/20' : 'bg-green-500/10 border-green-500/20'
+              const dotColor = area < 5500 ? 'bg-red-400' : area < 6300 ? 'bg-amber-400' : 'bg-green-400'
 
-              // Tactical tips based on field size
-              const tips = area < 5500
-                ? [
-                    'Menys espais entre línies → pressing alt més efectiu',
-                    'Joc directe i pilotes al segon pal guanyen importància',
-                    'Jugadors tècnics en espais reduïts marquen la diferència',
-                    'Menys temps per decidir — ritme alt de pilota',
-                  ]
-                : area < 6300
-                ? [
-                    'Camp equilibrat — permet tant joc combinatiu com directe',
-                    'Les transicions ràpides són clau en ambdues direccions',
-                    'Amplada suficient per generar superioritats per banda',
-                  ]
-                : [
-                    'Més espai entre línies → difícil pressionar alt tot el partit',
-                    'L\'amplada permet canvis d\'orientació efectius',
-                    'Equips ràpids al contraatac tenen avantatge',
-                    'Important tenir mitjos amb bona capacitat de cobertura',
-                  ]
+              const record = report?.fieldSizeRecord?.[cat]
 
               return (
                 <div className={`border rounded-2xl p-5 ${sizeBg}`}>
@@ -631,14 +614,43 @@ export default async function RivalPage() {
                       {matchPitch.length_m}×{matchPitch.width_m}m · {area.toLocaleString('ca-ES')}m²
                     </span>
                   </div>
-                  <ul className="space-y-1.5">
-                    {tips.map((tip, i) => (
-                      <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
-                        <span className={`mt-0.5 w-1.5 h-1.5 rounded-full shrink-0 ${area < 5500 ? 'bg-red-400' : area < 6300 ? 'bg-amber-400' : 'bg-green-400'}`} />
-                        {tip}
-                      </li>
-                    ))}
-                  </ul>
+
+                  {record && record.played > 0 ? (
+                    <div>
+                      <p className="text-xs text-slate-400 mb-3">
+                        El teu equip ha jugat <span className="text-white font-semibold">{record.played} partits</span> en camps d&apos;aquesta mida:
+                      </p>
+                      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center mb-3">
+                        {[
+                          { v: record.played, l: 'PJ', c: 'text-white' },
+                          { v: record.wins, l: 'V', c: 'text-green-400' },
+                          { v: record.draws, l: 'E', c: 'text-amber-400' },
+                          { v: record.losses, l: 'D', c: 'text-red-400' },
+                          { v: record.gf, l: 'GF', c: 'text-cyan-400' },
+                          { v: record.ga, l: 'GC', c: 'text-rose-400' },
+                        ].map(s => (
+                          <div key={s.l} className="bg-white/5 rounded-lg py-2">
+                            <div className={`text-lg font-black ${s.c}`}>{s.v}</div>
+                            <div className="text-[10px] text-slate-500">{s.l}</div>
+                          </div>
+                        ))}
+                      </div>
+                      {/* Win rate bar */}
+                      <div className="h-2 bg-white/5 rounded-full overflow-hidden flex">
+                        <div className="bg-green-500 rounded-full" style={{ width: `${(record.wins / record.played) * 100}%` }} />
+                        <div className="bg-amber-400 rounded-full" style={{ width: `${(record.draws / record.played) * 100}%` }} />
+                        <div className="bg-red-500 rounded-full" style={{ width: `${(record.losses / record.played) * 100}%` }} />
+                      </div>
+                      <div className="flex justify-between mt-1.5 text-[10px] text-slate-500">
+                        <span>{Math.round((record.wins / record.played) * 100)}% victòries</span>
+                        <span>{(record.gf / record.played).toFixed(1)} gols/partit</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-slate-500">
+                      Encara no hi ha prou partits jugats en camps d&apos;aquesta mida per mostrar estadístiques.
+                    </p>
+                  )}
                 </div>
               )
             })()}
