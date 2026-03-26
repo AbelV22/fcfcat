@@ -115,6 +115,14 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       const rr = (x: number, y: number, w: number, h: number, rad: number, c: RGB) => { fill(c); pdf.roundedRect(x, y, w, h, rad, rad, 'F') }
       const pct = (n: number, total: number) => total > 0 ? Math.round((n / total) * 100) : 0
 
+      /** Truncate text to fit within maxWidth (mm), using actual measured text width */
+      const fitText = (text: string, maxWidth: number): string => {
+        if (pdf.getTextWidth(text) <= maxWidth) return text
+        let t = text
+        while (t.length > 1 && pdf.getTextWidth(t + '…') > maxWidth) t = t.slice(0, -1)
+        return t + '…'
+      }
+
       const compBar = (x: number, yy: number, w: number, h: number, leftVal: number, rightVal: number, leftColor: RGB, _rightColor: RGB) => {
         const total = leftVal + rightVal
         const leftPct = total > 0 ? leftVal / total : 0.5
@@ -136,22 +144,22 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
         fill(C.green); pdf.rect(0, 0, W, 1.5, 'F')
 
         // Header
-        pdf.setFontSize(7); txt(C.s400)
+        pdf.setFontSize(8); txt(C.s400)
         pdf.text('NEOSCOUT', M, 7)
-        pdf.setFontSize(5); txt(C.s600)
-        pdf.text('neoscout.es', M + 20, 7)
-        pdf.setFontSize(5); txt(C.s500)
+        pdf.setFontSize(6); txt(C.s600)
+        pdf.text('neoscout.es', M + 22, 7)
+        pdf.setFontSize(6); txt(C.s500)
         pdf.text(dateStr, W - M, 7, { align: 'right' })
 
         if (isFirstPage) {
-          pdf.setFontSize(5.5); txt(C.green)
+          pdf.setFontSize(6.5); txt(C.green)
           pdf.text('INFORME PRE-PARTIT', W / 2, 7, { align: 'center' })
         }
 
         // Footer bar
         fill([10, 16, 30]); pdf.rect(0, H - FOOTER_H, W, FOOTER_H, 'F')
         fill(C.green); pdf.rect(0, H - FOOTER_H, W, 0.4, 'F')
-        pdf.setFontSize(5); txt(C.s500)
+        pdf.setFontSize(6); txt(C.s500)
         pdf.text('Generat amb NeoScout', M, H - 4)
         txt(C.s600)
         pdf.text(`neoscout.es/equip/${teamSlug}`, W - M, H - 4, { align: 'right' })
@@ -184,10 +192,10 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       rr(W - M - 3, y, 3, BANNER_H, 1.5, [30, 40, 60])
 
       // Team side (left)
-      pdf.setFontSize(9); txt(C.white)
-      const teamDisplay = r.name.length > 22 ? r.name.slice(0, 22) + '...' : r.name
+      pdf.setFontSize(10); txt(C.white)
+      const teamDisplay = fitText(r.name, CW / 2 - 30)
       pdf.text(teamDisplay, M + 8, y + 10)
-      pdf.setFontSize(6); txt(C.s400)
+      pdf.setFontSize(7); txt(C.s400)
       pdf.text(`#${r.position || '-'} | ${r.points} pts`, M + 8, y + 16)
 
       // Form dots (our team)
@@ -196,7 +204,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
         const cx = M + 8 + i * 7
         const dotColor = f.result === 'W' ? C.green : f.result === 'D' ? C.amber : f.result === 'L' ? C.red : C.s600
         rr(cx, y + 19, 5.5, 5.5, 2.75, dotColor)
-        pdf.setFontSize(4.5); txt(C.white)
+        pdf.setFontSize(5.5); txt(C.white)
         pdf.text(f.result ? RESULT_LABEL[f.result] : '?', cx + 2.75, y + 23, { align: 'center' })
       })
 
@@ -208,23 +216,23 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
 
       // Venue badge above VS
       const venue = nm.isHome ? 'LOCAL' : 'VISITANT'
-      rr(vsX - 10, y + 1, 20, 3.5, 1.5, nm.isHome ? [22, 80, 45] as RGB : [20, 50, 80] as RGB)
-      pdf.setFontSize(3.5); txt(nm.isHome ? C.green : C.cyan)
-      pdf.text(venue, vsX, y + 3.5, { align: 'center' })
+      rr(vsX - 10, y + 1, 20, 4, 1.5, nm.isHome ? [22, 80, 45] as RGB : [20, 50, 80] as RGB)
+      pdf.setFontSize(5); txt(nm.isHome ? C.green : C.cyan)
+      pdf.text(venue, vsX, y + 4, { align: 'center' })
 
       // Jornada + date under VS
-      pdf.setFontSize(5); txt(C.s400)
+      pdf.setFontSize(6); txt(C.s400)
       pdf.text(`J${nm.jornada}`, vsX, y + 21, { align: 'center' })
       const matchDate = nm.date || ''
       const timeStr = nm.time ? ` | ${nm.time}h` : ''
-      pdf.setFontSize(4.5); txt(C.s500)
+      pdf.setFontSize(5.5); txt(C.s500)
       pdf.text(`${matchDate}${timeStr}`, vsX, y + 25, { align: 'center' })
 
       // Rival side (right)
-      pdf.setFontSize(9); txt(C.white)
-      const rivalDisplay = rival.name.length > 22 ? rival.name.slice(0, 22) + '...' : rival.name
+      pdf.setFontSize(10); txt(C.white)
+      const rivalDisplay = fitText(rival.name, CW / 2 - 30)
       pdf.text(rivalDisplay, W - M - 8, y + 10, { align: 'right' })
-      pdf.setFontSize(6); txt(C.s400)
+      pdf.setFontSize(7); txt(C.s400)
       pdf.text(`#${rival.position || '-'} | ${rival.points} pts`, W - M - 8, y + 16, { align: 'right' })
 
       // Form dots (rival)
@@ -233,7 +241,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
         const cx = W - M - 8 - (4 - i) * 7
         const dotColor = f.result === 'W' ? C.green : f.result === 'D' ? C.amber : f.result === 'L' ? C.red : C.s600
         rr(cx, y + 19, 5.5, 5.5, 2.75, dotColor)
-        pdf.setFontSize(4.5); txt(C.white)
+        pdf.setFontSize(5.5); txt(C.white)
         pdf.text(f.result ? RESULT_LABEL[f.result] : '?', cx + 2.75, y + 23, { align: 'center' })
       })
 
@@ -247,17 +255,17 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       y = ensureSpace(COMP_BLOCK_H, y)
 
       rr(M, y, CW, 7, 2, C.bgCard)
-      pdf.setFontSize(6); txt(C.green)
+      pdf.setFontSize(7); txt(C.green)
       pdf.text('COMPARATIVA DE TEMPORADA', M + 5, y + 5)
       // Team name labels in header
-      pdf.setFontSize(4); txt(C.s400)
-      pdf.text(r.name.length > 18 ? r.name.slice(0, 18) + '...' : r.name, M + CW * 0.25, y + 5, { align: 'center' })
-      pdf.text(rival.name.length > 18 ? rival.name.slice(0, 18) + '...' : rival.name, M + CW * 0.75, y + 5, { align: 'center' })
+      pdf.setFontSize(5); txt(C.s400)
+      pdf.text(fitText(r.name, CW * 0.22), M + CW * 0.25, y + 5, { align: 'center' })
+      pdf.text(fitText(rival.name, CW * 0.22), M + CW * 0.75, y + 5, { align: 'center' })
       y += 10
 
       const drawCompRow = (label: string, leftVal: number | string, rightVal: number | string, leftNum: number, rightNum: number, yy: number) => {
         // Alternating row background
-        pdf.setFontSize(5); txt(C.s400)
+        pdf.setFontSize(6); txt(C.s400)
         pdf.text(label, W / 2, yy, { align: 'center' })
 
         const barW = (CW / 2) - 22
@@ -265,7 +273,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
         const rbX = W / 2 + 18
 
         // Values
-        pdf.setFontSize(7); txt(C.white)
+        pdf.setFontSize(8); txt(C.white)
         pdf.text(String(leftVal), lbX + barW + 4, yy + 7, { align: 'right' })
         pdf.text(String(rightVal), rbX + barW + 4, yy + 7, { align: 'right' })
 
@@ -294,7 +302,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       // ═══════════════════════════════════════════════════════════════
       // RIVAL HOME/AWAY — atomic block (~50mm)
       // ═══════════════════════════════════════════════════════════════
-      const HOME_AWAY_H = 50
+      const HOME_AWAY_H = 55
       y = ensureSpace(HOME_AWAY_H, y)
 
       const col1X = M
@@ -302,14 +310,14 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       const colW = CW / 2 - 2
 
       const miniRow = (label: string, val: string, yy: number, x: number) => {
-        pdf.setFontSize(5); txt(C.s400); pdf.text(label, x + 4, yy)
-        pdf.setFontSize(5.5); txt(C.white); pdf.text(val, x + colW - 4, yy, { align: 'right' })
-        return yy + 5.5
+        pdf.setFontSize(6); txt(C.s400); pdf.text(label, x + 4, yy)
+        pdf.setFontSize(6.5); txt(C.white); pdf.text(val, x + colW - 4, yy, { align: 'right' })
+        return yy + 6
       }
 
       // Left column: Home
       rr(col1X, y, colW, 7, 2, C.bgCard)
-      pdf.setFontSize(5.5); txt(C.cyan)
+      pdf.setFontSize(6.5); txt(C.cyan)
       pdf.text('RIVAL COM A LOCAL', col1X + 4, y + 5)
       let yL = y + 10
 
@@ -323,7 +331,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
 
       // Right column: Away
       rr(col2X, y, colW, 7, 2, C.bgCard)
-      pdf.setFontSize(5.5); txt(C.cyan)
+      pdf.setFontSize(6.5); txt(C.cyan)
       pdf.text('RIVAL COM A VISITANT', col2X + 4, y + 5)
       let yR = y + 10
 
@@ -355,23 +363,23 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
         y = ensureSpace(INSIGHTS_H, y)
 
         rr(M, y, CW, 7, 2, C.bgCard)
-        pdf.setFontSize(6); txt(C.amber)
+        pdf.setFontSize(7); txt(C.amber)
         pdf.text('PATRONS DEL RIVAL', M + 5, y + 5)
         y += 10
 
         insightLines.forEach((row, i) => {
           // Alternating subtle row bg
-          if (i % 2 === 0) rr(M + 1, y - 2, CW - 2, 5.5, 1, [18, 28, 48])
-          pdf.setFontSize(5); txt(C.s300); pdf.text(row[0], M + 5, y + 1)
-          pdf.setFontSize(6); txt(C.white); pdf.text(row[1], W - M - 5, y + 1, { align: 'right' })
-          y += 6
+          if (i % 2 === 0) rr(M + 1, y - 2, CW - 2, 6, 1, [18, 28, 48])
+          pdf.setFontSize(6); txt(C.s300); pdf.text(row[0], M + 5, y + 1)
+          pdf.setFontSize(7); txt(C.white); pdf.text(row[1], W - M - 5, y + 1, { align: 'right' })
+          y += 6.5
         })
 
         // 1st half vs 2nd half visual bar
         if (ins.firstHalfGoals + ins.secondHalfGoals > 0) {
-          compBar(M + 5, y, CW - 10, 3, ins.firstHalfGoals, ins.secondHalfGoals, C.amber, C.s600)
-          y += 5
-          pdf.setFontSize(3.5); txt(C.s500)
+          compBar(M + 5, y, CW - 10, 3.5, ins.firstHalfGoals, ins.secondHalfGoals, C.amber, C.s600)
+          y += 5.5
+          pdf.setFontSize(5); txt(C.s500)
           pdf.text('1a part', M + 5, y)
           pdf.text('2a part', W - M - 5, y, { align: 'right' })
         }
@@ -386,7 +394,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
         y = ensureSpace(BUCKETS_H, y)
 
         rr(M, y, CW, 7, 2, C.bgCard)
-        pdf.setFontSize(6); txt(C.green)
+        pdf.setFontSize(7); txt(C.green)
         pdf.text('MINUTS DE GOL DEL RIVAL', M + 5, y + 5)
         y += 10
 
@@ -397,23 +405,23 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
           const scoredW = (b.scored / maxBucket) * (bucketBarW / 2 - 4)
           const concededW = (b.conceded / maxBucket) * (bucketBarW / 2 - 4)
 
-          pdf.setFontSize(4.5); txt(C.s400)
+          pdf.setFontSize(5.5); txt(C.s400)
           pdf.text(b.label, M + 5, y + 2.5)
 
           const barStartX = M + 22
-          if (b.scored > 0) rr(barStartX, y, scoredW, 3.5, 1.5, C.green)
-          if (b.conceded > 0) rr(barStartX + bucketBarW / 2 + 2, y, concededW, 3.5, 1.5, C.red)
+          if (b.scored > 0) rr(barStartX, y, scoredW, 4, 1.5, C.green)
+          if (b.conceded > 0) rr(barStartX + bucketBarW / 2 + 2, y, concededW, 4, 1.5, C.red)
 
-          pdf.setFontSize(3.5); txt(C.s300)
+          pdf.setFontSize(5); txt(C.s300)
           if (b.scored > 0) pdf.text(String(b.scored), barStartX + scoredW + 2, y + 2.5)
           if (b.conceded > 0) pdf.text(String(b.conceded), barStartX + bucketBarW / 2 + 2 + concededW + 2, y + 2.5)
 
-          y += 5.5
+          y += 6
         })
         // Legend
-        rr(M + 5, y, 3, 2.5, 1, C.green)
-        pdf.setFontSize(3.5); txt(C.s400); pdf.text('A favor', M + 10, y + 2)
-        rr(M + 28, y, 3, 2.5, 1, C.red)
+        rr(M + 5, y, 3, 3, 1, C.green)
+        pdf.setFontSize(5); txt(C.s400); pdf.text('A favor', M + 10, y + 2)
+        rr(M + 28, y, 3, 3, 1, C.red)
         pdf.text('En contra', M + 33, y + 2)
         y += 6
       }
@@ -431,37 +439,37 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
 
         if (scorers.length > 0) {
           rr(col1X, y, colW, 7, 2, C.bgCard)
-          pdf.setFontSize(5.5); txt(C.green)
+          pdf.setFontSize(6.5); txt(C.green)
           pdf.text('GOLEJADORS RIVAL', col1X + 4, y + 5)
           let ys = y + 10
 
           scorers.forEach((p, i) => {
-            if (i % 2 === 0) rr(col1X + 1, ys - 2, colW - 2, 5, 1, [18, 28, 48])
-            pdf.setFontSize(5); txt(C.s300)
-            const pName = p.name.length > 20 ? p.name.slice(0, 20) + '...' : p.name
+            if (i % 2 === 0) rr(col1X + 1, ys - 2, colW - 2, 5.5, 1, [18, 28, 48])
+            pdf.setFontSize(6); txt(C.s300)
+            const pName = fitText(p.name, colW - 32)
             pdf.text(pName, col1X + 4, ys + 1)
-            pdf.setFontSize(6); txt(C.green)
+            pdf.setFontSize(7); txt(C.green)
             pdf.text(String(p.goals), col1X + colW - 6, ys + 1, { align: 'right' })
-            pdf.setFontSize(4); txt(C.s600)
+            pdf.setFontSize(5); txt(C.s600)
             pdf.text(`${p.appearances} PJ`, col1X + colW - 14, ys + 1, { align: 'right' })
-            ys += 5.5
+            ys += 6
           })
         }
 
         if (danger.length > 0) {
           rr(col2X, y, colW, 7, 2, [45, 35, 15])
-          pdf.setFontSize(5.5); txt(C.amber)
+          pdf.setFontSize(6.5); txt(C.amber)
           pdf.text('APERCEBITS', col2X + 4, y + 5)
           let yd = y + 10
 
           danger.forEach((p, i) => {
-            if (i % 2 === 0) rr(col2X + 1, yd - 2, colW - 2, 5, 1, [35, 30, 18])
-            pdf.setFontSize(5); txt(C.s300)
-            const pName = p.name.length > 18 ? p.name.slice(0, 18) + '...' : p.name
+            if (i % 2 === 0) rr(col2X + 1, yd - 2, colW - 2, 5.5, 1, [35, 30, 18])
+            pdf.setFontSize(6); txt(C.s300)
+            const pName = fitText(p.name, colW - 26)
             pdf.text(pName, col2X + 4, yd + 1)
-            pdf.setFontSize(5); txt(C.amber)
+            pdf.setFontSize(6); txt(C.amber)
             pdf.text(`${p.yellow_cards} grg.`, col2X + colW - 6, yd + 1, { align: 'right' })
-            yd += 5.5
+            yd += 6
           })
         }
 
@@ -477,30 +485,30 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
         y = ensureSpace(H2H_H, y)
 
         rr(M, y, CW, 7, 2, C.bgCard)
-        pdf.setFontSize(6); txt(C.white)
+        pdf.setFontSize(7); txt(C.white)
         pdf.text('ENFRONTAMENTS DIRECTES', M + 5, y + 5)
         y += 10
 
         r.headToHead.slice(0, 5).forEach((m, i) => {
-          if (i % 2 === 0) rr(M + 1, y - 2, CW - 2, 5.5, 1, [18, 28, 48])
+          if (i % 2 === 0) rr(M + 1, y - 2, CW - 2, 6, 1, [18, 28, 48])
 
           const dotColor = m.result === 'W' ? C.green : m.result === 'D' ? C.amber : m.result === 'L' ? C.red : C.s600
-          rr(M + 4, y - 0.5, 4, 4, 2, dotColor)
-          pdf.setFontSize(4); txt(C.white)
-          pdf.text(m.result ? RESULT_LABEL[m.result] : '?', M + 6, y + 2, { align: 'center' })
+          rr(M + 4, y - 0.5, 4.5, 4.5, 2.25, dotColor)
+          pdf.setFontSize(5); txt(C.white)
+          pdf.text(m.result ? RESULT_LABEL[m.result] : '?', M + 6.25, y + 2, { align: 'center' })
 
           if (m.goalsFor !== null && m.goalsAgainst !== null) {
-            pdf.setFontSize(6); txt(C.white)
+            pdf.setFontSize(7); txt(C.white)
             pdf.text(`${m.goalsFor} - ${m.goalsAgainst}`, M + 16, y + 2, { align: 'center' })
           }
 
-          pdf.setFontSize(4.5); txt(C.s400)
+          pdf.setFontSize(5.5); txt(C.s400)
           pdf.text(m.isHome ? 'LOCAL' : 'VISITANT', M + 26, y + 2)
 
-          pdf.setFontSize(4.5); txt(C.s600)
+          pdf.setFontSize(5.5); txt(C.s600)
           pdf.text(m.date, W - M - 4, y + 2, { align: 'right' })
 
-          y += 6
+          y += 6.5
         })
         y += 2
       }
@@ -514,34 +522,34 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
         y = ensureSpace(FORM_H, y)
 
         rr(M, y, CW, 7, 2, C.bgCard)
-        pdf.setFontSize(6); txt(C.white)
+        pdf.setFontSize(7); txt(C.white)
         pdf.text('ULTIMS PARTITS DEL RIVAL', M + 5, y + 5)
         y += 10
 
         rival.form.slice(0, 6).forEach((m, i) => {
-          if (i % 2 === 0) rr(M + 1, y - 2, CW - 2, 5.5, 1, [18, 28, 48])
+          if (i % 2 === 0) rr(M + 1, y - 2, CW - 2, 6, 1, [18, 28, 48])
 
           const dotColor = m.result === 'W' ? C.green : m.result === 'D' ? C.amber : m.result === 'L' ? C.red : C.s600
-          rr(M + 4, y - 0.5, 4, 4, 2, dotColor)
-          pdf.setFontSize(4); txt(C.white)
-          pdf.text(m.result ? RESULT_LABEL[m.result] : '?', M + 6, y + 2, { align: 'center' })
+          rr(M + 4, y - 0.5, 4.5, 4.5, 2.25, dotColor)
+          pdf.setFontSize(5); txt(C.white)
+          pdf.text(m.result ? RESULT_LABEL[m.result] : '?', M + 6.25, y + 2, { align: 'center' })
 
-          pdf.setFontSize(4); txt(C.s500)
+          pdf.setFontSize(5); txt(C.s500)
           pdf.text(m.isHome ? 'LOC' : 'VIS', M + 12, y + 2)
 
           if (m.goalsFor !== null && m.goalsAgainst !== null) {
-            pdf.setFontSize(5.5); txt(C.white)
+            pdf.setFontSize(6.5); txt(C.white)
             pdf.text(`${m.goalsFor}-${m.goalsAgainst}`, M + 22, y + 2)
           }
 
-          pdf.setFontSize(4.5); txt(C.s300)
-          const opp = m.opponent.length > 28 ? m.opponent.slice(0, 28) + '...' : m.opponent
+          pdf.setFontSize(5.5); txt(C.s300)
+          const opp = fitText(m.opponent, CW - 50)
           pdf.text(opp, M + 30, y + 2)
 
-          pdf.setFontSize(4); txt(C.s600)
+          pdf.setFontSize(5); txt(C.s600)
           pdf.text(m.date, W - M - 4, y + 2, { align: 'right' })
 
-          y += 6
+          y += 6.5
         })
         y += 2
       }
@@ -554,7 +562,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
         y = ensureSpace(PITCH_H, y)
 
         rr(M, y, CW, 7, 2, C.bgCard)
-        pdf.setFontSize(6); txt(C.cyan)
+        pdf.setFontSize(7); txt(C.cyan)
         pdf.text('DIMENSIONS DEL CAMP', M + 5, y + 5)
         y += 10
 
@@ -580,26 +588,26 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
         pdf.roundedRect(pitchCenterX - rpW / 2, pitchCenterY - rpH / 2, rpW, rpH, 1, 1, 'S')
 
         // Labels
-        pdf.setFontSize(4); txt(C.green)
+        pdf.setFontSize(5); txt(C.green)
         pdf.text(`${r.homePitch.length_m}x${r.homePitch.width_m}m`, pitchCenterX - hpW / 2 + 2, pitchCenterY - hpH / 2 + 3)
         if (r.homePitch.field_name) {
-          pdf.setFontSize(3.5); txt(C.s400)
-          pdf.text(r.homePitch.field_name, pitchCenterX - hpW / 2 + 2, pitchCenterY - hpH / 2 + 6)
+          pdf.setFontSize(5); txt(C.s400)
+          pdf.text(fitText(r.homePitch.field_name, hpW - 4), pitchCenterX - hpW / 2 + 2, pitchCenterY - hpH / 2 + 7)
         }
 
-        pdf.setFontSize(4); txt(C.red)
+        pdf.setFontSize(5); txt(C.red)
         pdf.text(`${r.rivalPitch.length_m}x${r.rivalPitch.width_m}m`, pitchCenterX + rpW / 2 - 2, pitchCenterY + rpH / 2 - 2, { align: 'right' })
         if (r.rivalPitch.field_name) {
-          pdf.setFontSize(3.5); txt(C.s400)
-          pdf.text(r.rivalPitch.field_name, pitchCenterX + rpW / 2 - 2, pitchCenterY + rpH / 2 + 1, { align: 'right' })
+          pdf.setFontSize(5); txt(C.s400)
+          pdf.text(fitText(r.rivalPitch.field_name, rpW - 4), pitchCenterX + rpW / 2 - 2, pitchCenterY + rpH / 2 + 2, { align: 'right' })
         }
 
         // Legend
         y += pitchAreaH + 3
-        rr(M + 5, y, 3, 2.5, 1, C.green)
-        pdf.setFontSize(3.5); txt(C.s400); pdf.text('El nostre camp', M + 10, y + 2)
-        rr(M + 35, y, 3, 2.5, 1, C.red)
-        pdf.text('Camp rival', M + 40, y + 2)
+        rr(M + 5, y, 3, 3, 1, C.green)
+        pdf.setFontSize(5); txt(C.s400); pdf.text('El nostre camp', M + 10, y + 2)
+        rr(M + 38, y, 3, 3, 1, C.red)
+        pdf.text('Camp rival', M + 43, y + 2)
         y += 5
       }
 
@@ -608,11 +616,11 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       // ═══════════════════════════════════════════════════════════════
       if (nm.referee) {
         y = ensureSpace(12, y)
-        rr(M, y, CW, 9, 2, C.bgCard)
-        pdf.setFontSize(5); txt(C.s400)
-        pdf.text('ARBITRE DESIGNAT', M + 5, y + 6)
-        pdf.setFontSize(6); txt(C.white)
-        pdf.text(nm.referee, W - M - 5, y + 6, { align: 'right' })
+        rr(M, y, CW, 10, 2, C.bgCard)
+        pdf.setFontSize(6); txt(C.s400)
+        pdf.text('ARBITRE DESIGNAT', M + 5, y + 6.5)
+        pdf.setFontSize(7); txt(C.white)
+        pdf.text(nm.referee, W - M - 5, y + 6.5, { align: 'right' })
         y += 12
       }
 
@@ -650,7 +658,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       // ═══════════════════════════════════════════════════════════════
       for (let p = 1; p <= pageNum; p++) {
         pdf.setPage(p)
-        pdf.setFontSize(4); txt(C.s600)
+        pdf.setFontSize(5); txt(C.s600)
         pdf.text(`${p}/${pageNum}`, W / 2, H - 4, { align: 'center' })
       }
 

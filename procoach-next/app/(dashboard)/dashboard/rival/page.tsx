@@ -2,7 +2,8 @@ import { redirect } from 'next/navigation'
 import { getDashboardTeam, isAdminUser } from '@/lib/dashboard-auth'
 import { getFullTeamReportDB } from '@/lib/supabase-data'
 import { Crosshair, Home, Plane, TrendingUp, AlertTriangle, Target, Ruler } from 'lucide-react'
-import ExportRivalPdf from '@/components/ExportRivalPdf'
+import TeamReportActions from '@/components/TeamReportActions'
+import type { PDFReportData } from '@/components/TeamReportActions'
 
 export const dynamic = 'force-dynamic'
 
@@ -350,6 +351,33 @@ export default async function RivalPage() {
   const visitantName = isHome ? rival?.name || '' : team.name
   const visitantInitial = visitantName.charAt(0)
 
+  // Build PDFReportData for the vector PDF export
+  const pdfReportData: PDFReportData | null = (report && rival && nextMatch) ? {
+    name: report.name,
+    competition: report.competition,
+    position: report.position,
+    played: report.played, wins: report.wins, draws: report.draws, losses: report.losses, gf: report.gf, ga: report.ga, points: report.points,
+    home: report.home,
+    away: report.away,
+    form: report.form.map(f => ({ date: f.date, jornada: f.jornada, opponent: f.opponent, isHome: f.isHome, goalsFor: f.goalsFor, goalsAgainst: f.goalsAgainst, result: f.result, referee: f.referee })),
+    rival: {
+      name: rival.name,
+      played: rival.played, wins: rival.wins, draws: rival.draws, losses: rival.losses, gf: rival.gf, ga: rival.ga, points: rival.points,
+      position: rival.position,
+      home: rival.home,
+      away: rival.away,
+      form: rival.form.map(f => ({ date: f.date, jornada: f.jornada, opponent: f.opponent, isHome: f.isHome, goalsFor: f.goalsFor, goalsAgainst: f.goalsAgainst, result: f.result, referee: f.referee })),
+      topScorers: rival.topScorers,
+      apercibits: rival.apercibits,
+      goalBuckets: rival.goalBuckets,
+      insights: rival.insights,
+    },
+    headToHead: h2h.map(h => ({ date: h.date, jornada: h.jornada, opponent: h.opponent, isHome: h.isHome, goalsFor: h.goalsFor, goalsAgainst: h.goalsAgainst, result: h.result, referee: h.referee })),
+    nextMatch: { opponent: nextMatch.opponent, date: nextMatch.date, jornada: nextMatch.jornada, isHome: nextMatch.isHome, time: nextMatch.time, referee: nextMatch.referee },
+    homePitch: report.homePitch ? { length_m: report.homePitch.length_m, width_m: report.homePitch.width_m, field_name: report.homePitch.field_name } : null,
+    rivalPitch: report.rivalPitch ? { length_m: report.rivalPitch.length_m, width_m: report.rivalPitch.width_m, field_name: report.rivalPitch.field_name } : null,
+  } : null
+
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 lg:py-8">
         {!nextMatch || !rival ? (
@@ -359,13 +387,19 @@ export default async function RivalPage() {
             <p className="text-slate-400 text-sm">Quan es publiqui el proper partit, apareixera aqui l&apos;analisi completa del rival.</p>
           </div>
         ) : (
-          <ExportRivalPdf
-            rivalName={rival.name}
-            teamName={team.name}
-            jornada={nextMatch.jornada}
-            matchDate={nextMatch.date}
-          >
           <div className="space-y-6">
+            {/* ═══ PDF EXPORT ═══ */}
+            {pdfReportData && (
+              <div className="flex justify-end">
+                <TeamReportActions
+                  teamName={team.name}
+                  teamSlug={team.slug}
+                  competition={report!.competition}
+                  reportData={pdfReportData}
+                />
+              </div>
+            )}
+
             {/* ═══ NEXT MATCH HEADER ═══ */}
             <div className="glass-card rounded-2xl p-6 border-cyan-500/20 relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 via-cyan-500 to-green-500" />
@@ -637,7 +671,6 @@ export default async function RivalPage() {
               </div>
             )}
           </div>
-          </ExportRivalPdf>
         )}
     </div>
   )
