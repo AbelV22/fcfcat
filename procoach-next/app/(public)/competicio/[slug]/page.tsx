@@ -14,6 +14,7 @@ import {
   getCompetitionScorersDB,
   getCompetitionDisciplineDB,
   getCompetitionRefereeRankingDB,
+  getFieldsDB,
 } from '@/lib/supabase-data'
 import { ListOrdered, AlertTriangle, LogIn, ChevronRight } from 'lucide-react'
 
@@ -75,6 +76,18 @@ export default async function CompeticionPage({
       getCompetitionRefereeRankingDB(slug),
       getCompetitionTeamsDB(slug),
     ])
+
+  // Fetch fields separately (non-blocking — don't break page if it fails)
+  let competitionFields: { name: string; team: string | null; length_m: number; width_m: number }[] = []
+  try {
+    const allFields = await getFieldsDB()
+    const teamNames = new Set(teams.map((t: any) => t.name))
+    competitionFields = allFields
+      .filter(f => f.team && teamNames.has(f.team) && f.length_m && f.width_m)
+      .map(f => ({ name: f.name, team: f.team, length_m: f.length_m, width_m: f.width_m }))
+  } catch {
+    // Fields data is optional — continue without it
+  }
 
   // Compute next jornada from calendar
   const today = new Date()
@@ -228,6 +241,7 @@ export default async function CompeticionPage({
         totalGoals={totalGoals}
         totalYellows={totalYellows}
         totalReds={totalReds}
+        fields={competitionFields}
       />
 
       <footer className="border-t border-white/5 mt-8 py-8 text-center text-sm text-slate-600">

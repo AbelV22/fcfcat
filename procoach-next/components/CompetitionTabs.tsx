@@ -5,10 +5,49 @@ import Link from 'next/link'
 import {
   ListOrdered, Users, Calendar, Shield, AlertTriangle,
   TrendingUp, Zap, LogIn, BarChart2, Target, Clock,
+  Home, Plane, Ruler,
 } from 'lucide-react'
 import { slugify } from '@/lib/utils'
 
 type TabId = 'resultats' | 'classificacio' | 'disciplina' | 'arbitres' | 'golejadors'
+type StandingsFilter = 'total' | 'local' | 'visitant'
+
+/** Compute standings from match results, filtered by home/away */
+function computeStandings(matches: any[], filter: StandingsFilter) {
+  const stats: Record<string, { name: string; played: number; won: number; drawn: number; lost: number; goals_for: number; goals_against: number; points: number }> = {}
+
+  for (const m of matches) {
+    if (m.home_score === null || m.home_score === undefined) continue
+
+    // Home team stats
+    if (filter === 'total' || filter === 'local') {
+      const k = m.home_team
+      if (!stats[k]) stats[k] = { name: k, played: 0, won: 0, drawn: 0, lost: 0, goals_for: 0, goals_against: 0, points: 0 }
+      stats[k].played++
+      stats[k].goals_for += m.home_score
+      stats[k].goals_against += m.away_score
+      if (m.home_score > m.away_score) { stats[k].won++; stats[k].points += 3 }
+      else if (m.home_score === m.away_score) { stats[k].drawn++; stats[k].points += 1 }
+      else stats[k].lost++
+    }
+
+    // Away team stats
+    if (filter === 'total' || filter === 'visitant') {
+      const k = m.away_team
+      if (!stats[k]) stats[k] = { name: k, played: 0, won: 0, drawn: 0, lost: 0, goals_for: 0, goals_against: 0, points: 0 }
+      stats[k].played++
+      stats[k].goals_for += m.away_score
+      stats[k].goals_against += m.home_score
+      if (m.away_score > m.home_score) { stats[k].won++; stats[k].points += 3 }
+      else if (m.home_score === m.away_score) { stats[k].drawn++; stats[k].points += 1 }
+      else stats[k].lost++
+    }
+  }
+
+  return Object.values(stats)
+    .sort((a, b) => b.points - a.points || (b.goals_for - b.goals_against) - (a.goals_for - a.goals_against) || b.goals_for - a.goals_for)
+    .map((t, i) => ({ ...t, slug: slugify(t.name), position: i + 1 }))
+}
 
 function formatDate(d: string) {
   if (!d) return ''
@@ -31,6 +70,13 @@ function ScoreBadge({ home, away }: { home: number | null; away: number | null }
   )
 }
 
+export interface FieldInfo {
+  name: string
+  team: string | null
+  length_m: number
+  width_m: number
+}
+
 export interface CompetitionTabsProps {
   slug: string
   name: string
@@ -48,7 +94,19 @@ export interface CompetitionTabsProps {
   totalGoals: number
   totalYellows: number
   totalReds: number
+  fields?: FieldInfo[]
 }
+
+type FieldSize = 'petit' | 'mitja' | 'gran'
+function classifyField(length_m: number, width_m: number): FieldSize {
+  const area = length_m * width_m
+  if (area < 5500) return 'petit'
+  if (area <= 6300) return 'mitja'
+  return 'gran'
+}
+const FIELD_SIZE_LABEL: Record<FieldSize, string> = { petit: 'Petit', mitja: 'Mitjà', gran: 'Gran' }
+const FIELD_SIZE_COLOR: Record<FieldSize, string> = { petit: 'text-red-400', mitja: 'text-amber-400', gran: 'text-green-400' }
+const FIELD_SIZE_BG: Record<FieldSize, string> = { petit: 'bg-red-500/10 border-red-500/20', mitja: 'bg-amber-500/10 border-amber-500/20', gran: 'bg-green-500/10 border-green-500/20' }
 
 // Only these competitions have full team detail pages (/equip/[slug])
 const COMPETITIONS_WITH_TEAM_PAGES = new Set(['segona-catalana', 'tercera-catalana'])
@@ -81,8 +139,10 @@ export default function CompetitionTabs({
   totalGoals,
   totalYellows,
   totalReds,
+  fields,
 }: CompetitionTabsProps) {
   const [activeTab, setActiveTab] = useState<TabId>('resultats')
+  const [standingsFilter, setStandingsFilter] = useState<StandingsFilter>('total')
 
   // Show content if we have FCF standings OR referee-analyzed matches.
   // matches comes from fcf_referee_matches (has scores); fcfStandings comes
@@ -248,8 +308,53 @@ export default function CompetitionTabs({
       )}
 
       {/* ─── TAB: CLASSIFICACIÓ ─── */}
-      {activeTab === 'classificacio' && (
-        <div>
+      {activeTab === 'classificacio' && (() => {
+        // Use FCF standings for 'total', compute from matches for home/away
+        const showStandings = standingsFilter === 'total'
+          ? displayStandings
+          : computeStandings(playedMatches, standingsFilter)
+        const isComputed = standingsFilter !== 'total'
+
+        // Field size insights (only when we have fields data)
+        const teamFieldMap = new Map<string, { size: FieldSize; area: number; length: number; width: number }>()
+        if (fields) {
+          for (const f of fields) {
+            if (f.team && f.length_m && f.width_m) {
+              teamFieldMap.set(f.team, {
+                size: classifyField(f.length_m, f.width_m),
+                area: f.length_m * f.width_m,
+                length: f.length_m,
+                width: f.width_m,
+              })
+            }
+          }
+        }
+
+        // Compute field size stats from played matches
+        const fieldSizeStats: Record<FieldSize, { matches: number; homeWins: number; awayWins: number; draws: number; goals: number; yellows: number; reds: number }> = {
+          petit: { matches: 0, homeWins: 0, awayWins: 0, draws: 0, goals: 0, yellows: 0, reds: 0 },
+          mitja: { matches: 0, homeWins: 0, awayWins: 0, draws: 0, goals: 0, yellows: 0, reds: 0 },
+          gran: { matches: 0, homeWins: 0, awayWins: 0, draws: 0, goals: 0, yellows: 0, reds: 0 },
+        }
+        let hasFieldStats = false
+        if (teamFieldMap.size > 0) {
+          for (const m of playedMatches) {
+            const f = teamFieldMap.get(m.home_team)
+            if (!f || m.home_score === null || m.home_score === undefined) continue
+            hasFieldStats = true
+            const s = fieldSizeStats[f.size]
+            s.matches++
+            s.goals += (m.home_score + m.away_score)
+            if (m.home_score > m.away_score) s.homeWins++
+            else if (m.home_score === m.away_score) s.draws++
+            else s.awayWins++
+            if (m.yellows !== undefined) s.yellows += m.yellows
+            if (m.reds !== undefined) s.reds += m.reds
+          }
+        }
+
+        return (
+        <div className="space-y-6">
           {displayStandings.length === 0 ? (
             <div className="text-center py-16 text-slate-500">
               <BarChart2 size={40} className="mx-auto mb-4 opacity-30" />
@@ -257,12 +362,42 @@ export default function CompetitionTabs({
             </div>
           ) : (
             <>
-              {fcfStandings.length > 0 && (
-                <div className="flex items-center gap-2 mb-3 text-xs text-green-400">
-                  <ListOrdered size={12} />
-                  <span>Classificació oficial FCF</span>
+              {/* Filter buttons: Total / Local / Visitant */}
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                {fcfStandings.length > 0 && standingsFilter === 'total' && (
+                  <div className="flex items-center gap-2 text-xs text-green-400">
+                    <ListOrdered size={12} />
+                    <span>Classificació oficial FCF</span>
+                  </div>
+                )}
+                {isComputed && (
+                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                    <BarChart2 size={12} />
+                    <span>Calculada a partir de les actes</span>
+                  </div>
+                )}
+                <div className="flex gap-1 bg-white/5 rounded-lg p-1 ml-auto">
+                  {([
+                    { id: 'total' as StandingsFilter, label: 'Total', icon: <ListOrdered size={12} /> },
+                    { id: 'local' as StandingsFilter, label: 'Local', icon: <Home size={12} /> },
+                    { id: 'visitant' as StandingsFilter, label: 'Visitant', icon: <Plane size={12} /> },
+                  ]).map(f => (
+                    <button
+                      key={f.id}
+                      onClick={() => setStandingsFilter(f.id)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                        standingsFilter === f.id
+                          ? 'bg-green-600 text-white shadow-sm'
+                          : 'text-slate-400 hover:text-white hover:bg-white/5'
+                      }`}
+                    >
+                      {f.icon}
+                      {f.label}
+                    </button>
+                  ))}
                 </div>
-              )}
+              </div>
+
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -280,16 +415,16 @@ export default function CompetitionTabs({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
-                    {displayStandings.map((t: any, i: number) => (
+                    {showStandings.map((t: any, i: number) => (
                       <tr key={t.slug || i} className="hover:bg-white/3 transition-colors group">
                         <td className="py-3 pl-2 text-slate-600 text-xs font-medium">{i + 1}</td>
                         <td className="py-3">
                           <TeamLink teamSlug={t.slug} teamName={t.name} competition={slug} className="font-medium text-slate-200 group-hover:text-white transition-colors" />
                         </td>
                         <td className="py-3 text-center text-slate-400">{t.played}</td>
-                        <td className="py-3 text-center text-green-400 hidden sm:table-cell">{t.wins}</td>
-                        <td className="py-3 text-center text-amber-400 hidden sm:table-cell">{t.draws}</td>
-                        <td className="py-3 text-center text-red-400 hidden sm:table-cell">{t.losses}</td>
+                        <td className="py-3 text-center text-green-400 hidden sm:table-cell">{t.won}</td>
+                        <td className="py-3 text-center text-amber-400 hidden sm:table-cell">{t.drawn}</td>
+                        <td className="py-3 text-center text-red-400 hidden sm:table-cell">{t.lost}</td>
                         <td className="py-3 text-center text-slate-400 hidden md:table-cell">{t.goals_for}</td>
                         <td className="py-3 text-center text-slate-400 hidden md:table-cell">{t.goals_against}</td>
                         <td className="py-3 text-center text-slate-400 hidden sm:table-cell">
@@ -301,15 +436,73 @@ export default function CompetitionTabs({
                   </tbody>
                 </table>
                 <p className="text-xs text-slate-600 mt-3 text-center">
-                  {fcfStandings.length > 0
+                  {standingsFilter === 'total' && fcfStandings.length > 0
                     ? '* Classificació oficial FCF.'
-                    : '* Classificació calculada a partir de les actes disponibles.'}
+                    : `* Classificació ${standingsFilter === 'local' ? 'com a local' : standingsFilter === 'visitant' ? 'com a visitant' : ''} calculada a partir de les actes disponibles.`}
                 </p>
               </div>
             </>
           )}
+
+          {/* ─── Field Size Insights ─── */}
+          {hasFieldStats && (
+            <div className="bg-white/3 border border-white/8 rounded-2xl p-5">
+              <h3 className="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
+                <Ruler size={16} className="text-cyan-400" />
+                Rendiment segons mida del camp
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {(['petit', 'mitja', 'gran'] as FieldSize[]).map(size => {
+                  const s = fieldSizeStats[size]
+                  if (s.matches === 0) return null
+                  const homeWinPct = ((s.homeWins / s.matches) * 100).toFixed(0)
+                  const drawPct = ((s.draws / s.matches) * 100).toFixed(0)
+                  const awayWinPct = ((s.awayWins / s.matches) * 100).toFixed(0)
+                  const goalsPerMatch = (s.goals / s.matches).toFixed(2)
+                  return (
+                    <div key={size} className={`border rounded-xl p-4 ${FIELD_SIZE_BG[size]}`}>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className={`text-sm font-bold ${FIELD_SIZE_COLOR[size]}`}>
+                          {FIELD_SIZE_LABEL[size]}
+                        </span>
+                        <span className="text-xs text-slate-500">{s.matches} partits</span>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-xs">
+                          <span className="text-slate-400">Victòria local</span>
+                          <span className="text-green-400 font-semibold">{homeWinPct}%</span>
+                        </div>
+                        <div className="flex justify-between text-xs">
+                          <span className="text-slate-400">Empat</span>
+                          <span className="text-amber-400 font-semibold">{drawPct}%</span>
+                        </div>
+                        <div className="flex justify-between text-xs">
+                          <span className="text-slate-400">Victòria visitant</span>
+                          <span className="text-cyan-400 font-semibold">{awayWinPct}%</span>
+                        </div>
+                        <div className="border-t border-white/10 pt-2 mt-2 flex justify-between text-xs">
+                          <span className="text-slate-400">Gols/partit</span>
+                          <span className="text-white font-semibold">{goalsPerMatch}</span>
+                        </div>
+                        {s.yellows > 0 && (
+                          <div className="flex justify-between text-xs">
+                            <span className="text-slate-400">Grogues/partit</span>
+                            <span className="text-amber-400 font-semibold">{(s.yellows / s.matches).toFixed(1)}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+              <p className="text-[10px] text-slate-600 mt-3 text-center">
+                Camp petit: &lt;5.500m² · Mitjà: 5.500–6.300m² · Gran: &gt;6.300m²
+              </p>
+            </div>
+          )}
         </div>
-      )}
+        )
+      })()}
 
       {/* ─── TAB: GOLEJADORS ─── */}
       {activeTab === 'golejadors' && (
