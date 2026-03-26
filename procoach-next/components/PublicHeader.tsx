@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, Menu, X, LogIn, ChevronDown } from 'lucide-react'
+import { Search, Menu, X, LogIn, ChevronDown, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 const competitions = [
@@ -110,6 +110,13 @@ export default function PublicHeader() {
               />
             </form>
             <Link
+              href="/login"
+              className="flex items-center gap-2 px-3 py-2 text-sm text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+            >
+              <User size={14} />
+              Iniciar sessió
+            </Link>
+            <Link
               href="/entrenador"
               className="flex items-center gap-2 px-4 py-2 bg-white text-slate-900 text-sm font-semibold rounded-xl transition-all hover:bg-emerald-50 hover:shadow-[0_0_20px_rgba(52,211,153,0.1)]"
             >
@@ -213,8 +220,16 @@ export default function PublicHeader() {
             </div>
           </div>
 
-          {/* CTA */}
-          <div className="px-4 pb-5 pt-2">
+          {/* Login + CTA */}
+          <div className="px-4 pb-5 pt-2 space-y-2">
+            <Link
+              href="/login"
+              className="flex items-center justify-center gap-2 w-full py-3.5 bg-white/5 border border-white/10 text-slate-200 text-sm font-semibold rounded-xl hover:bg-white/10 transition-colors"
+              onClick={closeMenu}
+            >
+              <User size={15} />
+              Iniciar sessió
+            </Link>
             <Link
               href="/entrenador"
               className="flex items-center justify-center gap-2 w-full py-4 bg-white text-slate-900 text-sm font-bold rounded-xl"

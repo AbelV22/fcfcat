@@ -589,6 +589,60 @@ export default async function RivalPage() {
               rivalLabel={rival.name.split(' ').slice(0, 2).join(' ')}
             />
 
+            {/* ═══ FIELD SIZE TACTICAL INSIGHT ═══ */}
+            {(() => {
+              // Determine venue pitch (where the match will be played)
+              const matchPitch = nextMatch.isHome ? report?.homePitch : report?.rivalPitch
+              if (!matchPitch) return null
+              const area = matchPitch.length_m * matchPitch.width_m
+              const sizeLabel = area < 5500 ? 'petit' : area < 6300 ? 'mitjà' : 'gran'
+              const sizeColor = area < 5500 ? 'text-red-400' : area < 6300 ? 'text-amber-400' : 'text-green-400'
+              const sizeBg = area < 5500 ? 'bg-red-500/10 border-red-500/20' : area < 6300 ? 'bg-amber-500/10 border-amber-500/20' : 'bg-green-500/10 border-green-500/20'
+
+              // Tactical tips based on field size
+              const tips = area < 5500
+                ? [
+                    'Menys espais entre línies → pressing alt més efectiu',
+                    'Joc directe i pilotes al segon pal guanyen importància',
+                    'Jugadors tècnics en espais reduïts marquen la diferència',
+                    'Menys temps per decidir — ritme alt de pilota',
+                  ]
+                : area < 6300
+                ? [
+                    'Camp equilibrat — permet tant joc combinatiu com directe',
+                    'Les transicions ràpides són clau en ambdues direccions',
+                    'Amplada suficient per generar superioritats per banda',
+                  ]
+                : [
+                    'Més espai entre línies → difícil pressionar alt tot el partit',
+                    'L\'amplada permet canvis d\'orientació efectius',
+                    'Equips ràpids al contraatac tenen avantatge',
+                    'Important tenir mitjos amb bona capacitat de cobertura',
+                  ]
+
+              return (
+                <div className={`border rounded-2xl p-5 ${sizeBg}`}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <Ruler size={16} className={sizeColor} />
+                    <span className="text-sm font-bold text-white">
+                      Jugues en camp <span className={sizeColor}>{sizeLabel}</span>
+                    </span>
+                    <span className="text-xs text-slate-500 ml-auto">
+                      {matchPitch.length_m}×{matchPitch.width_m}m · {area.toLocaleString('ca-ES')}m²
+                    </span>
+                  </div>
+                  <ul className="space-y-1.5">
+                    {tips.map((tip, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
+                        <span className={`mt-0.5 w-1.5 h-1.5 rounded-full shrink-0 ${area < 5500 ? 'bg-red-400' : area < 6300 ? 'bg-amber-400' : 'bg-green-400'}`} />
+                        {tip}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            })()}
+
             {/* ═══ TOP SCORERS with bars ═══ */}
             {rival.topScorers.length > 0 && (
               <div className="glass-card rounded-2xl p-6">
