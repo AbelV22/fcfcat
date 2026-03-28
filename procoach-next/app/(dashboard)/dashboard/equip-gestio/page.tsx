@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getDashboardTeam, isAdminUser } from '@/lib/dashboard-auth'
-import { getFullTeamReportDB } from '@/lib/supabase-data'
+import { getFullTeamReportDB, COMPETITIONS_WITHOUT_MINUTES } from '@/lib/supabase-data'
 import { Users, AlertTriangle } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
@@ -88,7 +88,7 @@ export default async function EquipGestioPage() {
                       <th className="text-center py-3 px-2">PJ</th>
                       <th className="text-center py-3 px-2">Titular</th>
                       <th className="text-center py-3 px-2">Gols</th>
-                      <th className="text-center py-3 px-2">Min</th>
+                      <th className="text-center py-3 px-2">{COMPETITIONS_WITHOUT_MINUTES.has(report?.competition || '') ? 'Tit.' : 'Min'}</th>
                       <th className="text-center py-3 px-2">🟡</th>
                       <th className="text-center py-3 px-2">🔴</th>
                     </tr>
@@ -107,7 +107,11 @@ export default async function EquipGestioPage() {
                             <td className="py-3 px-2 text-center text-slate-300">{p.appearances ?? 0}</td>
                             <td className="py-3 px-2 text-center text-slate-400">-</td>
                             <td className="py-3 px-2 text-center text-green-400 font-bold">{p.goals ?? 0}</td>
-                            <td className="py-3 px-2 text-center text-slate-400">{p.minutes_played ?? '-'}</td>
+                            <td className="py-3 px-2 text-center text-slate-400">
+                              {COMPETITIONS_WITHOUT_MINUTES.has(report?.competition || '')
+                                ? (p.starts > 0 ? p.starts : '-')
+                                : (p.minutes_played ?? '-')}
+                            </td>
                             <td className={`py-3 px-2 text-center font-bold ${(p.yellow_cards ?? 0) >= 4 ? 'text-amber-400' : 'text-slate-500'}`}>
                               {p.yellow_cards ?? 0}
                             </td>

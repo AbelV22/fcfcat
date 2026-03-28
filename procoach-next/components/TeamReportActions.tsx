@@ -5,7 +5,8 @@ import { FileDown, Share2, Loader2 } from 'lucide-react'
 
 // ─── Types ──────────────────────────────────────────────────────────────
 type SplitStats = { played: number; wins: number; draws: number; losses: number; gf: number; ga: number; points: number }
-type PlayerEntry = { name: string; appearances: number; goals: number; yellow_cards: number; red_cards: number; minutes_played: number; risk: boolean }
+type PlayerEntry = { name: string; appearances: number; starts?: number; goals: number; yellow_cards: number; red_cards: number; minutes_played: number; risk: boolean }
+const _NO_MINUTES_COMPS = new Set(['quarta-catalana', 'juvenil-primera-divisio', 'preferent-juvenils'])
 type MatchEntry = { date: string; jornada: number; opponent: string; isHome: boolean; goalsFor: number | null; goalsAgainst: number | null; result: 'W' | 'D' | 'L' | null; referee: string | null }
 type GoalBucketEntry = { label: string; scored: number; conceded: number }
 type RivalInsights = {
@@ -38,6 +39,7 @@ export interface PDFReportData {
     form: MatchEntry[]
     topScorers: PlayerEntry[]
     apercibits: PlayerEntry[]
+    mostMinutes: PlayerEntry[]
     goalBuckets: GoalBucketEntry[]
     insights: RivalInsights | null
   } | null
@@ -146,34 +148,85 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
       // ─── Page chrome ───────────────────────────────────────────
       const drawPageChrome = (isFirstPage: boolean) => {
         fill(C.bg); pdf.rect(0, 0, W, H, 'F')
-        fill(C.green); pdf.rect(0, 0, W, 1.2, 'F')
 
-        // Header with logo
+        // Premium gradient accent line (emerald → cyan like website)
+        const gradSteps = 30
+        const stepW = W / gradSteps
+        for (let i = 0; i < gradSteps; i++) {
+          const t = i / (gradSteps - 1)
+          // Fade: transparent → emerald → cyan → transparent
+          const fade = Math.sin(t * Math.PI)
+          const r = Math.round(34 + (6 - 34) * t)
+          const g = Math.round(197 + (182 - 197) * t)
+          const b = Math.round(94 + (212 - 94) * t)
+          pdf.setFillColor(r, g, b)
+          pdf.setGState(new (pdf as any).GState({ opacity: fade * 0.7 }))
+          pdf.rect(i * stepW, 0, stepW + 0.5, 1, 'F')
+        }
+        pdf.setGState(new (pdf as any).GState({ opacity: 1 }))
+
+        // Header bar background
+        rr(M, 2, CW, HEADER_H - 1, 2, [10, 16, 30])
+
+        // Logo + NeoScout branding (matching website: "Neo" white + "Scout" emerald)
         if (logoData) {
-          const lh = 5, lw = lh / logoAspect
-          pdf.addImage(logoData, 'PNG', M, 2.5, lw, lh)
-          pdf.setFontSize(9); txt(C.white)
-          pdf.text('NeoScout', M + lw + 2, 6.5)
+          const lh = 6, lw = lh / logoAspect
+          pdf.addImage(logoData, 'PNG', M + 3, 3.2, lw, lh)
+          pdf.setFontSize(11); txt(C.white)
+          pdf.text('Neo', M + lw + 5.5, 7.5)
+          const neoW = pdf.getTextWidth('Neo')
+          txt(C.green)
+          pdf.text('Scout', M + lw + 5.5 + neoW, 7.5)
         } else {
-          pdf.setFontSize(9); txt(C.white)
-          pdf.text('NeoScout', M, 6.5)
+          pdf.setFontSize(11); txt(C.white)
+          pdf.text('Neo', M + 3, 7.5)
+          const neoW = pdf.getTextWidth('Neo')
+          txt(C.green)
+          pdf.text('Scout', M + 3 + neoW, 7.5)
         }
 
+        // Date (right side of header)
         pdf.setFontSize(5.5); txt(C.s500)
-        pdf.text(dateStr, W - M, 6.5, { align: 'right' })
+        pdf.text(dateStr, W - M - 3, 7.5, { align: 'right' })
 
+        // "INFORME PRE-PARTIT" badge on first page (centered)
         if (isFirstPage) {
-          pdf.setFontSize(6); txt(C.green)
-          pdf.text('INFORME PRE-PARTIT', W / 2, 6.5, { align: 'center' })
+          const badgeText = 'INFORME PRE-PARTIT'
+          pdf.setFontSize(6)
+          const badgeW = pdf.getTextWidth(badgeText) + 8
+          const badgeX = (W - badgeW) / 2
+          rr(badgeX, 3.5, badgeW, 5, 2.5, C.greenDk)
+          txt(C.white)
+          pdf.text(badgeText, W / 2, 7, { align: 'center' })
         }
 
-        // Footer
-        fill([10, 16, 30]); pdf.rect(0, H - FOOTER_H, W, FOOTER_H, 'F')
-        fill(C.green); pdf.rect(0, H - FOOTER_H, W, 0.3, 'F')
+        // Footer — dark bar with gradient top accent
+        fill([8, 15, 30]); pdf.rect(0, H - FOOTER_H, W, FOOTER_H, 'F')
+        // Gradient top line on footer (same emerald→cyan)
+        for (let i = 0; i < gradSteps; i++) {
+          const t = i / (gradSteps - 1)
+          const fade = Math.sin(t * Math.PI)
+          const r = Math.round(34 + (6 - 34) * t)
+          const g = Math.round(197 + (182 - 197) * t)
+          const b = Math.round(94 + (212 - 94) * t)
+          pdf.setFillColor(r, g, b)
+          pdf.setGState(new (pdf as any).GState({ opacity: fade * 0.5 }))
+          pdf.rect(i * stepW, H - FOOTER_H, stepW + 0.5, 0.4, 'F')
+        }
+        pdf.setGState(new (pdf as any).GState({ opacity: 1 }))
+
+        // Footer text
         pdf.setFontSize(5); txt(C.s500)
-        pdf.text('Generat amb NeoScout', M, H - 3)
+        const genLabel = 'Generat amb '
+        pdf.text(genLabel, M + 3, H - 3)
+        const genW = pdf.getTextWidth(genLabel)
+        txt(C.white)
+        pdf.text('Neo', M + 3 + genW, H - 3)
+        const neoFW = pdf.getTextWidth('Neo')
+        txt(C.green)
+        pdf.text('Scout', M + 3 + genW + neoFW, H - 3)
         txt(C.s600)
-        pdf.text(`neoscout.es/equip/${teamSlug}`, W - M, H - 3, { align: 'right' })
+        pdf.text(`neoscout.es/equip/${teamSlug}`, W - M - 3, H - 3, { align: 'right' })
       }
 
       const ensureSpace = (neededH: number, curY: number): number => {
@@ -493,6 +546,46 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
           })
         }
         y += 8 + maxRows * 5.5
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      // TITULARS HABITUALS — full width, top 7 most-played
+      // ═══════════════════════════════════════════════════════════════
+      const starters = rival.mostMinutes.slice(0, 7)
+      if (starters.length > 0) {
+        const STARTERS_H = 8 + starters.length * 5.5
+        y = ensureSpace(STARTERS_H, y)
+
+        const _hasMin = !_NO_MINUTES_COMPS.has(r.competition)
+        rr(M, y, CW, 6, 2, C.bgCard)
+        pdf.setFontSize(6); txt(C.cyan)
+        pdf.text('TITULARS HABITUALS', M + 4, y + 4.5)
+        pdf.setFontSize(4.5); txt(C.s500)
+        pdf.text(_hasMin ? 'min.' : 'tit.', M + CW - 5, y + 4.5, { align: 'right' })
+        pdf.text('PJ', M + CW - 16, y + 4.5, { align: 'right' })
+        pdf.text('gols', M + CW - 25, y + 4.5, { align: 'right' })
+        let ys = y + 8
+
+        starters.forEach((p, i) => {
+          if (i % 2 === 0) rr(M + 1, ys - 1.5, CW - 2, 5, 1, [18, 28, 48])
+          // Position number
+          pdf.setFontSize(5); txt(C.s600)
+          pdf.text(String(i + 1), M + 5, ys + 1, { align: 'center' })
+          // Name
+          pdf.setFontSize(5.5); txt(C.s300)
+          pdf.text(fitText(p.name, CW - 60), M + 9, ys + 1)
+          // Goals
+          pdf.setFontSize(5.5); txt(p.goals > 0 ? C.green : C.s600)
+          pdf.text(String(p.goals), M + CW - 25, ys + 1, { align: 'right' })
+          // Appearances
+          pdf.setFontSize(5.5); txt(C.s400)
+          pdf.text(String(p.appearances), M + CW - 16, ys + 1, { align: 'right' })
+          // Minutes or Starts
+          pdf.setFontSize(5.5); txt(C.cyan)
+          pdf.text(_hasMin ? `${p.minutes_played}'` : String(p.starts || p.appearances), M + CW - 5, ys + 1, { align: 'right' })
+          ys += 5.5
+        })
+        y += STARTERS_H
       }
 
       // ═══════════════════════════════════════════════════════════════

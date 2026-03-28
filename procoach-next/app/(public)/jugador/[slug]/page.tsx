@@ -8,7 +8,7 @@ import {
 } from 'lucide-react'
 import PublicHeader from '@/components/PublicHeader'
 import PublicFooter from '@/components/PublicFooter'
-import { getPlayerProfile, type PlayerProfileDB } from '@/lib/supabase-data'
+import { getPlayerProfile, COMPETITIONS_WITHOUT_MINUTES, type PlayerProfileDB } from '@/lib/supabase-data'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -94,8 +94,10 @@ export default async function JugadorPage({ params }: Props) {
   const posGradient = POSITION_COLORS[player.position || ''] || 'from-slate-600 to-slate-700'
   const posText = POSITION_TEXT[player.position || ''] || 'text-slate-400'
 
-  const minutesPerGoal = career.goals > 0 ? Math.round(career.minutesPlayed / career.goals) : null
-  const goalsPer90 = career.minutesPlayed > 0 ? (career.goals / career.minutesPlayed * 90).toFixed(2) : null
+  // Check if any of the player's seasons have reliable minutes data
+  const hasMinutes = seasons.some(s => !COMPETITIONS_WITHOUT_MINUTES.has(s.competition))
+  const minutesPerGoal = hasMinutes && career.goals > 0 ? Math.round(career.minutesPlayed / career.goals) : null
+  const goalsPer90 = hasMinutes && career.minutesPlayed > 0 ? (career.goals / career.minutesPlayed * 90).toFixed(2) : null
 
   return (
     <div className="min-h-screen bg-[#0f172a]">
@@ -201,20 +203,34 @@ export default async function JugadorPage({ params }: Props) {
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-2.5 sm:gap-3 mb-6">
           <StatCard value={career.appearances} label="Partits" color="text-white" />
           <StatCard value={career.goals} label="Gols" color="text-green-400" />
-          <StatCard
-            value={career.appearances > 0 && career.minutesPlayed > 0
-              ? `${Math.round(career.minutesPlayed / (career.appearances * 90) * 100)}%`
-              : '–'}
-            label="% Minuts"
-            color="text-cyan-400"
-          />
+          {hasMinutes ? (
+            <StatCard
+              value={career.appearances > 0 && career.minutesPlayed > 0
+                ? `${Math.round(career.minutesPlayed / (career.appearances * 90) * 100)}%`
+                : '–'}
+              label="% Minuts"
+              color="text-cyan-400"
+            />
+          ) : (
+            <StatCard value={career.starts} label="Titularitats" color="text-cyan-400" />
+          )}
           <StatCard value={career.yellowCards} label="Grogues" color="text-yellow-400" />
           <StatCard value={career.redCards} label="Vermelles" color="text-red-400" />
-          <StatCard
-            value={goalsPer90 || '–'}
-            label="Gols/90'"
-            color="text-emerald-400"
-          />
+          {hasMinutes ? (
+            <StatCard
+              value={goalsPer90 || '–'}
+              label="Gols/90'"
+              color="text-emerald-400"
+            />
+          ) : (
+            <StatCard
+              value={career.goals > 0 && career.appearances > 0
+                ? (career.goals / career.appearances).toFixed(2)
+                : '–'}
+              label="Gols/Partit"
+              color="text-emerald-400"
+            />
+          )}
         </div>
 
         <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
@@ -238,7 +254,7 @@ export default async function JugadorPage({ params }: Props) {
                         <th className="text-center pb-2.5 font-medium w-10">⚽</th>
                         <th className="text-center pb-2.5 font-medium w-10">🟨</th>
                         <th className="text-center pb-2.5 font-medium w-10">🟥</th>
-                        <th className="text-center pb-2.5 font-medium w-14">Min</th>
+                        <th className="text-center pb-2.5 font-medium w-14">{hasMinutes ? 'Min' : 'Tit.'}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
@@ -267,7 +283,9 @@ export default async function JugadorPage({ params }: Props) {
                               : <span className="text-slate-600 text-xs">–</span>}
                           </td>
                           <td className="py-2.5 text-center text-slate-500 text-xs">
-                            {s.minutesPlayed > 0 ? `${s.minutesPlayed}'` : '–'}
+                            {COMPETITIONS_WITHOUT_MINUTES.has(s.competition)
+                              ? (s.starts > 0 ? s.starts : '–')
+                              : (s.minutesPlayed > 0 ? `${s.minutesPlayed}'` : '–')}
                           </td>
                         </tr>
                       ))}
@@ -357,22 +375,26 @@ export default async function JugadorPage({ params }: Props) {
                   <h3 className="font-bold text-white text-sm">Estadístiques avançades</h3>
                 </div>
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-slate-500">Min. per gol</span>
-                    <span className="text-sm font-bold text-white">{minutesPerGoal ? `${minutesPerGoal}'` : '–'}</span>
-                  </div>
+                  {hasMinutes && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-slate-500">Min. per gol</span>
+                      <span className="text-sm font-bold text-white">{minutesPerGoal ? `${minutesPerGoal}'` : '–'}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between items-center">
                     <span className="text-xs text-slate-500">Titularitats</span>
                     <span className="text-sm font-bold text-white">
                       {career.starts > 0 ? `${career.starts} (${Math.round(career.starts / career.appearances * 100)}%)` : '–'}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-slate-500">Min. per partit</span>
-                    <span className="text-sm font-bold text-white">
-                      {career.appearances > 0 ? `${Math.round(career.minutesPlayed / career.appearances)}'` : '–'}
-                    </span>
-                  </div>
+                  {hasMinutes && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-slate-500">Min. per partit</span>
+                      <span className="text-sm font-bold text-white">
+                        {career.appearances > 0 ? `${Math.round(career.minutesPlayed / career.appearances)}'` : '–'}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex justify-between items-center">
                     <span className="text-xs text-slate-500">Targetes / partit</span>
                     <span className="text-sm font-bold text-white">

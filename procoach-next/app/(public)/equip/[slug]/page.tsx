@@ -3,7 +3,7 @@ import Link from 'next/link'
 import PublicHeader from '@/components/PublicHeader'
 import PublicFooter from '@/components/PublicFooter'
 import { COMPETITION_NAMES, slugify, loadTeamData } from '@/lib/data'
-import { getFullTeamReportDB, type FullTeamReportDB, type RivalDataDB, type RefereeStatsDB, type FieldDimsDB } from '@/lib/supabase-data'
+import { getFullTeamReportDB, COMPETITIONS_WITHOUT_MINUTES, type FullTeamReportDB, type RivalDataDB, type RefereeStatsDB, type FieldDimsDB } from '@/lib/supabase-data'
 import { PitchCompare } from '@/components/PitchCompare'
 import { RivalScoutCard } from '@/components/RivalScoutCard'
 import { AdminGate, AdminBadge, AdminBlurValue, AdminUpgradeLink } from '@/components/AdminGate'
@@ -220,7 +220,7 @@ function NextMatchInfoCard({ nextMatch, competition }: {
   )
 }
 
-function SquadTable({ players, teamSlug }: { players: FullTeamReportDB['players']; teamSlug: string }) {
+function SquadTable({ players, teamSlug, hasMinutes }: { players: FullTeamReportDB['players']; teamSlug: string; hasMinutes: boolean }) {
   return (
     <div className="bg-white/4 border border-white/8 rounded-2xl p-4 sm:p-5">
       <div className="flex items-center gap-2 mb-4">
@@ -237,7 +237,7 @@ function SquadTable({ players, teamSlug }: { players: FullTeamReportDB['players'
                 <th className="text-center pb-2.5 font-medium w-10">⚽</th>
                 <th className="text-center pb-2.5 font-medium w-10">🟨</th>
                 <th className="text-center pb-2.5 font-medium w-10">🟥</th>
-                <th className="text-center pb-2.5 font-medium w-16 hidden sm:table-cell">Min</th>
+                <th className="text-center pb-2.5 font-medium w-16 hidden sm:table-cell">{hasMinutes ? 'Min' : 'Tit.'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
@@ -260,7 +260,9 @@ function SquadTable({ players, teamSlug }: { players: FullTeamReportDB['players'
                   </td>
                   <td className="py-2.5 text-center">{p.red_cards > 0 ? <span className="text-red-400 font-bold text-xs">{p.red_cards}</span> : <span className="text-slate-600 text-xs">–</span>}</td>
                   <td className="py-2.5 text-center text-slate-500 text-xs hidden sm:table-cell">
-                    {p.minutes_played > 0 ? `${p.minutes_played}'` : '–'}
+                    {hasMinutes
+                      ? (p.minutes_played > 0 ? `${p.minutes_played}'` : '–')
+                      : (p.starts > 0 ? p.starts : '–')}
                   </td>
                 </tr>
               ))}
@@ -903,6 +905,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
                   form: report.rival.form.map(f => ({ date: f.date, jornada: f.jornada, opponent: f.opponent, isHome: f.isHome, goalsFor: f.goalsFor, goalsAgainst: f.goalsAgainst, result: f.result, referee: f.referee })),
                   topScorers: report.rival.topScorers,
                   apercibits: report.rival.apercibits,
+                  mostMinutes: report.rival.mostMinutes,
                   goalBuckets: report.rival.goalBuckets,
                   insights: report.rival.insights,
                 } : null,
@@ -958,6 +961,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
                   rival={report.rival as any}
                   nextMatch={{ ...report.nextMatch, referee: null, referees: [] }}
                   headToHead={report.headToHead as any}
+                  hasMinutes={!COMPETITIONS_WITHOUT_MINUTES.has(report.competition)}
                 />
               </RegisterBlur>
             }
@@ -966,6 +970,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
               rival={report.rival as any}
               nextMatch={report.nextMatch as any}
               headToHead={report.headToHead as any}
+              hasMinutes={!COMPETITIONS_WITHOUT_MINUTES.has(report.competition)}
             />
           </AdminGate>
         )}
@@ -1023,7 +1028,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
                     <div key={i} className="flex items-center justify-between px-3 py-2 rounded-xl bg-amber-900/15 border border-amber-500/15">
                       <div className="min-w-0">
                         <Link href={`/jugador/${slugify(p.name)}--${slug}`} className="text-sm font-medium text-slate-200 truncate hover:text-green-400 transition-colors block">{p.name}</Link>
-                        <p className="text-xs text-slate-500">{p.appearances} partits · {p.minutes_played > 0 ? `${p.minutes_played}'` : '–'}</p>
+                        <p className="text-xs text-slate-500">{p.appearances} partits{!COMPETITIONS_WITHOUT_MINUTES.has(report.competition) && p.minutes_played > 0 ? ` · ${p.minutes_played}'` : ''}</p>
                       </div>
                       <span className="text-xs font-bold text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded-full ml-3 shrink-0">🟨 {p.yellow_cards}</span>
                     </div>
@@ -1045,7 +1050,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
                         <span className="w-5 h-5 rounded-full bg-green-500/20 text-green-400 text-[10px] font-bold flex items-center justify-center shrink-0">{i + 1}</span>
                         <div className="min-w-0">
                           <Link href={`/jugador/${slugify(p.name)}--${slug}`} className="text-sm font-medium text-slate-200 truncate hover:text-green-400 transition-colors block">{p.name}</Link>
-                          <p className="text-xs text-slate-500">{p.appearances} partits · {p.minutes_played > 0 ? `${p.minutes_played}'` : '–'}</p>
+                          <p className="text-xs text-slate-500">{p.appearances} partits{!COMPETITIONS_WITHOUT_MINUTES.has(report.competition) && p.minutes_played > 0 ? ` · ${p.minutes_played}'` : ''}</p>
                         </div>
                       </div>
                       <span className="text-lg font-black text-green-400 ml-3 shrink-0">{p.goals} ⚽</span>
@@ -1059,7 +1064,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
 
         {/* Row 6: Full squad */}
         {report.players.length > 0 ? (
-          <SquadTable players={report.players} teamSlug={slug} />
+          <SquadTable players={report.players} teamSlug={slug} hasMinutes={!COMPETITIONS_WITHOUT_MINUTES.has(report.competition)} />
         ) : isPriority ? (
           <ScrapeProgressBanner
             slug={slug}

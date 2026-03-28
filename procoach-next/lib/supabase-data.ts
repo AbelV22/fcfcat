@@ -646,6 +646,7 @@ export async function getTeamBasicDataDB(slug: string) {
     players: (playerStatsRes.data || []).map((p: any) => ({
       name: p.player_name || '',
       appearances: p.appearances || 0,
+      starts: p.starts || 0,
       goals: p.goals || 0,
       yellow_cards: p.yellow_cards || 0,
       red_cards: p.red_cards || 0,
@@ -821,7 +822,14 @@ export async function getRecentResultsDB(limit = 50) {
 // ─── Full team report (SSR — replaces buildTeamReport filesystem reader) ──────
 
 type SplitStats = { played: number; wins: number; draws: number; losses: number; gf: number; ga: number; points: number }
-type PlayerEntry = { name: string; appearances: number; goals: number; yellow_cards: number; red_cards: number; minutes_played: number; risk: boolean }
+type PlayerEntry = { name: string; appearances: number; starts: number; goals: number; yellow_cards: number; red_cards: number; minutes_played: number; risk: boolean }
+
+/** Competitions where FCF actas lack substitution data — minutes are unreliable */
+export const COMPETITIONS_WITHOUT_MINUTES = new Set([
+  'quarta-catalana',
+  'juvenil-primera-divisio',
+  'preferent-juvenils',
+])
 type MatchEntry = { date: string; jornada: number; opponent: string; opponentSlug: string; isHome: boolean; goalsFor: number | null; goalsAgainst: number | null; result: 'W' | 'D' | 'L' | null; referee: string | null }
 type StandingEntry = { position: number; name: string; slug: string; played: number; wins: number; draws: number; losses: number; gf: number; ga: number; points: number }
 type GoalBucketEntry = { label: string; scored: number; conceded: number }
@@ -1282,6 +1290,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
   const players: PlayerEntry[] = (playerStatsRes.data || []).map((p: any) => ({
     name: p.player_name || '',
     appearances: p.appearances || 0,
+    starts: p.starts || 0,
     goals: p.goals || 0,
     yellow_cards: p.yellow_cards || 0,
     red_cards: p.red_cards || 0,
@@ -1365,7 +1374,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       ? supabase.from('fcf_referee_matches').select('jornada, match_date, home_team, away_team, home_score, away_score, main_referee, goals').eq('competition', competition).eq('away_team', rivalName).not('away_score', 'is', null).order('jornada', { ascending: false }).limit(15)
       : Promise.resolve({ data: [] as any[] }),
     rivalSlug
-      ? supabase.from('fcf_player_stats').select('player_name, appearances, goals, yellow_cards, red_cards, minutes_played').eq('team_slug', rivalSlug).eq('competition', competition).order('appearances', { ascending: false }).limit(30)
+      ? supabase.from('fcf_player_stats').select('player_name, appearances, starts, goals, yellow_cards, red_cards, minutes_played').eq('team_slug', rivalSlug).eq('competition', competition).order('appearances', { ascending: false }).limit(30)
       : Promise.resolve({ data: [] as any[] }),
     refereeName
       ? supabase.from('fcf_referee_matches').select('competition, jornada, match_date, home_team, away_team, home_score, away_score, yellow_cards, red_cards').eq('main_referee', refereeName).in('competition', SENIOR_LEVEL_COMPETITIONS).order('match_date', { ascending: false }).limit(50)
@@ -1409,6 +1418,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     const rivalPlayers: PlayerEntry[] = (rivalPlayersRes.data || []).map((p: any) => ({
       name: p.player_name || '',
       appearances: p.appearances || 0,
+      starts: p.starts || 0,
       goals: p.goals || 0,
       yellow_cards: p.yellow_cards || 0,
       red_cards: p.red_cards || 0,
@@ -1450,7 +1460,9 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       players: rivalPlayers,
       form: rAllPlayed.slice(0, 5).map((m:any) => _toMatchEntry(m, m.isHome, rivalName)),
       topScorers: [...rivalPlayers].sort((a,b) => b.goals - a.goals).filter(p => p.goals > 0).slice(0, 5),
-      mostMinutes: [...rivalPlayers].sort((a,b) => b.minutes_played - a.minutes_played).filter(p => p.minutes_played > 0).slice(0, 5),
+      mostMinutes: COMPETITIONS_WITHOUT_MINUTES.has(competition)
+        ? [...rivalPlayers].sort((a,b) => b.starts - a.starts).filter(p => p.starts > 0).slice(0, 7)
+        : [...rivalPlayers].sort((a,b) => b.minutes_played - a.minutes_played).filter(p => p.minutes_played > 0).slice(0, 7),
       apercibits: rivalPlayers.filter(p => p.risk),
       goalBuckets: rivalGoalBuckets,
       awayByFieldSize: [],    // pitch dimension data not available from Supabase
@@ -1946,8 +1958,8 @@ const FEATURED_COMPETITIONS = [
   'lliga-elit',
 ]
 
-/** Divisions where we have minutes_played data (exclude quarta-catalana) */
-const COMPETITIONS_WITH_MINUTES = FEATURED_COMPETITIONS.filter(c => c !== 'quarta-catalana')
+/** Divisions where we have minutes_played data (exclude those without substitution data) */
+const COMPETITIONS_WITH_MINUTES = FEATURED_COMPETITIONS.filter(c => !COMPETITIONS_WITHOUT_MINUTES.has(c))
 
 export interface FeaturedPlayer {
   slug: string

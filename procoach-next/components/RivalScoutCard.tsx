@@ -172,7 +172,7 @@ function SplitBlock({
   )
 }
 
-function RivalSquadTable({ players }: { players: PlayerStat[] }) {
+function RivalSquadTable({ players, hasMinutes = true }: { players: PlayerStat[]; hasMinutes?: boolean }) {
   const sorted = [...players].sort((a, b) => b.appearances - a.appearances).slice(0, 20)
   return (
     <div className="overflow-x-auto rounded-xl border border-white/5">
@@ -184,7 +184,7 @@ function RivalSquadTable({ players }: { players: PlayerStat[] }) {
             <th className="text-center py-2 px-2 font-medium w-8">⚽</th>
             <th className="text-center py-2 px-2 font-medium w-8">🟨</th>
             <th className="text-center py-2 px-2 font-medium w-8">🟥</th>
-            <th className="text-center py-2 px-2 font-medium w-14 hidden sm:table-cell">Min</th>
+            <th className="text-center py-2 px-2 font-medium w-14 hidden sm:table-cell">{hasMinutes ? 'Min' : 'Tit.'}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-white/4">
@@ -211,7 +211,9 @@ function RivalSquadTable({ players }: { players: PlayerStat[] }) {
                 {p.red_cards > 0 ? <span className="text-red-400 font-bold">{p.red_cards}</span> : <span className="text-slate-700">–</span>}
               </td>
               <td className="py-2 px-2 text-center text-slate-600 hidden sm:table-cell">
-                {p.minutes_played > 0 ? `${p.minutes_played}'` : '–'}
+                {hasMinutes
+                  ? (p.minutes_played > 0 ? `${p.minutes_played}'` : '–')
+                  : ((p as any).starts > 0 ? (p as any).starts : '–')}
               </td>
             </tr>
           ))}
@@ -408,10 +410,12 @@ export function RivalScoutCard({
   rival,
   nextMatch,
   headToHead,
+  hasMinutes = true,
 }: {
   rival: RivalReport & { insights?: RivalInsights | null }
   nextMatch: NextMatchInfo
   headToHead: MatchResult[]
+  hasMinutes?: boolean
 }) {
   const [expanded, setExpanded] = useState(false)
 
@@ -651,17 +655,19 @@ export function RivalScoutCard({
             </div>
           )}
 
-          {/* Most minutes */}
+          {/* Most minutes / Most starts */}
           {rival.mostMinutes.length > 0 && (
             <div>
               <div className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3">
-                Jugadors amb més minuts
+                {hasMinutes ? 'Jugadors amb més minuts' : 'Jugadors amb més titularitats'}
               </div>
               <div className="bg-black/20 rounded-xl p-4 border border-white/5 grid grid-cols-2 gap-x-6 gap-y-1.5">
                 {rival.mostMinutes.slice(0, 8).map((p, i) => (
                   <div key={i} className="flex items-center justify-between">
                     <span className="text-xs text-slate-300 truncate pr-2">{p.name.split(',')[0]}</span>
-                    <span className="text-xs font-bold text-cyan-400 shrink-0">{p.minutes_played}'</span>
+                    <span className="text-xs font-bold text-cyan-400 shrink-0">
+                      {hasMinutes ? `${p.minutes_played}'` : `${(p as any).starts || p.appearances}`}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -674,7 +680,7 @@ export function RivalScoutCard({
               <div className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3">
                 Plantilla completa — {rival.players.length} jugadors
               </div>
-              <RivalSquadTable players={rival.players} />
+              <RivalSquadTable players={rival.players} hasMinutes={hasMinutes} />
               {rival.players.some(p => p.risk) && (
                 <p className="text-[10px] text-amber-500/60 mt-2 flex items-center gap-1">
                   <AlertTriangle size={10} />
