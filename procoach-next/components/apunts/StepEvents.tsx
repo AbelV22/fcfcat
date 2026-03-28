@@ -88,11 +88,15 @@ export default function StepEvents({
   events,
   onChange,
   actaPlayers = [],
+  customStats = [],
+  onCustomStatsChange,
 }: {
   lineups: LineupEntry[]
   events: EventEntry[]
   onChange: (events: EventEntry[]) => void
   actaPlayers?: string[]
+  customStats?: { key: string; label: string }[]
+  onCustomStatsChange?: (stats: { key: string; label: string }[]) => void
 }) {
   const [showModal, setShowModal] = useState(false)
   const [editIndex, setEditIndex] = useState<number | null>(null)
@@ -100,6 +104,8 @@ export default function StepEvents({
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<'events' | 'playerStats'>('events')
   const [statsPlayer, setStatsPlayer] = useState<string | null>(null)
+  const [showNewStatModal, setShowNewStatModal] = useState(false)
+  const [newStatName, setNewStatName] = useState('')
   const [form, setForm] = useState<EventEntry>({
     event_type: 'goal',
     minute: 1,
@@ -112,11 +118,23 @@ export default function StepEvents({
     is_opponent: false,
   })
 
+  // Helper to get label for any event type (built-in + custom)
+  const getEventLabel = (type: EventType): string => {
+    if (type.startsWith('custom_')) {
+      const key = type.replace('custom_', '')
+      return customStats.find((cs) => cs.key === key)?.label || key
+    }
+    return EVENT_LABELS[type] || type
+  }
+
   // Use lineup players if available, otherwise fall back to actaPlayers
-  const lineupPlayers = lineups
-    .filter((l) => l.player_name && l.attendance === 'present')
-    .map((l) => l.player_name)
+  const lineupAttending = lineups.filter((l) => l.player_name && l.attendance === 'present')
+  const lineupPlayers = lineupAttending.map((l) => l.player_name)
   const playerNames = lineupPlayers.length > 0 ? lineupPlayers : actaPlayers
+
+  // Split into starters and bench by looking up lineup entry per player name
+  const lineupStarters = lineupAttending.filter((l) => l.is_starter).map((l) => l.player_name)
+  const lineupBench = lineupAttending.filter((l) => !l.is_starter).map((l) => l.player_name)
 
   // Split acta players into starters and bench for display
   const starterCount = lineups.filter((l) => l.is_starter && l.player_name).length
@@ -242,7 +260,7 @@ export default function StepEvents({
           </p>
           {/* Starters */}
           <div className="flex flex-wrap gap-1.5 mb-1.5">
-            {(lineupPlayers.length > 0 ? lineupPlayers.filter((_, i) => lineups[i]?.is_starter) : actaStarters).map((name) => {
+            {(lineupStarters.length > 0 ? lineupStarters : actaStarters).map((name) => {
               const isSelected = selectedPlayer === name
               const playerEventCount = events.filter((e) => e.player_name === name && !e.is_opponent).length
               return (
@@ -268,12 +286,9 @@ export default function StepEvents({
             })}
           </div>
           {/* Bench */}
-          {(lineupPlayers.length > 0 ? lineupPlayers.filter((_, i) => !lineups[i]?.is_starter) : actaBench).length > 0 && (
+          {(lineupBench.length > 0 ? lineupBench : actaBench).length > 0 && (
             <div className="flex flex-wrap gap-1.5">
-              {(lineupPlayers.length > 0
-                ? lineupPlayers.filter((_, i) => !lineups[i]?.is_starter)
-                : actaBench
-              ).map((name) => {
+              {(lineupBench.length > 0 ? lineupBench : actaBench).map((name) => {
                 const isSelected = selectedPlayer === name
                 const playerEventCount = events.filter((e) => e.player_name === name && !e.is_opponent).length
                 return (
@@ -431,7 +446,7 @@ export default function StepEvents({
             >
               <Icon size={14} style={{ color: `var(--color-${color}-400, #4ade80)` }} />
               <span className="text-[9px] text-slate-400 font-medium text-center leading-tight">
-                {EVENT_LABELS[type]}
+                {getEventLabel(type)}
               </span>
             </button>
           )
@@ -442,8 +457,8 @@ export default function StepEvents({
       <div className="space-y-2 mb-4">
         {events.filter(e => !QUICK_COUNTER.includes(e.event_type) || e.player_name).map((evt, i) => {
           const realIndex = events.indexOf(evt)
-          const color = EVENT_COLORS[evt.event_type]
-          const Icon = EVENT_ICONS[evt.event_type]
+          const color = EVENT_COLORS[evt.event_type] || 'purple'
+          const Icon = EVENT_ICONS[evt.event_type] || Zap
           return (
             <div
               key={i}
@@ -463,7 +478,7 @@ export default function StepEvents({
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-semibold text-white truncate">
-                  {evt.player_name || EVENT_LABELS[evt.event_type]}
+                  {evt.player_name || getEventLabel(evt.event_type)}
                   {evt.secondary_player && (
                     <span className="text-slate-500 font-normal"> → {evt.secondary_player}</span>
                   )}
@@ -472,7 +487,7 @@ export default function StepEvents({
                   )}
                 </p>
                 <p className="text-[10px] text-slate-500">
-                  {EVENT_LABELS[evt.event_type]}
+                  {getEventLabel(evt.event_type)}
                   {evt.goal_type && ` · ${GOAL_TYPE_LABELS[evt.goal_type]}`}
                   {evt.goal_origin && ` · ${GOAL_ORIGIN_LABELS[evt.goal_origin]}`}
                   {evt.shot_zone && ` · ${SHOT_ZONE_LABELS[evt.shot_zone]}`}
@@ -596,7 +611,7 @@ export default function StepEvents({
                         >
                           <Icon size={16} style={{ color: `var(--color-${color}-400, #4ade80)` }} />
                           <span className="text-[9px] text-slate-400 font-medium text-center leading-tight">
-                            {EVENT_LABELS[type]}
+                            {getEventLabel(type)}
                           </span>
                           <span
                             className="text-lg font-black"
@@ -607,6 +622,66 @@ export default function StepEvents({
                         </button>
                       )
                     })}
+
+                    {/* Custom stats */}
+                    {customStats.map((cs) => {
+                      const customType = `custom_${cs.key}` as EventType
+                      const count = events.filter(
+                        (e) => e.player_name === statsPlayer && e.event_type === customType && !e.is_opponent
+                      ).length
+                      return (
+                        <button
+                          key={cs.key}
+                          onClick={() => {
+                            const evt: EventEntry = {
+                              event_type: customType,
+                              minute: 0,
+                              player_name: statsPlayer,
+                              secondary_player: null,
+                              goal_type: null,
+                              goal_origin: null,
+                              shot_zone: null,
+                              note: null,
+                              is_opponent: false,
+                            }
+                            onChange([...events, evt])
+                          }}
+                          onContextMenu={(e) => {
+                            e.preventDefault()
+                            const idx = [...events].reverse().findIndex(
+                              (ev) => ev.player_name === statsPlayer && ev.event_type === customType && !ev.is_opponent
+                            )
+                            if (idx >= 0) {
+                              const realIdx = events.length - 1 - idx
+                              onChange(events.filter((_, i) => i !== realIdx))
+                            }
+                          }}
+                          className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl bg-purple-500/5 border border-purple-500/15 hover:border-purple-500/30 hover:bg-purple-500/10 transition-all active:scale-95"
+                        >
+                          <Zap size={16} className="text-purple-400" />
+                          <span className="text-[9px] text-purple-300 font-medium text-center leading-tight">
+                            {cs.label}
+                          </span>
+                          <span
+                            className="text-lg font-black"
+                            style={{ color: count > 0 ? '#c084fc' : '#334155' }}
+                          >
+                            {count}
+                          </span>
+                        </button>
+                      )
+                    })}
+
+                    {/* Create new stat button */}
+                    <button
+                      onClick={() => setShowNewStatModal(true)}
+                      className="flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-xl border border-dashed border-white/10 hover:border-purple-500/30 hover:bg-purple-500/5 transition-all"
+                    >
+                      <Plus size={16} className="text-slate-500" />
+                      <span className="text-[9px] text-slate-500 font-medium text-center leading-tight">
+                        Nova stat
+                      </span>
+                    </button>
                   </div>
 
                   {/* Also show key events for this player */}
@@ -624,7 +699,7 @@ export default function StepEvents({
                               key={i}
                               className="text-[10px] px-2 py-1 rounded-lg bg-white/5 text-slate-300 border border-white/5"
                             >
-                              {e.minute > 0 ? `${e.minute}' ` : ''}{EVENT_LABELS[e.event_type]}
+                              {e.minute > 0 ? `${e.minute}' ` : ''}{getEventLabel(e.event_type)}
                             </span>
                           ))}
                         </div>
@@ -664,7 +739,7 @@ export default function StepEvents({
                           >
                             <Icon size={12} style={{ color: `var(--color-${color}-400, #4ade80)` }} />
                             <span className="text-[8px] text-slate-500 font-medium text-center leading-tight">
-                              {EVENT_LABELS[type].split(' ')[0]}
+                              {getEventLabel(type).split(' ')[0]}
                             </span>
                           </button>
                         )
@@ -727,7 +802,7 @@ export default function StepEvents({
                       >
                         <Icon size={14} style={{ color: active ? `var(--color-${color}-400, #4ade80)` : '#64748b' }} />
                         <span className={active ? 'text-white' : 'text-slate-500'}>
-                          {EVENT_LABELS[type].split(' ')[0]}
+                          {getEventLabel(type).split(' ')[0]}
                         </span>
                       </button>
                     )
@@ -900,6 +975,89 @@ export default function StepEvents({
                 className="flex-1 py-2.5 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 disabled:opacity-30 text-white text-sm font-semibold rounded-xl transition-all"
               >
                 {editIndex !== null ? 'Actualitzar' : 'Afegir'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* New Custom Stat Modal */}
+      {showNewStatModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#1e293b] border border-white/10 rounded-2xl w-full max-w-sm">
+            <div className="flex items-center justify-between p-4 border-b border-white/8">
+              <h3 className="font-bold text-white text-sm">Nova estadistica personalitzada</h3>
+              <button onClick={() => { setShowNewStatModal(false); setNewStatName('') }} className="text-slate-500 hover:text-white">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-4 space-y-3">
+              <p className="text-xs text-slate-400">
+                Crea una nova stat per anotar durant el partit (ex: &quot;Sprint&quot;, &quot;Cobertura&quot;, &quot;Desbordament&quot;).
+              </p>
+              <input
+                type="text"
+                placeholder="Nom de la stat..."
+                value={newStatName}
+                onChange={(e) => setNewStatName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && newStatName.trim()) {
+                    const key = newStatName.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '')
+                    if (key && !customStats.find((cs) => cs.key === key)) {
+                      onCustomStatsChange?.([...customStats, { key, label: newStatName.trim() }])
+                    }
+                    setNewStatName('')
+                    setShowNewStatModal(false)
+                  }
+                }}
+                className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:border-purple-500/50"
+                autoFocus
+              />
+
+              {/* Existing custom stats */}
+              {customStats.length > 0 && (
+                <div>
+                  <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1.5">Stats creades</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {customStats.map((cs) => (
+                      <span
+                        key={cs.key}
+                        className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg bg-purple-500/10 text-purple-300 border border-purple-500/20"
+                      >
+                        {cs.label}
+                        <button
+                          onClick={() => onCustomStatsChange?.(customStats.filter((s) => s.key !== cs.key))}
+                          className="text-purple-400/50 hover:text-red-400 ml-0.5"
+                        >
+                          <X size={10} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="p-4 border-t border-white/8 flex gap-2">
+              <button
+                onClick={() => { setShowNewStatModal(false); setNewStatName('') }}
+                className="flex-1 py-2.5 bg-white/5 border border-white/10 text-slate-400 text-sm rounded-xl hover:bg-white/10 transition-all"
+              >
+                Cancel·lar
+              </button>
+              <button
+                onClick={() => {
+                  if (!newStatName.trim()) return
+                  const key = newStatName.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '')
+                  if (key && !customStats.find((cs) => cs.key === key)) {
+                    onCustomStatsChange?.([...customStats, { key, label: newStatName.trim() }])
+                  }
+                  setNewStatName('')
+                  setShowNewStatModal(false)
+                }}
+                disabled={!newStatName.trim()}
+                className="flex-1 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-30 text-white text-sm font-semibold rounded-xl transition-all"
+              >
+                Crear
               </button>
             </div>
           </div>

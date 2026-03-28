@@ -614,7 +614,7 @@ function buildRivalFromIntelligence(
     goalBuckets,
     form,
     topScorers: [...players].sort((a, b) => b.goals - a.goals).filter(p => p.goals > 0).slice(0, 5),
-    mostMinutes: [...players].sort((a, b) => b.minutes_played - a.minutes_played).filter(p => p.minutes_played > 0).slice(0, 5),
+    mostMinutes: [...players].sort((a, b) => b.minutes_played - a.minutes_played).filter(p => p.minutes_played > 0).slice(0, 7),
     apercibits: players.filter(p => p.risk),
     awayByFieldSize: computeAwayByFieldSize(rivalMatches, rivalSlug),
   }
@@ -673,7 +673,7 @@ function buildRivalReport(
     goalBuckets,
     form,
     topScorers: [...players].sort((a, b) => b.goals - a.goals).filter(p => p.goals > 0).slice(0, 5),
-    mostMinutes: [...players].sort((a, b) => b.minutes_played - a.minutes_played).slice(0, 5),
+    mostMinutes: [...players].sort((a, b) => b.minutes_played - a.minutes_played).slice(0, 7),
     apercibits: players.filter(p => p.risk),
     awayByFieldSize: computeAwayByFieldSize(rivalMatches, rivalSlug),
   }

@@ -49,6 +49,27 @@ function getInitialState(): WizardState {
       saves: null,
       half_time_score_for: null,
       half_time_score_against: null,
+      shots_blocked_for: null,
+      shots_blocked_against: null,
+      dribbles_attempted: null,
+      dribbles_completed: null,
+      total_passes_for: null,
+      total_passes_against: null,
+      pass_accuracy: null,
+      tackles_for: null,
+      tackles_against: null,
+      clearances: null,
+      aerial_duels_won: null,
+      aerial_duels_lost: null,
+      throw_ins_for: null,
+      throw_ins_against: null,
+      goal_kicks_for: null,
+      goal_kicks_against: null,
+      penalties_for: null,
+      penalties_against: null,
+      penalties_scored: null,
+      penalties_saved: null,
+      high_claims: null,
       phase_attack: null,
       phase_defense: null,
       phase_transition_atk: null,
@@ -60,6 +81,7 @@ function getInitialState(): WizardState {
     },
     actaPrefilled: false,
     actaPlayers: [],
+    customStats: [],
   }
 }
 
@@ -337,6 +359,8 @@ export default function WizardShell({
                 events={state.events}
                 onChange={(events) => updateState({ events })}
                 actaPlayers={state.actaPlayers}
+                customStats={state.customStats}
+                onCustomStatsChange={(customStats) => updateState({ customStats })}
               />
             )}
             {state.step === 2 && (

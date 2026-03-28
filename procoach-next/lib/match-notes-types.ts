@@ -29,6 +29,8 @@ export type EventType =
   | 'duel_lost'
   | 'accurate_pass'
   | 'cross'
+  // Custom coach stats
+  | `custom_${string}`
 
 export type GoalType =
   | 'right_foot'
@@ -70,8 +72,8 @@ export interface MatchNote {
   opponent_analysis: string | null
   areas_to_improve: string | null
   status: MatchNoteStatus
-  // New fields
-  possession_estimate: number | null // 0-100
+  // Match stats (manual input)
+  possession_estimate: number | null // 0-100 (kept for backward compat)
   corners_for: number | null
   corners_against: number | null
   fouls_for: number | null
@@ -81,16 +83,44 @@ export interface MatchNote {
   shots_for: number | null
   shots_against: number | null
   saves: number | null
+  half_time_score_for: number | null
+  half_time_score_against: number | null
+  // Attack
+  shots_blocked_for: number | null
+  shots_blocked_against: number | null
+  dribbles_attempted: number | null
+  dribbles_completed: number | null
+  // Distribution
+  total_passes_for: number | null
+  total_passes_against: number | null
+  pass_accuracy: number | null // 0-100
+  // Defense
+  tackles_for: number | null
+  tackles_against: number | null
+  clearances: number | null
+  aerial_duels_won: number | null
+  aerial_duels_lost: number | null
+  // Set pieces
+  throw_ins_for: number | null
+  throw_ins_against: number | null
+  goal_kicks_for: number | null
+  goal_kicks_against: number | null
+  penalties_for: number | null
+  penalties_against: number | null
+  penalties_scored: number | null
+  penalties_saved: number | null
+  // Goalkeeping
+  high_claims: number | null
+  // Phase ratings
   phase_attack: number | null   // 1-5
   phase_defense: number | null  // 1-5
   phase_transition_atk: number | null // 1-5
   phase_transition_def: number | null // 1-5
   phase_set_pieces: number | null // 1-5
-  training_focus: string | null // derived action items for next week
-  half_time_score_for: number | null
-  half_time_score_against: number | null
-  pitch_condition: string | null // 'good' | 'average' | 'poor'
-  weather: string | null // 'sunny' | 'cloudy' | 'rain' | 'wind' | 'cold'
+  // Tactical / notes
+  training_focus: string | null
+  pitch_condition: string | null
+  weather: string | null
   captain: string | null
   created_at: string
   updated_at: string
@@ -182,6 +212,33 @@ export interface WizardState {
     saves: number | null
     half_time_score_for: number | null
     half_time_score_against: number | null
+    // Attack
+    shots_blocked_for: number | null
+    shots_blocked_against: number | null
+    dribbles_attempted: number | null
+    dribbles_completed: number | null
+    // Distribution
+    total_passes_for: number | null
+    total_passes_against: number | null
+    pass_accuracy: number | null
+    // Defense
+    tackles_for: number | null
+    tackles_against: number | null
+    clearances: number | null
+    aerial_duels_won: number | null
+    aerial_duels_lost: number | null
+    // Set pieces
+    throw_ins_for: number | null
+    throw_ins_against: number | null
+    goal_kicks_for: number | null
+    goal_kicks_against: number | null
+    penalties_for: number | null
+    penalties_against: number | null
+    penalties_scored: number | null
+    penalties_saved: number | null
+    // Goalkeeping
+    high_claims: number | null
+    // Phase ratings
     phase_attack: number | null
     phase_defense: number | null
     phase_transition_atk: number | null
@@ -195,6 +252,8 @@ export interface WizardState {
   actaPrefilled: boolean
   // Players from acta (available for events/ratings without needing lineup step)
   actaPlayers: string[]
+  // Custom stats created by the coach
+  customStats: { key: string; label: string }[]
 }
 
 // Acta data from fcf_referee_matches for pre-filling

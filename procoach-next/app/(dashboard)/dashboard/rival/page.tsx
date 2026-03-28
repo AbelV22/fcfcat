@@ -369,6 +369,7 @@ export default async function RivalPage() {
       form: rival.form.map(f => ({ date: f.date, jornada: f.jornada, opponent: f.opponent, isHome: f.isHome, goalsFor: f.goalsFor, goalsAgainst: f.goalsAgainst, result: f.result, referee: f.referee })),
       topScorers: rival.topScorers,
       apercibits: rival.apercibits,
+      mostMinutes: rival.mostMinutes,
       goalBuckets: rival.goalBuckets,
       insights: rival.insights,
     },
