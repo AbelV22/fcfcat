@@ -66,7 +66,7 @@ export async function upsertMatchNote(
     opponent_analysis: note.opponent_analysis,
     areas_to_improve: note.areas_to_improve,
     status: note.status ?? 'draft',
-    // New fields
+    // Stats
     possession_estimate: note.possession_estimate ?? null,
     corners_for: note.corners_for ?? null,
     corners_against: note.corners_against ?? null,
@@ -77,14 +77,42 @@ export async function upsertMatchNote(
     shots_for: note.shots_for ?? null,
     shots_against: note.shots_against ?? null,
     saves: note.saves ?? null,
+    half_time_score_for: note.half_time_score_for ?? null,
+    half_time_score_against: note.half_time_score_against ?? null,
+    // Attack
+    shots_blocked_for: (note as any).shots_blocked_for ?? null,
+    shots_blocked_against: (note as any).shots_blocked_against ?? null,
+    dribbles_attempted: (note as any).dribbles_attempted ?? null,
+    dribbles_completed: (note as any).dribbles_completed ?? null,
+    // Distribution
+    total_passes_for: (note as any).total_passes_for ?? null,
+    total_passes_against: (note as any).total_passes_against ?? null,
+    pass_accuracy: (note as any).pass_accuracy ?? null,
+    // Defense
+    tackles_for: (note as any).tackles_for ?? null,
+    tackles_against: (note as any).tackles_against ?? null,
+    clearances: (note as any).clearances ?? null,
+    aerial_duels_won: (note as any).aerial_duels_won ?? null,
+    aerial_duels_lost: (note as any).aerial_duels_lost ?? null,
+    // Set pieces
+    throw_ins_for: (note as any).throw_ins_for ?? null,
+    throw_ins_against: (note as any).throw_ins_against ?? null,
+    goal_kicks_for: (note as any).goal_kicks_for ?? null,
+    goal_kicks_against: (note as any).goal_kicks_against ?? null,
+    penalties_for: (note as any).penalties_for ?? null,
+    penalties_against: (note as any).penalties_against ?? null,
+    penalties_scored: (note as any).penalties_scored ?? null,
+    penalties_saved: (note as any).penalties_saved ?? null,
+    // Goalkeeping
+    high_claims: (note as any).high_claims ?? null,
+    // Phase ratings
     phase_attack: note.phase_attack ?? null,
     phase_defense: note.phase_defense ?? null,
     phase_transition_atk: note.phase_transition_atk ?? null,
     phase_transition_def: note.phase_transition_def ?? null,
     phase_set_pieces: note.phase_set_pieces ?? null,
+    // Tactical / notes
     training_focus: note.training_focus ?? null,
-    half_time_score_for: note.half_time_score_for ?? null,
-    half_time_score_against: note.half_time_score_against ?? null,
     pitch_condition: note.pitch_condition ?? null,
     weather: note.weather ?? null,
     captain: note.captain ?? null,
@@ -223,18 +251,41 @@ export async function saveFullMatchNote(
     shots_for: state.summary.shots_for ?? null,
     shots_against: state.summary.shots_against ?? null,
     saves: state.summary.saves ?? null,
+    half_time_score_for: state.summary.half_time_score_for ?? null,
+    half_time_score_against: state.summary.half_time_score_against ?? null,
+    // New expanded stats
+    shots_blocked_for: state.summary.shots_blocked_for ?? null,
+    shots_blocked_against: state.summary.shots_blocked_against ?? null,
+    dribbles_attempted: state.summary.dribbles_attempted ?? null,
+    dribbles_completed: state.summary.dribbles_completed ?? null,
+    total_passes_for: state.summary.total_passes_for ?? null,
+    total_passes_against: state.summary.total_passes_against ?? null,
+    pass_accuracy: state.summary.pass_accuracy ?? null,
+    tackles_for: state.summary.tackles_for ?? null,
+    tackles_against: state.summary.tackles_against ?? null,
+    clearances: state.summary.clearances ?? null,
+    aerial_duels_won: state.summary.aerial_duels_won ?? null,
+    aerial_duels_lost: state.summary.aerial_duels_lost ?? null,
+    throw_ins_for: state.summary.throw_ins_for ?? null,
+    throw_ins_against: state.summary.throw_ins_against ?? null,
+    goal_kicks_for: state.summary.goal_kicks_for ?? null,
+    goal_kicks_against: state.summary.goal_kicks_against ?? null,
+    penalties_for: state.summary.penalties_for ?? null,
+    penalties_against: state.summary.penalties_against ?? null,
+    penalties_scored: state.summary.penalties_scored ?? null,
+    penalties_saved: state.summary.penalties_saved ?? null,
+    high_claims: state.summary.high_claims ?? null,
+    // Phase ratings
     phase_attack: state.summary.phase_attack ?? null,
     phase_defense: state.summary.phase_defense ?? null,
     phase_transition_atk: state.summary.phase_transition_atk ?? null,
     phase_transition_def: state.summary.phase_transition_def ?? null,
     phase_set_pieces: state.summary.phase_set_pieces ?? null,
-    half_time_score_for: state.summary.half_time_score_for ?? null,
-    half_time_score_against: state.summary.half_time_score_against ?? null,
     pitch_condition: state.summary.pitch_condition ?? null,
     weather: state.summary.weather ?? null,
     captain: state.summary.captain ?? null,
     status,
-  })
+  } as any)
 
   // 2. Upsert children in parallel
   await Promise.all([
@@ -283,54 +334,76 @@ export async function fetchActaDataForMatch(
   awayTeam: string,
   jornada?: number | null,
   matchDate?: string | null,
+  competition?: string | null,
 ): Promise<ActaData | null> {
   const supabase = createClient()
 
-  // Try to find the match in fcf_referee_matches
-  let query = supabase
-    .from('fcf_referee_matches')
-    .select('*')
-
-  // Match by teams (case insensitive)
-  if (jornada) {
-    query = query
-      .ilike('home_team', `%${homeTeam}%`)
-      .ilike('away_team', `%${awayTeam}%`)
+  // Strategy 1: Match by competition + jornada + teams (most reliable)
+  if (jornada && competition) {
+    const { data } = await supabase
+      .from('fcf_referee_matches')
+      .select('*')
+      .eq('competition', competition)
       .eq('jornada', jornada)
-  } else if (matchDate) {
-    query = query
       .ilike('home_team', `%${homeTeam}%`)
       .ilike('away_team', `%${awayTeam}%`)
-      .eq('match_date', matchDate)
-  } else {
-    query = query
-      .ilike('home_team', `%${homeTeam}%`)
-      .ilike('away_team', `%${awayTeam}%`)
+      .limit(1)
+      .single()
+    if (data) return parseActaRow(data)
   }
 
-  const { data, error } = await query.limit(1).single()
+  // Strategy 2: Match by jornada + teams only (cross-competition fallback)
+  if (jornada) {
+    const { data } = await supabase
+      .from('fcf_referee_matches')
+      .select('*')
+      .eq('jornada', jornada)
+      .ilike('home_team', `%${homeTeam}%`)
+      .ilike('away_team', `%${awayTeam}%`)
+      .limit(1)
+      .single()
+    if (data) return parseActaRow(data)
+  }
 
-  if (error || !data) return null
+  // Strategy 3: Match by date + teams
+  if (matchDate) {
+    const { data } = await supabase
+      .from('fcf_referee_matches')
+      .select('*')
+      .eq('match_date', matchDate)
+      .ilike('home_team', `%${homeTeam}%`)
+      .ilike('away_team', `%${awayTeam}%`)
+      .limit(1)
+      .single()
+    if (data) return parseActaRow(data)
+  }
 
-  // Parse JSONB fields (they may be stored as goals, substitutions, lineups if table is updated)
-  const yellowCards = Array.isArray(data.yellow_cards) ? data.yellow_cards : []
-  const redCards = Array.isArray(data.red_cards) ? data.red_cards : []
-  const goals = Array.isArray(data.goals) ? data.goals : []
-  const substitutions = Array.isArray(data.substitutions) ? data.substitutions : []
-  const homeLineup = Array.isArray(data.home_lineup) ? data.home_lineup : []
-  const awayLineup = Array.isArray(data.away_lineup) ? data.away_lineup : []
-  const homeBench = Array.isArray(data.home_bench) ? data.home_bench : []
-  const awayBench = Array.isArray(data.away_bench) ? data.away_bench : []
+  // Strategy 4: Just teams (last resort)
+  const { data } = await supabase
+    .from('fcf_referee_matches')
+    .select('*')
+    .ilike('home_team', `%${homeTeam}%`)
+    .ilike('away_team', `%${awayTeam}%`)
+    .order('jornada', { ascending: false })
+    .limit(1)
+    .single()
 
+  if (!data) return null
+  return parseActaRow(data)
+}
+
+/** Parse a raw fcf_referee_matches row into ActaData */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function parseActaRow(data: any): ActaData {
   return {
-    goals,
-    yellow_cards: yellowCards,
-    red_cards: redCards,
-    substitutions,
-    home_lineup: homeLineup,
-    away_lineup: awayLineup,
-    home_bench: homeBench,
-    away_bench: awayBench,
+    goals: Array.isArray(data.goals) ? data.goals : [],
+    yellow_cards: Array.isArray(data.yellow_cards) ? data.yellow_cards : [],
+    red_cards: Array.isArray(data.red_cards) ? data.red_cards : [],
+    substitutions: Array.isArray(data.substitutions) ? data.substitutions : [],
+    home_lineup: Array.isArray(data.home_lineup) ? data.home_lineup : [],
+    away_lineup: Array.isArray(data.away_lineup) ? data.away_lineup : [],
+    home_bench: Array.isArray(data.home_bench) ? data.home_bench : [],
+    away_bench: Array.isArray(data.away_bench) ? data.away_bench : [],
   }
 }
 

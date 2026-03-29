@@ -66,30 +66,37 @@ COMPETITIONS = [
 ]
 
 # ─── Competitions where referee data is scraped from actas ────────────────────
-# Adult: Primera Catalana and above.
-# Juvenil: Preferent and above.
-# Cadet/Infantil: Preferent and Divisió d'Honor only.
+# All competitions with calendar data get acta scraping.
 REFEREE_COMPETITIONS = {
+    # Adult
     "tercera-federacio",
     "lliga-elit",
     "primera-catalana",
     "segona-catalana",
+    "tercera-catalana",
+    "quarta-catalana",
     # Juvenil
     "divisio-honor-juvenil",
     "lliga-nacional-juvenil",
     "preferent-juvenils",
+    "juvenil-primera-divisio",
     # Cadet S16
     "divisio-honor-cadet-s16",
     "preferent-cadet-s16",
+    "cadet-primera-divisio-s16",
+    "cadet-segona-divisio-s16",
     # Cadet S15
     "divisio-honor-cadet-s15",
     "preferent-cadet-s15",
+    "cadet-primera-divisio-s15",
+    "cadet-segona-divisio-s15",
     # Infantil S14
     "divisio-honor-infantil-s14",
     "preferent-infantil-s14",
     # Infantil S13
     "divisio-honor-infantil-s13",
     "preferent-infantil-s13",
+    "infantil-primera-divisio-s13",
 }
 
 # ─── Known groups per competition ─────────────────────────────────────────────

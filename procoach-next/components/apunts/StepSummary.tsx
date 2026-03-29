@@ -1,8 +1,13 @@
 'use client'
 
-import { Check, Save, Users, Target, Clock, TrendingUp, Cloud, Leaf } from 'lucide-react'
+import { useState } from 'react'
+import {
+  Check, Save, Users, Target, Clock, TrendingUp, Cloud, Leaf,
+  ChevronDown, Crosshair, Waypoints, Shield, Flag, Hand as GloveIcon, Minus, Plus, Zap,
+} from 'lucide-react'
 import type { WizardState, TacticalApproach } from '@/lib/match-notes-types'
 import { TACTICAL_LABELS, EVENT_LABELS, PHASE_LABELS, WEATHER_OPTIONS, PITCH_CONDITION_OPTIONS } from '@/lib/match-notes-types'
+import { computeAutoStats } from '@/lib/match-stats-utils'
 import RatingSlider from './RatingSlider'
 
 const TACTICAL_OPTIONS: { value: TacticalApproach; emoji: string }[] = [
@@ -14,6 +19,99 @@ const TACTICAL_OPTIONS: { value: TacticalApproach; emoji: string }[] = [
 
 const PHASE_KEYS = ['phase_attack', 'phase_defense', 'phase_transition_atk', 'phase_transition_def', 'phase_set_pieces'] as const
 
+// ─── Stepper Component ───────────────────────────────────
+function StatStepper({ value, onChange, label }: { value: number | null; onChange: (v: number | null) => void; label?: string }) {
+  const v = value ?? 0
+  return (
+    <div className="flex items-center gap-1">
+      {label && <span className="text-[9px] text-slate-500 w-16 shrink-0">{label}</span>}
+      <button
+        onClick={() => onChange(Math.max(0, v - 1))}
+        className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-all active:scale-90"
+      >
+        <Minus size={12} />
+      </button>
+      <span className="w-8 text-center text-sm font-bold text-white">{v}</span>
+      <button
+        onClick={() => onChange(v + 1)}
+        className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-all active:scale-90"
+      >
+        <Plus size={12} />
+      </button>
+    </div>
+  )
+}
+
+function ForAgainstStepper({
+  forValue, againstValue, onForChange, onAgainstChange, label,
+}: {
+  forValue: number | null; againstValue: number | null
+  onForChange: (v: number | null) => void; onAgainstChange: (v: number | null) => void
+  label: string
+}) {
+  return (
+    <div className="flex items-center justify-between py-2">
+      <span className="text-xs text-slate-300 flex-1">{label}</span>
+      <div className="flex items-center gap-3">
+        <StatStepper value={forValue} onChange={onForChange} />
+        <span className="text-[10px] text-slate-600">vs</span>
+        <StatStepper value={againstValue} onChange={onAgainstChange} />
+      </div>
+    </div>
+  )
+}
+
+function AutoStatRow({ label, forVal, againstVal }: { label: string; forVal: number; againstVal?: number }) {
+  const max = Math.max(forVal, againstVal ?? 0, 1)
+  return (
+    <div className="flex items-center justify-between py-1.5">
+      <span className="text-xs text-slate-300 flex-1">{label}</span>
+      <div className="flex items-center gap-2">
+        {againstVal !== undefined ? (
+          <>
+            <div className="w-16 flex justify-end">
+              <div className="h-4 rounded-l bg-green-500/30 flex items-center justify-end px-1" style={{ width: `${(forVal / max) * 100}%`, minWidth: forVal > 0 ? '16px' : '0' }}>
+                <span className="text-[10px] font-bold text-green-300">{forVal}</span>
+              </div>
+            </div>
+            <div className="w-16 flex justify-start">
+              <div className="h-4 rounded-r bg-red-500/20 flex items-center px-1" style={{ width: `${((againstVal) / max) * 100}%`, minWidth: againstVal > 0 ? '16px' : '0' }}>
+                <span className="text-[10px] font-bold text-red-300">{againstVal}</span>
+              </div>
+            </div>
+          </>
+        ) : (
+          <span className="text-sm font-bold text-white">{forVal}</span>
+        )}
+        <span className="text-[8px] text-cyan-500/50 w-7 text-right">auto</span>
+      </div>
+    </div>
+  )
+}
+
+// ─── Collapsible Section ─────────────────────────────────
+function StatSection({
+  title, icon: Icon, iconColor, children, defaultOpen = false,
+}: {
+  title: string; icon: typeof Target; iconColor: string; children: React.ReactNode; defaultOpen?: boolean
+}) {
+  const [open, setOpen] = useState(defaultOpen)
+  return (
+    <div className="border border-white/5 rounded-xl overflow-hidden mb-3">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center gap-2 px-4 py-3 bg-white/3 hover:bg-white/5 transition-colors"
+      >
+        <Icon size={14} style={{ color: iconColor }} />
+        <span className="text-xs font-semibold text-white flex-1 text-left">{title}</span>
+        <ChevronDown size={14} className={`text-slate-500 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && <div className="px-4 py-3 space-y-1 border-t border-white/5">{children}</div>}
+    </div>
+  )
+}
+
+// ─── Main Component ──────────────────────────────────────
 export default function StepSummary({
   state,
   onChange,
@@ -30,74 +128,61 @@ export default function StepSummary({
     onChange({ ...summary, ...partial })
   }
 
-  const goalsFor = state.events.filter((e) => e.event_type === 'goal' && e.goal_type !== 'own_goal' && !e.is_opponent).length
-  const goalsAgainst = state.events.filter((e) => e.event_type === 'goal' && (e.goal_type === 'own_goal' || e.is_opponent)).length
+  const auto = computeAutoStats(state.events)
   const starters = state.lineups.filter((l) => l.is_starter && l.player_name).length
   const totalEvents = state.events.length
-  const shotsOnTarget = state.events.filter(e => e.event_type === 'shot_on_target' && !e.is_opponent).length
-  const shotsTotal = state.events.filter(e => ['shot_on_target', 'shot_off_target', 'shot_woodwork'].includes(e.event_type) && !e.is_opponent).length
   const playerNames = state.lineups.filter(l => l.player_name && l.attendance === 'present').map(l => l.player_name)
+  const actaPlayerNames = state.actaPlayers || []
+  const allPlayers = playerNames.length > 0 ? playerNames : actaPlayerNames
 
   return (
     <div>
-      <h2 className="text-xl font-bold text-white mb-1">Resum i analisi tactic</h2>
-      <p className="text-sm text-slate-400 mb-6">
-        Completa l&apos;analisi del partit amb estadistiques, valoracio tactica i notes.
+      <h2 className="text-xl font-bold text-white mb-1">Resum i estadistiques</h2>
+      <p className="text-sm text-slate-400 mb-5">
+        Les estadistiques dels esdeveniments es calculen automaticament. Afegeix les que falten.
       </p>
 
-      {/* Match summary cards */}
-      <div className="grid grid-cols-4 gap-2 mb-6">
+      {/* ─── Match summary cards ─── */}
+      <div className="grid grid-cols-4 gap-2 mb-5">
         <div className="glass-card rounded-xl p-3 text-center">
           <Target size={14} className="text-green-400 mx-auto mb-1" />
-          <p className="text-lg font-black text-white">{goalsFor} - {goalsAgainst}</p>
+          <p className="text-lg font-black text-white">{auto.goals_total_for} - {auto.goals_total_against}</p>
           <p className="text-[10px] text-slate-500">Resultat</p>
         </div>
         <div className="glass-card rounded-xl p-3 text-center">
-          <Users size={14} className="text-cyan-400 mx-auto mb-1" />
-          <p className="text-lg font-black text-white">{starters}</p>
-          <p className="text-[10px] text-slate-500">Titulars</p>
+          <Clock size={14} className="text-amber-400 mx-auto mb-1" />
+          <p className="text-sm font-black text-white">
+            {auto.goals_1h_for}-{auto.goals_1h_against}
+            <span className="text-[9px] text-slate-500 font-normal"> / </span>
+            {auto.goals_2h_for}-{auto.goals_2h_against}
+          </p>
+          <p className="text-[10px] text-slate-500">1a / 2a part</p>
         </div>
         <div className="glass-card rounded-xl p-3 text-center">
-          <Clock size={14} className="text-amber-400 mx-auto mb-1" />
+          <Crosshair size={14} className="text-emerald-400 mx-auto mb-1" />
+          <p className="text-lg font-black text-white">{auto.shots_on_target_for + auto.shots_off_target_for + auto.shots_woodwork_for}</p>
+          <p className="text-[10px] text-slate-500">Tirs totals</p>
+        </div>
+        <div className="glass-card rounded-xl p-3 text-center">
+          <TrendingUp size={14} className="text-cyan-400 mx-auto mb-1" />
           <p className="text-lg font-black text-white">{totalEvents}</p>
           <p className="text-[10px] text-slate-500">Events</p>
         </div>
-        <div className="glass-card rounded-xl p-3 text-center">
-          <TrendingUp size={14} className="text-emerald-400 mx-auto mb-1" />
-          <p className="text-lg font-black text-white">{shotsTotal > 0 ? `${shotsOnTarget}/${shotsTotal}` : '-'}</p>
-          <p className="text-[10px] text-slate-500">Tirs/Porta</p>
-        </div>
       </div>
 
-      {/* Formation & info */}
-      <div className="glass-card rounded-xl p-4 mb-4">
-        <div className="flex items-center gap-3 flex-wrap">
-          <span className="text-xs text-slate-500">Formacio</span>
-          <span className="text-sm font-bold text-white">{state.formation || '-'}</span>
-          <span className="text-xs text-slate-500 ml-4">Oponent</span>
-          <span className="text-sm font-bold text-white">{state.matchData?.opponent || '-'}</span>
-        </div>
-      </div>
-
-      {/* Half-time score */}
+      {/* ─── Half-time score ─── */}
       <div className="mb-5">
         <label className="text-xs text-slate-400 mb-2 block">Resultat descans</label>
         <div className="flex items-center gap-2">
           <input
-            type="number"
-            min="0"
-            max="20"
-            placeholder="0"
+            type="number" min="0" max="20" placeholder="0"
             value={summary.half_time_score_for ?? ''}
             onChange={(e) => update({ half_time_score_for: e.target.value ? parseInt(e.target.value) : null })}
             className="w-16 px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-white text-sm text-center focus:outline-none focus:border-green-500/50"
           />
           <span className="text-slate-500">-</span>
           <input
-            type="number"
-            min="0"
-            max="20"
-            placeholder="0"
+            type="number" min="0" max="20" placeholder="0"
             value={summary.half_time_score_against ?? ''}
             onChange={(e) => update({ half_time_score_against: e.target.value ? parseInt(e.target.value) : null })}
             className="w-16 px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-white text-sm text-center focus:outline-none focus:border-green-500/50"
@@ -105,75 +190,125 @@ export default function StepSummary({
         </div>
       </div>
 
-      {/* Team stats grid */}
-      <div className="mb-6">
-        <label className="text-xs text-slate-400 mb-3 block">Estadistiques d&apos;equip</label>
-        <div className="grid grid-cols-2 gap-3">
-          {/* Possession */}
-          <div className="glass-card rounded-xl p-3">
-            <p className="text-[10px] text-slate-500 mb-1">Possessio estimada</p>
+      {/* ─── Stat Sections ─── */}
+
+      {/* ATAC */}
+      <StatSection title="Atac" icon={Crosshair} iconColor="#4ade80" defaultOpen>
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[9px] text-slate-600 uppercase tracking-wider">Nosaltres</span>
+          <span className="text-[9px] text-slate-600 uppercase tracking-wider">Rival</span>
+        </div>
+        <AutoStatRow label="Gols 1a part" forVal={auto.goals_1h_for} againstVal={auto.goals_1h_against} />
+        <AutoStatRow label="Gols 2a part" forVal={auto.goals_2h_for} againstVal={auto.goals_2h_against} />
+        <AutoStatRow label="Tirs a porta" forVal={auto.shots_on_target_for} againstVal={auto.shots_on_target_against} />
+        <AutoStatRow label="Tirs fora" forVal={auto.shots_off_target_for} againstVal={auto.shots_off_target_against} />
+        <AutoStatRow label="Tirs al pal" forVal={auto.shots_woodwork_for} againstVal={auto.shots_woodwork_against} />
+        <div className="border-t border-white/5 pt-2 mt-2">
+          <p className="text-[9px] text-slate-600 uppercase tracking-wider mb-2">Manual</p>
+          <ForAgainstStepper label="Tirs totals" forValue={summary.shots_for} againstValue={summary.shots_against} onForChange={(v) => update({ shots_for: v })} onAgainstChange={(v) => update({ shots_against: v })} />
+          <ForAgainstStepper label="Tirs bloquejats" forValue={summary.shots_blocked_for} againstValue={summary.shots_blocked_against} onForChange={(v) => update({ shots_blocked_for: v })} onAgainstChange={(v) => update({ shots_blocked_against: v })} />
+          <div className="flex items-center justify-between py-2">
+            <span className="text-xs text-slate-300 flex-1">Regates</span>
             <div className="flex items-center gap-2">
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={summary.possession_estimate ?? 50}
-                onChange={(e) => update({ possession_estimate: parseInt(e.target.value) })}
-                className="flex-1 accent-green-500"
-              />
-              <span className="text-sm font-bold text-white w-10 text-right">{summary.possession_estimate ?? 50}%</span>
+              <StatStepper value={summary.dribbles_completed} onChange={(v) => update({ dribbles_completed: v })} label="Ok" />
+              <span className="text-[10px] text-slate-600">/</span>
+              <StatStepper value={summary.dribbles_attempted} onChange={(v) => update({ dribbles_attempted: v })} label="Tot" />
             </div>
-          </div>
-
-          {/* Shots */}
-          <div className="glass-card rounded-xl p-3">
-            <p className="text-[10px] text-slate-500 mb-1">Tirs totals</p>
-            <div className="flex items-center gap-1">
-              <input type="number" min="0" placeholder="Nosaltres" value={summary.shots_for ?? ''} onChange={(e) => update({ shots_for: e.target.value ? parseInt(e.target.value) : null })} className="w-full px-2 py-1 bg-white/5 border border-white/10 rounded text-white text-xs text-center focus:outline-none focus:border-green-500/50" />
-              <span className="text-slate-600 text-xs">-</span>
-              <input type="number" min="0" placeholder="Rival" value={summary.shots_against ?? ''} onChange={(e) => update({ shots_against: e.target.value ? parseInt(e.target.value) : null })} className="w-full px-2 py-1 bg-white/5 border border-white/10 rounded text-white text-xs text-center focus:outline-none focus:border-green-500/50" />
-            </div>
-          </div>
-
-          {/* Corners */}
-          <div className="glass-card rounded-xl p-3">
-            <p className="text-[10px] text-slate-500 mb-1">Corners</p>
-            <div className="flex items-center gap-1">
-              <input type="number" min="0" placeholder="A favor" value={summary.corners_for ?? ''} onChange={(e) => update({ corners_for: e.target.value ? parseInt(e.target.value) : null })} className="w-full px-2 py-1 bg-white/5 border border-white/10 rounded text-white text-xs text-center focus:outline-none focus:border-green-500/50" />
-              <span className="text-slate-600 text-xs">-</span>
-              <input type="number" min="0" placeholder="Contra" value={summary.corners_against ?? ''} onChange={(e) => update({ corners_against: e.target.value ? parseInt(e.target.value) : null })} className="w-full px-2 py-1 bg-white/5 border border-white/10 rounded text-white text-xs text-center focus:outline-none focus:border-green-500/50" />
-            </div>
-          </div>
-
-          {/* Fouls */}
-          <div className="glass-card rounded-xl p-3">
-            <p className="text-[10px] text-slate-500 mb-1">Faltes</p>
-            <div className="flex items-center gap-1">
-              <input type="number" min="0" placeholder="Comeses" value={summary.fouls_for ?? ''} onChange={(e) => update({ fouls_for: e.target.value ? parseInt(e.target.value) : null })} className="w-full px-2 py-1 bg-white/5 border border-white/10 rounded text-white text-xs text-center focus:outline-none focus:border-green-500/50" />
-              <span className="text-slate-600 text-xs">-</span>
-              <input type="number" min="0" placeholder="Rebudes" value={summary.fouls_against ?? ''} onChange={(e) => update({ fouls_against: e.target.value ? parseInt(e.target.value) : null })} className="w-full px-2 py-1 bg-white/5 border border-white/10 rounded text-white text-xs text-center focus:outline-none focus:border-green-500/50" />
-            </div>
-          </div>
-
-          {/* Offsides */}
-          <div className="glass-card rounded-xl p-3">
-            <p className="text-[10px] text-slate-500 mb-1">Fores de joc</p>
-            <div className="flex items-center gap-1">
-              <input type="number" min="0" placeholder="Nosaltres" value={summary.offsides_for ?? ''} onChange={(e) => update({ offsides_for: e.target.value ? parseInt(e.target.value) : null })} className="w-full px-2 py-1 bg-white/5 border border-white/10 rounded text-white text-xs text-center focus:outline-none focus:border-green-500/50" />
-              <span className="text-slate-600 text-xs">-</span>
-              <input type="number" min="0" placeholder="Rival" value={summary.offsides_against ?? ''} onChange={(e) => update({ offsides_against: e.target.value ? parseInt(e.target.value) : null })} className="w-full px-2 py-1 bg-white/5 border border-white/10 rounded text-white text-xs text-center focus:outline-none focus:border-green-500/50" />
-            </div>
-          </div>
-
-          {/* Saves */}
-          <div className="glass-card rounded-xl p-3">
-            <p className="text-[10px] text-slate-500 mb-1">Parades del porter</p>
-            <input type="number" min="0" placeholder="0" value={summary.saves ?? ''} onChange={(e) => update({ saves: e.target.value ? parseInt(e.target.value) : null })} className="w-full px-2 py-1 bg-white/5 border border-white/10 rounded text-white text-xs text-center focus:outline-none focus:border-green-500/50" />
           </div>
         </div>
-      </div>
+      </StatSection>
 
-      {/* Captain selector */}
+      {/* DISTRIBUCIO */}
+      <StatSection title="Distribucio" icon={Waypoints} iconColor="#06b6d4">
+        <AutoStatRow label="Centrades" forVal={auto.crosses_for} againstVal={auto.crosses_against} />
+        <AutoStatRow label="Ocasions creades" forVal={auto.chances_created} />
+        <AutoStatRow label="Assistencies" forVal={auto.assists} />
+        <AutoStatRow label="Pre-assistencies" forVal={auto.pre_assists} />
+        <AutoStatRow label="Passades clau" forVal={auto.accurate_passes} />
+        <div className="border-t border-white/5 pt-2 mt-2">
+          <p className="text-[9px] text-slate-600 uppercase tracking-wider mb-2">Manual</p>
+          <ForAgainstStepper label="Passades totals" forValue={summary.total_passes_for} againstValue={summary.total_passes_against} onForChange={(v) => update({ total_passes_for: v })} onAgainstChange={(v) => update({ total_passes_against: v })} />
+          <div className="flex items-center justify-between py-2">
+            <span className="text-xs text-slate-300 flex-1">Precisio passada</span>
+            <div className="flex items-center gap-2">
+              <input
+                type="range" min="0" max="100"
+                value={summary.pass_accuracy ?? 70}
+                onChange={(e) => update({ pass_accuracy: parseInt(e.target.value) })}
+                className="w-24 accent-cyan-500"
+              />
+              <span className="text-xs font-bold text-white w-10 text-right">{summary.pass_accuracy ?? 70}%</span>
+            </div>
+          </div>
+        </div>
+      </StatSection>
+
+      {/* DEFENSA */}
+      <StatSection title="Defensa" icon={Shield} iconColor="#f59e0b">
+        <AutoStatRow label="Recuperacions" forVal={auto.recoveries} />
+        <AutoStatRow label="Perdues" forVal={auto.turnovers} />
+        <AutoStatRow label="Duels guanyats" forVal={auto.duels_won} againstVal={auto.duels_lost} />
+        <div className="border-t border-white/5 pt-2 mt-2">
+          <p className="text-[9px] text-slate-600 uppercase tracking-wider mb-2">Manual</p>
+          <ForAgainstStepper label="Entrades" forValue={summary.tackles_for} againstValue={summary.tackles_against} onForChange={(v) => update({ tackles_for: v })} onAgainstChange={(v) => update({ tackles_against: v })} />
+          <div className="flex items-center justify-between py-2">
+            <span className="text-xs text-slate-300 flex-1">Despejos</span>
+            <StatStepper value={summary.clearances} onChange={(v) => update({ clearances: v })} />
+          </div>
+          <div className="flex items-center justify-between py-2">
+            <span className="text-xs text-slate-300 flex-1">Duels aeris</span>
+            <div className="flex items-center gap-2">
+              <StatStepper value={summary.aerial_duels_won} onChange={(v) => update({ aerial_duels_won: v })} label="W" />
+              <span className="text-[10px] text-slate-600">/</span>
+              <StatStepper value={summary.aerial_duels_lost} onChange={(v) => update({ aerial_duels_lost: v })} label="L" />
+            </div>
+          </div>
+        </div>
+      </StatSection>
+
+      {/* PILOTA ATURADA & DISCIPLINA */}
+      <StatSection title="Pilota aturada i disciplina" icon={Flag} iconColor="#0ea5e9">
+        <AutoStatRow label="Corners" forVal={auto.corners_for} againstVal={auto.corners_against} />
+        <AutoStatRow label="Fores de joc" forVal={auto.offsides_for} againstVal={auto.offsides_against} />
+        <AutoStatRow label="Faltes comeses" forVal={auto.fouls_committed} />
+        <AutoStatRow label="Faltes rebudes" forVal={auto.fouls_suffered} />
+        <AutoStatRow label="Targetes grogues" forVal={auto.yellow_cards_for} againstVal={auto.yellow_cards_against} />
+        <AutoStatRow label="Targetes vermelles" forVal={auto.red_cards_for} againstVal={auto.red_cards_against} />
+        <div className="border-t border-white/5 pt-2 mt-2">
+          <p className="text-[9px] text-slate-600 uppercase tracking-wider mb-2">Manual</p>
+          <ForAgainstStepper label="Corners (override)" forValue={summary.corners_for} againstValue={summary.corners_against} onForChange={(v) => update({ corners_for: v })} onAgainstChange={(v) => update({ corners_against: v })} />
+          <ForAgainstStepper label="Faltes (override)" forValue={summary.fouls_for} againstValue={summary.fouls_against} onForChange={(v) => update({ fouls_for: v })} onAgainstChange={(v) => update({ fouls_against: v })} />
+          <ForAgainstStepper label="Saques de banda" forValue={summary.throw_ins_for} againstValue={summary.throw_ins_against} onForChange={(v) => update({ throw_ins_for: v })} onAgainstChange={(v) => update({ throw_ins_against: v })} />
+          <ForAgainstStepper label="Saques de porta" forValue={summary.goal_kicks_for} againstValue={summary.goal_kicks_against} onForChange={(v) => update({ goal_kicks_for: v })} onAgainstChange={(v) => update({ goal_kicks_against: v })} />
+          <ForAgainstStepper label="Penals" forValue={summary.penalties_for} againstValue={summary.penalties_against} onForChange={(v) => update({ penalties_for: v })} onAgainstChange={(v) => update({ penalties_against: v })} />
+          <div className="flex items-center justify-between py-2">
+            <span className="text-xs text-slate-300 flex-1">Penals marcats / aturats</span>
+            <div className="flex items-center gap-2">
+              <StatStepper value={summary.penalties_scored} onChange={(v) => update({ penalties_scored: v })} label="Gol" />
+              <StatStepper value={summary.penalties_saved} onChange={(v) => update({ penalties_saved: v })} label="Aturat" />
+            </div>
+          </div>
+        </div>
+      </StatSection>
+
+      {/* PORTERIA */}
+      <StatSection title="Porteria" icon={GloveIcon} iconColor="#14b8a6">
+        <AutoStatRow label="Gols encaixats" forVal={auto.goals_total_against} />
+        <AutoStatRow label="Parades (events)" forVal={auto.saves_from_events} />
+        <div className="border-t border-white/5 pt-2 mt-2">
+          <p className="text-[9px] text-slate-600 uppercase tracking-wider mb-2">Manual</p>
+          <div className="flex items-center justify-between py-2">
+            <span className="text-xs text-slate-300 flex-1">Parades totals</span>
+            <StatStepper value={summary.saves} onChange={(v) => update({ saves: v })} />
+          </div>
+          <div className="flex items-center justify-between py-2">
+            <span className="text-xs text-slate-300 flex-1">Sortides per alt</span>
+            <StatStepper value={summary.high_claims} onChange={(v) => update({ high_claims: v })} />
+          </div>
+        </div>
+      </StatSection>
+
+      {/* ─── Captain, Weather, Pitch ─── */}
       <div className="mb-5">
         <label className="text-xs text-slate-400 mb-1 block">Capita del partit</label>
         <select
@@ -182,13 +317,12 @@ export default function StepSummary({
           className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-green-500/50"
         >
           <option value="">Selecciona...</option>
-          {playerNames.map((n) => (
+          {allPlayers.map((n) => (
             <option key={n} value={n}>{n}</option>
           ))}
         </select>
       </div>
 
-      {/* Weather & Pitch */}
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div>
           <label className="text-xs text-slate-400 mb-2 block flex items-center gap-1">
@@ -232,7 +366,7 @@ export default function StepSummary({
         </div>
       </div>
 
-      {/* Overall match rating */}
+      {/* ─── Overall rating ─── */}
       <div className="mb-6">
         <label className="text-xs text-slate-400 mb-2 block">Valoracio global del partit</label>
         <RatingSlider
@@ -241,7 +375,7 @@ export default function StepSummary({
         />
       </div>
 
-      {/* Phase-of-play ratings */}
+      {/* ─── Phase ratings ─── */}
       <div className="mb-6">
         <label className="text-xs text-slate-400 mb-3 block">Valoracio per fases de joc (1-5)</label>
         <div className="space-y-2">
@@ -273,7 +407,7 @@ export default function StepSummary({
         </div>
       </div>
 
-      {/* Tactical approach */}
+      {/* ─── Tactical approach ─── */}
       <div className="mb-6">
         <label className="text-xs text-slate-400 mb-2 block">Enfocament tactic</label>
         <div className="grid grid-cols-2 gap-2">
@@ -294,7 +428,7 @@ export default function StepSummary({
         </div>
       </div>
 
-      {/* Key moments */}
+      {/* ─── Text notes ─── */}
       <div className="mb-5">
         <label className="text-xs text-slate-400 mb-1.5 block">Moments clau</label>
         <textarea
@@ -324,7 +458,6 @@ export default function StepSummary({
         )}
       </div>
 
-      {/* Opponent analysis */}
       <div className="mb-5">
         <label className="text-xs text-slate-400 mb-1.5 block">Analisi del rival</label>
         <textarea
@@ -336,7 +469,6 @@ export default function StepSummary({
         />
       </div>
 
-      {/* Areas to improve */}
       <div className="mb-5">
         <label className="text-xs text-slate-400 mb-1.5 block">Arees de millora</label>
         <textarea
@@ -348,7 +480,6 @@ export default function StepSummary({
         />
       </div>
 
-      {/* Training focus */}
       <div className="mb-8">
         <label className="text-xs text-slate-400 mb-1.5 block">Focus d&apos;entrenament per la setmana vinent</label>
         <textarea
@@ -360,7 +491,7 @@ export default function StepSummary({
         />
       </div>
 
-      {/* Save buttons */}
+      {/* ─── Save buttons ─── */}
       <div className="flex gap-3">
         <button
           onClick={() => onSave('draft')}

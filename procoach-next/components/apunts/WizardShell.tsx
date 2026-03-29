@@ -162,6 +162,7 @@ export default function WizardShell({
         awayTeam,
         matchData.jornada,
         matchData.match_date,
+        matchData.competition,
       )
 
       if (acta) {

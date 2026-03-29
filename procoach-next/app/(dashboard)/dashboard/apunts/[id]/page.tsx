@@ -11,6 +11,7 @@ import { createClient } from '@/lib/supabase-client'
 import { fetchMatchNote } from '@/lib/match-notes-data'
 import type { MatchNoteFull } from '@/lib/match-notes-types'
 import { EVENT_LABELS, GOAL_TYPE_LABELS, TACTICAL_LABELS, PLAYER_TAGS } from '@/lib/match-notes-types'
+import MatchStatsDisplay from '@/components/apunts/MatchStatsDisplay'
 
 export default function ViewNotePage() {
   const router = useRouter()
@@ -153,6 +154,9 @@ export default function ViewNotePage() {
             </div>
           </section>
         )}
+
+        {/* Match Stats */}
+        <MatchStatsDisplay note={note} events={note.events} />
 
         {/* Ratings */}
         {note.ratings.length > 0 && (
