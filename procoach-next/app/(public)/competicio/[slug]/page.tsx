@@ -49,6 +49,7 @@ const CATEGORY_LABEL: Record<string, string> = {
 }
 
 const PRIORITY_COMPETITIONS = new Set([
+  'lliga-elit', 'primera-catalana',
   'segona-catalana', 'tercera-catalana',
   'preferent-juvenils', 'juvenil-primera-divisio',
   'divisio-honor-juvenil', 'lliga-nacional-juvenil',

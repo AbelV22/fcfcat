@@ -105,8 +105,8 @@ REFEREE_COMPETITIONS = {
 KNOWN_GROUPS = {
     # Adult
     "tercera-federacio":           ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7"],
-    "lliga-elit":                  ["grup-unic"],
-    "primera-catalana":            ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8"],
+    "lliga-elit":                  ["grup-1"],
+    "primera-catalana":            ["grup-1", "grup-2", "grup-3"],
     "segona-catalana":             ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6"],
     "tercera-catalana":            ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8", "grup-9", "grup-10", "grup-11", "grup-12", "grup-13", "grup-14", "grup-15", "grup-16", "grup-17", "grup-18"],
     "quarta-catalana":             ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8", "grup-9", "grup-10", "grup-11", "grup-12", "grup-13", "grup-14", "grup-15", "grup-16", "grup-17", "grup-18", "grup-19"],

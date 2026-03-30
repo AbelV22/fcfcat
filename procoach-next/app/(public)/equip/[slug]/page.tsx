@@ -794,7 +794,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
   const compName = COMPETITION_NAMES[report.competition] || report.competition
   const apercibits = report.players.filter(p => p.risk)
   const topScorers = [...report.players].sort((a, b) => b.goals - a.goals).filter(p => p.goals > 0).slice(0, 5)
-  const PRIORITY = new Set(['segona-catalana', 'tercera-catalana', 'preferent-juvenils', 'juvenil-primera-divisio', 'quarta-catalana', 'divisio-honor-juvenil', 'lliga-nacional-juvenil', 'divisio-honor-cadet-s16', 'divisio-honor-cadet-s15'])
+  const PRIORITY = new Set(['lliga-elit', 'primera-catalana', 'segona-catalana', 'tercera-catalana', 'quarta-catalana', 'preferent-juvenils', 'juvenil-primera-divisio', 'divisio-honor-juvenil', 'lliga-nacional-juvenil', 'divisio-honor-cadet-s16', 'divisio-honor-cadet-s15'])
   const isPriority = PRIORITY.has(report.competition)
 
   const teamJsonLd = {

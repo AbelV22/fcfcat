@@ -38,6 +38,8 @@ SEASON    = "2526"
 # ── Priority competitions & known groups ─────────────────────────────────────
 PRIORITY = {
     # Confirmed groups for 2025/26 season
+    "lliga-elit":               ["grup-1"],           # 1 group (16 teams)
+    "primera-catalana":         ["grup-1","grup-2","grup-3"],  # 3 groups
     "segona-catalana":          ["grup-1","grup-2","grup-3","grup-4","grup-5","grup-6"],  # 6 groups
     "tercera-catalana":         [f"grup-{i}" for i in range(1, 19)],  # 18 groups
     "quarta-catalana":          [f"grup-{i}" for i in range(1, 20)],  # 19 groups
