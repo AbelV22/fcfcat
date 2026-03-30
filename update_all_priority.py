@@ -39,7 +39,7 @@ SEASON    = "2526"
 PRIORITY = {
     # Confirmed groups for 2025/26 season
     "segona-catalana":          ["grup-1","grup-2","grup-3","grup-4","grup-5","grup-6"],  # 6 groups
-    "tercera-catalana":         ["grup-1","grup-2","grup-3","grup-4","grup-5","grup-6","grup-7","grup-8","grup-9","grup-10"],  # 10 groups
+    "tercera-catalana":         [f"grup-{i}" for i in range(1, 19)],  # 18 groups
     "quarta-catalana":          [f"grup-{i}" for i in range(1, 20)],  # 19 groups
     # Juvenil top tiers
     "divisio-honor-juvenil":    ["grup-3"],       # Catalan group (Barça, Espanyol)
