@@ -111,19 +111,19 @@ KNOWN_GROUPS = {
     "tercera-catalana":            ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8", "grup-9", "grup-10"],
     "quarta-catalana":             ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8", "grup-9", "grup-10", "grup-11", "grup-12", "grup-13", "grup-14", "grup-15", "grup-16", "grup-17", "grup-18", "grup-19"],
     # Juvenil
-    "divisio-honor-juvenil":       ["grup-unic"],
-    "lliga-nacional-juvenil":      ["grup-unic"],
+    "divisio-honor-juvenil":       ["grup-3"],
+    "lliga-nacional-juvenil":      ["grup-7"],
     "preferent-juvenils":          ["grup-1", "grup-2", "grup-3", "grup-4"],
     "juvenil-primera-divisio":     ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6", "grup-7", "grup-8", "grup-9", "grup-10", "grup-11", "grup-12", "grup-13", "grup-14", "grup-15"],
     "segona-catalana-juvenil":     ["grup-1"],
     "tercera-catalana-juvenil":    ["grup-1"],
     # Cadet S16
-    "divisio-honor-cadet-s16":     ["grup-unic"],
+    "divisio-honor-cadet-s16":     ["grup-1"],
     "preferent-cadet-s16":         ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5", "grup-6"],
     "cadet-primera-divisio-s16":   ["grup-1"],
     "cadet-segona-divisio-s16":    ["grup-1"],
     # Cadet S15
-    "divisio-honor-cadet-s15":     ["grup-unic"],
+    "divisio-honor-cadet-s15":     ["grup-1"],
     "preferent-cadet-s15":         ["grup-1", "grup-2", "grup-3", "grup-4", "grup-5"],
     "cadet-primera-divisio-s15":   ["grup-1"],
     "cadet-segona-divisio-s15":    ["grup-1"],

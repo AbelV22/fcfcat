@@ -41,8 +41,14 @@ PRIORITY = {
     "segona-catalana":          ["grup-1","grup-2","grup-3","grup-4","grup-5","grup-6"],  # 6 groups
     "tercera-catalana":         ["grup-1","grup-2","grup-3","grup-4","grup-5","grup-6","grup-7","grup-8","grup-9","grup-10"],  # 10 groups
     "quarta-catalana":          [f"grup-{i}" for i in range(1, 20)],  # 19 groups
+    # Juvenil top tiers
+    "divisio-honor-juvenil":    ["grup-3"],       # Catalan group (Barça, Espanyol)
+    "lliga-nacional-juvenil":   ["grup-7"],       # Catalan group (Barça B, Espanyol B)
     "preferent-juvenils":       ["grup-1","grup-2","grup-3","grup-4"],
     "juvenil-primera-divisio":  ["grup-1","grup-2","grup-3","grup-4","grup-5","grup-6","grup-7","grup-8","grup-9","grup-10","grup-11","grup-12","grup-13","grup-14","grup-15"],
+    # Cadet DH (Barça, Espanyol)
+    "divisio-honor-cadet-s16":  ["grup-1"],
+    "divisio-honor-cadet-s15":  ["grup-1"],
 }
 
 SPORT = "futbol-11"

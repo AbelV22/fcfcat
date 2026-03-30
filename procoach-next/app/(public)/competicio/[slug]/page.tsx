@@ -51,6 +51,8 @@ const CATEGORY_LABEL: Record<string, string> = {
 const PRIORITY_COMPETITIONS = new Set([
   'segona-catalana', 'tercera-catalana',
   'preferent-juvenils', 'juvenil-primera-divisio',
+  'divisio-honor-juvenil', 'lliga-nacional-juvenil',
+  'divisio-honor-cadet-s16', 'divisio-honor-cadet-s15',
 ])
 
 export default async function CompeticionPage({

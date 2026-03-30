@@ -349,6 +349,7 @@ const COMPETITION_PRIORITY = [
   'segona-catalana', 'tercera-catalana', 'quarta-catalana',
   'divisio-honor-juvenil', 'lliga-nacional-juvenil',
   'preferent-juvenils', 'juvenil-primera-divisio',
+  'divisio-honor-cadet-s16', 'divisio-honor-cadet-s15',
 ]
 function competitionRank(c: string) {
   const i = COMPETITION_PRIORITY.indexOf(c)
@@ -484,7 +485,7 @@ export async function getTeamBasicDataDB(slug: string) {
     .from('fcf_standings')
     .select('*')
     .eq('team_slug', slug)
-    .in('competition', ['segona-catalana', 'tercera-catalana', 'preferent-juvenils', 'juvenil-primera-divisio', 'quarta-catalana'])
+    .in('competition', ['segona-catalana', 'tercera-catalana', 'preferent-juvenils', 'juvenil-primera-divisio', 'quarta-catalana', 'divisio-honor-juvenil', 'lliga-nacional-juvenil', 'divisio-honor-cadet-s16', 'divisio-honor-cadet-s15'])
     .limit(1)
 
   const standing = standingRows?.[0] || null
@@ -1157,8 +1158,12 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     'segona-catalana',
     'tercera-catalana',
     'quarta-catalana',
+    'divisio-honor-juvenil',
+    'lliga-nacional-juvenil',
     'preferent-juvenils',
     'juvenil-primera-divisio',
+    'divisio-honor-cadet-s16',
+    'divisio-honor-cadet-s15',
   ]
 
   // ── Round 1: Find team standing ──────────────────────────────────────────
