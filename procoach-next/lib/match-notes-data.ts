@@ -302,10 +302,12 @@ export async function saveFullMatchNote(
 /** Fetch team matches from fcf_matches for a given club name */
 export async function fetchTeamMatches(clubName: string) {
   const supabase = createClient()
+  // Quote values with double-quotes so commas in team names don't break .or() parsing
+  const pattern = `%${clubName}%`
   const { data, error } = await supabase
     .from('fcf_matches')
     .select('*')
-    .or(`home_team.ilike.%${clubName}%,away_team.ilike.%${clubName}%`)
+    .or(`home_team.ilike."${pattern}",away_team.ilike."${pattern}"`)
     .order('match_date', { ascending: false })
     .limit(40)
 
