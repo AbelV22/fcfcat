@@ -485,7 +485,7 @@ export async function getTeamBasicDataDB(slug: string) {
     .from('fcf_standings')
     .select('*')
     .eq('team_slug', slug)
-    .in('competition', ['segona-catalana', 'tercera-catalana', 'preferent-juvenils', 'juvenil-primera-divisio', 'quarta-catalana', 'divisio-honor-juvenil', 'lliga-nacional-juvenil', 'divisio-honor-cadet-s16', 'divisio-honor-cadet-s15'])
+    .in('competition', ['tercera-federacio', 'lliga-elit', 'primera-catalana', 'segona-catalana', 'tercera-catalana', 'quarta-catalana', 'divisio-honor-juvenil', 'lliga-nacional-juvenil', 'preferent-juvenils', 'juvenil-primera-divisio', 'divisio-honor-cadet-s16', 'divisio-honor-cadet-s15'])
     .limit(1)
 
   const standing = standingRows?.[0] || null
@@ -1154,6 +1154,8 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
   // Adult competitions come first so that, e.g., poble-nou-at-a resolves to
   // quarta-catalana rather than juvenil-primera-divisio.
   const COMPETITION_PRIORITY = [
+    'tercera-federacio',
+    'lliga-elit',
     'primera-catalana',
     'segona-catalana',
     'tercera-catalana',
@@ -2091,4 +2093,123 @@ export async function getFeaturedPlayersDB(): Promise<FeaturedPlayersData> {
   }
 
   return { topScorersByCompetition, topGoalsPerMinuteByCompetition }
+}
+
+// ─── Scouting / Discover Players ─────────────────────────────────────────────
+
+/** Age category inferred from competition slug (season 2025-26) */
+const COMPETITION_AGE_CATEGORY: Record<string, { label: string; birthYearRange: [number, number] }> = {
+  'divisio-honor-juvenil':       { label: 'Juvenil (U19)',      birthYearRange: [2007, 2008] },
+  'lliga-nacional-juvenil':      { label: 'Juvenil (U19)',      birthYearRange: [2007, 2008] },
+  'preferent-juvenils':          { label: 'Juvenil (U19)',      birthYearRange: [2007, 2008] },
+  'juvenil-primera-divisio':     { label: 'Juvenil (U19)',      birthYearRange: [2007, 2008] },
+  'segona-catalana-juvenil':     { label: 'Juvenil (U19)',      birthYearRange: [2007, 2008] },
+  'tercera-catalana-juvenil':    { label: 'Juvenil (U19)',      birthYearRange: [2007, 2008] },
+  'divisio-honor-cadet-s16':     { label: 'Cadet S16 (U17)',    birthYearRange: [2009, 2010] },
+  'preferent-cadet-s16':         { label: 'Cadet S16 (U17)',    birthYearRange: [2009, 2010] },
+  'cadet-primera-divisio-s16':   { label: 'Cadet S16 (U17)',    birthYearRange: [2009, 2010] },
+  'cadet-segona-divisio-s16':    { label: 'Cadet S16 (U17)',    birthYearRange: [2009, 2010] },
+  'divisio-honor-cadet-s15':     { label: 'Cadet S15 (U16)',    birthYearRange: [2010, 2011] },
+  'preferent-cadet-s15':         { label: 'Cadet S15 (U16)',    birthYearRange: [2010, 2011] },
+  'cadet-primera-divisio-s15':   { label: 'Cadet S15 (U16)',    birthYearRange: [2010, 2011] },
+  'cadet-segona-divisio-s15':    { label: 'Cadet S15 (U16)',    birthYearRange: [2010, 2011] },
+  'divisio-honor-infantil-s14':  { label: 'Infantil S14 (U15)', birthYearRange: [2011, 2012] },
+  'preferent-infantil-s14':      { label: 'Infantil S14 (U15)', birthYearRange: [2011, 2012] },
+  'primera-divisio-infantil-s14':{ label: 'Infantil S14 (U15)', birthYearRange: [2011, 2012] },
+  'divisio-honor-infantil-s13':  { label: 'Infantil S13 (U14)', birthYearRange: [2012, 2013] },
+  'preferent-infantil-s13':      { label: 'Infantil S13 (U14)', birthYearRange: [2012, 2013] },
+  'infantil-primera-divisio-s13':{ label: 'Infantil S13 (U14)', birthYearRange: [2012, 2013] },
+}
+
+export { COMPETITION_AGE_CATEGORY }
+
+export interface ScoutingPlayer {
+  slug: string
+  name: string
+  team: string
+  teamSlug: string
+  competition: string
+  competitionName: string
+  group: string
+  appearances: number
+  starts: number
+  goals: number
+  yellowCards: number
+  redCards: number
+  minutesPlayed: number
+  goalsPerMatch: number | null
+  /** From player_profiles if available */
+  birthYear: number | null
+  /** Inferred from competition category */
+  ageCategory: string | null
+  /** Estimated age range from competition */
+  estimatedBirthYearRange: [number, number] | null
+  position: string | null
+  lookingForTeam: boolean
+  verified: boolean
+}
+
+export async function getScoutingPlayersDB(): Promise<ScoutingPlayer[]> {
+  const supabase = getSupabase()
+  if (!supabase) return []
+
+  // Fetch all player stats
+  const allStats = await fetchAllRows((from, to) =>
+    supabase
+      .from('fcf_player_stats')
+      .select('player_slug, player_name, team_name, team_slug, competition, group_name, appearances, starts, goals, yellow_cards, red_cards, minutes_played')
+      .range(from, to)
+  )
+
+  if (!allStats || allStats.length === 0) return []
+
+  // Fetch profile data (birth_year, position, etc.)
+  const profiles = await fetchAllRows((from, to) =>
+    supabase
+      .from('player_profiles')
+      .select('canonical_slug, display_name, birth_year, position, looking_for_team, verified, opted_out')
+      .eq('opted_out', false)
+      .range(from, to)
+  )
+
+  const profileMap: Record<string, typeof profiles[number]> = {}
+  for (const p of profiles || []) {
+    if (p.canonical_slug) profileMap[p.canonical_slug] = p
+  }
+
+  // Build player entries — one per player_slug + competition combo for granularity
+  const players: ScoutingPlayer[] = allStats.map(s => {
+    const profile = profileMap[s.player_slug]
+    const ageCat = COMPETITION_AGE_CATEGORY[s.competition]
+    const appearances = s.appearances || 0
+    const goals = s.goals || 0
+
+    return {
+      slug: s.player_slug,
+      name: profile?.display_name || s.player_name || s.player_slug.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()),
+      team: s.team_name,
+      teamSlug: s.team_slug,
+      competition: s.competition,
+      competitionName: COMPETITION_NAMES[s.competition] || s.competition,
+      group: s.group_name || '',
+      appearances,
+      starts: s.starts || 0,
+      goals,
+      yellowCards: s.yellow_cards || 0,
+      redCards: s.red_cards || 0,
+      minutesPlayed: s.minutes_played || 0,
+      goalsPerMatch: appearances > 0 ? Math.round((goals / appearances) * 100) / 100 : null,
+      birthYear: profile?.birth_year ?? null,
+      ageCategory: ageCat?.label ?? null,
+      estimatedBirthYearRange: ageCat?.birthYearRange ?? null,
+      position: profile?.position ?? null,
+      lookingForTeam: profile?.looking_for_team ?? false,
+      verified: profile?.verified ?? false,
+    }
+  })
+
+  // Sort by goals desc, then appearances desc
+  players.sort((a, b) => b.goals - a.goals || b.appearances - a.appearances)
+
+  return players
 }

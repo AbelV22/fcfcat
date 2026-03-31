@@ -38,8 +38,11 @@ function isRateLimited(ip: string): boolean {
 
 // Allowed competition slugs to prevent arbitrary scraping
 const ALLOWED_COMPETITIONS = new Set([
-  'segona-catalana', 'tercera-catalana', 'preferent-juvenils',
-  'juvenil-primera-divisio', 'primera-catalana', 'quarta-catalana',
+  'tercera-federacio', 'lliga-elit', 'primera-catalana',
+  'segona-catalana', 'tercera-catalana', 'quarta-catalana',
+  'preferent-juvenils', 'juvenil-primera-divisio',
+  'divisio-honor-juvenil', 'lliga-nacional-juvenil',
+  'divisio-honor-cadet-s16', 'divisio-honor-cadet-s15',
 ])
 
 // Validate group format: grup-1 through grup-20
