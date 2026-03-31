@@ -64,8 +64,12 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
   }, [state])
 
   const filteredTeams = teamQuery.length >= 2
-    ? teams.filter(t => t.name.toLowerCase().includes(teamQuery.toLowerCase())).slice(0, 8)
+    ? teams.filter(t => t.name.toLowerCase().includes(teamQuery.toLowerCase())).slice(0, 12)
     : []
+
+  // Allow manual entry: user typed a name but no exact match exists in the list
+  const canUseManualName = teamQuery.trim().length >= 3 && !form.team
+  const exactMatchExists = teams.some(t => t.name.toLowerCase() === teamQuery.trim().toLowerCase())
 
   // Find all teams that share the same FCF venue (same club, same field)
   function getClubMates(venue: string | null): string[] {
@@ -74,6 +78,56 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
     return Object.entries(teamVenueMap)
       .filter(([, v]) => v.split('  ')[0].trim().toLowerCase() === venueNorm)
       .map(([name]) => name)
+  }
+
+  function useManualName() {
+    const name = teamQuery.trim()
+    if (!name) return
+    // Try to detect venue from the map (case-insensitive partial match)
+    const venueKey = Object.keys(teamVenueMap).find(k => k.toLowerCase() === name.toLowerCase())
+    const detectedVenue = venueKey ? teamVenueMap[venueKey] : ''
+
+    // Check if another team from the same club already has a field saved
+    const clubMates = getClubMates(detectedVenue || null)
+    const sharedField = clubMates.length > 0
+      ? fields.find(f => clubMates.some(mate => f.team?.toLowerCase() === mate.toLowerCase()))
+      : null
+
+    // Also try name-based club detection (e.g. "CLUB X A" → "CLUB X B")
+    const namePrefix = name.replace(/\s+[A-Z]$/, '') // strip trailing letter suffix
+    const nameBasedField = !sharedField && namePrefix !== name
+      ? fields.find(f => f.team && f.team.replace(/\s+[A-Z]$/, '') === namePrefix)
+      : null
+
+    const reuseField = sharedField || nameBasedField
+
+    if (reuseField) {
+      setForm({
+        name: reuseField.name,
+        fcf_venue: reuseField.fcf_venue ?? detectedVenue,
+        team: name,
+        city: reuseField.city ?? '',
+        length_m: String(reuseField.length_m),
+        width_m: String(reuseField.width_m),
+        confirmed: reuseField.confirmed,
+        notes: reuseField.notes ?? '',
+      })
+      setEditingName(reuseField.name)
+    } else {
+      const city = detectedVenue ? extractCity(detectedVenue) : ''
+      const suggestedName = detectedVenue ? venueToName(detectedVenue) : ''
+      setForm({
+        ...EMPTY,
+        team: name,
+        fcf_venue: detectedVenue,
+        city,
+        name: suggestedName,
+      })
+      setEditingName(null)
+    }
+    setTeamQuery(name)
+    setShowSuggestions(false)
+    setTimeout(() => document.getElementById('camps-form-section')?.scrollIntoView({ behavior: 'smooth' }), 50)
   }
 
   function selectTeam(t: TeamOption) {
@@ -97,9 +151,17 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
 
       // Check if another team from the same club already has a field saved (same venue)
       const clubMates = getClubMates(detectedVenue)
-      const sharedField = clubMates.length > 0
+      let sharedField = clubMates.length > 0
         ? fields.find(f => clubMates.some(mate => f.team?.toLowerCase() === mate.toLowerCase()))
         : null
+
+      // Fallback: name-based club detection (e.g. "CLUB X A" → "CLUB X B")
+      if (!sharedField) {
+        const namePrefix = t.name.replace(/\s+[A-Z]$/, '')
+        if (namePrefix !== t.name) {
+          sharedField = fields.find(f => f.team && f.team.replace(/\s+[A-Z]$/, '') === namePrefix) ?? null
+        }
+      }
 
       if (sharedField) {
         // Same club — reuse the existing field data
@@ -166,8 +228,15 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
   const hasDetectedVenue = hasTeamSelected && !!form.fcf_venue
   const hasNoVenueData = hasTeamSelected && !teamVenueMap[form.team]
 
-  // Club mates: other teams sharing the same venue
-  const clubMates = hasDetectedVenue ? getClubMates(form.fcf_venue).filter(n => n !== form.team) : []
+  // Club mates: other teams sharing the same venue OR same name prefix
+  const venueClubMates = hasDetectedVenue ? getClubMates(form.fcf_venue).filter(n => n !== form.team) : []
+  // Name-based mates: "CLUB X B" when current is "CLUB X A"
+  const namePrefix = form.team ? form.team.replace(/\s+[A-Z]$/, '') : ''
+  const nameClubMates = namePrefix && namePrefix !== form.team
+    ? [...teams.map(t => t.name), ...fields.filter(f => f.team).map(f => f.team!)]
+        .filter(n => n !== form.team && n.replace(/\s+[A-Z]$/, '') === namePrefix)
+    : []
+  const clubMates = [...new Set([...venueClubMates, ...nameClubMates])]
   const sharedFieldFrom = clubMates.find(mate => fields.some(f => f.team?.toLowerCase() === mate.toLowerCase()))
 
   return (
@@ -289,7 +358,7 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
                 autoComplete="off"
                 className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-600 text-sm focus:outline-none focus:border-green-500/50 focus:ring-1 focus:ring-green-500/30 transition-all"
               />
-              {showSuggestions && filteredTeams.length > 0 && (
+              {showSuggestions && (filteredTeams.length > 0 || canUseManualName) && (
                 <div className="absolute z-20 top-full mt-1 w-full bg-[#0d1a2e] border border-white/15 rounded-xl shadow-xl overflow-hidden">
                   {filteredTeams.map(t => {
                     const hasField = fields.some(f => f.team?.toLowerCase() === t.name.toLowerCase())
@@ -314,6 +383,19 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
                       </button>
                     )
                   })}
+                  {/* Manual entry option when no exact match */}
+                  {canUseManualName && !exactMatchExists && (
+                    <button
+                      type="button"
+                      onMouseDown={useManualName}
+                      className="w-full text-left px-4 py-2.5 hover:bg-amber-500/10 transition-colors flex items-center justify-between gap-3 border-t border-white/10 bg-amber-500/5"
+                    >
+                      <span className="text-sm text-amber-300">
+                        Usar &quot;{teamQuery.trim()}&quot; com a nom d&apos;equip
+                      </span>
+                      <span className="text-[10px] px-1.5 py-0.5 bg-amber-500/20 text-amber-400 rounded font-semibold">manual</span>
+                    </button>
+                  )}
                 </div>
               )}
             </div>
