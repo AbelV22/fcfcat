@@ -26,6 +26,8 @@ interface CalendarMatch {
   away_score: number | null
   jornada: number | null
   status: string | null
+  competition: string | null
+  group_name: string | null
 }
 
 interface MergedMatch {
@@ -38,6 +40,8 @@ interface MergedMatch {
   goalsAgainst: number | null
   jornada: number | null
   isPast: boolean
+  competition: string | null
+  group_name: string | null
 }
 
 const TABS: { key: Tab; label: string; icon: typeof ClipboardList }[] = [
@@ -130,6 +134,8 @@ export default function ApuntsPage() {
         goalsAgainst: isHome ? m.away_score : m.home_score,
         jornada: m.jornada,
         isPast: dateISO <= today,
+        competition: m.competition,
+        group_name: m.group_name,
       })
     }
 
@@ -147,6 +153,8 @@ export default function ApuntsPage() {
         goalsAgainst: n.goals_against,
         jornada: null,
         isPast: d <= today,
+        competition: null,
+        group_name: null,
       })
     }
 
@@ -179,6 +187,8 @@ export default function ApuntsPage() {
         ...(m.goalsFor !== null ? { gf: String(m.goalsFor) } : {}),
         ...(m.goalsAgainst !== null ? { ga: String(m.goalsAgainst) } : {}),
         ...(m.jornada !== null ? { jornada: String(m.jornada) } : {}),
+        ...(m.competition ? { comp: m.competition } : {}),
+        ...(m.group_name ? { group: m.group_name } : {}),
       })
       router.push(`/dashboard/apunts/nou?${params.toString()}`)
     }
