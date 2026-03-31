@@ -110,6 +110,131 @@ function GoalTimingChart({ buckets }: { buckets: { label: string; scored: number
   )
 }
 
+/** Crossed goal probability by time segment */
+function GoalProbabilityChart({
+  teamBuckets,
+  rivalBuckets,
+  teamName,
+  rivalName,
+}: {
+  teamBuckets: { label: string; scored: number; conceded: number }[]
+  rivalBuckets: { label: string; scored: number; conceded: number }[]
+  teamName: string
+  rivalName: string
+}) {
+  if (!teamBuckets?.length || !rivalBuckets?.length) return null
+
+  const teamTotalScored = teamBuckets.reduce((s, b) => s + b.scored, 0)
+  const teamTotalConceded = teamBuckets.reduce((s, b) => s + b.conceded, 0)
+  const rivalTotalScored = rivalBuckets.reduce((s, b) => s + b.scored, 0)
+  const rivalTotalConceded = rivalBuckets.reduce((s, b) => s + b.conceded, 0)
+
+  if (teamTotalScored === 0 && rivalTotalScored === 0) return null
+
+  // For each time bucket compute crossed probabilities:
+  // P(we score in segment) = P(we score at this time) × P(rival concedes at this time)
+  // P(we concede in segment) = P(rival scores at this time) × P(we concede at this time)
+  const crossed = teamBuckets.map((tb, i) => {
+    const rb = rivalBuckets[i] || { scored: 0, conceded: 0 }
+    const pWeScore = teamTotalScored > 0 ? tb.scored / teamTotalScored : 0
+    const pTheyConcede = rivalTotalConceded > 0 ? rb.conceded / rivalTotalConceded : 0
+    const pTheyScore = rivalTotalScored > 0 ? rb.scored / rivalTotalScored : 0
+    const pWeConcede = teamTotalConceded > 0 ? tb.conceded / teamTotalConceded : 0
+
+    return {
+      label: tb.label,
+      scoreRaw: pWeScore * pTheyConcede,
+      concedeRaw: pTheyScore * pWeConcede,
+    }
+  })
+
+  // Normalize to percentages
+  const totalScore = crossed.reduce((s, c) => s + c.scoreRaw, 0)
+  const totalConcede = crossed.reduce((s, c) => s + c.concedeRaw, 0)
+
+  const segments = crossed.map(c => ({
+    label: c.label,
+    scorePct: totalScore > 0 ? Math.round((c.scoreRaw / totalScore) * 100) : 0,
+    concedePct: totalConcede > 0 ? Math.round((c.concedeRaw / totalConcede) * 100) : 0,
+  }))
+
+  const maxPct = Math.max(...segments.flatMap(s => [s.scorePct, s.concedePct]), 1)
+
+  // Find peak segments
+  const peakScore = segments.reduce((best, s) => s.scorePct > best.scorePct ? s : best, segments[0])
+  const peakConcede = segments.reduce((best, s) => s.concedePct > best.concedePct ? s : best, segments[0])
+
+  return (
+    <div className="glass-card rounded-2xl p-6">
+      <div className="flex items-center gap-2 mb-2">
+        <Target size={18} className="text-cyan-400" />
+        <h2 className="text-lg font-bold text-white">Probabilitat creuada de gol</h2>
+      </div>
+      <p className="text-xs text-slate-500 mb-4">
+        Creua quan el teu equip marca/encaixa amb quan el rival marca/encaixa per predir els minuts calents
+      </p>
+
+      <div className="flex items-center gap-3 mb-4 text-xs">
+        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm bg-emerald-500" /> Oportunitat de marcar</span>
+        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm bg-rose-500" /> Risc d&apos;encaixar</span>
+      </div>
+
+      {/* Bar chart */}
+      <div className="flex items-end gap-2 h-36">
+        {segments.map((s, i) => {
+          const scoreH = (s.scorePct / maxPct) * 100
+          const concedeH = (s.concedePct / maxPct) * 100
+          const isTopScore = s === peakScore && s.scorePct > 0
+          const isTopConcede = s === peakConcede && s.concedePct > 0
+          return (
+            <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
+              <div className="w-full flex gap-0.5 items-end justify-center" style={{ height: '120px' }}>
+                <div
+                  className={`w-[45%] rounded-t-sm transition-all duration-500 ${isTopScore ? 'bg-emerald-400 ring-1 ring-emerald-400/50' : 'bg-emerald-500/70'}`}
+                  style={{ height: `${scoreH}%`, minHeight: s.scorePct > 0 ? '4px' : 0 }}
+                  title={`Marcar: ${s.scorePct}%`}
+                />
+                <div
+                  className={`w-[45%] rounded-t-sm transition-all duration-500 ${isTopConcede ? 'bg-rose-400 ring-1 ring-rose-400/50' : 'bg-rose-500/70'}`}
+                  style={{ height: `${concedeH}%`, minHeight: s.concedePct > 0 ? '4px' : 0 }}
+                  title={`Encaixar: ${s.concedePct}%`}
+                />
+              </div>
+              <span className="text-[9px] text-slate-500 mt-1">{s.label.replace("'", "\u2019")}</span>
+              <div className="flex gap-1 text-[10px]">
+                <span className="text-emerald-400 font-bold">{s.scorePct}%</span>
+                <span className="text-rose-400 font-bold">{s.concedePct}%</span>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Insights */}
+      <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {peakScore.scorePct > 0 && (
+          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3">
+            <div className="text-xs text-emerald-400 font-bold mb-1">Millor moment per marcar</div>
+            <div className="text-white text-sm font-semibold">{peakScore.label}</div>
+            <div className="text-[10px] text-slate-400 mt-1">
+              {peakScore.scorePct}% de probabilitat — el teu equip marca i el rival encaixa en aquest tram
+            </div>
+          </div>
+        )}
+        {peakConcede.concedePct > 0 && (
+          <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl p-3">
+            <div className="text-xs text-rose-400 font-bold mb-1">Minut de major perill</div>
+            <div className="text-white text-sm font-semibold">{peakConcede.label}</div>
+            <div className="text-[10px] text-slate-400 mt-1">
+              {peakConcede.concedePct}% de probabilitat — el rival marca i tu encaixes en aquest tram
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 /** Pitch comparison overlay — visual filled SVG with grass stripes */
 function PitchCompareOverlay({ homePitch, rivalPitch, homeLabel, rivalLabel }: {
   homePitch: { length_m: number; width_m: number; field_name: string } | null
@@ -553,6 +678,14 @@ export default async function RivalPage() {
             {rival.goalBuckets && rival.goalBuckets.length > 0 && (
               <GoalTimingChart buckets={rival.goalBuckets} />
             )}
+
+            {/* ═══ CROSSED GOAL PROBABILITY ═══ */}
+            <GoalProbabilityChart
+              teamBuckets={report!.goalBuckets}
+              rivalBuckets={rival.goalBuckets}
+              teamName={team.name}
+              rivalName={rival.name}
+            />
 
             {/* ═══ INSIGHTS / PATRONS ═══ */}
             {rival.insights && (
