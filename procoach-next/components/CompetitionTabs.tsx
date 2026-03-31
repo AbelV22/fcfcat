@@ -108,18 +108,10 @@ const FIELD_SIZE_LABEL: Record<FieldSize, string> = { petit: 'Petit', mitja: 'Mi
 const FIELD_SIZE_COLOR: Record<FieldSize, string> = { petit: 'text-red-400', mitja: 'text-amber-400', gran: 'text-green-400' }
 const FIELD_SIZE_BG: Record<FieldSize, string> = { petit: 'bg-red-500/10 border-red-500/20', mitja: 'bg-amber-500/10 border-amber-500/20', gran: 'bg-green-500/10 border-green-500/20' }
 
-// Only these competitions have full team detail pages (/equip/[slug])
-const COMPETITIONS_WITH_TEAM_PAGES = new Set(['segona-catalana', 'tercera-catalana'])
-
-/** Renders a clickable Link to /equip/[teamSlug] for supported competitions,
- *  otherwise just plain text — avoids showing adult data for youth team slugs. */
 function TeamLink({
-  teamSlug, teamName, competition, className,
-}: { teamSlug: string; teamName: string; competition: string; className?: string }) {
-  if (COMPETITIONS_WITH_TEAM_PAGES.has(competition)) {
-    return <Link href={`/equip/${teamSlug}`} className={className}>{teamName}</Link>
-  }
-  return <span className={className ? className.replace(/hover:[^\s]+/g, '').trim() : undefined}>{teamName}</span>
+  teamSlug, teamName, className,
+}: { teamSlug: string; teamName: string; className?: string }) {
+  return <Link href={`/equip/${teamSlug}`} className={className}>{teamName}</Link>
 }
 
 export default function CompetitionTabs({
@@ -208,9 +200,9 @@ export default function CompetitionTabs({
                 <div key={i} className="bg-white/4 hover:bg-white/6 transition-colors rounded-xl border border-white/6 px-4 py-3">
                   <div className="flex items-center gap-3">
                     <div className="flex-1 min-w-0 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                      <TeamLink teamSlug={slugify(m.home_team)} teamName={m.home_team} competition={slug} className="text-sm text-slate-200 hover:text-white transition-colors font-medium truncate text-right" />
+                      <TeamLink teamSlug={slugify(m.home_team)} teamName={m.home_team} className="text-sm text-slate-200 hover:text-white transition-colors font-medium truncate text-right" />
                       <ScoreBadge home={m.home_score} away={m.away_score} />
-                      <TeamLink teamSlug={slugify(m.away_team)} teamName={m.away_team} competition={slug} className="text-sm text-slate-200 hover:text-white transition-colors truncate" />
+                      <TeamLink teamSlug={slugify(m.away_team)} teamName={m.away_team} className="text-sm text-slate-200 hover:text-white transition-colors truncate" />
                     </div>
                     <div className="text-right shrink-0 hidden sm:block">
                       {m.main_referee && (
@@ -247,11 +239,11 @@ export default function CompetitionTabs({
                   {nextJornadaFixtures.map((m: any, i: number) => (
                     <div key={i} className="bg-green-900/10 border border-green-500/20 rounded-xl px-3 py-2.5">
                       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                        <TeamLink teamSlug={slugify(m.home_team)} teamName={m.home_team} competition={slug} className="text-xs text-slate-300 hover:text-white transition-colors font-medium truncate text-right" />
+                        <TeamLink teamSlug={slugify(m.home_team)} teamName={m.home_team} className="text-xs text-slate-300 hover:text-white transition-colors font-medium truncate text-right" />
                         <span className="text-xs font-bold text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full whitespace-nowrap">
                           {m.date ? m.date.slice(0, 5) : `J${m.jornada}`}{m.time ? ` ${m.time}` : ''}
                         </span>
-                        <TeamLink teamSlug={slugify(m.away_team)} teamName={m.away_team} competition={slug} className="text-xs text-slate-300 hover:text-white transition-colors truncate" />
+                        <TeamLink teamSlug={slugify(m.away_team)} teamName={m.away_team} className="text-xs text-slate-300 hover:text-white transition-colors truncate" />
                       </div>
                     </div>
                   ))}
@@ -265,7 +257,6 @@ export default function CompetitionTabs({
               </h2>
               <div className="space-y-1">
                 {teams.slice(0, 24).map((t, i) => (
-                  COMPETITIONS_WITH_TEAM_PAGES.has(slug) ? (
                     <Link
                       key={i}
                       href={`/equip/${t.slug}`}
@@ -274,15 +265,6 @@ export default function CompetitionTabs({
                       <span className="text-sm text-slate-300 group-hover:text-white transition-colors truncate">{t.name}</span>
                       <span className="text-xs text-slate-600 shrink-0 ml-2">{t.played}J</span>
                     </Link>
-                  ) : (
-                    <div
-                      key={i}
-                      className="flex items-center justify-between px-3 py-2 rounded-lg bg-white/3 border border-white/5"
-                    >
-                      <span className="text-sm text-slate-300 truncate">{t.name}</span>
-                      <span className="text-xs text-slate-600 shrink-0 ml-2">{t.played}J</span>
-                    </div>
-                  )
                 ))}
               </div>
             </div>
@@ -419,7 +401,7 @@ export default function CompetitionTabs({
                       <tr key={t.slug || i} className="hover:bg-white/3 transition-colors group">
                         <td className="py-3 pl-2 text-slate-600 text-xs font-medium">{i + 1}</td>
                         <td className="py-3">
-                          <TeamLink teamSlug={t.slug} teamName={t.name} competition={slug} className="font-medium text-slate-200 group-hover:text-white transition-colors" />
+                          <TeamLink teamSlug={t.slug} teamName={t.name} className="font-medium text-slate-200 group-hover:text-white transition-colors" />
                         </td>
                         <td className="py-3 text-center text-slate-400">{t.played}</td>
                         <td className="py-3 text-center text-green-400 hidden sm:table-cell">{t.won}</td>
@@ -540,7 +522,7 @@ export default function CompetitionTabs({
                         <td className="py-3 pl-2 text-slate-600 text-xs font-medium">{i + 1}</td>
                         <td className="py-3 font-medium text-slate-200">{s.name}</td>
                         <td className="py-3 text-slate-400 hidden sm:table-cell">
-                          <TeamLink teamSlug={slugify(s.team)} teamName={s.team} competition={slug} className="hover:text-white transition-colors truncate block max-w-[180px]" />
+                          <TeamLink teamSlug={slugify(s.team)} teamName={s.team} className="hover:text-white transition-colors truncate block max-w-[180px]" />
                         </td>
                         <td className="py-3 text-center text-slate-500 hidden md:table-cell">{s.matches}</td>
                         <td className="py-3 text-center">
@@ -579,8 +561,8 @@ export default function CompetitionTabs({
                       <p className="text-xs text-slate-500 truncate">{p.team}</p>
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0 ml-3">
-                      <span className="text-xs font-bold text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded-full">🟨 {p.yellows}</span>
-                      {p.reds > 0 && <span className="text-xs font-bold text-red-400 bg-red-500/20 px-2 py-0.5 rounded-full">🟥 {p.reds}</span>}
+                      <span className="flex items-center gap-1 text-xs font-bold text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded-full"><span className="inline-block w-2.5 h-3 rounded-[1px] bg-amber-400" /> {p.yellows}</span>
+                      {p.reds > 0 && <span className="flex items-center gap-1 text-xs font-bold text-red-400 bg-red-500/20 px-2 py-0.5 rounded-full"><span className="inline-block w-2.5 h-3 rounded-[1px] bg-red-500" /> {p.reds}</span>}
                     </div>
                   </div>
                 ))}
@@ -609,8 +591,8 @@ export default function CompetitionTabs({
                       <p className="text-xs text-slate-500 truncate">{p.team}</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0 ml-3">
-                      {p.yellows > 0 && <span className="text-xs font-bold text-amber-400">🟨 {p.yellows}</span>}
-                      {p.reds > 0 && <span className="text-xs font-bold text-red-400">🟥 {p.reds}</span>}
+                      {p.yellows > 0 && <span className="flex items-center gap-1 text-xs font-bold text-amber-400"><span className="inline-block w-2.5 h-3 rounded-[1px] bg-amber-400" /> {p.yellows}</span>}
+                      {p.reds > 0 && <span className="flex items-center gap-1 text-xs font-bold text-red-400"><span className="inline-block w-2.5 h-3 rounded-[1px] bg-red-500" /> {p.reds}</span>}
                     </div>
                   </div>
                 ))}
@@ -623,7 +605,6 @@ export default function CompetitionTabs({
               </h2>
               <div className="space-y-2">
                 {discipline.teams.slice(0, 15).map((t, i) => (
-                  COMPETITIONS_WITH_TEAM_PAGES.has(slug) ? (
                     <Link
                       key={i}
                       href={`/equip/${t.slug}`}
@@ -631,22 +612,10 @@ export default function CompetitionTabs({
                     >
                       <span className="text-sm font-medium text-slate-200 group-hover:text-white truncate">{t.name}</span>
                       <div className="flex items-center gap-2 shrink-0 ml-3">
-                        {t.yellows > 0 && <span className="text-xs font-bold text-amber-400">🟨 {t.yellows}</span>}
-                        {t.reds > 0 && <span className="text-xs font-bold text-red-400">🟥 {t.reds}</span>}
+                        {t.yellows > 0 && <span className="flex items-center gap-1 text-xs font-bold text-amber-400"><span className="inline-block w-2.5 h-3 rounded-[1px] bg-amber-400" /> {t.yellows}</span>}
+                        {t.reds > 0 && <span className="flex items-center gap-1 text-xs font-bold text-red-400"><span className="inline-block w-2.5 h-3 rounded-[1px] bg-red-500" /> {t.reds}</span>}
                       </div>
                     </Link>
-                  ) : (
-                    <div
-                      key={i}
-                      className="flex items-center justify-between bg-white/4 border border-white/6 rounded-xl px-4 py-2.5"
-                    >
-                      <span className="text-sm font-medium text-slate-200 truncate">{t.name}</span>
-                      <div className="flex items-center gap-2 shrink-0 ml-3">
-                        {t.yellows > 0 && <span className="text-xs font-bold text-amber-400">🟨 {t.yellows}</span>}
-                        {t.reds > 0 && <span className="text-xs font-bold text-red-400">🟥 {t.reds}</span>}
-                      </div>
-                    </div>
-                  )
                 ))}
               </div>
             </div>
@@ -677,8 +646,8 @@ export default function CompetitionTabs({
                     <tr className="border-b border-white/8 text-slate-500 text-xs uppercase tracking-wider">
                       <th className="text-left pb-3 font-medium">Àrbitre</th>
                       <th className="text-center pb-3 font-medium">Partits</th>
-                      <th className="text-center pb-3 font-medium">🟨 Total</th>
-                      <th className="text-center pb-3 font-medium">🟥 Total</th>
+                      <th className="text-center pb-3 font-medium text-amber-400">Grogues</th>
+                      <th className="text-center pb-3 font-medium text-red-400">Vermelles</th>
                       <th className="text-center pb-3 font-medium text-amber-400">G/Partit</th>
                       <th className="text-center pb-3 font-medium text-red-400">R/Partit</th>
                     </tr>

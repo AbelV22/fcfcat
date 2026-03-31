@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, UserPlus } from 'lucide-react'
 
 export default function CoachCTA() {
   return (
@@ -25,26 +25,31 @@ export default function CoachCTA() {
             <span className="gradient-text-hero"> partits avui</span>
           </h2>
           <p className="text-slate-400 mb-10 leading-relaxed text-sm sm:text-base max-w-lg mx-auto">
-            Registra el teu equip i accedeix a totes les dades de la teva competició.
-            Actes oficials FCF, rivals, plantilla i notes de partits.
+            Tria el teu equip i accedeix a totes les dades de la teva competicio.
+            Rivals, plantilla, apercibits i notes de partits.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/entrenador"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-slate-900
-                         font-semibold rounded-xl transition-all hover:bg-emerald-50
-                         hover:shadow-[0_0_40px_rgba(52,211,153,0.2)] text-base"
+              className="group inline-flex items-center justify-center gap-3 px-12 py-6
+                         bg-gradient-to-r from-emerald-500 to-emerald-600 text-white
+                         font-bold text-lg sm:text-xl rounded-2xl
+                         transition-all duration-300
+                         hover:from-emerald-400 hover:to-emerald-500
+                         hover:shadow-[0_0_60px_rgba(52,211,153,0.3)]
+                         hover:scale-[1.02] active:scale-[0.98]"
             >
-              Afegeix el teu equip — Gratis
-              <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+              <UserPlus size={24} />
+              Crea el teu compte gratis
+              <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               href="/login"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 border border-white/[0.12]
-                         hover:bg-white/5 text-slate-300 hover:text-white font-medium rounded-xl transition-all"
+              className="inline-flex items-center justify-center gap-2 px-8 py-5 border border-white/[0.12]
+                         hover:bg-white/5 text-slate-300 hover:text-white font-medium rounded-2xl transition-all text-base"
             >
-              Accés entrenadors
+              Ja tinc compte
             </Link>
           </div>
         </div>

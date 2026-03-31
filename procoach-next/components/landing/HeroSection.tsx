@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, ArrowRight, AlertTriangle, Zap, Target, TrendingUp } from 'lucide-react'
+import { Search, ArrowRight, AlertTriangle, Zap, Target, TrendingUp, Swords, ClipboardList, ShieldCheck, UserPlus } from 'lucide-react'
 import Link from 'next/link'
 
 const DEMO_RIVAL_SCORERS = [
@@ -149,11 +149,33 @@ export default function HeroSection() {
               </div>
             </form>
 
+            {/* Big register CTA */}
+            <div className="animate-fade-up delay-350 mb-8">
+              <Link
+                href="/entrenador"
+                className="group relative inline-flex items-center justify-center gap-3 w-full sm:w-auto
+                           px-10 py-5 sm:py-6
+                           bg-gradient-to-r from-emerald-500 to-emerald-600 text-white
+                           font-bold text-lg sm:text-xl rounded-2xl
+                           transition-all duration-300
+                           hover:from-emerald-400 hover:to-emerald-500
+                           hover:shadow-[0_0_60px_rgba(52,211,153,0.3)]
+                           hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <UserPlus size={24} className="shrink-0" />
+                Crea el teu compte gratis
+                <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
+              </Link>
+              <p className="text-xs text-slate-500 mt-3">
+                Rivals, plantilla, apercibits i molt mes. Tot en un clic.
+              </p>
+            </div>
+
             {/* Subtle feature tags */}
-            <div className="flex flex-wrap gap-2 sm:gap-4 text-[11px] sm:text-xs text-slate-500 animate-fade-up delay-400">
-              <span>⚔️ Anàlisi de rivals</span>
-              <span>📋 Notes de partits</span>
-              <span>🛡️ Control plantilla</span>
+            <div className="flex flex-wrap gap-3 sm:gap-5 text-[11px] sm:text-xs text-slate-500 animate-fade-up delay-400">
+              <span className="flex items-center gap-1.5"><Swords size={12} className="text-slate-500" /> Analisi de rivals</span>
+              <span className="flex items-center gap-1.5"><ClipboardList size={12} className="text-slate-500" /> Notes de partits</span>
+              <span className="flex items-center gap-1.5"><ShieldCheck size={12} className="text-slate-500" /> Control plantilla</span>
             </div>
           </div>
 
@@ -255,9 +277,9 @@ export default function HeroSection() {
                     >
                       <span className="text-slate-300 font-medium text-[11px]">{p.name}</span>
                       <div className="flex items-center gap-2">
-                        {p.goals > 0 && <span className="text-emerald-400/80 text-[11px]">{p.goals} ⚽</span>}
-                        <span className={`text-[11px] ${p.risk ? 'text-amber-400' : 'text-slate-600'}`}>
-                          🟨 {p.yellows}
+                        {p.goals > 0 && <span className="text-emerald-400/80 text-[11px]">{p.goals} gols</span>}
+                        <span className={`flex items-center gap-1 text-[11px] ${p.risk ? 'text-amber-400' : 'text-slate-600'}`}>
+                          <span className="inline-block w-2.5 h-3 rounded-[1px] bg-amber-400/80" /> {p.yellows}
                         </span>
                         {p.risk && <span className="text-[9px] text-amber-400/80 bg-amber-500/15 px-1.5 py-0.5 rounded">RISC</span>}
                       </div>

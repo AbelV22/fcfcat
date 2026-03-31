@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { Heart, Settings } from 'lucide-react'
 
 export default function PublicFooter() {
   return (
@@ -101,10 +102,10 @@ export default function PublicFooter() {
           <p className="text-xs text-slate-600">
             © 2025-2026 NeoScout · Dades no oficials extretes de fcf.cat
           </p>
-          <p className="text-xs text-slate-600">
-            Fet amb ❤️ per al futbol català
+          <p className="text-xs text-slate-600 flex items-center gap-1">
+            Fet amb <Heart size={12} className="text-red-500" /> per al futbol catala
           </p>
-          <Link href="/admin/login" className="text-xs text-slate-600 hover:text-slate-400 transition-colors">⚙</Link>
+          <Link href="/admin/login" className="text-slate-600 hover:text-slate-400 transition-colors"><Settings size={14} /></Link>
         </div>
       </div>
     </footer>
