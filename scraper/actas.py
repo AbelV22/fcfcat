@@ -210,10 +210,18 @@ def scrape_acta(client: FCFClient, acta_url: str) -> Optional[MatchReport]:
 
     staff_yc = sum(1 for c in report.yellow_cards if c.recipient_type == "technical_staff")
     staff_rc = sum(1 for c in report.red_cards if c.recipient_type == "technical_staff")
+    pen_count = sum(1 for g in report.goals if g.goal_type == "penalty")
+    og_count = sum(1 for g in report.goals if g.goal_type == "own_goal")
+    goal_extra = ""
+    if pen_count or og_count:
+        parts = []
+        if pen_count: parts.append(f"pen:{pen_count}")
+        if og_count: parts.append(f"og:{og_count}")
+        goal_extra = f" ({', '.join(parts)})"
     logger.info(
         f"Acta J{report.jornada}: {report.home_team} {report.home_score}-{report.away_score} {report.away_team} | "
         f"Home XI:{len(report.home_lineup)} Away XI:{len(report.away_lineup)} | "
-        f"Goals:{len(report.goals)} YC:{len(report.yellow_cards)} RC:{len(report.red_cards)} "
+        f"Goals:{len(report.goals)}{goal_extra} YC:{len(report.yellow_cards)} RC:{len(report.red_cards)} "
         f"(staff YC:{staff_yc} RC:{staff_rc})"
     )
 
@@ -261,35 +269,57 @@ def _parse_players(rows: list[Tag]) -> list[PlayerEntry]:
     return players
 
 
+GOAL_TYPE_MAP = {
+    "normal": "normal",
+    "penal": "penalty",
+    "propia": "own_goal",
+}
+
+# Pattern that captures the goal type CSS class followed by the goal details.
+# The goal type div (gol-normal/gol-penal/gol-propia) appears BEFORE the
+# acta-marcador-gol div in the same <td>, so we must capture both in one pass.
+_GOAL_RE = re.compile(
+    r'gol-(normal|penal|propia)'       # 1: goal type from CSS class
+    r'.*?'                              #    skip to running score marker
+    r'class="acta-marcador-gol"[^>]*>'
+    r'\s*(\d+)\s*[-–]\s*(\d+)'         # 2,3: running score (home - away)
+    r'.*?'                              #    skip to scorer link
+    r'<a\s+href="[^"]*jugador[^"]*">'
+    r'([^<]+)'                          # 4: scorer name
+    r'.*?'                              #    skip to minute
+    r'<td>\s*(\d+)[\'\u2032]?\s*</td>',  # 5: minute
+    re.DOTALL,
+)
+
+
 def _parse_goals(rows: list[Tag], home_team: str, away_team: str, soup: BeautifulSoup) -> list[GoalEvent]:
     """Parse goals from the Gols table.
-    
+
     Warning: FCF HTML for goals is often malformed (missing </a> tags)
     and split across multiple <tr> rows for a single goal.
     Instead of relying on BeautifulSoup's DOM tree which gets corrupted,
     we extract the raw HTML of all rows and parse it with regex.
+
+    Goal types are detected via CSS classes on the ball icon div:
+      - gol-normal  → normal goal
+      - gol-penal   → penalty goal
+      - gol-propia  → own goal
     """
     goals = []
     prev_home_score = 0
     prev_away_score = 0
-    
+
     # Concatenate all row HTML into one string so we can find goals
     # even if they are split across multiple rows (scorer in next tr, etc)
     tbl_html = "".join(str(row) for row in rows)
-    
-    # We look for the marker "<div class="acta-marcador-gol">" to identify a goal block.
-    # The block ends before the next marker or end of string.
-    blocks = re.split(r'class="acta-marcador-gol"[^>]*>', tbl_html)[1:]
-    
-    for block in blocks:
-        # Extract score: \s* 0 - 1 \s* <
-        score_match = re.search(r'^\s*(\d+)\s*[-–]\s*(\d+)\s*<', block)
-        if not score_match:
-            continue
-            
-        new_home = int(score_match.group(1))
-        new_away = int(score_match.group(2))
-        
+
+    for m in _GOAL_RE.finditer(tbl_html):
+        raw_type = m.group(1)
+        new_home = int(m.group(2))
+        new_away = int(m.group(3))
+        scorer = m.group(4).strip()
+        minute = m.group(5).strip()
+
         # Determine team from running score change
         team = ""
         if new_home > prev_home_score:
@@ -298,24 +328,15 @@ def _parse_goals(rows: list[Tag], home_team: str, away_team: str, soup: Beautifu
             team = "away"
         prev_home_score = new_home
         prev_away_score = new_away
-        
-        # Extract scorer name: <a href="...jugador...">PLAYER NAME ... <
-        scorer = ""
-        name_match = re.search(r'<a href="[^"]*jugador[^"]*">([^<]+)', block)
-        if name_match:
-            scorer = name_match.group(1).strip()
-            
-        # Extract minute: <td>12'</td> or <td> 12' </td>
-        minute = ""
-        min_match = re.search(r'<td>\s*(\d+)[\'\u2032]?\s*</td>', block)
-        if min_match:
-            minute = min_match.group(1).strip()
-            
+
+        goal_type = GOAL_TYPE_MAP.get(raw_type, "normal")
+
         if scorer:
             goals.append(GoalEvent(
                 player=scorer,
                 minute=minute,
                 team=team,
+                goal_type=goal_type,
             ))
 
     return goals

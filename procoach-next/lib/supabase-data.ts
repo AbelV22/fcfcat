@@ -749,7 +749,7 @@ export async function getRefereeBySlugDB(slug: string) {
   const matches = await fetchAllRows((from, to) =>
     supabase
       .from('fcf_referee_matches')
-      .select('competition, group_name, jornada, match_date, home_team, away_team, home_score, away_score, yellow_cards, red_cards')
+      .select('competition, group_name, jornada, match_date, home_team, away_team, home_score, away_score, yellow_cards, red_cards, goals')
       .eq('main_referee', refName)
       .order('match_date', { ascending: false })
       .range(from, to)
@@ -766,6 +766,13 @@ export async function getRefereeBySlugDB(slug: string) {
       .filter((c: any) => c.recipient_type === 'player')
   )
 
+  // Penalty stats (goal_type === 'penalty'; missing field treated as 'normal')
+  const allGoals = matches.flatMap(m => Array.isArray(m.goals) ? m.goals : [])
+  const penaltyGoals = allGoals.filter((g: any) => g.goal_type === 'penalty')
+  const matchesWithPenalty = matches.filter(m =>
+    (Array.isArray(m.goals) ? m.goals : []).some((g: any) => g.goal_type === 'penalty')
+  ).length
+
   return {
     name: refName,
     slug,
@@ -775,6 +782,9 @@ export async function getRefereeBySlugDB(slug: string) {
     staffCards: 0,
     yellows_per_match: matches.length > 0 ? +(yellows.length / matches.length).toFixed(2) : 0,
     reds_per_match: matches.length > 0 ? +(reds.length / matches.length).toFixed(2) : 0,
+    penalties_total: penaltyGoals.length,
+    penalties_per_match: matches.length > 0 ? +(penaltyGoals.length / matches.length).toFixed(2) : 0,
+    matches_with_penalty_pct: matches.length > 0 ? Math.round((matchesWithPenalty / matches.length) * 100) : 0,
     competitions: [...new Set(matches.map(m => m.competition))],
     recentMatches: matches.slice(0, 10).map(m => ({
       date: m.match_date,
@@ -786,6 +796,8 @@ export async function getRefereeBySlugDB(slug: string) {
         .filter((c: any) => c.recipient_type === 'player').length,
       reds: (Array.isArray(m.red_cards) ? m.red_cards : [])
         .filter((c: any) => c.recipient_type === 'player').length,
+      penalties: (Array.isArray(m.goals) ? m.goals : [])
+        .filter((g: any) => g.goal_type === 'penalty').length,
       competition: m.competition,
       group: m.group_name,
       jornada: m.jornada,
@@ -1038,6 +1050,10 @@ export type RefereeStatsDB = {
   competitionBreakdown: Array<{ competition: string; matches: number; yellows: number; reds: number }>
   // Goals context
   avg_goals_per_match: number
+  // Penalty stats (from goal_type field in goals JSONB; 0 until data is re-scraped)
+  penalties_total: number
+  penalties_per_match: number
+  matches_with_penalty_pct: number
   // Severity score (0-100) — composite strictness index
   severity_score: number
   // Whether referee is predicted (most recent in group) vs officially assigned
@@ -1385,7 +1401,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       ? supabase.from('fcf_player_stats').select('player_name, appearances, starts, goals, yellow_cards, red_cards, minutes_played').eq('team_slug', rivalSlug).eq('competition', competition).order('appearances', { ascending: false }).limit(30)
       : Promise.resolve({ data: [] as any[] }),
     refereeName
-      ? supabase.from('fcf_referee_matches').select('competition, jornada, match_date, home_team, away_team, home_score, away_score, yellow_cards, red_cards').eq('main_referee', refereeName).in('competition', SENIOR_LEVEL_COMPETITIONS).order('match_date', { ascending: false }).limit(50)
+      ? supabase.from('fcf_referee_matches').select('competition, jornada, match_date, home_team, away_team, home_score, away_score, yellow_cards, red_cards, goals').eq('main_referee', refereeName).in('competition', SENIOR_LEVEL_COMPETITIONS).order('match_date', { ascending: false }).limit(50)
       : Promise.resolve({ data: [] as any[] }),
     // H2H: team at home vs rival away
     rivalName && teamName
@@ -1531,6 +1547,16 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     const totalGoals = rm.reduce((s: number, m: any) => s + (m.home_score ?? 0) + (m.away_score ?? 0), 0)
     const avg_goals_per_match = rm.length > 0 ? +(totalGoals / rm.length).toFixed(2) : 0
 
+    // Penalty stats (goal_type === 'penalty'; missing field treated as 'normal')
+    const allRefGoals = rm.flatMap((m: any) => Array.isArray(m.goals) ? m.goals : [])
+    const refPenaltyGoals = allRefGoals.filter((g: any) => g.goal_type === 'penalty')
+    const refMatchesWithPenalty = rm.filter((m: any) =>
+      (Array.isArray(m.goals) ? m.goals : []).some((g: any) => g.goal_type === 'penalty')
+    ).length
+    const penalties_total = refPenaltyGoals.length
+    const penalties_per_match = rm.length > 0 ? +(penalties_total / rm.length).toFixed(2) : 0
+    const matches_with_penalty_pct = rm.length > 0 ? Math.round((refMatchesWithPenalty / rm.length) * 100) : 0
+
     // Competition breakdown
     const compMap: Record<string, { matches: number; yellows: number; reds: number }> = {}
     for (const m of rm) {
@@ -1622,6 +1648,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
         away_score: m.away_score,
         yellows: (Array.isArray(m.yellow_cards) ? m.yellow_cards : []).filter((c: any) => c.recipient_type === 'player').length,
         reds: (Array.isArray(m.red_cards) ? m.red_cards : []).filter((c: any) => c.recipient_type === 'player').length,
+        penalties: (Array.isArray(m.goals) ? m.goals : []).filter((g: any) => g.goal_type === 'penalty').length,
         competition: m.competition || '',
         jornada: m.jornada || 0,
       })),
@@ -1644,6 +1671,9 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       second_half_reds,
       competitionBreakdown,
       avg_goals_per_match,
+      penalties_total,
+      penalties_per_match,
+      matches_with_penalty_pct,
       severity_score,
       predicted: refereeIsPredicted,
     }

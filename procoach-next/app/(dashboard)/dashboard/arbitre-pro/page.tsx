@@ -212,11 +212,12 @@ export default async function ArbitreProPage() {
             </div>
 
             {/* ── Key Stats Grid ───────────────────────────────────────────────── */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
               {[
                 { v: ref.yellows_per_match.toFixed(1), l: 'Grogues/partit', c: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' },
                 { v: ref.reds_per_match.toFixed(2), l: 'Vermelles/partit', c: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20' },
                 { v: `${ref.matches_with_red_pct}%`, l: 'Partits amb expulsio', c: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20' },
+                { v: ref.penalties_per_match.toFixed(2), l: 'Penals/partit', c: 'text-cyan-400', bg: 'bg-cyan-500/10 border-cyan-500/20' },
                 { v: ref.avg_goals_per_match.toFixed(1), l: 'Gols/partit', c: 'text-green-400', bg: 'bg-green-500/10 border-green-500/20' },
               ].map(s => (
                 <div key={s.l} className={`rounded-xl p-4 text-center border ${s.bg}`}>
@@ -225,6 +226,26 @@ export default async function ArbitreProPage() {
                 </div>
               ))}
             </div>
+
+            {/* ── Penalty Detail ───────────────────────────────────────────────── */}
+            {ref.penalties_total > 0 && (
+              <div className="glass-card rounded-2xl p-5 border-cyan-500/15">
+                <div className="flex items-center gap-2 mb-3">
+                  <Target size={16} className="text-cyan-400" />
+                  <h3 className="text-sm font-bold text-white">Penals</h3>
+                </div>
+                <div className="flex items-center gap-6 text-sm">
+                  <div>
+                    <span className="text-slate-400">Total penals pitats: </span>
+                    <span className="font-bold text-cyan-400">{ref.penalties_total}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400">Partits amb penal: </span>
+                    <span className="font-bold text-cyan-400">{ref.matches_with_penalty_pct}%</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* ── Card Trend Sparkline ─────────────────────────────────────────── */}
             {ref.recentMatches.length >= 3 && (
@@ -386,6 +407,7 @@ export default async function ArbitreProPage() {
                         </span>
                         <span className="text-amber-400 text-xs shrink-0">{m.yellows}🟡</span>
                         {m.reds > 0 && <span className="text-red-400 text-xs shrink-0">{m.reds}🔴</span>}
+                        {(m as any).penalties > 0 && <span className="text-cyan-400 text-xs shrink-0">{(m as any).penalties}P</span>}
                       </div>
                     )
                   })}

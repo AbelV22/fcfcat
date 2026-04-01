@@ -93,10 +93,11 @@ export default async function ArbitrePage({ params }: Props) {
         </div>
 
         {/* Stats grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4 mb-6">
           <StatBadge value={ref.matches} label="Partits" color="text-white" />
           <StatBadge value={ref.yellows_per_match} label="🟨 per part." color="text-yellow-400" />
           <StatBadge value={ref.reds_per_match} label="🟥 per part." color="text-red-400" />
+          <StatBadge value={ref.penalties_per_match} label="Penals/part." color="text-cyan-400" />
           <StatBadge value={`${expulsionPct}%`} label="Amb expulsió" color="text-orange-400" />
         </div>
 
@@ -126,6 +127,9 @@ export default async function ArbitrePage({ params }: Props) {
                     )}
                     {match.reds > 0 && (
                       <span className="text-xs text-red-400 font-semibold">🟥{match.reds}</span>
+                    )}
+                    {(match as any).penalties > 0 && (
+                      <span className="text-xs text-cyan-400 font-semibold">P{(match as any).penalties}</span>
                     )}
                     {match.yellows === 0 && match.reds === 0 && (
                       <span className="text-[10px] text-slate-700">–</span>

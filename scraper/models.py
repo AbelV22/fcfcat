@@ -93,6 +93,7 @@ class GoalEvent:
     player: str
     minute: str  # can be "45+2", etc.
     team: str = ""  # "home" or "away"
+    goal_type: str = "normal"  # "normal", "penalty", "own_goal"
 
 
 @dataclass
