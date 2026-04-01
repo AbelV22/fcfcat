@@ -281,14 +281,11 @@ function computePlayers(
       }
     }
 
-    // Red cards (direct + double-yellow dismissal)
+    // Direct red cards (double-yellow dismissals are in yellow_cards, not red_cards)
     for (const c of reds) {
       if (!c.player) continue
       ensure(c.player)
       players[c.player].red_cards++
-      if (c.is_double_yellow_dismissal) {
-        players[c.player].yellow_cards++
-      }
     }
   }
 
@@ -585,7 +582,7 @@ function buildRivalFromIntelligence(
       yellow_cards: s.yellow_cards || 0,
       red_cards: s.red_cards || 0,
       minutes_played: s.minutes_played || 0,
-      risk: [4, 9, 14].includes(s.yellow_cards || 0),
+      risk: (s.yellow_cards || 0) % 5 === 4,
     }))
     .sort((a, b) => b.appearances - a.appearances)
 
@@ -648,7 +645,7 @@ function buildRivalReport(
 
   const rawPlayers = computePlayers(playedMatches, rivalSlug)
   const players: PlayerStat[] = Object.entries(rawPlayers)
-    .map(([name, s]) => ({ name, ...s, risk: [4, 9, 14].includes(s.yellow_cards) }))
+    .map(([name, s]) => ({ name, ...s, risk: s.yellow_cards % 5 === 4 }))
     .sort((a, b) => b.appearances - a.appearances)
 
   // global_referees has no goals data → all-zero buckets
@@ -847,13 +844,13 @@ export function buildTeamReport(teamSlug: string): TeamReport | null {
         yellow_cards: s.yellow_cards || 0,
         red_cards: s.red_cards || 0,
         minutes_played: s.minutes_played || 0,
-        risk: [4, 9, 14].includes(s.yellow_cards || 0),
+        risk: (s.yellow_cards || 0) % 5 === 4,
       }))
       .sort((a, b) => b.appearances - a.appearances)
   } else {
     const rawPlayers = computePlayers(playedMatches, resolvedSlug)
     players = Object.entries(rawPlayers)
-      .map(([name, s]) => ({ name, ...s, risk: [4, 9, 14].includes(s.yellow_cards) }))
+      .map(([name, s]) => ({ name, ...s, risk: s.yellow_cards % 5 === 4 }))
       .sort((a, b) => b.appearances - a.appearances)
   }
 

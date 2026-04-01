@@ -294,7 +294,8 @@ export async function getCompetitionDisciplineDB(slug: string) {
     .sort((a, b) => (b.yellows * 1 + b.reds * 5) - (a.yellows * 1 + a.reds * 5))
   const teams = Object.values(teamStats)
     .sort((a, b) => (b.yellows + b.reds * 3) - (a.yellows + a.reds * 3))
-  const riskPlayers = players.filter(p => p.yellows >= 4 && p.yellows % 4 === 0)
+  // FCF Art.336: suspensió automàtica als 5, 10, 15... grocs. Apercibido = 4, 9, 14...
+  const riskPlayers = players.filter(p => p.yellows % 5 === 4)
 
   return { players, teams, riskPlayers }
 }
@@ -653,7 +654,7 @@ export async function getTeamBasicDataDB(slug: string) {
       red_cards: p.red_cards || 0,
       minutes_played: p.minutes_played || 0,
       // FCF suspension thresholds: 4, 9, 14 yellow cards
-      risk: [4, 9, 14].includes(p.yellow_cards || 0),
+      risk: (p.yellow_cards || 0) % 5 === 4,
     })),
     sanctions: [] as any[],
     goalBuckets: [] as any[],
@@ -1302,7 +1303,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     yellow_cards: p.yellow_cards || 0,
     red_cards: p.red_cards || 0,
     minutes_played: p.minutes_played || 0,
-    risk: [4, 9, 14].includes(p.yellow_cards || 0),
+    risk: (p.yellow_cards || 0) % 5 === 4,
   }))
 
   // Group standings
@@ -1430,7 +1431,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       yellow_cards: p.yellow_cards || 0,
       red_cards: p.red_cards || 0,
       minutes_played: p.minutes_played || 0,
-      risk: [4, 9, 14].includes(p.yellow_cards || 0),
+      risk: (p.yellow_cards || 0) % 5 === 4,
     }))
 
     // Rival home/away GF/GA: use acta sums (real data from available matches)

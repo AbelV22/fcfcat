@@ -428,8 +428,8 @@ export function getCompetitionDiscipline(slug: string) {
   const teams = Object.values(teamStats)
     .sort((a, b) => (b.yellows + b.reds * 3) - (a.yellows + a.reds * 3))
 
-  // "Risc de sanció" = 4+ yellows without a red
-  const riskPlayers = players.filter(p => p.yellows >= 4 && p.yellows % 4 === 0)
+  // FCF Art.336: suspensió automàtica als 5, 10, 15... grocs. Apercibido = 4, 9, 14...
+  const riskPlayers = players.filter(p => p.yellows % 5 === 4)
 
   return { players, teams, riskPlayers }
 }
