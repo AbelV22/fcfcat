@@ -105,7 +105,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
           ) : (
             <>
               <FileDown size={16} className="group-hover:scale-110 transition-transform" />
-              <span>Informe PDF</span>
+              <span className="hidden xs:inline">Informe PDF</span>
             </>
           )}
         </button>

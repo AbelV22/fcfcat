@@ -1,0 +1,1076 @@
+/Users/abelvazquezsantisteban/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+
+ Running referee scrape for 23 competitions
+
+
+============================================================
+  🏗 Building Referee DB: Tercera Federació
+  Season: 2526 | Groups: 7
+============================================================
+
+  📂 Existing DB: 0 matches
+
+  [1/7] tercera-federacio/grup-1
+      Found 0 acta URLs
+
+      ✅ +0 new | ~0 already had | 0 errors
+  [2/7] tercera-federacio/grup-2
+      Found 0 acta URLs
+
+      ✅ +0 new | ~0 already had | 0 errors
+  [3/7] tercera-federacio/grup-3
+      Found 0 acta URLs
+
+      ✅ +0 new | ~0 already had | 0 errors
+  [4/7] tercera-federacio/grup-4
+      Found 0 acta URLs
+
+      ✅ +0 new | ~0 already had | 0 errors
+  [5/7] tercera-federacio/grup-5
+      Found 0 acta URLs
+
+      ✅ +0 new | ~0 already had | 0 errors
+  [6/7] tercera-federacio/grup-6
+      Found 0 acta URLs
+
+      ✅ +0 new | ~0 already had | 0 errors
+  [7/7] tercera-federacio/grup-7
+      Found 0 acta URLs
+
+      ✅ +0 new | ~0 already had | 0 errors
+
+============================================================
+  ✅ DONE — Tercera Federació
+============================================================
+  Actas scraped:     0
+  New matches added: 0
+  Already existed:   0
+  Validation errors: 0
+  Total in DB now:   0
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Lliga Elit
+  Season: 2526 | Groups: 1
+============================================================
+
+  📂 Existing DB: 0 matches
+
+  [1/1] lliga-elit/grup-1
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+19 new, ~0 skip)      Processing acta 30/192... (+29 new, ~0 skip)      Processing acta 40/192... (+39 new, ~0 skip)      Processing acta 50/192... (+49 new, ~0 skip)      Processing acta 60/192... (+59 new, ~0 skip)      Processing acta 70/192... (+69 new, ~0 skip)      Processing acta 80/192... (+79 new, ~0 skip)      Processing acta 90/192... (+89 new, ~0 skip)      Processing acta 100/192... (+99 new, ~0 skip)      Processing acta 110/192... (+109 new, ~0 skip)      Processing acta 120/192... (+119 new, ~0 skip)      Processing acta 130/192... (+129 new, ~0 skip)      Processing acta 140/192... (+139 new, ~0 skip)      Processing acta 150/192... (+149 new, ~0 skip)      Processing acta 160/192... (+159 new, ~0 skip)      Processing acta 170/192... (+169 new, ~0 skip)      Processing acta 180/192... (+179 new, ~0 skip)      Processing acta 190/192... (+189 new, ~0 skip)      Processing acta 192/192... (+191 new, ~0 skip)
+      ✅ +192 new | ~0 already had | 2 errors
+
+============================================================
+  ✅ DONE — Lliga Elit
+============================================================
+  Actas scraped:     192
+  New matches added: 192
+  Already existed:   0
+  Validation errors: 2
+  Total in DB now:   192
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Primera Catalana
+  Season: 2526 | Groups: 3
+============================================================
+
+  📂 Existing DB: 192 matches
+
+  [1/3] primera-catalana/grup-1
+      Found 190 acta URLs
+      Processing acta 10/190... (+9 new, ~0 skip)      Processing acta 20/190... (+19 new, ~0 skip)      Processing acta 30/190... (+29 new, ~0 skip)      Processing acta 40/190... (+39 new, ~0 skip)      Processing acta 50/190... (+49 new, ~0 skip)      Processing acta 60/190... (+59 new, ~0 skip)      Processing acta 70/190... (+69 new, ~0 skip)      Processing acta 80/190... (+79 new, ~0 skip)      Processing acta 90/190... (+89 new, ~0 skip)      Processing acta 100/190... (+99 new, ~0 skip)      Processing acta 110/190... (+109 new, ~0 skip)      Processing acta 120/190... (+119 new, ~0 skip)      Processing acta 130/190... (+129 new, ~0 skip)      Processing acta 140/190... (+139 new, ~0 skip)      Processing acta 150/190... (+149 new, ~0 skip)      Processing acta 160/190... (+159 new, ~0 skip)      Processing acta 170/190... (+169 new, ~0 skip)      Processing acta 180/190... (+179 new, ~0 skip)      Processing acta 190/190... (+189 new, ~0 skip)
+      ✅ +190 new | ~0 already had | 0 errors
+  [2/3] primera-catalana/grup-2
+      Found 191 acta URLs
+      Processing acta 10/191... (+9 new, ~0 skip)      Processing acta 20/191... (+19 new, ~0 skip)      Processing acta 30/191... (+29 new, ~0 skip)      Processing acta 40/191... (+39 new, ~0 skip)      Processing acta 50/191... (+49 new, ~0 skip)      Processing acta 60/191... (+59 new, ~0 skip)      Processing acta 70/191... (+69 new, ~0 skip)      Processing acta 80/191... (+79 new, ~0 skip)      Processing acta 90/191... (+89 new, ~0 skip)      Processing acta 100/191... (+99 new, ~0 skip)      Processing acta 110/191... (+109 new, ~0 skip)      Processing acta 120/191... (+119 new, ~0 skip)      Processing acta 130/191... (+129 new, ~0 skip)      Processing acta 140/191... (+139 new, ~0 skip)      Processing acta 150/191... (+149 new, ~0 skip)      Processing acta 160/191... (+159 new, ~0 skip)      Processing acta 170/191... (+169 new, ~0 skip)      Processing acta 180/191... (+179 new, ~0 skip)      Processing acta 190/191... (+189 new, ~0 skip)      Processing acta 191/191... (+190 new, ~0 skip)
+      ✅ +191 new | ~0 already had | 4 errors
+  [3/3] primera-catalana/grup-3
+      Found 191 acta URLs
+      Processing acta 10/191... (+9 new, ~0 skip)      Processing acta 20/191... (+19 new, ~0 skip)      Processing acta 30/191... (+29 new, ~0 skip)      Processing acta 40/191... (+39 new, ~0 skip)      Processing acta 50/191... (+49 new, ~0 skip)Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Read timed out. (read timeout=30). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/viladecans-ud-a/1cat/el-catllar-ce-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/viladecans-ud-a/1cat/el-catllar-ce-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/primera-catalana/grup-3/1cat/viladecans-ud-a/1cat/el-catllar-ce-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/primera-catalana/grup-3/1cat/viladecans-ud-a/1cat/el-catllar-ce-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/viladecans-ud-a/1cat/el-catllar-ce-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/tortosa-ebre-cf-a/1cat/natacio-terrassa-c-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/tortosa-ebre-cf-a/1cat/natacio-terrassa-c-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/tortosa-ebre-cf-a/1cat/natacio-terrassa-c-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/primera-catalana/grup-3/1cat/tortosa-ebre-cf-a/1cat/natacio-terrassa-c-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/primera-catalana/grup-3/1cat/tortosa-ebre-cf-a/1cat/natacio-terrassa-c-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/tortosa-ebre-cf-a/1cat/natacio-terrassa-c-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/tarrega-ue-a/1cat/cubelles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/tarrega-ue-a/1cat/cubelles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/tarrega-ue-a/1cat/cubelles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/primera-catalana/grup-3/1cat/tarrega-ue-a/1cat/cubelles-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/primera-catalana/grup-3/1cat/tarrega-ue-a/1cat/cubelles-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/tarrega-ue-a/1cat/cubelles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/nsa-camp-joliu-a/1cat/fundacio-e-atletic-vilafranca-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/nsa-camp-joliu-a/1cat/fundacio-e-atletic-vilafranca-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/nsa-camp-joliu-a/1cat/fundacio-e-atletic-vilafranca-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/primera-catalana/grup-3/1cat/nsa-camp-joliu-a/1cat/fundacio-e-atletic-vilafranca-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/primera-catalana/grup-3/1cat/nsa-camp-joliu-a/1cat/fundacio-e-atletic-vilafranca-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/nsa-camp-joliu-a/1cat/fundacio-e-atletic-vilafranca-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/martorell-cf-a/1cat/sant-cugat-futbol-club-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/martorell-cf-a/1cat/sant-cugat-futbol-club-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/martorell-cf-a/1cat/sant-cugat-futbol-club-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/primera-catalana/grup-3/1cat/martorell-cf-a/1cat/sant-cugat-futbol-club-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/primera-catalana/grup-3/1cat/martorell-cf-a/1cat/sant-cugat-futbol-club-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/martorell-cf-a/1cat/sant-cugat-futbol-club-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/rapitenca-ue-a/1cat/martorell-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/rapitenca-ue-a/1cat/martorell-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/rapitenca-ue-a/1cat/martorell-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/primera-catalana/grup-3/1cat/rapitenca-ue-a/1cat/martorell-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/primera-catalana/grup-3/1cat/rapitenca-ue-a/1cat/martorell-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/rapitenca-ue-a/1cat/martorell-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/santboia-fc-a/1cat/terlenka-barcelonista-c-f-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/primera-catalana/grup-3/1cat/santboia-fc-a/1cat/terlenka-barcelonista-c-f-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+      Processing acta 60/191... (+53 new, ~0 skip)      Processing acta 70/191... (+63 new, ~0 skip)      Processing acta 80/191... (+73 new, ~0 skip)      Processing acta 90/191... (+83 new, ~0 skip)      Processing acta 100/191... (+93 new, ~0 skip)      Processing acta 110/191... (+103 new, ~0 skip)      Processing acta 120/191... (+113 new, ~0 skip)      Processing acta 130/191... (+123 new, ~0 skip)      Processing acta 140/191... (+133 new, ~0 skip)      Processing acta 150/191... (+143 new, ~0 skip)      Processing acta 160/191... (+153 new, ~0 skip)      Processing acta 170/191... (+163 new, ~0 skip)      Processing acta 180/191... (+173 new, ~0 skip)      Processing acta 190/191... (+183 new, ~0 skip)      Processing acta 191/191... (+184 new, ~0 skip)
+      ✅ +185 new | ~0 already had | 1 errors
+Server error (502). Waiting 2s...
+
+============================================================
+  ✅ DONE — Primera Catalana
+============================================================
+  Actas scraped:     566
+  New matches added: 566
+  Already existed:   0
+  Validation errors: 5
+  Total in DB now:   758
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Segona Catalana
+  Season: 2526 | Groups: 6
+============================================================
+
+  📂 Existing DB: 758 matches
+
+  [1/6] segona-catalana/grup-1
+      Found 191 acta URLs
+      Processing acta 10/191... (+9 new, ~0 skip)      Processing acta 20/191... (+19 new, ~0 skip)      Processing acta 30/191... (+29 new, ~0 skip)      Processing acta 40/191... (+39 new, ~0 skip)      Processing acta 50/191... (+49 new, ~0 skip)      Processing acta 60/191... (+59 new, ~0 skip)      Processing acta 70/191... (+69 new, ~0 skip)      Processing acta 80/191... (+79 new, ~0 skip)      Processing acta 90/191... (+89 new, ~0 skip)      Processing acta 100/191... (+99 new, ~0 skip)      Processing acta 110/191... (+109 new, ~0 skip)      Processing acta 120/191... (+119 new, ~0 skip)      Processing acta 130/191... (+129 new, ~0 skip)      Processing acta 140/191... (+139 new, ~0 skip)      Processing acta 150/191... (+149 new, ~0 skip)      Processing acta 160/191... (+159 new, ~0 skip)      Processing acta 170/191... (+169 new, ~0 skip)      Processing acta 180/191... (+179 new, ~0 skip)      Processing acta 190/191... (+189 new, ~0 skip)      Processing acta 191/191... (+190 new, ~0 skip)
+      ✅ +191 new | ~0 already had | 4 errors
+  [2/6] segona-catalana/grup-2
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+19 new, ~0 skip)      Processing acta 30/192... (+29 new, ~0 skip)      Processing acta 40/192... (+39 new, ~0 skip)      Processing acta 50/192... (+49 new, ~0 skip)      Processing acta 60/192... (+59 new, ~0 skip)      Processing acta 70/192... (+69 new, ~0 skip)      Processing acta 80/192... (+79 new, ~0 skip)      Processing acta 90/192... (+89 new, ~0 skip)      Processing acta 100/192... (+99 new, ~0 skip)      Processing acta 110/192... (+109 new, ~0 skip)      Processing acta 120/192... (+119 new, ~0 skip)      Processing acta 130/192... (+129 new, ~0 skip)      Processing acta 140/192... (+139 new, ~0 skip)      Processing acta 150/192... (+149 new, ~0 skip)      Processing acta 160/192... (+159 new, ~0 skip)      Processing acta 170/192... (+169 new, ~0 skip)      Processing acta 180/192... (+179 new, ~0 skip)      Processing acta 190/192... (+189 new, ~0 skip)      Processing acta 192/192... (+191 new, ~0 skip)
+      ✅ +192 new | ~0 already had | 3 errors
+  [3/6] segona-catalana/grup-3
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+19 new, ~0 skip)      Processing acta 30/192... (+29 new, ~0 skip)      Processing acta 40/192... (+39 new, ~0 skip)      Processing acta 50/192... (+49 new, ~0 skip)      Processing acta 60/192... (+59 new, ~0 skip)      Processing acta 70/192... (+69 new, ~0 skip)      Processing acta 80/192... (+79 new, ~0 skip)      Processing acta 90/192... (+89 new, ~0 skip)      Processing acta 100/192... (+99 new, ~0 skip)      Processing acta 110/192... (+109 new, ~0 skip)      Processing acta 120/192... (+119 new, ~0 skip)      Processing acta 130/192... (+129 new, ~0 skip)      Processing acta 140/192... (+139 new, ~0 skip)      Processing acta 150/192... (+149 new, ~0 skip)      Processing acta 160/192... (+159 new, ~0 skip)      Processing acta 170/192... (+169 new, ~0 skip)      Processing acta 180/192... (+179 new, ~0 skip)      Processing acta 190/192... (+189 new, ~0 skip)      Processing acta 192/192... (+191 new, ~0 skip)
+      ✅ +192 new | ~0 already had | 9 errors
+  [4/6] segona-catalana/grup-4
+      Found 190 acta URLs
+      Processing acta 10/190... (+9 new, ~0 skip)      Processing acta 20/190... (+19 new, ~0 skip)      Processing acta 30/190... (+29 new, ~0 skip)      Processing acta 40/190... (+39 new, ~0 skip)      Processing acta 50/190... (+49 new, ~0 skip)      Processing acta 60/190... (+59 new, ~0 skip)      Processing acta 70/190... (+69 new, ~0 skip)      Processing acta 80/190... (+79 new, ~0 skip)      Processing acta 90/190... (+89 new, ~0 skip)      Processing acta 100/190... (+99 new, ~0 skip)      Processing acta 110/190... (+109 new, ~0 skip)      Processing acta 120/190... (+119 new, ~0 skip)      Processing acta 130/190... (+129 new, ~0 skip)      Processing acta 140/190... (+139 new, ~0 skip)      Processing acta 150/190... (+149 new, ~0 skip)      Processing acta 160/190... (+159 new, ~0 skip)      Processing acta 170/190... (+169 new, ~0 skip)      Processing acta 180/190... (+179 new, ~0 skip)      Processing acta 190/190... (+189 new, ~0 skip)
+      ✅ +190 new | ~0 already had | 2 errors
+  [5/6] segona-catalana/grup-5
+      Found 190 acta URLs
+      Processing acta 10/190... (+9 new, ~0 skip)      Processing acta 20/190... (+19 new, ~0 skip)      Processing acta 30/190... (+29 new, ~0 skip)      Processing acta 40/190... (+39 new, ~0 skip)      Processing acta 50/190... (+49 new, ~0 skip)      Processing acta 60/190... (+59 new, ~0 skip)      Processing acta 70/190... (+69 new, ~0 skip)      Processing acta 80/190... (+79 new, ~0 skip)      Processing acta 90/190... (+89 new, ~0 skip)      Processing acta 100/190... (+99 new, ~0 skip)      Processing acta 110/190... (+109 new, ~0 skip)      Processing acta 120/190... (+119 new, ~0 skip)      Processing acta 130/190... (+129 new, ~0 skip)      Processing acta 140/190... (+139 new, ~0 skip)      Processing acta 150/190... (+149 new, ~0 skip)      Processing acta 160/190... (+159 new, ~0 skip)      Processing acta 170/190... (+169 new, ~0 skip)      Processing acta 180/190... (+179 new, ~0 skip)      Processing acta 190/190... (+189 new, ~0 skip)
+      ✅ +190 new | ~0 already had | 2 errors
+  [6/6] segona-catalana/grup-6
+      Found 191 acta URLs
+      Processing acta 10/191... (+9 new, ~0 skip)      Processing acta 20/191... (+19 new, ~0 skip)      Processing acta 30/191... (+29 new, ~0 skip)      Processing acta 40/191... (+39 new, ~0 skip)      Processing acta 50/191... (+49 new, ~0 skip)      Processing acta 60/191... (+59 new, ~0 skip)      Processing acta 70/191... (+69 new, ~0 skip)      Processing acta 80/191... (+79 new, ~0 skip)      Processing acta 90/191... (+89 new, ~0 skip)      Processing acta 100/191... (+99 new, ~0 skip)      Processing acta 110/191... (+109 new, ~0 skip)      Processing acta 120/191... (+119 new, ~0 skip)      Processing acta 130/191... (+129 new, ~0 skip)      Processing acta 140/191... (+139 new, ~0 skip)      Processing acta 150/191... (+149 new, ~0 skip)      Processing acta 160/191... (+159 new, ~0 skip)      Processing acta 170/191... (+169 new, ~0 skip)      Processing acta 180/191... (+179 new, ~0 skip)      Processing acta 190/191... (+189 new, ~0 skip)      Processing acta 191/191... (+190 new, ~0 skip)
+      ✅ +191 new | ~0 already had | 0 errors
+
+============================================================
+  ✅ DONE — Segona Catalana
+============================================================
+  Actas scraped:     1146
+  New matches added: 1146
+  Already existed:   0
+  Validation errors: 20
+  Total in DB now:   1904
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Tercera Catalana
+  Season: 2526 | Groups: 18
+============================================================
+
+  📂 Existing DB: 1904 matches
+
+  [1/18] tercera-catalana/grup-1
+      Found 188 acta URLs
+      Processing acta 10/188... (+9 new, ~0 skip)      Processing acta 20/188... (+19 new, ~0 skip)      Processing acta 30/188... (+29 new, ~0 skip)      Processing acta 40/188... (+39 new, ~0 skip)      Processing acta 50/188... (+49 new, ~0 skip)      Processing acta 60/188... (+59 new, ~0 skip)      Processing acta 70/188... (+69 new, ~0 skip)      Processing acta 80/188... (+79 new, ~0 skip)      Processing acta 90/188... (+89 new, ~0 skip)      Processing acta 100/188... (+99 new, ~0 skip)      Processing acta 110/188... (+109 new, ~0 skip)      Processing acta 120/188... (+119 new, ~0 skip)      Processing acta 130/188... (+129 new, ~0 skip)      Processing acta 140/188... (+139 new, ~0 skip)      Processing acta 150/188... (+149 new, ~0 skip)      Processing acta 160/188... (+159 new, ~0 skip)      Processing acta 170/188... (+169 new, ~0 skip)      Processing acta 180/188... (+179 new, ~0 skip)      Processing acta 188/188... (+187 new, ~0 skip)
+      ✅ +188 new | ~0 already had | 1 errors
+  [2/18] tercera-catalana/grup-2
+      Found 191 acta URLs
+      Processing acta 10/191... (+9 new, ~0 skip)      Processing acta 20/191... (+19 new, ~0 skip)      Processing acta 30/191... (+29 new, ~0 skip)      Processing acta 40/191... (+39 new, ~0 skip)      Processing acta 50/191... (+49 new, ~0 skip)      Processing acta 60/191... (+59 new, ~0 skip)      Processing acta 70/191... (+69 new, ~0 skip)      Processing acta 80/191... (+79 new, ~0 skip)      Processing acta 90/191... (+89 new, ~0 skip)      Processing acta 100/191... (+99 new, ~0 skip)      Processing acta 110/191... (+109 new, ~0 skip)      Processing acta 120/191... (+119 new, ~0 skip)      Processing acta 130/191... (+129 new, ~0 skip)      Processing acta 140/191... (+139 new, ~0 skip)      Processing acta 150/191... (+149 new, ~0 skip)      Processing acta 160/191... (+159 new, ~0 skip)      Processing acta 170/191... (+169 new, ~0 skip)      Processing acta 180/191... (+179 new, ~0 skip)      Processing acta 190/191... (+189 new, ~0 skip)      Processing acta 191/191... (+190 new, ~0 skip)
+      ✅ +191 new | ~0 already had | 5 errors
+  [3/18] tercera-catalana/grup-3
+      Found 189 acta URLs
+      Processing acta 10/189... (+9 new, ~0 skip)      Processing acta 20/189... (+19 new, ~0 skip)      Processing acta 30/189... (+29 new, ~0 skip)      Processing acta 40/189... (+39 new, ~0 skip)      Processing acta 50/189... (+49 new, ~0 skip)      Processing acta 60/189... (+59 new, ~0 skip)      Processing acta 70/189... (+69 new, ~0 skip)      Processing acta 80/189... (+79 new, ~0 skip)      Processing acta 90/189... (+89 new, ~0 skip)      Processing acta 100/189... (+99 new, ~0 skip)      Processing acta 110/189... (+109 new, ~0 skip)      Processing acta 120/189... (+119 new, ~0 skip)      Processing acta 130/189... (+129 new, ~0 skip)      Processing acta 140/189... (+139 new, ~0 skip)      Processing acta 150/189... (+149 new, ~0 skip)      Processing acta 160/189... (+159 new, ~0 skip)      Processing acta 170/189... (+169 new, ~0 skip)      Processing acta 180/189... (+179 new, ~0 skip)      Processing acta 189/189... (+188 new, ~0 skip)
+      ✅ +189 new | ~0 already had | 3 errors
+  [4/18] tercera-catalana/grup-4
+      Found 190 acta URLs
+      Processing acta 10/190... (+9 new, ~0 skip)      Processing acta 20/190... (+19 new, ~0 skip)      Processing acta 30/190... (+29 new, ~0 skip)      Processing acta 40/190... (+39 new, ~0 skip)      Processing acta 50/190... (+49 new, ~0 skip)      Processing acta 60/190... (+59 new, ~0 skip)      Processing acta 70/190... (+69 new, ~0 skip)      Processing acta 80/190... (+79 new, ~0 skip)      Processing acta 90/190... (+89 new, ~0 skip)      Processing acta 100/190... (+99 new, ~0 skip)      Processing acta 110/190... (+109 new, ~0 skip)      Processing acta 120/190... (+119 new, ~0 skip)      Processing acta 130/190... (+129 new, ~0 skip)      Processing acta 140/190... (+139 new, ~0 skip)      Processing acta 150/190... (+149 new, ~0 skip)      Processing acta 160/190... (+159 new, ~0 skip)      Processing acta 170/190... (+169 new, ~0 skip)      Processing acta 180/190... (+179 new, ~0 skip)      Processing acta 190/190... (+189 new, ~0 skip)
+      ✅ +190 new | ~0 already had | 2 errors
+  [5/18] tercera-catalana/grup-5
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+19 new, ~0 skip)      Processing acta 30/192... (+29 new, ~0 skip)      Processing acta 40/192... (+39 new, ~0 skip)      Processing acta 50/192... (+49 new, ~0 skip)      Processing acta 60/192... (+59 new, ~0 skip)      Processing acta 70/192... (+69 new, ~0 skip)      Processing acta 80/192... (+79 new, ~0 skip)      Processing acta 90/192... (+89 new, ~0 skip)      Processing acta 100/192... (+99 new, ~0 skip)      Processing acta 110/192... (+109 new, ~0 skip)      Processing acta 120/192... (+119 new, ~0 skip)      Processing acta 130/192... (+129 new, ~0 skip)      Processing acta 140/192... (+139 new, ~0 skip)      Processing acta 150/192... (+149 new, ~0 skip)      Processing acta 160/192... (+159 new, ~0 skip)      Processing acta 170/192... (+169 new, ~0 skip)      Processing acta 180/192... (+179 new, ~0 skip)      Processing acta 190/192... (+189 new, ~0 skip)      Processing acta 192/192... (+191 new, ~0 skip)
+      ✅ +192 new | ~0 already had | 0 errors
+  [6/18] tercera-catalana/grup-6
+      Found 187 acta URLs
+      Processing acta 10/187... (+9 new, ~0 skip)      Processing acta 20/187... (+19 new, ~0 skip)      Processing acta 30/187... (+29 new, ~0 skip)      Processing acta 40/187... (+39 new, ~0 skip)      Processing acta 50/187... (+49 new, ~0 skip)      Processing acta 60/187... (+59 new, ~0 skip)      Processing acta 70/187... (+69 new, ~0 skip)      Processing acta 80/187... (+79 new, ~0 skip)      Processing acta 90/187... (+89 new, ~0 skip)      Processing acta 100/187... (+99 new, ~0 skip)      Processing acta 110/187... (+109 new, ~0 skip)      Processing acta 120/187... (+119 new, ~0 skip)      Processing acta 130/187... (+129 new, ~0 skip)      Processing acta 140/187... (+139 new, ~0 skip)      Processing acta 150/187... (+149 new, ~0 skip)      Processing acta 160/187... (+159 new, ~0 skip)      Processing acta 170/187... (+169 new, ~0 skip)      Processing acta 180/187... (+179 new, ~0 skip)      Processing acta 187/187... (+186 new, ~0 skip)
+      ✅ +187 new | ~0 already had | 10 errors
+  [7/18] tercera-catalana/grup-7
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+19 new, ~0 skip)      Processing acta 30/192... (+29 new, ~0 skip)      Processing acta 40/192... (+39 new, ~0 skip)      Processing acta 50/192... (+49 new, ~0 skip)      Processing acta 60/192... (+59 new, ~0 skip)      Processing acta 70/192... (+69 new, ~0 skip)      Processing acta 80/192... (+79 new, ~0 skip)      Processing acta 90/192... (+89 new, ~0 skip)      Processing acta 100/192... (+99 new, ~0 skip)      Processing acta 110/192... (+109 new, ~0 skip)      Processing acta 120/192... (+119 new, ~0 skip)      Processing acta 130/192... (+129 new, ~0 skip)      Processing acta 140/192... (+139 new, ~0 skip)      Processing acta 150/192... (+149 new, ~0 skip)      Processing acta 160/192... (+159 new, ~0 skip)      Processing acta 170/192... (+169 new, ~0 skip)      Processing acta 180/192... (+179 new, ~0 skip)      Processing acta 190/192... (+189 new, ~0 skip)      Processing acta 192/192... (+191 new, ~0 skip)
+      ✅ +192 new | ~0 already had | 9 errors
+  [8/18] tercera-catalana/grup-8
+      Found 191 acta URLs
+      Processing acta 10/191... (+9 new, ~0 skip)      Processing acta 20/191... (+19 new, ~0 skip)      Processing acta 30/191... (+29 new, ~0 skip)      Processing acta 40/191... (+39 new, ~0 skip)      Processing acta 50/191... (+49 new, ~0 skip)      Processing acta 60/191... (+59 new, ~0 skip)      Processing acta 70/191... (+69 new, ~0 skip)      Processing acta 80/191... (+79 new, ~0 skip)      Processing acta 90/191... (+89 new, ~0 skip)      Processing acta 100/191... (+99 new, ~0 skip)      Processing acta 110/191... (+109 new, ~0 skip)      Processing acta 120/191... (+119 new, ~0 skip)      Processing acta 130/191... (+129 new, ~0 skip)      Processing acta 140/191... (+139 new, ~0 skip)      Processing acta 150/191... (+149 new, ~0 skip)      Processing acta 160/191... (+159 new, ~0 skip)      Processing acta 170/191... (+169 new, ~0 skip)      Processing acta 180/191... (+179 new, ~0 skip)      Processing acta 190/191... (+189 new, ~0 skip)      Processing acta 191/191... (+190 new, ~0 skip)
+      ✅ +191 new | ~0 already had | 25 errors
+  [9/18] tercera-catalana/grup-9
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+19 new, ~0 skip)      Processing acta 30/192... (+29 new, ~0 skip)      Processing acta 40/192... (+39 new, ~0 skip)      Processing acta 50/192... (+49 new, ~0 skip)      Processing acta 60/192... (+59 new, ~0 skip)      Processing acta 70/192... (+69 new, ~0 skip)      Processing acta 80/192... (+79 new, ~0 skip)      Processing acta 90/192... (+89 new, ~0 skip)      Processing acta 100/192... (+99 new, ~0 skip)      Processing acta 110/192... (+109 new, ~0 skip)      Processing acta 120/192... (+119 new, ~0 skip)      Processing acta 130/192... (+129 new, ~0 skip)      Processing acta 140/192... (+139 new, ~0 skip)      Processing acta 150/192... (+149 new, ~0 skip)      Processing acta 160/192... (+159 new, ~0 skip)      Processing acta 170/192... (+169 new, ~0 skip)      Processing acta 180/192... (+179 new, ~0 skip)      Processing acta 190/192... (+189 new, ~0 skip)      Processing acta 192/192... (+191 new, ~0 skip)
+      ✅ +192 new | ~0 already had | 2 errors
+  [10/18] tercera-catalana/grup-10
+      Found 168 acta URLs
+      Processing acta 10/168... (+9 new, ~0 skip)      Processing acta 20/168... (+19 new, ~0 skip)      Processing acta 30/168... (+29 new, ~0 skip)      Processing acta 40/168... (+39 new, ~0 skip)      Processing acta 50/168... (+49 new, ~0 skip)      Processing acta 60/168... (+59 new, ~0 skip)      Processing acta 70/168... (+69 new, ~0 skip)      Processing acta 80/168... (+79 new, ~0 skip)      Processing acta 90/168... (+89 new, ~0 skip)      Processing acta 100/168... (+99 new, ~0 skip)      Processing acta 110/168... (+109 new, ~0 skip)      Processing acta 120/168... (+119 new, ~0 skip)      Processing acta 130/168... (+129 new, ~0 skip)      Processing acta 140/168... (+139 new, ~0 skip)      Processing acta 150/168... (+149 new, ~0 skip)      Processing acta 160/168... (+159 new, ~0 skip)      Processing acta 168/168... (+167 new, ~0 skip)
+      ✅ +168 new | ~0 already had | 6 errors
+  [11/18] tercera-catalana/grup-11
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+19 new, ~0 skip)      Processing acta 30/192... (+29 new, ~0 skip)      Processing acta 40/192... (+39 new, ~0 skip)      Processing acta 50/192... (+49 new, ~0 skip)      Processing acta 60/192... (+59 new, ~0 skip)      Processing acta 70/192... (+69 new, ~0 skip)      Processing acta 80/192... (+79 new, ~0 skip)      Processing acta 90/192... (+89 new, ~0 skip)      Processing acta 100/192... (+99 new, ~0 skip)      Processing acta 110/192... (+109 new, ~0 skip)      Processing acta 120/192... (+119 new, ~0 skip)      Processing acta 130/192... (+129 new, ~0 skip)      Processing acta 140/192... (+139 new, ~0 skip)      Processing acta 150/192... (+149 new, ~0 skip)      Processing acta 160/192... (+159 new, ~0 skip)      Processing acta 170/192... (+169 new, ~0 skip)      Processing acta 180/192... (+179 new, ~0 skip)      Processing acta 190/192... (+189 new, ~0 skip)      Processing acta 192/192... (+191 new, ~0 skip)
+      ✅ +192 new | ~0 already had | 4 errors
+  [12/18] tercera-catalana/grup-12
+      Found 190 acta URLs
+      Processing acta 10/190... (+9 new, ~0 skip)      Processing acta 20/190... (+19 new, ~0 skip)      Processing acta 30/190... (+29 new, ~0 skip)      Processing acta 40/190... (+39 new, ~0 skip)      Processing acta 50/190... (+49 new, ~0 skip)      Processing acta 60/190... (+59 new, ~0 skip)      Processing acta 70/190... (+69 new, ~0 skip)      Processing acta 80/190... (+79 new, ~0 skip)      Processing acta 90/190... (+89 new, ~0 skip)      Processing acta 100/190... (+99 new, ~0 skip)      Processing acta 110/190... (+109 new, ~0 skip)      Processing acta 120/190... (+119 new, ~0 skip)      Processing acta 130/190... (+129 new, ~0 skip)      Processing acta 140/190... (+139 new, ~0 skip)      Processing acta 150/190... (+149 new, ~0 skip)      Processing acta 160/190... (+159 new, ~0 skip)      Processing acta 170/190... (+169 new, ~0 skip)      Processing acta 180/190... (+179 new, ~0 skip)      Processing acta 190/190... (+189 new, ~0 skip)
+      ✅ +190 new | ~0 already had | 7 errors
+  [13/18] tercera-catalana/grup-13
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+19 new, ~0 skip)      Processing acta 30/192... (+29 new, ~0 skip)      Processing acta 40/192... (+39 new, ~0 skip)      Processing acta 50/192... (+49 new, ~0 skip)      Processing acta 60/192... (+59 new, ~0 skip)      Processing acta 70/192... (+69 new, ~0 skip)      Processing acta 80/192... (+79 new, ~0 skip)      Processing acta 90/192... (+89 new, ~0 skip)      Processing acta 100/192... (+99 new, ~0 skip)      Processing acta 110/192... (+109 new, ~0 skip)      Processing acta 120/192... (+119 new, ~0 skip)      Processing acta 130/192... (+129 new, ~0 skip)      Processing acta 140/192... (+139 new, ~0 skip)      Processing acta 150/192... (+149 new, ~0 skip)      Processing acta 160/192... (+159 new, ~0 skip)      Processing acta 170/192... (+169 new, ~0 skip)      Processing acta 180/192... (+179 new, ~0 skip)      Processing acta 190/192... (+189 new, ~0 skip)      Processing acta 192/192... (+191 new, ~0 skip)
+      ✅ +192 new | ~0 already had | 0 errors
+  [14/18] tercera-catalana/grup-14
+      Found 191 acta URLs
+      Processing acta 10/191... (+9 new, ~0 skip)      Processing acta 20/191... (+19 new, ~0 skip)      Processing acta 30/191... (+29 new, ~0 skip)      Processing acta 40/191... (+39 new, ~0 skip)      Processing acta 50/191... (+49 new, ~0 skip)      Processing acta 60/191... (+59 new, ~0 skip)      Processing acta 70/191... (+69 new, ~0 skip)      Processing acta 80/191... (+79 new, ~0 skip)      Processing acta 90/191... (+89 new, ~0 skip)      Processing acta 100/191... (+99 new, ~0 skip)      Processing acta 110/191... (+109 new, ~0 skip)      Processing acta 120/191... (+119 new, ~0 skip)      Processing acta 130/191... (+129 new, ~0 skip)      Processing acta 140/191... (+139 new, ~0 skip)      Processing acta 150/191... (+149 new, ~0 skip)      Processing acta 160/191... (+159 new, ~0 skip)      Processing acta 170/191... (+169 new, ~0 skip)      Processing acta 180/191... (+179 new, ~0 skip)      Processing acta 190/191... (+189 new, ~0 skip)      Processing acta 191/191... (+190 new, ~0 skip)
+      ✅ +191 new | ~0 already had | 2 errors
+  [15/18] tercera-catalana/grup-15
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+19 new, ~0 skip)      Processing acta 30/192... (+29 new, ~0 skip)      Processing acta 40/192... (+39 new, ~0 skip)      Processing acta 50/192... (+49 new, ~0 skip)      Processing acta 60/192... (+59 new, ~0 skip)      Processing acta 70/192... (+69 new, ~0 skip)      Processing acta 80/192... (+79 new, ~0 skip)      Processing acta 90/192... (+89 new, ~0 skip)      Processing acta 100/192... (+99 new, ~0 skip)      Processing acta 110/192... (+109 new, ~0 skip)      Processing acta 120/192... (+119 new, ~0 skip)      Processing acta 130/192... (+129 new, ~0 skip)      Processing acta 140/192... (+139 new, ~0 skip)      Processing acta 150/192... (+149 new, ~0 skip)      Processing acta 160/192... (+159 new, ~0 skip)      Processing acta 170/192... (+169 new, ~0 skip)      Processing acta 180/192... (+179 new, ~0 skip)      Processing acta 190/192... (+189 new, ~0 skip)      Processing acta 192/192... (+191 new, ~0 skip)
+      ✅ +192 new | ~0 already had | 5 errors
+  [16/18] tercera-catalana/grup-16
+      Found 185 acta URLs
+      Processing acta 10/185... (+9 new, ~0 skip)      Processing acta 20/185... (+19 new, ~0 skip)      Processing acta 30/185... (+29 new, ~0 skip)      Processing acta 40/185... (+39 new, ~0 skip)      Processing acta 50/185... (+49 new, ~0 skip)      Processing acta 60/185... (+59 new, ~0 skip)      Processing acta 70/185... (+69 new, ~0 skip)      Processing acta 80/185... (+79 new, ~0 skip)      Processing acta 90/185... (+89 new, ~0 skip)      Processing acta 100/185... (+99 new, ~0 skip)      Processing acta 110/185... (+109 new, ~0 skip)      Processing acta 120/185... (+119 new, ~0 skip)      Processing acta 130/185... (+129 new, ~0 skip)      Processing acta 140/185... (+139 new, ~0 skip)      Processing acta 150/185... (+149 new, ~0 skip)      Processing acta 160/185... (+159 new, ~0 skip)      Processing acta 170/185... (+169 new, ~0 skip)      Processing acta 180/185... (+179 new, ~0 skip)      Processing acta 185/185... (+184 new, ~0 skip)
+      ✅ +185 new | ~0 already had | 6 errors
+  [17/18] tercera-catalana/grup-17
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+19 new, ~0 skip)      Processing acta 30/192... (+29 new, ~0 skip)      Processing acta 40/192... (+39 new, ~0 skip)      Processing acta 50/192... (+49 new, ~0 skip)      Processing acta 60/192... (+59 new, ~0 skip)      Processing acta 70/192... (+69 new, ~0 skip)      Processing acta 80/192... (+79 new, ~0 skip)      Processing acta 90/192... (+89 new, ~0 skip)      Processing acta 100/192... (+99 new, ~0 skip)      Processing acta 110/192... (+109 new, ~0 skip)      Processing acta 120/192... (+119 new, ~0 skip)      Processing acta 130/192... (+129 new, ~0 skip)      Processing acta 140/192... (+139 new, ~0 skip)      Processing acta 150/192... (+149 new, ~0 skip)      Processing acta 160/192... (+159 new, ~0 skip)      Processing acta 170/192... (+169 new, ~0 skip)      Processing acta 180/192... (+179 new, ~0 skip)      Processing acta 190/192... (+189 new, ~0 skip)      Processing acta 192/192... (+191 new, ~0 skip)
+      ✅ +192 new | ~0 already had | 2 errors
+  [18/18] tercera-catalana/grup-18
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+19 new, ~0 skip)      Processing acta 30/192... (+29 new, ~0 skip)      Processing acta 40/192... (+39 new, ~0 skip)      Processing acta 50/192... (+49 new, ~0 skip)      Processing acta 60/192... (+59 new, ~0 skip)      Processing acta 70/192... (+69 new, ~0 skip)      Processing acta 80/192... (+79 new, ~0 skip)      Processing acta 90/192... (+89 new, ~0 skip)      Processing acta 100/192... (+99 new, ~0 skip)      Processing acta 110/192... (+109 new, ~0 skip)      Processing acta 120/192... (+119 new, ~0 skip)      Processing acta 130/192... (+129 new, ~0 skip)      Processing acta 140/192... (+139 new, ~0 skip)      Processing acta 150/192... (+149 new, ~0 skip)      Processing acta 160/192... (+159 new, ~0 skip)      Processing acta 170/192... (+169 new, ~0 skip)      Processing acta 180/192... (+179 new, ~0 skip)      Processing acta 190/192... (+189 new, ~0 skip)      Processing acta 192/192... (+191 new, ~0 skip)
+      ✅ +192 new | ~0 already had | 4 errors
+
+============================================================
+  ✅ DONE — Tercera Catalana
+============================================================
+  Actas scraped:     3406
+  New matches added: 3406
+  Already existed:   0
+  Validation errors: 93
+  Total in DB now:   5310
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Quarta Catalana
+  Season: 2526 | Groups: 19
+============================================================
+
+  📂 Existing DB: 5310 matches
+
+  [1/19] quarta-catalana/grup-1
+      Found 145 acta URLs
+      Processing acta 10/145... (+9 new, ~0 skip)      Processing acta 20/145... (+19 new, ~0 skip)      Processing acta 30/145... (+29 new, ~0 skip)      Processing acta 40/145... (+39 new, ~0 skip)      Processing acta 50/145... (+49 new, ~0 skip)      Processing acta 60/145... (+59 new, ~0 skip)      Processing acta 70/145... (+69 new, ~0 skip)      Processing acta 80/145... (+79 new, ~0 skip)      Processing acta 90/145... (+89 new, ~0 skip)      Processing acta 100/145... (+99 new, ~0 skip)      Processing acta 110/145... (+109 new, ~0 skip)      Processing acta 120/145... (+119 new, ~0 skip)      Processing acta 130/145... (+129 new, ~0 skip)      Processing acta 140/145... (+139 new, ~0 skip)      Processing acta 145/145... (+144 new, ~0 skip)
+      ✅ +145 new | ~0 already had | 7 errors
+  [2/19] quarta-catalana/grup-2
+      Found 142 acta URLs
+      Processing acta 10/142... (+9 new, ~0 skip)      Processing acta 20/142... (+19 new, ~0 skip)      Processing acta 30/142... (+29 new, ~0 skip)      Processing acta 40/142... (+39 new, ~0 skip)      Processing acta 50/142... (+49 new, ~0 skip)      Processing acta 60/142... (+59 new, ~0 skip)      Processing acta 70/142... (+69 new, ~0 skip)      Processing acta 80/142... (+79 new, ~0 skip)      Processing acta 90/142... (+89 new, ~0 skip)      Processing acta 100/142... (+99 new, ~0 skip)      Processing acta 110/142... (+109 new, ~0 skip)      Processing acta 120/142... (+119 new, ~0 skip)      Processing acta 130/142... (+129 new, ~0 skip)      Processing acta 140/142... (+139 new, ~0 skip)      Processing acta 142/142... (+141 new, ~0 skip)
+      ✅ +142 new | ~0 already had | 0 errors
+  [3/19] quarta-catalana/grup-3
+      Found 181 acta URLs
+      Processing acta 10/181... (+9 new, ~0 skip)      Processing acta 20/181... (+19 new, ~0 skip)      Processing acta 30/181... (+29 new, ~0 skip)      Processing acta 40/181... (+39 new, ~0 skip)      Processing acta 50/181... (+49 new, ~0 skip)      Processing acta 60/181... (+59 new, ~0 skip)      Processing acta 70/181... (+69 new, ~0 skip)      Processing acta 80/181... (+79 new, ~0 skip)      Processing acta 90/181... (+89 new, ~0 skip)      Processing acta 100/181... (+99 new, ~0 skip)      Processing acta 110/181... (+109 new, ~0 skip)      Processing acta 120/181... (+119 new, ~0 skip)      Processing acta 130/181... (+129 new, ~0 skip)      Processing acta 140/181... (+139 new, ~0 skip)      Processing acta 150/181... (+149 new, ~0 skip)      Processing acta 160/181... (+159 new, ~0 skip)      Processing acta 170/181... (+169 new, ~0 skip)      Processing acta 180/181... (+179 new, ~0 skip)      Processing acta 181/181... (+180 new, ~0 skip)
+      ✅ +181 new | ~0 already had | 2 errors
+  [4/19] quarta-catalana/grup-4
+      Found 131 acta URLs
+      Processing acta 10/131... (+9 new, ~0 skip)      Processing acta 20/131... (+19 new, ~0 skip)      Processing acta 30/131... (+29 new, ~0 skip)      Processing acta 40/131... (+39 new, ~0 skip)      Processing acta 50/131... (+49 new, ~0 skip)      Processing acta 60/131... (+59 new, ~0 skip)      Processing acta 70/131... (+69 new, ~0 skip)      Processing acta 80/131... (+79 new, ~0 skip)      Processing acta 90/131... (+89 new, ~0 skip)      Processing acta 100/131... (+99 new, ~0 skip)      Processing acta 110/131... (+109 new, ~0 skip)      Processing acta 120/131... (+119 new, ~0 skip)      Processing acta 130/131... (+129 new, ~0 skip)      Processing acta 131/131... (+130 new, ~0 skip)
+      ✅ +131 new | ~0 already had | 0 errors
+  [5/19] quarta-catalana/grup-5
+      Found 166 acta URLs
+      Processing acta 10/166... (+9 new, ~0 skip)      Processing acta 20/166... (+19 new, ~0 skip)      Processing acta 30/166... (+29 new, ~0 skip)      Processing acta 40/166... (+39 new, ~0 skip)      Processing acta 50/166... (+49 new, ~0 skip)      Processing acta 60/166... (+59 new, ~0 skip)      Processing acta 70/166... (+69 new, ~0 skip)      Processing acta 80/166... (+79 new, ~0 skip)      Processing acta 90/166... (+89 new, ~0 skip)      Processing acta 100/166... (+99 new, ~0 skip)      Processing acta 110/166... (+109 new, ~0 skip)      Processing acta 120/166... (+119 new, ~0 skip)      Processing acta 130/166... (+129 new, ~0 skip)      Processing acta 140/166... (+139 new, ~0 skip)      Processing acta 150/166... (+149 new, ~0 skip)      Processing acta 160/166... (+159 new, ~0 skip)      Processing acta 166/166... (+165 new, ~0 skip)
+      ✅ +166 new | ~0 already had | 2 errors
+  [6/19] quarta-catalana/grup-6
+      Found 152 acta URLs
+      Processing acta 10/152... (+9 new, ~0 skip)      Processing acta 20/152... (+19 new, ~0 skip)      Processing acta 30/152... (+29 new, ~0 skip)      Processing acta 40/152... (+39 new, ~0 skip)      Processing acta 50/152... (+49 new, ~0 skip)      Processing acta 60/152... (+59 new, ~0 skip)      Processing acta 70/152... (+69 new, ~0 skip)      Processing acta 80/152... (+79 new, ~0 skip)      Processing acta 90/152... (+89 new, ~0 skip)      Processing acta 100/152... (+99 new, ~0 skip)      Processing acta 110/152... (+109 new, ~0 skip)      Processing acta 120/152... (+119 new, ~0 skip)      Processing acta 130/152... (+129 new, ~0 skip)      Processing acta 140/152... (+139 new, ~0 skip)      Processing acta 150/152... (+149 new, ~0 skip)      Processing acta 152/152... (+151 new, ~0 skip)
+      ✅ +152 new | ~0 already had | 2 errors
+  [7/19] quarta-catalana/grup-7
+      Found 165 acta URLs
+      Processing acta 10/165... (+9 new, ~0 skip)      Processing acta 20/165... (+19 new, ~0 skip)      Processing acta 30/165... (+29 new, ~0 skip)      Processing acta 40/165... (+39 new, ~0 skip)      Processing acta 50/165... (+49 new, ~0 skip)      Processing acta 60/165... (+59 new, ~0 skip)      Processing acta 70/165... (+69 new, ~0 skip)      Processing acta 80/165... (+79 new, ~0 skip)      Processing acta 90/165... (+89 new, ~0 skip)      Processing acta 100/165... (+99 new, ~0 skip)      Processing acta 110/165... (+109 new, ~0 skip)      Processing acta 120/165... (+119 new, ~0 skip)      Processing acta 130/165... (+129 new, ~0 skip)      Processing acta 140/165... (+139 new, ~0 skip)      Processing acta 150/165... (+149 new, ~0 skip)      Processing acta 160/165... (+159 new, ~0 skip)      Processing acta 165/165... (+164 new, ~0 skip)
+      ✅ +165 new | ~0 already had | 10 errors
+  [8/19] quarta-catalana/grup-8
+      Found 189 acta URLs
+      Processing acta 10/189... (+9 new, ~0 skip)      Processing acta 20/189... (+19 new, ~0 skip)      Processing acta 30/189... (+29 new, ~0 skip)      Processing acta 40/189... (+39 new, ~0 skip)      Processing acta 50/189... (+49 new, ~0 skip)      Processing acta 60/189... (+59 new, ~0 skip)      Processing acta 70/189... (+69 new, ~0 skip)      Processing acta 80/189... (+79 new, ~0 skip)      Processing acta 90/189... (+89 new, ~0 skip)      Processing acta 100/189... (+99 new, ~0 skip)      Processing acta 110/189... (+109 new, ~0 skip)      Processing acta 120/189... (+119 new, ~0 skip)      Processing acta 130/189... (+129 new, ~0 skip)      Processing acta 140/189... (+139 new, ~0 skip)      Processing acta 150/189... (+149 new, ~0 skip)      Processing acta 160/189... (+159 new, ~0 skip)      Processing acta 170/189... (+169 new, ~0 skip)      Processing acta 180/189... (+179 new, ~0 skip)      Processing acta 189/189... (+188 new, ~0 skip)
+      ✅ +189 new | ~0 already had | 8 errors
+  [9/19] quarta-catalana/grup-9
+      Found 123 acta URLs
+      Processing acta 10/123... (+9 new, ~0 skip)      Processing acta 20/123... (+19 new, ~0 skip)      Processing acta 30/123... (+29 new, ~0 skip)      Processing acta 40/123... (+39 new, ~0 skip)      Processing acta 50/123... (+49 new, ~0 skip)      Processing acta 60/123... (+59 new, ~0 skip)      Processing acta 70/123... (+69 new, ~0 skip)      Processing acta 80/123... (+79 new, ~0 skip)      Processing acta 90/123... (+89 new, ~0 skip)      Processing acta 100/123... (+99 new, ~0 skip)      Processing acta 110/123... (+109 new, ~0 skip)      Processing acta 120/123... (+119 new, ~0 skip)      Processing acta 123/123... (+122 new, ~0 skip)
+      ✅ +123 new | ~0 already had | 12 errors
+  [10/19] quarta-catalana/grup-10
+      Found 188 acta URLs
+      Processing acta 10/188... (+9 new, ~0 skip)      Processing acta 20/188... (+19 new, ~0 skip)      Processing acta 30/188... (+29 new, ~0 skip)      Processing acta 40/188... (+39 new, ~0 skip)      Processing acta 50/188... (+49 new, ~0 skip)      Processing acta 60/188... (+59 new, ~0 skip)      Processing acta 70/188... (+69 new, ~0 skip)      Processing acta 80/188... (+79 new, ~0 skip)      Processing acta 90/188... (+89 new, ~0 skip)      Processing acta 100/188... (+99 new, ~0 skip)      Processing acta 110/188... (+109 new, ~0 skip)      Processing acta 120/188... (+119 new, ~0 skip)      Processing acta 130/188... (+129 new, ~0 skip)      Processing acta 140/188... (+139 new, ~0 skip)      Processing acta 150/188... (+149 new, ~0 skip)      Processing acta 160/188... (+159 new, ~0 skip)      Processing acta 170/188... (+169 new, ~0 skip)      Processing acta 180/188... (+179 new, ~0 skip)      Processing acta 188/188... (+187 new, ~0 skip)
+      ✅ +188 new | ~0 already had | 5 errors
+  [11/19] quarta-catalana/grup-11
+      Found 181 acta URLs
+      Processing acta 10/181... (+9 new, ~0 skip)      Processing acta 20/181... (+19 new, ~0 skip)      Processing acta 30/181... (+29 new, ~0 skip)      Processing acta 40/181... (+39 new, ~0 skip)      Processing acta 50/181... (+49 new, ~0 skip)      Processing acta 60/181... (+59 new, ~0 skip)      Processing acta 70/181... (+69 new, ~0 skip)      Processing acta 80/181... (+79 new, ~0 skip)      Processing acta 90/181... (+89 new, ~0 skip)      Processing acta 100/181... (+99 new, ~0 skip)      Processing acta 110/181... (+109 new, ~0 skip)      Processing acta 120/181... (+119 new, ~0 skip)      Processing acta 130/181... (+129 new, ~0 skip)      Processing acta 140/181... (+139 new, ~0 skip)      Processing acta 150/181... (+149 new, ~0 skip)      Processing acta 160/181... (+159 new, ~0 skip)      Processing acta 170/181... (+169 new, ~0 skip)      Processing acta 180/181... (+179 new, ~0 skip)      Processing acta 181/181... (+180 new, ~0 skip)
+      ✅ +181 new | ~0 already had | 6 errors
+  [12/19] quarta-catalana/grup-12
+      Found 105 acta URLs
+      Processing acta 10/105... (+9 new, ~0 skip)      Processing acta 20/105... (+19 new, ~0 skip)      Processing acta 30/105... (+29 new, ~0 skip)      Processing acta 40/105... (+39 new, ~0 skip)      Processing acta 50/105... (+49 new, ~0 skip)      Processing acta 60/105... (+59 new, ~0 skip)      Processing acta 70/105... (+69 new, ~0 skip)      Processing acta 80/105... (+79 new, ~0 skip)      Processing acta 90/105... (+89 new, ~0 skip)      Processing acta 100/105... (+99 new, ~0 skip)      Processing acta 105/105... (+104 new, ~0 skip)
+      ✅ +105 new | ~0 already had | 3 errors
+  [13/19] quarta-catalana/grup-13
+      Found 143 acta URLs
+      Processing acta 10/143... (+9 new, ~0 skip)      Processing acta 20/143... (+19 new, ~0 skip)      Processing acta 30/143... (+29 new, ~0 skip)      Processing acta 40/143... (+39 new, ~0 skip)      Processing acta 50/143... (+49 new, ~0 skip)      Processing acta 60/143... (+59 new, ~0 skip)      Processing acta 70/143... (+69 new, ~0 skip)      Processing acta 80/143... (+79 new, ~0 skip)      Processing acta 90/143... (+89 new, ~0 skip)      Processing acta 100/143... (+99 new, ~0 skip)      Processing acta 110/143... (+109 new, ~0 skip)      Processing acta 120/143... (+119 new, ~0 skip)      Processing acta 130/143... (+129 new, ~0 skip)      Processing acta 140/143... (+139 new, ~0 skip)      Processing acta 143/143... (+142 new, ~0 skip)
+      ✅ +143 new | ~0 already had | 1 errors
+  [14/19] quarta-catalana/grup-14
+      Found 166 acta URLs
+      Processing acta 10/166... (+9 new, ~0 skip)      Processing acta 20/166... (+19 new, ~0 skip)      Processing acta 30/166... (+29 new, ~0 skip)      Processing acta 40/166... (+39 new, ~0 skip)      Processing acta 50/166... (+49 new, ~0 skip)      Processing acta 60/166... (+59 new, ~0 skip)      Processing acta 70/166... (+69 new, ~0 skip)      Processing acta 80/166... (+79 new, ~0 skip)      Processing acta 90/166... (+89 new, ~0 skip)      Processing acta 100/166... (+99 new, ~0 skip)      Processing acta 110/166... (+109 new, ~0 skip)      Processing acta 120/166... (+119 new, ~0 skip)      Processing acta 130/166... (+129 new, ~0 skip)      Processing acta 140/166... (+139 new, ~0 skip)      Processing acta 150/166... (+149 new, ~0 skip)      Processing acta 160/166... (+159 new, ~0 skip)      Processing acta 166/166... (+165 new, ~0 skip)
+      ✅ +166 new | ~0 already had | 5 errors
+  [15/19] quarta-catalana/grup-15
+      Found 118 acta URLs
+      Processing acta 10/118... (+9 new, ~0 skip)      Processing acta 20/118... (+19 new, ~0 skip)      Processing acta 30/118... (+29 new, ~0 skip)      Processing acta 40/118... (+39 new, ~0 skip)      Processing acta 50/118... (+49 new, ~0 skip)      Processing acta 60/118... (+59 new, ~0 skip)      Processing acta 70/118... (+69 new, ~0 skip)      Processing acta 80/118... (+79 new, ~0 skip)      Processing acta 90/118... (+89 new, ~0 skip)      Processing acta 100/118... (+99 new, ~0 skip)      Processing acta 110/118... (+109 new, ~0 skip)      Processing acta 118/118... (+117 new, ~0 skip)
+      ✅ +118 new | ~0 already had | 11 errors
+  [16/19] quarta-catalana/grup-16
+      Found 191 acta URLs
+      Processing acta 10/191... (+9 new, ~0 skip)      Processing acta 20/191... (+19 new, ~0 skip)      Processing acta 30/191... (+29 new, ~0 skip)      Processing acta 40/191... (+39 new, ~0 skip)      Processing acta 50/191... (+49 new, ~0 skip)      Processing acta 60/191... (+59 new, ~0 skip)      Processing acta 70/191... (+69 new, ~0 skip)      Processing acta 80/191... (+79 new, ~0 skip)      Processing acta 90/191... (+89 new, ~0 skip)      Processing acta 100/191... (+99 new, ~0 skip)      Processing acta 110/191... (+109 new, ~0 skip)      Processing acta 120/191... (+119 new, ~0 skip)      Processing acta 130/191... (+129 new, ~0 skip)      Processing acta 140/191... (+139 new, ~0 skip)      Processing acta 150/191... (+149 new, ~0 skip)      Processing acta 160/191... (+159 new, ~0 skip)      Processing acta 170/191... (+169 new, ~0 skip)      Processing acta 180/191... (+179 new, ~0 skip)      Processing acta 190/191... (+189 new, ~0 skip)      Processing acta 191/191... (+190 new, ~0 skip)
+      ✅ +191 new | ~0 already had | 5 errors
+  [17/19] quarta-catalana/grup-17
+      Found 168 acta URLs
+      Processing acta 10/168... (+9 new, ~0 skip)      Processing acta 20/168... (+19 new, ~0 skip)      Processing acta 30/168... (+29 new, ~0 skip)      Processing acta 40/168... (+39 new, ~0 skip)      Processing acta 50/168... (+49 new, ~0 skip)      Processing acta 60/168... (+59 new, ~0 skip)      Processing acta 70/168... (+69 new, ~0 skip)      Processing acta 80/168... (+79 new, ~0 skip)      Processing acta 90/168... (+89 new, ~0 skip)      Processing acta 100/168... (+99 new, ~0 skip)      Processing acta 110/168... (+109 new, ~0 skip)      Processing acta 120/168... (+119 new, ~0 skip)      Processing acta 130/168... (+129 new, ~0 skip)      Processing acta 140/168... (+139 new, ~0 skip)      Processing acta 150/168... (+149 new, ~0 skip)      Processing acta 160/168... (+159 new, ~0 skip)      Processing acta 168/168... (+167 new, ~0 skip)
+      ✅ +168 new | ~0 already had | 6 errors
+  [18/19] quarta-catalana/grup-18
+      Found 181 acta URLs
+      Processing acta 10/181... (+9 new, ~0 skip)      Processing acta 20/181... (+19 new, ~0 skip)      Processing acta 30/181... (+29 new, ~0 skip)      Processing acta 40/181... (+39 new, ~0 skip)      Processing acta 50/181... (+49 new, ~0 skip)      Processing acta 60/181... (+59 new, ~0 skip)      Processing acta 70/181... (+69 new, ~0 skip)      Processing acta 80/181... (+79 new, ~0 skip)      Processing acta 90/181... (+89 new, ~0 skip)      Processing acta 100/181... (+99 new, ~0 skip)      Processing acta 110/181... (+109 new, ~0 skip)      Processing acta 120/181... (+119 new, ~0 skip)      Processing acta 130/181... (+129 new, ~0 skip)      Processing acta 140/181... (+139 new, ~0 skip)      Processing acta 150/181... (+149 new, ~0 skip)      Processing acta 160/181... (+159 new, ~0 skip)      Processing acta 170/181... (+169 new, ~0 skip)      Processing acta 180/181... (+179 new, ~0 skip)      Processing acta 181/181... (+180 new, ~0 skip)
+      ✅ +181 new | ~0 already had | 13 errors
+  [19/19] quarta-catalana/grup-19
+      Found 167 acta URLs
+      Processing acta 10/167... (+9 new, ~0 skip)      Processing acta 20/167... (+19 new, ~0 skip)      Processing acta 30/167... (+29 new, ~0 skip)      Processing acta 40/167... (+39 new, ~0 skip)      Processing acta 50/167... (+49 new, ~0 skip)      Processing acta 60/167... (+59 new, ~0 skip)      Processing acta 70/167... (+69 new, ~0 skip)      Processing acta 80/167... (+79 new, ~0 skip)      Processing acta 90/167... (+89 new, ~0 skip)      Processing acta 100/167... (+99 new, ~0 skip)      Processing acta 110/167... (+109 new, ~0 skip)      Processing acta 120/167... (+119 new, ~0 skip)      Processing acta 130/167... (+129 new, ~0 skip)      Processing acta 140/167... (+139 new, ~0 skip)      Processing acta 150/167... (+149 new, ~0 skip)      Processing acta 160/167... (+159 new, ~0 skip)      Processing acta 167/167... (+166 new, ~0 skip)
+      ✅ +167 new | ~0 already had | 3 errors
+
+============================================================
+  ✅ DONE — Quarta Catalana
+============================================================
+  Actas scraped:     3002
+  New matches added: 3002
+  Already existed:   0
+  Validation errors: 101
+  Total in DB now:   8312
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Divisió d'Honor Juvenil
+  Season: 2526 | Groups: 1
+============================================================
+
+  📂 Existing DB: 8312 matches
+
+  [1/1] divisio-honor-juvenil/grup-3
+      Found 199 acta URLs
+      Processing acta 10/199... (+1 new, ~8 skip)      Processing acta 20/199... (+1 new, ~18 skip)      Processing acta 30/199... (+1 new, ~28 skip)      Processing acta 40/199... (+1 new, ~38 skip)      Processing acta 50/199... (+1 new, ~48 skip)      Processing acta 60/199... (+1 new, ~58 skip)      Processing acta 70/199... (+1 new, ~68 skip)      Processing acta 80/199... (+1 new, ~78 skip)      Processing acta 90/199... (+1 new, ~88 skip)      Processing acta 100/199... (+1 new, ~98 skip)      Processing acta 110/199... (+1 new, ~108 skip)      Processing acta 120/199... (+1 new, ~118 skip)      Processing acta 130/199... (+1 new, ~128 skip)      Processing acta 140/199... (+1 new, ~138 skip)      Processing acta 150/199... (+1 new, ~148 skip)      Processing acta 160/199... (+1 new, ~158 skip)      Processing acta 170/199... (+1 new, ~168 skip)      Processing acta 180/199... (+1 new, ~178 skip)      Processing acta 190/199... (+1 new, ~188 skip)      Processing acta 199/199... (+1 new, ~197 skip)
+      ✅ +1 new | ~198 already had | 0 errors
+
+============================================================
+  ✅ DONE — Divisió d'Honor Juvenil
+============================================================
+  Actas scraped:     199
+  New matches added: 1
+  Already existed:   198
+  Validation errors: 0
+  Total in DB now:   8313
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Lliga Nacional Juvenil
+  Season: 2526 | Groups: 1
+============================================================
+
+  📂 Existing DB: 8313 matches
+
+  [1/1] lliga-nacional-juvenil/grup-7
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+19 new, ~0 skip)      Processing acta 30/192... (+29 new, ~0 skip)      Processing acta 40/192... (+39 new, ~0 skip)      Processing acta 50/192... (+49 new, ~0 skip)      Processing acta 60/192... (+59 new, ~0 skip)      Processing acta 70/192... (+69 new, ~0 skip)      Processing acta 80/192... (+79 new, ~0 skip)      Processing acta 90/192... (+89 new, ~0 skip)      Processing acta 100/192... (+99 new, ~0 skip)      Processing acta 110/192... (+109 new, ~0 skip)      Processing acta 120/192... (+119 new, ~0 skip)      Processing acta 130/192... (+129 new, ~0 skip)      Processing acta 140/192... (+139 new, ~0 skip)      Processing acta 150/192... (+149 new, ~0 skip)      Processing acta 160/192... (+159 new, ~0 skip)      Processing acta 170/192... (+169 new, ~0 skip)      Processing acta 180/192... (+179 new, ~0 skip)      Processing acta 190/192... (+189 new, ~0 skip)      Processing acta 192/192... (+191 new, ~0 skip)
+      ✅ +192 new | ~0 already had | 0 errors
+
+============================================================
+  ✅ DONE — Lliga Nacional Juvenil
+============================================================
+  Actas scraped:     192
+  New matches added: 192
+  Already existed:   0
+  Validation errors: 0
+  Total in DB now:   8505
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Preferent Juvenil
+  Season: 2526 | Groups: 4
+============================================================
+
+  📂 Existing DB: 8505 matches
+
+  [1/4] preferent-juvenils/grup-1
+      Found 188 acta URLs
+      Processing acta 10/188... (+9 new, ~0 skip)      Processing acta 20/188... (+19 new, ~0 skip)      Processing acta 30/188... (+29 new, ~0 skip)      Processing acta 40/188... (+39 new, ~0 skip)      Processing acta 50/188... (+49 new, ~0 skip)      Processing acta 60/188... (+59 new, ~0 skip)      Processing acta 70/188... (+69 new, ~0 skip)      Processing acta 80/188... (+79 new, ~0 skip)      Processing acta 90/188... (+89 new, ~0 skip)      Processing acta 100/188... (+99 new, ~0 skip)      Processing acta 110/188... (+109 new, ~0 skip)      Processing acta 120/188... (+119 new, ~0 skip)      Processing acta 130/188... (+129 new, ~0 skip)      Processing acta 140/188... (+139 new, ~0 skip)      Processing acta 150/188... (+149 new, ~0 skip)      Processing acta 160/188... (+159 new, ~0 skip)      Processing acta 170/188... (+169 new, ~0 skip)      Processing acta 180/188... (+179 new, ~0 skip)      Processing acta 188/188... (+187 new, ~0 skip)
+      ✅ +188 new | ~0 already had | 2 errors
+  [2/4] preferent-juvenils/grup-2
+      Found 191 acta URLs
+      Processing acta 10/191... (+9 new, ~0 skip)      Processing acta 20/191... (+19 new, ~0 skip)      Processing acta 30/191... (+29 new, ~0 skip)      Processing acta 40/191... (+39 new, ~0 skip)      Processing acta 50/191... (+49 new, ~0 skip)      Processing acta 60/191... (+59 new, ~0 skip)      Processing acta 70/191... (+69 new, ~0 skip)      Processing acta 80/191... (+79 new, ~0 skip)      Processing acta 90/191... (+89 new, ~0 skip)      Processing acta 100/191... (+99 new, ~0 skip)      Processing acta 110/191... (+109 new, ~0 skip)      Processing acta 120/191... (+119 new, ~0 skip)      Processing acta 130/191... (+129 new, ~0 skip)      Processing acta 140/191... (+139 new, ~0 skip)      Processing acta 150/191... (+149 new, ~0 skip)      Processing acta 160/191... (+159 new, ~0 skip)      Processing acta 170/191... (+169 new, ~0 skip)      Processing acta 180/191... (+179 new, ~0 skip)      Processing acta 190/191... (+189 new, ~0 skip)      Processing acta 191/191... (+190 new, ~0 skip)
+      ✅ +191 new | ~0 already had | 8 errors
+  [3/4] preferent-juvenils/grup-3
+      Found 190 acta URLs
+      Processing acta 10/190... (+9 new, ~0 skip)      Processing acta 20/190... (+19 new, ~0 skip)      Processing acta 30/190... (+29 new, ~0 skip)      Processing acta 40/190... (+39 new, ~0 skip)      Processing acta 50/190... (+49 new, ~0 skip)      Processing acta 60/190... (+59 new, ~0 skip)      Processing acta 70/190... (+69 new, ~0 skip)      Processing acta 80/190... (+79 new, ~0 skip)      Processing acta 90/190... (+89 new, ~0 skip)      Processing acta 100/190... (+99 new, ~0 skip)      Processing acta 110/190... (+109 new, ~0 skip)      Processing acta 120/190... (+119 new, ~0 skip)      Processing acta 130/190... (+129 new, ~0 skip)      Processing acta 140/190... (+139 new, ~0 skip)      Processing acta 150/190... (+149 new, ~0 skip)      Processing acta 160/190... (+159 new, ~0 skip)      Processing acta 170/190... (+169 new, ~0 skip)      Processing acta 180/190... (+179 new, ~0 skip)      Processing acta 190/190... (+189 new, ~0 skip)
+      ✅ +190 new | ~0 already had | 3 errors
+  [4/4] preferent-juvenils/grup-4
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+19 new, ~0 skip)      Processing acta 30/192... (+29 new, ~0 skip)      Processing acta 40/192... (+39 new, ~0 skip)      Processing acta 50/192... (+49 new, ~0 skip)      Processing acta 60/192... (+59 new, ~0 skip)      Processing acta 70/192... (+69 new, ~0 skip)      Processing acta 80/192... (+79 new, ~0 skip)      Processing acta 90/192... (+89 new, ~0 skip)      Processing acta 100/192... (+99 new, ~0 skip)      Processing acta 110/192... (+109 new, ~0 skip)      Processing acta 120/192... (+119 new, ~0 skip)      Processing acta 130/192... (+129 new, ~0 skip)      Processing acta 140/192... (+139 new, ~0 skip)      Processing acta 150/192... (+149 new, ~0 skip)      Processing acta 160/192... (+159 new, ~0 skip)      Processing acta 170/192... (+169 new, ~0 skip)      Processing acta 180/192... (+179 new, ~0 skip)      Processing acta 190/192... (+189 new, ~0 skip)      Processing acta 192/192... (+191 new, ~0 skip)
+      ✅ +192 new | ~0 already had | 0 errors
+
+============================================================
+  ✅ DONE — Preferent Juvenil
+============================================================
+  Actas scraped:     761
+  New matches added: 761
+  Already existed:   0
+  Validation errors: 13
+  Total in DB now:   9266
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Juvenil Primera Divisió
+  Season: 2526 | Groups: 15
+============================================================
+
+  📂 Existing DB: 9266 matches
+
+  [1/15] juvenil-primera-divisio/grup-1
+      Found 180 acta URLs
+      Processing acta 10/180... (+9 new, ~0 skip)      Processing acta 20/180... (+19 new, ~0 skip)      Processing acta 30/180... (+29 new, ~0 skip)      Processing acta 40/180... (+39 new, ~0 skip)      Processing acta 50/180... (+49 new, ~0 skip)      Processing acta 60/180... (+59 new, ~0 skip)      Processing acta 70/180... (+69 new, ~0 skip)      Processing acta 80/180... (+79 new, ~0 skip)      Processing acta 90/180... (+89 new, ~0 skip)      Processing acta 100/180... (+99 new, ~0 skip)      Processing acta 110/180... (+109 new, ~0 skip)      Processing acta 120/180... (+119 new, ~0 skip)      Processing acta 130/180... (+129 new, ~0 skip)      Processing acta 140/180... (+139 new, ~0 skip)      Processing acta 150/180... (+149 new, ~0 skip)      Processing acta 160/180... (+159 new, ~0 skip)      Processing acta 170/180... (+169 new, ~0 skip)      Processing acta 180/180... (+179 new, ~0 skip)
+      ✅ +180 new | ~0 already had | 4 errors
+  [2/15] juvenil-primera-divisio/grup-2
+      Found 180 acta URLs
+      Processing acta 10/180... (+9 new, ~0 skip)      Processing acta 20/180... (+19 new, ~0 skip)      Processing acta 30/180... (+29 new, ~0 skip)      Processing acta 40/180... (+39 new, ~0 skip)      Processing acta 50/180... (+49 new, ~0 skip)      Processing acta 60/180... (+59 new, ~0 skip)      Processing acta 70/180... (+69 new, ~0 skip)      Processing acta 80/180... (+79 new, ~0 skip)      Processing acta 90/180... (+88 new, ~1 skip)      Processing acta 100/180... (+98 new, ~1 skip)      Processing acta 110/180... (+108 new, ~1 skip)      Processing acta 120/180... (+118 new, ~1 skip)      Processing acta 130/180... (+128 new, ~1 skip)      Processing acta 140/180... (+138 new, ~1 skip)      Processing acta 150/180... (+148 new, ~1 skip)      Processing acta 160/180... (+158 new, ~1 skip)      Processing acta 170/180... (+168 new, ~1 skip)      Processing acta 180/180... (+178 new, ~1 skip)
+      ✅ +179 new | ~1 already had | 4 errors
+  [3/15] juvenil-primera-divisio/grup-3
+      Found 180 acta URLs
+      Processing acta 10/180... (+9 new, ~0 skip)      Processing acta 20/180... (+19 new, ~0 skip)      Processing acta 30/180... (+29 new, ~0 skip)      Processing acta 40/180... (+39 new, ~0 skip)      Processing acta 50/180... (+49 new, ~0 skip)      Processing acta 60/180... (+59 new, ~0 skip)      Processing acta 70/180... (+69 new, ~0 skip)      Processing acta 80/180... (+79 new, ~0 skip)      Processing acta 90/180... (+87 new, ~2 skip)      Processing acta 100/180... (+97 new, ~2 skip)      Processing acta 110/180... (+107 new, ~2 skip)      Processing acta 120/180... (+117 new, ~2 skip)      Processing acta 130/180... (+127 new, ~2 skip)      Processing acta 140/180... (+137 new, ~2 skip)      Processing acta 150/180... (+147 new, ~2 skip)      Processing acta 160/180... (+157 new, ~2 skip)      Processing acta 170/180... (+167 new, ~2 skip)      Processing acta 180/180... (+177 new, ~2 skip)
+      ✅ +178 new | ~2 already had | 4 errors
+  [4/15] juvenil-primera-divisio/grup-4
+      Found 183 acta URLs
+      Processing acta 10/183... (+9 new, ~0 skip)      Processing acta 20/183... (+19 new, ~0 skip)      Processing acta 30/183... (+29 new, ~0 skip)      Processing acta 40/183... (+39 new, ~0 skip)Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Read timed out. (read timeout=30). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/caldes-montbui-cf-a/1j/fundacio-unio-esportiva-vilassar-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/caldes-montbui-cf-a/1j/fundacio-unio-esportiva-vilassar-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/caldes-montbui-cf-a/1j/fundacio-unio-esportiva-vilassar-c: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/caldes-montbui-cf-a/1j/fundacio-unio-esportiva-vilassar-c after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/caldes-montbui-cf-a/1j/fundacio-unio-esportiva-vilassar-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/vilassar-dalt-giatsu-ce-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/vilassar-dalt-giatsu-ce-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/vilassar-dalt-giatsu-ce-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/vilassar-dalt-giatsu-ce-c: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/vilassar-dalt-giatsu-ce-c after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/vilassar-dalt-giatsu-ce-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+      Processing acta 50/183... (+47 new, ~0 skip)Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/can-rull-romulo-tronchoni-cfu-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/can-rull-romulo-tronchoni-cfu-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/can-rull-romulo-tronchoni-cfu-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/can-rull-romulo-tronchoni-cfu-b: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/can-rull-romulo-tronchoni-cfu-b after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/can-rull-romulo-tronchoni-cfu-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/ametlla-valles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/ametlla-valles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/ametlla-valles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/ametlla-valles-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/ametlla-valles-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/ametlla-valles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/barbera-club-de-futbol-a/1j/vilamajor-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/barbera-club-de-futbol-a/1j/vilamajor-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/barbera-club-de-futbol-a/1j/vilamajor-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/barbera-club-de-futbol-a/1j/vilamajor-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/barbera-club-de-futbol-a/1j/vilamajor-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/barbera-club-de-futbol-a/1j/vilamajor-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/manlleu-aec-b/1j/torello-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/manlleu-aec-b/1j/torello-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/manlleu-aec-b/1j/torello-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/manlleu-aec-b/1j/torello-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/manlleu-aec-b/1j/torello-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/manlleu-aec-b/1j/torello-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/olimpic-la-garriga-cf-a/1j/cardedeu-fc-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/olimpic-la-garriga-cf-a/1j/cardedeu-fc-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/olimpic-la-garriga-cf-a/1j/cardedeu-fc-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/olimpic-la-garriga-cf-a/1j/cardedeu-fc-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/olimpic-la-garriga-cf-a/1j/cardedeu-fc-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/olimpic-la-garriga-cf-a/1j/cardedeu-fc-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/tibidabo-torre-romeu-ud-a/1j/caldes-montbui-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/tibidabo-torre-romeu-ud-a/1j/caldes-montbui-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/tibidabo-torre-romeu-ud-a/1j/caldes-montbui-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/tibidabo-torre-romeu-ud-a/1j/caldes-montbui-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/tibidabo-torre-romeu-ud-a/1j/caldes-montbui-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/tibidabo-torre-romeu-ud-a/1j/caldes-montbui-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/bellavista-milan-c-a/1j/fundacio-unio-esportiva-vilassar-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/bellavista-milan-c-a/1j/fundacio-unio-esportiva-vilassar-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/bellavista-milan-c-a/1j/fundacio-unio-esportiva-vilassar-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/bellavista-milan-c-a/1j/fundacio-unio-esportiva-vilassar-c: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/bellavista-milan-c-a/1j/fundacio-unio-esportiva-vilassar-c after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/bellavista-milan-c-a/1j/fundacio-unio-esportiva-vilassar-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/bellavista-milan-c-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/bellavista-milan-c-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/bellavista-milan-c-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/bellavista-milan-c-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/bellavista-milan-c-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/bellavista-milan-c-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/mollet-ue-cf-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/mollet-ue-cf-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/mollet-ue-cf-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/mollet-ue-cf-b: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/mollet-ue-cf-b after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/mollet-ue-cf-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/ametlla-valles-cf-a/1j/fundacio-unio-esportiva-vic-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/ametlla-valles-cf-a/1j/fundacio-unio-esportiva-vic-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/ametlla-valles-cf-a/1j/fundacio-unio-esportiva-vic-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/ametlla-valles-cf-a/1j/fundacio-unio-esportiva-vic-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/ametlla-valles-cf-a/1j/fundacio-unio-esportiva-vic-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/ametlla-valles-cf-a/1j/fundacio-unio-esportiva-vic-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+      Processing acta 60/183... (+47 new, ~0 skip)Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilamajor-cf-a/1j/folgueroles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilamajor-cf-a/1j/folgueroles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilamajor-cf-a/1j/folgueroles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilamajor-cf-a/1j/folgueroles-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilamajor-cf-a/1j/folgueroles-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilamajor-cf-a/1j/folgueroles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/torello-cf-a/1j/barbera-club-de-futbol-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/torello-cf-a/1j/barbera-club-de-futbol-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/torello-cf-a/1j/barbera-club-de-futbol-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/torello-cf-a/1j/barbera-club-de-futbol-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/torello-cf-a/1j/barbera-club-de-futbol-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/torello-cf-a/1j/barbera-club-de-futbol-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/cardedeu-fc-a/1j/manlleu-aec-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/cardedeu-fc-a/1j/manlleu-aec-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/cardedeu-fc-a/1j/manlleu-aec-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/cardedeu-fc-a/1j/manlleu-aec-b: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/cardedeu-fc-a/1j/manlleu-aec-b after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/cardedeu-fc-a/1j/manlleu-aec-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/caldes-montbui-cf-a/1j/olimpic-la-garriga-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/caldes-montbui-cf-a/1j/olimpic-la-garriga-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/caldes-montbui-cf-a/1j/olimpic-la-garriga-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/caldes-montbui-cf-a/1j/olimpic-la-garriga-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/caldes-montbui-cf-a/1j/olimpic-la-garriga-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/caldes-montbui-cf-a/1j/olimpic-la-garriga-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vilassar-c/1j/tibidabo-torre-romeu-ud-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vilassar-c/1j/tibidabo-torre-romeu-ud-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vilassar-c/1j/tibidabo-torre-romeu-ud-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vilassar-c/1j/tibidabo-torre-romeu-ud-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vilassar-c/1j/tibidabo-torre-romeu-ud-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vilassar-c/1j/tibidabo-torre-romeu-ud-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/can-rull-romulo-tronchoni-cfu-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/can-rull-romulo-tronchoni-cfu-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/can-rull-romulo-tronchoni-cfu-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/can-rull-romulo-tronchoni-cfu-b: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/can-rull-romulo-tronchoni-cfu-b after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/can-rull-romulo-tronchoni-cfu-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/ametlla-valles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/ametlla-valles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/ametlla-valles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/ametlla-valles-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/ametlla-valles-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/ametlla-valles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/vilamajor-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/vilamajor-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/vilamajor-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/vilamajor-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/vilamajor-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/vilamajor-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/torello-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/torello-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/torello-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/torello-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/torello-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/torello-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/barbera-club-de-futbol-a/1j/cardedeu-fc-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/barbera-club-de-futbol-a/1j/cardedeu-fc-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/barbera-club-de-futbol-a/1j/cardedeu-fc-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/barbera-club-de-futbol-a/1j/cardedeu-fc-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/barbera-club-de-futbol-a/1j/cardedeu-fc-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/barbera-club-de-futbol-a/1j/cardedeu-fc-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+      Processing acta 70/183... (+47 new, ~0 skip)Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/manlleu-aec-b/1j/caldes-montbui-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/manlleu-aec-b/1j/caldes-montbui-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/manlleu-aec-b/1j/caldes-montbui-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/manlleu-aec-b/1j/caldes-montbui-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/manlleu-aec-b/1j/caldes-montbui-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/manlleu-aec-b/1j/caldes-montbui-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/olimpic-la-garriga-cf-a/1j/fundacio-unio-esportiva-vilassar-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/olimpic-la-garriga-cf-a/1j/fundacio-unio-esportiva-vilassar-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/olimpic-la-garriga-cf-a/1j/fundacio-unio-esportiva-vilassar-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/olimpic-la-garriga-cf-a/1j/fundacio-unio-esportiva-vilassar-c: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/olimpic-la-garriga-cf-a/1j/fundacio-unio-esportiva-vilassar-c after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/olimpic-la-garriga-cf-a/1j/fundacio-unio-esportiva-vilassar-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/bellavista-milan-c-a/1j/tibidabo-torre-romeu-ud-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/bellavista-milan-c-a/1j/tibidabo-torre-romeu-ud-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/bellavista-milan-c-a/1j/tibidabo-torre-romeu-ud-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/bellavista-milan-c-a/1j/tibidabo-torre-romeu-ud-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/bellavista-milan-c-a/1j/tibidabo-torre-romeu-ud-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/bellavista-milan-c-a/1j/tibidabo-torre-romeu-ud-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/bellavista-milan-c-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/bellavista-milan-c-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/bellavista-milan-c-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/bellavista-milan-c-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/bellavista-milan-c-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/bellavista-milan-c-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/ametlla-valles-cf-a/1j/vilassar-dalt-giatsu-ce-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/ametlla-valles-cf-a/1j/vilassar-dalt-giatsu-ce-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/ametlla-valles-cf-a/1j/vilassar-dalt-giatsu-ce-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/ametlla-valles-cf-a/1j/vilassar-dalt-giatsu-ce-c: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/ametlla-valles-cf-a/1j/vilassar-dalt-giatsu-ce-c after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/ametlla-valles-cf-a/1j/vilassar-dalt-giatsu-ce-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilamajor-cf-a/1j/mollet-ue-cf-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilamajor-cf-a/1j/mollet-ue-cf-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilamajor-cf-a/1j/mollet-ue-cf-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilamajor-cf-a/1j/mollet-ue-cf-b: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilamajor-cf-a/1j/mollet-ue-cf-b after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilamajor-cf-a/1j/mollet-ue-cf-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/torello-cf-a/1j/fundacio-unio-esportiva-vic-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/torello-cf-a/1j/fundacio-unio-esportiva-vic-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/torello-cf-a/1j/fundacio-unio-esportiva-vic-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/torello-cf-a/1j/fundacio-unio-esportiva-vic-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/torello-cf-a/1j/fundacio-unio-esportiva-vic-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/torello-cf-a/1j/fundacio-unio-esportiva-vic-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/cardedeu-fc-a/1j/folgueroles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/cardedeu-fc-a/1j/folgueroles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/cardedeu-fc-a/1j/folgueroles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/cardedeu-fc-a/1j/folgueroles-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/cardedeu-fc-a/1j/folgueroles-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/cardedeu-fc-a/1j/folgueroles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/caldes-montbui-cf-a/1j/barbera-club-de-futbol-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/caldes-montbui-cf-a/1j/barbera-club-de-futbol-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/caldes-montbui-cf-a/1j/barbera-club-de-futbol-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/caldes-montbui-cf-a/1j/barbera-club-de-futbol-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/caldes-montbui-cf-a/1j/barbera-club-de-futbol-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/caldes-montbui-cf-a/1j/barbera-club-de-futbol-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vilassar-c/1j/manlleu-aec-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vilassar-c/1j/manlleu-aec-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vilassar-c/1j/manlleu-aec-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vilassar-c/1j/manlleu-aec-b: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vilassar-c/1j/manlleu-aec-b after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vilassar-c/1j/manlleu-aec-b (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+      Processing acta 80/183... (+47 new, ~0 skip)Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/tibidabo-torre-romeu-ud-a/1j/olimpic-la-garriga-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/tibidabo-torre-romeu-ud-a/1j/olimpic-la-garriga-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/tibidabo-torre-romeu-ud-a/1j/olimpic-la-garriga-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/tibidabo-torre-romeu-ud-a/1j/olimpic-la-garriga-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/tibidabo-torre-romeu-ud-a/1j/olimpic-la-garriga-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/tibidabo-torre-romeu-ud-a/1j/olimpic-la-garriga-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/ametlla-valles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/ametlla-valles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/ametlla-valles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/ametlla-valles-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/ametlla-valles-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/can-rull-romulo-tronchoni-cfu-b/1j/ametlla-valles-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/vilamajor-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/vilamajor-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/vilamajor-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/vilamajor-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/vilamajor-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/vilassar-dalt-giatsu-ce-c/1j/vilamajor-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/torello-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/torello-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/torello-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/torello-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/torello-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/mollet-ue-cf-b/1j/torello-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/cardedeu-fc-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/cardedeu-fc-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/cardedeu-fc-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/cardedeu-fc-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/cardedeu-fc-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/fundacio-unio-esportiva-vic-a/1j/cardedeu-fc-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/caldes-montbui-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/caldes-montbui-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/caldes-montbui-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/caldes-montbui-cf-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/caldes-montbui-cf-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/folgueroles-cf-a/1j/caldes-montbui-cf-a (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)"))
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/barbera-club-de-futbol-a/1j/fundacio-unio-esportiva-vilassar-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Max retries exceeded with url: /acta/2526/futbol-11/juvenil-primera-divisio/grup-4/1j/barbera-club-de-futbol-a/1j/fundacio-unio-esportiva-vilassar-c (Caused by NameResolutionError("HTTPSConnection(host='www.fcf.cat', port=443): Failed to resolve 'www.fcf.cat' ([Errno 8] nodename nor servname provided, or not known)")). Retrying in 6s...
+      Processing acta 90/183... (+51 new, ~0 skip)      Processing acta 100/183... (+61 new, ~0 skip)      Processing acta 110/183... (+71 new, ~0 skip)      Processing acta 120/183... (+81 new, ~0 skip)      Processing acta 130/183... (+91 new, ~0 skip)      Processing acta 140/183... (+101 new, ~0 skip)      Processing acta 150/183... (+111 new, ~0 skip)      Processing acta 160/183... (+121 new, ~0 skip)      Processing acta 170/183... (+131 new, ~0 skip)      Processing acta 180/183... (+141 new, ~0 skip)      Processing acta 183/183... (+144 new, ~0 skip)
+      ✅ +145 new | ~0 already had | 9 errors
+  [5/15] juvenil-primera-divisio/grup-5
+      Found 183 acta URLs
+      Processing acta 10/183... (+9 new, ~0 skip)      Processing acta 20/183... (+19 new, ~0 skip)      Processing acta 30/183... (+29 new, ~0 skip)      Processing acta 40/183... (+39 new, ~0 skip)      Processing acta 50/183... (+49 new, ~0 skip)      Processing acta 60/183... (+59 new, ~0 skip)      Processing acta 70/183... (+69 new, ~0 skip)      Processing acta 80/183... (+79 new, ~0 skip)      Processing acta 90/183... (+89 new, ~0 skip)      Processing acta 100/183... (+99 new, ~0 skip)      Processing acta 110/183... (+109 new, ~0 skip)      Processing acta 120/183... (+119 new, ~0 skip)      Processing acta 130/183... (+129 new, ~0 skip)      Processing acta 140/183... (+139 new, ~0 skip)      Processing acta 150/183... (+149 new, ~0 skip)      Processing acta 160/183... (+159 new, ~0 skip)      Processing acta 170/183... (+169 new, ~0 skip)      Processing acta 180/183... (+179 new, ~0 skip)      Processing acta 183/183... (+182 new, ~0 skip)
+      ✅ +183 new | ~0 already had | 5 errors
+  [6/15] juvenil-primera-divisio/grup-6
+      Found 182 acta URLs
+      Processing acta 10/182... (+9 new, ~0 skip)      Processing acta 20/182... (+19 new, ~0 skip)      Processing acta 30/182... (+29 new, ~0 skip)      Processing acta 40/182... (+39 new, ~0 skip)      Processing acta 50/182... (+49 new, ~0 skip)      Processing acta 60/182... (+59 new, ~0 skip)      Processing acta 70/182... (+69 new, ~0 skip)      Processing acta 80/182... (+79 new, ~0 skip)      Processing acta 90/182... (+89 new, ~0 skip)      Processing acta 100/182... (+99 new, ~0 skip)      Processing acta 110/182... (+109 new, ~0 skip)      Processing acta 120/182... (+119 new, ~0 skip)      Processing acta 130/182... (+129 new, ~0 skip)      Processing acta 140/182... (+139 new, ~0 skip)      Processing acta 150/182... (+149 new, ~0 skip)      Processing acta 160/182... (+159 new, ~0 skip)      Processing acta 170/182... (+169 new, ~0 skip)      Processing acta 180/182... (+179 new, ~0 skip)      Processing acta 182/182... (+181 new, ~0 skip)
+      ✅ +182 new | ~0 already had | 6 errors
+  [7/15] juvenil-primera-divisio/grup-7
+      Found 184 acta URLs
+      Processing acta 10/184... (+9 new, ~0 skip)      Processing acta 20/184... (+19 new, ~0 skip)      Processing acta 30/184... (+29 new, ~0 skip)      Processing acta 40/184... (+39 new, ~0 skip)      Processing acta 50/184... (+49 new, ~0 skip)      Processing acta 60/184... (+59 new, ~0 skip)      Processing acta 70/184... (+69 new, ~0 skip)      Processing acta 80/184... (+79 new, ~0 skip)      Processing acta 90/184... (+89 new, ~0 skip)      Processing acta 100/184... (+99 new, ~0 skip)      Processing acta 110/184... (+109 new, ~0 skip)      Processing acta 120/184... (+119 new, ~0 skip)      Processing acta 130/184... (+129 new, ~0 skip)      Processing acta 140/184... (+139 new, ~0 skip)      Processing acta 150/184... (+149 new, ~0 skip)      Processing acta 160/184... (+159 new, ~0 skip)      Processing acta 170/184... (+169 new, ~0 skip)      Processing acta 180/184... (+179 new, ~0 skip)      Processing acta 184/184... (+183 new, ~0 skip)
+      ✅ +184 new | ~0 already had | 4 errors
+  [8/15] juvenil-primera-divisio/grup-8
+      Found 181 acta URLs
+      Processing acta 10/181... (+9 new, ~0 skip)      Processing acta 20/181... (+19 new, ~0 skip)      Processing acta 30/181... (+29 new, ~0 skip)      Processing acta 40/181... (+39 new, ~0 skip)      Processing acta 50/181... (+49 new, ~0 skip)      Processing acta 60/181... (+59 new, ~0 skip)      Processing acta 70/181... (+69 new, ~0 skip)      Processing acta 80/181... (+79 new, ~0 skip)      Processing acta 90/181... (+89 new, ~0 skip)      Processing acta 100/181... (+99 new, ~0 skip)      Processing acta 110/181... (+109 new, ~0 skip)      Processing acta 120/181... (+119 new, ~0 skip)      Processing acta 130/181... (+129 new, ~0 skip)      Processing acta 140/181... (+139 new, ~0 skip)      Processing acta 150/181... (+149 new, ~0 skip)      Processing acta 160/181... (+159 new, ~0 skip)      Processing acta 170/181... (+169 new, ~0 skip)      Processing acta 180/181... (+179 new, ~0 skip)      Processing acta 181/181... (+180 new, ~0 skip)
+      ✅ +181 new | ~0 already had | 11 errors
+  [9/15] juvenil-primera-divisio/grup-9
+      Found 181 acta URLs
+      Processing acta 10/181... (+9 new, ~0 skip)      Processing acta 20/181... (+19 new, ~0 skip)      Processing acta 30/181... (+29 new, ~0 skip)      Processing acta 40/181... (+39 new, ~0 skip)      Processing acta 50/181... (+49 new, ~0 skip)      Processing acta 60/181... (+59 new, ~0 skip)      Processing acta 70/181... (+69 new, ~0 skip)      Processing acta 80/181... (+79 new, ~0 skip)      Processing acta 90/181... (+89 new, ~0 skip)      Processing acta 100/181... (+98 new, ~1 skip)      Processing acta 110/181... (+108 new, ~1 skip)      Processing acta 120/181... (+118 new, ~1 skip)      Processing acta 130/181... (+128 new, ~1 skip)      Processing acta 140/181... (+138 new, ~1 skip)      Processing acta 150/181... (+148 new, ~1 skip)      Processing acta 160/181... (+158 new, ~1 skip)      Processing acta 170/181... (+168 new, ~1 skip)      Processing acta 180/181... (+178 new, ~1 skip)      Processing acta 181/181... (+179 new, ~1 skip)
+      ✅ +180 new | ~1 already had | 2 errors
+  [10/15] juvenil-primera-divisio/grup-10
+      Found 173 acta URLs
+      Processing acta 10/173... (+9 new, ~0 skip)      Processing acta 20/173... (+19 new, ~0 skip)      Processing acta 30/173... (+29 new, ~0 skip)      Processing acta 40/173... (+39 new, ~0 skip)      Processing acta 50/173... (+49 new, ~0 skip)      Processing acta 60/173... (+59 new, ~0 skip)      Processing acta 70/173... (+69 new, ~0 skip)      Processing acta 80/173... (+79 new, ~0 skip)      Processing acta 90/173... (+89 new, ~0 skip)      Processing acta 100/173... (+99 new, ~0 skip)      Processing acta 110/173... (+108 new, ~1 skip)      Processing acta 120/173... (+118 new, ~1 skip)      Processing acta 130/173... (+128 new, ~1 skip)      Processing acta 140/173... (+138 new, ~1 skip)      Processing acta 150/173... (+148 new, ~1 skip)      Processing acta 160/173... (+158 new, ~1 skip)      Processing acta 170/173... (+168 new, ~1 skip)      Processing acta 173/173... (+171 new, ~1 skip)
+      ✅ +172 new | ~1 already had | 0 errors
+  [11/15] juvenil-primera-divisio/grup-11
+      Found 183 acta URLs
+      Processing acta 10/183... (+9 new, ~0 skip)      Processing acta 20/183... (+19 new, ~0 skip)      Processing acta 30/183... (+29 new, ~0 skip)      Processing acta 40/183... (+39 new, ~0 skip)      Processing acta 50/183... (+49 new, ~0 skip)      Processing acta 60/183... (+59 new, ~0 skip)      Processing acta 70/183... (+69 new, ~0 skip)      Processing acta 80/183... (+79 new, ~0 skip)      Processing acta 90/183... (+89 new, ~0 skip)      Processing acta 100/183... (+99 new, ~0 skip)      Processing acta 110/183... (+109 new, ~0 skip)      Processing acta 120/183... (+119 new, ~0 skip)      Processing acta 130/183... (+129 new, ~0 skip)      Processing acta 140/183... (+139 new, ~0 skip)      Processing acta 150/183... (+149 new, ~0 skip)      Processing acta 160/183... (+159 new, ~0 skip)      Processing acta 170/183... (+169 new, ~0 skip)      Processing acta 180/183... (+179 new, ~0 skip)      Processing acta 183/183... (+182 new, ~0 skip)
+      ✅ +183 new | ~0 already had | 5 errors
+  [12/15] juvenil-primera-divisio/grup-12
+      Found 183 acta URLs
+      Processing acta 10/183... (+9 new, ~0 skip)      Processing acta 20/183... (+19 new, ~0 skip)      Processing acta 30/183... (+29 new, ~0 skip)      Processing acta 40/183... (+39 new, ~0 skip)      Processing acta 50/183... (+49 new, ~0 skip)      Processing acta 60/183... (+59 new, ~0 skip)      Processing acta 70/183... (+69 new, ~0 skip)      Processing acta 80/183... (+79 new, ~0 skip)      Processing acta 90/183... (+89 new, ~0 skip)      Processing acta 100/183... (+99 new, ~0 skip)      Processing acta 110/183... (+109 new, ~0 skip)      Processing acta 120/183... (+119 new, ~0 skip)      Processing acta 130/183... (+129 new, ~0 skip)      Processing acta 140/183... (+139 new, ~0 skip)      Processing acta 150/183... (+149 new, ~0 skip)      Processing acta 160/183... (+159 new, ~0 skip)      Processing acta 170/183... (+169 new, ~0 skip)      Processing acta 180/183... (+179 new, ~0 skip)      Processing acta 183/183... (+182 new, ~0 skip)
+      ✅ +183 new | ~0 already had | 0 errors
+  [13/15] juvenil-primera-divisio/grup-13
+      Found 110 acta URLs
+      Processing acta 10/110... (+9 new, ~0 skip)      Processing acta 20/110... (+19 new, ~0 skip)      Processing acta 30/110... (+29 new, ~0 skip)      Processing acta 40/110... (+39 new, ~0 skip)      Processing acta 50/110... (+49 new, ~0 skip)      Processing acta 60/110... (+59 new, ~0 skip)      Processing acta 70/110... (+69 new, ~0 skip)      Processing acta 80/110... (+79 new, ~0 skip)      Processing acta 90/110... (+89 new, ~0 skip)      Processing acta 100/110... (+99 new, ~0 skip)      Processing acta 110/110... (+109 new, ~0 skip)
+      ✅ +110 new | ~0 already had | 7 errors
+  [14/15] juvenil-primera-divisio/grup-14
+      Found 90 acta URLs
+      Processing acta 10/90... (+9 new, ~0 skip)      Processing acta 20/90... (+19 new, ~0 skip)      Processing acta 30/90... (+29 new, ~0 skip)      Processing acta 40/90... (+39 new, ~0 skip)      Processing acta 50/90... (+49 new, ~0 skip)      Processing acta 60/90... (+59 new, ~0 skip)      Processing acta 70/90... (+69 new, ~0 skip)      Processing acta 80/90... (+79 new, ~0 skip)      Processing acta 90/90... (+89 new, ~0 skip)
+      ✅ +90 new | ~0 already had | 18 errors
+  [15/15] juvenil-primera-divisio/grup-15
+      Found 109 acta URLs
+      Processing acta 10/109... (+9 new, ~0 skip)      Processing acta 20/109... (+19 new, ~0 skip)      Processing acta 30/109... (+29 new, ~0 skip)      Processing acta 40/109... (+39 new, ~0 skip)      Processing acta 50/109... (+49 new, ~0 skip)      Processing acta 60/109... (+59 new, ~0 skip)      Processing acta 70/109... (+69 new, ~0 skip)      Processing acta 80/109... (+79 new, ~0 skip)      Processing acta 90/109... (+89 new, ~0 skip)      Processing acta 100/109... (+99 new, ~0 skip)      Processing acta 109/109... (+108 new, ~0 skip)
+      ✅ +109 new | ~0 already had | 4 errors
+
+============================================================
+  ✅ DONE — Juvenil Primera Divisió
+============================================================
+  Actas scraped:     2444
+  New matches added: 2439
+  Already existed:   5
+  Validation errors: 83
+  Total in DB now:   11705
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Divisió d'Honor Cadet S16
+  Season: 2526 | Groups: 1
+============================================================
+
+  📂 Existing DB: 11705 matches
+
+  [1/1] divisio-honor-cadet-s16/grup-1
+      Found 191 acta URLs
+      Processing acta 10/191... (+9 new, ~0 skip)      Processing acta 20/191... (+19 new, ~0 skip)      Processing acta 30/191... (+29 new, ~0 skip)      Processing acta 40/191... (+39 new, ~0 skip)      Processing acta 50/191... (+49 new, ~0 skip)      Processing acta 60/191... (+59 new, ~0 skip)      Processing acta 70/191... (+69 new, ~0 skip)      Processing acta 80/191... (+79 new, ~0 skip)      Processing acta 90/191... (+89 new, ~0 skip)      Processing acta 100/191... (+99 new, ~0 skip)      Processing acta 110/191... (+109 new, ~0 skip)      Processing acta 120/191... (+119 new, ~0 skip)      Processing acta 130/191... (+129 new, ~0 skip)Connection error: ('Connection aborted.', TimeoutError(60, 'Operation timed out')). Retrying in 3s...
+Connection error: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer')). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Read timed out. (read timeout=30). Retrying in 3s...
+      Processing acta 140/191... (+139 new, ~0 skip)      Processing acta 150/191... (+149 new, ~0 skip)      Processing acta 160/191... (+159 new, ~0 skip)Connection error: ('Connection aborted.', TimeoutError(60, 'Operation timed out')). Retrying in 3s...
+Connection error: ('Connection aborted.', TimeoutError(60, 'Operation timed out')). Retrying in 3s...
+Connection error: ('Connection aborted.', TimeoutError(60, 'Operation timed out')). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Read timed out. (read timeout=30). Retrying in 3s...
+      Processing acta 170/191... (+169 new, ~0 skip)Connection error: ('Connection aborted.', TimeoutError(60, 'Operation timed out')). Retrying in 3s...
+Connection error: ('Connection aborted.', TimeoutError(60, 'Operation timed out')). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Read timed out. (read timeout=30). Retrying in 3s...
+      Processing acta 180/191... (+179 new, ~0 skip)Connection error: ('Connection aborted.', TimeoutError(60, 'Operation timed out')). Retrying in 3s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Read timed out. (read timeout=30). Retrying in 6s...
+Connection error: HTTPSConnectionPool(host='www.fcf.cat', port=443): Read timed out. (read timeout=30). Retrying in 9s...
+Failed to fetch acta https://www.fcf.cat/acta/2526/futbol-11/divisio-honor-cadet-s16/grup-1/hc16/mercantil-ce-a/hc16/fundacio-futbol-badalona-a: Failed to fetch https://www.fcf.cat/acta/2526/futbol-11/divisio-honor-cadet-s16/grup-1/hc16/mercantil-ce-a/hc16/fundacio-futbol-badalona-a after 3 attempts: HTTPSConnectionPool(host='www.fcf.cat', port=443): Read timed out. (read timeout=30)
+      Processing acta 190/191... (+188 new, ~0 skip)      Processing acta 191/191... (+189 new, ~0 skip)
+      ✅ +190 new | ~0 already had | 2 errors
+
+============================================================
+  ✅ DONE — Divisió d'Honor Cadet S16
+============================================================
+  Actas scraped:     190
+  New matches added: 190
+  Already existed:   0
+  Validation errors: 2
+  Total in DB now:   11895
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Preferent Cadet S16
+  Season: 2526 | Groups: 6
+============================================================
+
+  📂 Existing DB: 11895 matches
+
+  [1/6] preferent-cadet-s16/grup-1
+      Found 187 acta URLs
+      Processing acta 10/187... (+9 new, ~0 skip)      Processing acta 20/187... (+19 new, ~0 skip)      Processing acta 30/187... (+29 new, ~0 skip)      Processing acta 40/187... (+39 new, ~0 skip)      Processing acta 50/187... (+48 new, ~1 skip)      Processing acta 60/187... (+58 new, ~1 skip)      Processing acta 70/187... (+68 new, ~1 skip)      Processing acta 80/187... (+78 new, ~1 skip)      Processing acta 90/187... (+88 new, ~1 skip)      Processing acta 100/187... (+98 new, ~1 skip)      Processing acta 110/187... (+108 new, ~1 skip)      Processing acta 120/187... (+117 new, ~2 skip)      Processing acta 130/187... (+127 new, ~2 skip)      Processing acta 140/187... (+137 new, ~2 skip)      Processing acta 150/187... (+147 new, ~2 skip)      Processing acta 160/187... (+157 new, ~2 skip)      Processing acta 170/187... (+166 new, ~3 skip)      Processing acta 180/187... (+176 new, ~3 skip)      Processing acta 187/187... (+183 new, ~3 skip)
+      ✅ +184 new | ~3 already had | 4 errors
+  [2/6] preferent-cadet-s16/grup-2
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+19 new, ~0 skip)      Processing acta 30/192... (+29 new, ~0 skip)      Processing acta 40/192... (+39 new, ~0 skip)      Processing acta 50/192... (+49 new, ~0 skip)      Processing acta 60/192... (+59 new, ~0 skip)      Processing acta 70/192... (+69 new, ~0 skip)      Processing acta 80/192... (+79 new, ~0 skip)      Processing acta 90/192... (+89 new, ~0 skip)      Processing acta 100/192... (+99 new, ~0 skip)      Processing acta 110/192... (+109 new, ~0 skip)      Processing acta 120/192... (+119 new, ~0 skip)      Processing acta 130/192... (+129 new, ~0 skip)      Processing acta 140/192... (+139 new, ~0 skip)      Processing acta 150/192... (+149 new, ~0 skip)      Processing acta 160/192... (+159 new, ~0 skip)      Processing acta 170/192... (+169 new, ~0 skip)      Processing acta 180/192... (+179 new, ~0 skip)      Processing acta 190/192... (+189 new, ~0 skip)      Processing acta 192/192... (+191 new, ~0 skip)
+      ✅ +192 new | ~0 already had | 2 errors
+  [3/6] preferent-cadet-s16/grup-3
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+19 new, ~0 skip)      Processing acta 30/192... (+29 new, ~0 skip)      Processing acta 40/192... (+39 new, ~0 skip)      Processing acta 50/192... (+49 new, ~0 skip)      Processing acta 60/192... (+59 new, ~0 skip)      Processing acta 70/192... (+69 new, ~0 skip)      Processing acta 80/192... (+79 new, ~0 skip)      Processing acta 90/192... (+88 new, ~1 skip)      Processing acta 100/192... (+98 new, ~1 skip)      Processing acta 110/192... (+108 new, ~1 skip)      Processing acta 120/192... (+118 new, ~1 skip)      Processing acta 130/192... (+128 new, ~1 skip)      Processing acta 140/192... (+138 new, ~1 skip)      Processing acta 150/192... (+148 new, ~1 skip)      Processing acta 160/192... (+158 new, ~1 skip)      Processing acta 170/192... (+168 new, ~1 skip)      Processing acta 180/192... (+178 new, ~1 skip)      Processing acta 190/192... (+188 new, ~1 skip)      Processing acta 192/192... (+190 new, ~1 skip)
+      ✅ +191 new | ~1 already had | 4 errors
+  [4/6] preferent-cadet-s16/grup-4
+      Found 189 acta URLs
+      Processing acta 10/189... (+9 new, ~0 skip)      Processing acta 20/189... (+19 new, ~0 skip)      Processing acta 30/189... (+29 new, ~0 skip)      Processing acta 40/189... (+39 new, ~0 skip)      Processing acta 50/189... (+49 new, ~0 skip)      Processing acta 60/189... (+59 new, ~0 skip)      Processing acta 70/189... (+69 new, ~0 skip)      Processing acta 80/189... (+79 new, ~0 skip)      Processing acta 90/189... (+89 new, ~0 skip)      Processing acta 100/189... (+99 new, ~0 skip)      Processing acta 110/189... (+109 new, ~0 skip)      Processing acta 120/189... (+119 new, ~0 skip)      Processing acta 130/189... (+129 new, ~0 skip)      Processing acta 140/189... (+139 new, ~0 skip)      Processing acta 150/189... (+149 new, ~0 skip)      Processing acta 160/189... (+159 new, ~0 skip)      Processing acta 170/189... (+169 new, ~0 skip)      Processing acta 180/189... (+179 new, ~0 skip)      Processing acta 189/189... (+188 new, ~0 skip)
+      ✅ +189 new | ~0 already had | 1 errors
+  [5/6] preferent-cadet-s16/grup-5
+      Found 0 acta URLs
+
+      ✅ +0 new | ~0 already had | 0 errors
+  [6/6] preferent-cadet-s16/grup-6
+      Found 0 acta URLs
+
+      ✅ +0 new | ~0 already had | 0 errors
+
+============================================================
+  ✅ DONE — Preferent Cadet S16
+============================================================
+  Actas scraped:     760
+  New matches added: 756
+  Already existed:   4
+  Validation errors: 11
+  Total in DB now:   12651
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Cadet Primera Divisió S16
+  Season: 2526 | Groups: 1
+============================================================
+
+  📂 Existing DB: 12651 matches
+
+  [1/1] cadet-primera-divisio-s16/grup-1
+      Found 157 acta URLs
+      Processing acta 10/157... (+8 new, ~1 skip)      Processing acta 20/157... (+18 new, ~1 skip)      Processing acta 30/157... (+28 new, ~1 skip)      Processing acta 40/157... (+38 new, ~1 skip)      Processing acta 50/157... (+48 new, ~1 skip)      Processing acta 60/157... (+58 new, ~1 skip)      Processing acta 70/157... (+67 new, ~2 skip)      Processing acta 80/157... (+77 new, ~2 skip)      Processing acta 90/157... (+87 new, ~2 skip)      Processing acta 100/157... (+97 new, ~2 skip)      Processing acta 110/157... (+106 new, ~3 skip)      Processing acta 120/157... (+116 new, ~3 skip)      Processing acta 130/157... (+126 new, ~3 skip)      Processing acta 140/157... (+136 new, ~3 skip)      Processing acta 150/157... (+146 new, ~3 skip)      Processing acta 157/157... (+153 new, ~3 skip)
+      ✅ +154 new | ~3 already had | 2 errors
+
+============================================================
+  ✅ DONE — Cadet Primera Divisió S16
+============================================================
+  Actas scraped:     157
+  New matches added: 154
+  Already existed:   3
+  Validation errors: 2
+  Total in DB now:   12805
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Cadet Segona Divisió S16
+  Season: 2526 | Groups: 1
+============================================================
+
+  📂 Existing DB: 12805 matches
+
+  [1/1] cadet-segona-divisio-s16/grup-1
+      Found 113 acta URLs
+      Processing acta 10/113... (+9 new, ~0 skip)      Processing acta 20/113... (+19 new, ~0 skip)      Processing acta 30/113... (+29 new, ~0 skip)      Processing acta 40/113... (+39 new, ~0 skip)      Processing acta 50/113... (+49 new, ~0 skip)      Processing acta 60/113... (+59 new, ~0 skip)      Processing acta 70/113... (+69 new, ~0 skip)      Processing acta 80/113... (+79 new, ~0 skip)      Processing acta 90/113... (+89 new, ~0 skip)      Processing acta 100/113... (+99 new, ~0 skip)      Processing acta 110/113... (+109 new, ~0 skip)      Processing acta 113/113... (+112 new, ~0 skip)
+      ✅ +113 new | ~0 already had | 5 errors
+
+============================================================
+  ✅ DONE — Cadet Segona Divisió S16
+============================================================
+  Actas scraped:     113
+  New matches added: 113
+  Already existed:   0
+  Validation errors: 5
+  Total in DB now:   12918
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Divisió d'Honor Cadet S15
+  Season: 2526 | Groups: 1
+============================================================
+
+  📂 Existing DB: 12918 matches
+
+  [1/1] divisio-honor-cadet-s15/grup-1
+      Found 191 acta URLs
+      Processing acta 10/191... (+9 new, ~0 skip)      Processing acta 20/191... (+19 new, ~0 skip)      Processing acta 30/191... (+27 new, ~2 skip)      Processing acta 40/191... (+37 new, ~2 skip)      Processing acta 50/191... (+47 new, ~2 skip)      Processing acta 60/191... (+57 new, ~2 skip)      Processing acta 70/191... (+67 new, ~2 skip)      Processing acta 80/191... (+77 new, ~2 skip)      Processing acta 90/191... (+87 new, ~2 skip)      Processing acta 100/191... (+96 new, ~3 skip)      Processing acta 110/191... (+106 new, ~3 skip)      Processing acta 120/191... (+116 new, ~3 skip)      Processing acta 130/191... (+126 new, ~3 skip)      Processing acta 140/191... (+136 new, ~3 skip)      Processing acta 150/191... (+144 new, ~5 skip)      Processing acta 160/191... (+154 new, ~5 skip)      Processing acta 170/191... (+164 new, ~5 skip)      Processing acta 180/191... (+174 new, ~5 skip)      Processing acta 190/191... (+184 new, ~5 skip)      Processing acta 191/191... (+185 new, ~5 skip)
+      ✅ +186 new | ~5 already had | 1 errors
+
+============================================================
+  ✅ DONE — Divisió d'Honor Cadet S15
+============================================================
+  Actas scraped:     191
+  New matches added: 186
+  Already existed:   5
+  Validation errors: 1
+  Total in DB now:   13104
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Preferent Cadet S15
+  Season: 2526 | Groups: 5
+============================================================
+
+  📂 Existing DB: 13104 matches
+
+  [1/5] preferent-cadet-s15/grup-1
+      Found 191 acta URLs
+      Processing acta 10/191... (+8 new, ~1 skip)      Processing acta 20/191... (+17 new, ~2 skip)      Processing acta 30/191... (+27 new, ~2 skip)      Processing acta 40/191... (+37 new, ~2 skip)      Processing acta 50/191... (+47 new, ~2 skip)      Processing acta 60/191... (+57 new, ~2 skip)      Processing acta 70/191... (+63 new, ~6 skip)      Processing acta 80/191... (+72 new, ~7 skip)      Processing acta 90/191... (+82 new, ~7 skip)      Processing acta 100/191... (+91 new, ~8 skip)      Processing acta 110/191... (+101 new, ~8 skip)      Processing acta 120/191... (+111 new, ~8 skip)      Processing acta 130/191... (+120 new, ~9 skip)      Processing acta 140/191... (+129 new, ~10 skip)      Processing acta 150/191... (+139 new, ~10 skip)      Processing acta 160/191... (+149 new, ~10 skip)      Processing acta 170/191... (+159 new, ~10 skip)      Processing acta 180/191... (+169 new, ~10 skip)      Processing acta 190/191... (+175 new, ~14 skip)      Processing acta 191/191... (+176 new, ~14 skip)
+      ✅ +177 new | ~14 already had | 1 errors
+  [2/5] preferent-cadet-s15/grup-2
+      Found 191 acta URLs
+      Processing acta 10/191... (+9 new, ~0 skip)      Processing acta 20/191... (+19 new, ~0 skip)      Processing acta 30/191... (+29 new, ~0 skip)      Processing acta 40/191... (+39 new, ~0 skip)      Processing acta 50/191... (+49 new, ~0 skip)      Processing acta 60/191... (+59 new, ~0 skip)      Processing acta 70/191... (+69 new, ~0 skip)      Processing acta 80/191... (+79 new, ~0 skip)      Processing acta 90/191... (+89 new, ~0 skip)      Processing acta 100/191... (+99 new, ~0 skip)      Processing acta 110/191... (+108 new, ~1 skip)      Processing acta 120/191... (+118 new, ~1 skip)      Processing acta 130/191... (+128 new, ~1 skip)      Processing acta 140/191... (+138 new, ~1 skip)      Processing acta 150/191... (+148 new, ~1 skip)      Processing acta 160/191... (+158 new, ~1 skip)      Processing acta 170/191... (+168 new, ~1 skip)      Processing acta 180/191... (+178 new, ~1 skip)      Processing acta 190/191... (+188 new, ~1 skip)      Processing acta 191/191... (+189 new, ~1 skip)
+      ✅ +190 new | ~1 already had | 4 errors
+  [3/5] preferent-cadet-s15/grup-3
+      Found 191 acta URLs
+      Processing acta 10/191... (+9 new, ~0 skip)      Processing acta 20/191... (+19 new, ~0 skip)      Processing acta 30/191... (+29 new, ~0 skip)      Processing acta 40/191... (+39 new, ~0 skip)      Processing acta 50/191... (+49 new, ~0 skip)      Processing acta 60/191... (+59 new, ~0 skip)      Processing acta 70/191... (+69 new, ~0 skip)      Processing acta 80/191... (+79 new, ~0 skip)      Processing acta 90/191... (+89 new, ~0 skip)      Processing acta 100/191... (+99 new, ~0 skip)      Processing acta 110/191... (+109 new, ~0 skip)      Processing acta 120/191... (+119 new, ~0 skip)      Processing acta 130/191... (+129 new, ~0 skip)      Processing acta 140/191... (+139 new, ~0 skip)      Processing acta 150/191... (+149 new, ~0 skip)      Processing acta 160/191... (+159 new, ~0 skip)      Processing acta 170/191... (+169 new, ~0 skip)      Processing acta 180/191... (+179 new, ~0 skip)      Processing acta 190/191... (+189 new, ~0 skip)      Processing acta 191/191... (+190 new, ~0 skip)
+      ✅ +191 new | ~0 already had | 8 errors
+  [4/5] preferent-cadet-s15/grup-4
+      Found 191 acta URLs
+      Processing acta 10/191... (+9 new, ~0 skip)      Processing acta 20/191... (+19 new, ~0 skip)      Processing acta 30/191... (+29 new, ~0 skip)      Processing acta 40/191... (+39 new, ~0 skip)      Processing acta 50/191... (+49 new, ~0 skip)      Processing acta 60/191... (+59 new, ~0 skip)      Processing acta 70/191... (+69 new, ~0 skip)      Processing acta 80/191... (+79 new, ~0 skip)      Processing acta 90/191... (+89 new, ~0 skip)      Processing acta 100/191... (+99 new, ~0 skip)      Processing acta 110/191... (+109 new, ~0 skip)      Processing acta 120/191... (+119 new, ~0 skip)      Processing acta 130/191... (+129 new, ~0 skip)      Processing acta 140/191... (+139 new, ~0 skip)      Processing acta 150/191... (+149 new, ~0 skip)      Processing acta 160/191... (+159 new, ~0 skip)      Processing acta 170/191... (+169 new, ~0 skip)      Processing acta 180/191... (+179 new, ~0 skip)      Processing acta 190/191... (+189 new, ~0 skip)      Processing acta 191/191... (+190 new, ~0 skip)
+      ✅ +191 new | ~0 already had | 3 errors
+  [5/5] preferent-cadet-s15/grup-5
+      Found 0 acta URLs
+
+      ✅ +0 new | ~0 already had | 0 errors
+
+============================================================
+  ✅ DONE — Preferent Cadet S15
+============================================================
+  Actas scraped:     764
+  New matches added: 749
+  Already existed:   15
+  Validation errors: 16
+  Total in DB now:   13853
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Cadet Primera Divisió S15
+  Season: 2526 | Groups: 1
+============================================================
+
+  📂 Existing DB: 13853 matches
+
+  [1/1] cadet-primera-divisio-s15/grup-1
+      Found 181 acta URLs
+      Processing acta 10/181... (+9 new, ~0 skip)      Processing acta 20/181... (+19 new, ~0 skip)      Processing acta 30/181... (+29 new, ~0 skip)      Processing acta 40/181... (+39 new, ~0 skip)      Processing acta 50/181... (+49 new, ~0 skip)      Processing acta 60/181... (+59 new, ~0 skip)      Processing acta 70/181... (+69 new, ~0 skip)      Processing acta 80/181... (+79 new, ~0 skip)      Processing acta 90/181... (+89 new, ~0 skip)      Processing acta 100/181... (+99 new, ~0 skip)      Processing acta 110/181... (+108 new, ~1 skip)      Processing acta 120/181... (+117 new, ~2 skip)      Processing acta 130/181... (+127 new, ~2 skip)      Processing acta 140/181... (+137 new, ~2 skip)      Processing acta 150/181... (+147 new, ~2 skip)      Processing acta 160/181... (+157 new, ~2 skip)      Processing acta 170/181... (+167 new, ~2 skip)      Processing acta 180/181... (+177 new, ~2 skip)      Processing acta 181/181... (+178 new, ~2 skip)
+      ✅ +179 new | ~2 already had | 2 errors
+
+============================================================
+  ✅ DONE — Cadet Primera Divisió S15
+============================================================
+  Actas scraped:     181
+  New matches added: 179
+  Already existed:   2
+  Validation errors: 2
+  Total in DB now:   14032
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Cadet Segona Divisió S15
+  Season: 2526 | Groups: 1
+============================================================
+
+  📂 Existing DB: 14032 matches
+
+  [1/1] cadet-segona-divisio-s15/grup-1
+      Found 132 acta URLs
+      Processing acta 10/132... (+9 new, ~0 skip)      Processing acta 20/132... (+19 new, ~0 skip)      Processing acta 30/132... (+29 new, ~0 skip)      Processing acta 40/132... (+39 new, ~0 skip)      Processing acta 50/132... (+49 new, ~0 skip)      Processing acta 60/132... (+59 new, ~0 skip)      Processing acta 70/132... (+69 new, ~0 skip)      Processing acta 80/132... (+79 new, ~0 skip)      Processing acta 90/132... (+88 new, ~1 skip)      Processing acta 100/132... (+98 new, ~1 skip)      Processing acta 110/132... (+108 new, ~1 skip)      Processing acta 120/132... (+118 new, ~1 skip)      Processing acta 130/132... (+128 new, ~1 skip)      Processing acta 132/132... (+130 new, ~1 skip)
+      ✅ +131 new | ~1 already had | 11 errors
+
+============================================================
+  ✅ DONE — Cadet Segona Divisió S15
+============================================================
+  Actas scraped:     132
+  New matches added: 131
+  Already existed:   1
+  Validation errors: 11
+  Total in DB now:   14163
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Divisió d'Honor Infantil S14
+  Season: 2526 | Groups: 1
+============================================================
+
+  📂 Existing DB: 14163 matches
+
+  [1/1] divisio-honor-infantil-s14/grup-unic
+      Found 0 acta URLs
+
+      ✅ +0 new | ~0 already had | 0 errors
+
+============================================================
+  ✅ DONE — Divisió d'Honor Infantil S14
+============================================================
+  Actas scraped:     0
+  New matches added: 0
+  Already existed:   0
+  Validation errors: 0
+  Total in DB now:   14163
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Preferent Infantil S14
+  Season: 2526 | Groups: 5
+============================================================
+
+  📂 Existing DB: 14163 matches
+
+  [1/5] preferent-infantil-s14/grup-1
+      Found 189 acta URLs
+      Processing acta 10/189... (+9 new, ~0 skip)      Processing acta 20/189... (+19 new, ~0 skip)      Processing acta 30/189... (+29 new, ~0 skip)      Processing acta 40/189... (+39 new, ~0 skip)      Processing acta 50/189... (+49 new, ~0 skip)      Processing acta 60/189... (+59 new, ~0 skip)      Processing acta 70/189... (+69 new, ~0 skip)      Processing acta 80/189... (+79 new, ~0 skip)      Processing acta 90/189... (+89 new, ~0 skip)      Processing acta 100/189... (+99 new, ~0 skip)      Processing acta 110/189... (+109 new, ~0 skip)      Processing acta 120/189... (+119 new, ~0 skip)      Processing acta 130/189... (+129 new, ~0 skip)      Processing acta 140/189... (+139 new, ~0 skip)      Processing acta 150/189... (+149 new, ~0 skip)      Processing acta 160/189... (+159 new, ~0 skip)      Processing acta 170/189... (+169 new, ~0 skip)      Processing acta 180/189... (+179 new, ~0 skip)      Processing acta 189/189... (+188 new, ~0 skip)
+      ✅ +189 new | ~0 already had | 5 errors
+  [2/5] preferent-infantil-s14/grup-2
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+18 new, ~1 skip)      Processing acta 30/192... (+27 new, ~2 skip)      Processing acta 40/192... (+37 new, ~2 skip)      Processing acta 50/192... (+47 new, ~2 skip)      Processing acta 60/192... (+57 new, ~2 skip)      Processing acta 70/192... (+67 new, ~2 skip)      Processing acta 80/192... (+76 new, ~3 skip)      Processing acta 90/192... (+86 new, ~3 skip)      Processing acta 100/192... (+96 new, ~3 skip)      Processing acta 110/192... (+106 new, ~3 skip)      Processing acta 120/192... (+116 new, ~3 skip)      Processing acta 130/192... (+126 new, ~3 skip)      Processing acta 140/192... (+135 new, ~4 skip)      Processing acta 150/192... (+144 new, ~5 skip)      Processing acta 160/192... (+154 new, ~5 skip)      Processing acta 170/192... (+164 new, ~5 skip)      Processing acta 180/192... (+174 new, ~5 skip)      Processing acta 190/192... (+184 new, ~5 skip)      Processing acta 192/192... (+186 new, ~5 skip)
+      ✅ +187 new | ~5 already had | 1 errors
+  [3/5] preferent-infantil-s14/grup-3
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+19 new, ~0 skip)      Processing acta 30/192... (+29 new, ~0 skip)      Processing acta 40/192... (+39 new, ~0 skip)      Processing acta 50/192... (+49 new, ~0 skip)      Processing acta 60/192... (+59 new, ~0 skip)      Processing acta 70/192... (+69 new, ~0 skip)      Processing acta 80/192... (+79 new, ~0 skip)      Processing acta 90/192... (+89 new, ~0 skip)      Processing acta 100/192... (+99 new, ~0 skip)      Processing acta 110/192... (+109 new, ~0 skip)      Processing acta 120/192... (+118 new, ~1 skip)      Processing acta 130/192... (+128 new, ~1 skip)      Processing acta 140/192... (+138 new, ~1 skip)      Processing acta 150/192... (+148 new, ~1 skip)      Processing acta 160/192... (+158 new, ~1 skip)      Processing acta 170/192... (+168 new, ~1 skip)      Processing acta 180/192... (+178 new, ~1 skip)      Processing acta 190/192... (+188 new, ~1 skip)      Processing acta 192/192... (+190 new, ~1 skip)
+      ✅ +191 new | ~1 already had | 0 errors
+  [4/5] preferent-infantil-s14/grup-4
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+18 new, ~1 skip)      Processing acta 30/192... (+27 new, ~2 skip)      Processing acta 40/192... (+36 new, ~3 skip)      Processing acta 50/192... (+45 new, ~4 skip)      Processing acta 60/192... (+54 new, ~5 skip)      Processing acta 70/192... (+62 new, ~7 skip)      Processing acta 80/192... (+71 new, ~8 skip)      Processing acta 90/192... (+81 new, ~8 skip)      Processing acta 100/192... (+90 new, ~9 skip)      Processing acta 110/192... (+99 new, ~10 skip)      Processing acta 120/192... (+109 new, ~10 skip)      Processing acta 130/192... (+118 new, ~11 skip)      Processing acta 140/192... (+127 new, ~12 skip)      Processing acta 150/192... (+136 new, ~13 skip)      Processing acta 160/192... (+145 new, ~14 skip)      Processing acta 170/192... (+154 new, ~15 skip)      Processing acta 180/192... (+163 new, ~16 skip)      Processing acta 190/192... (+171 new, ~18 skip)      Processing acta 192/192... (+173 new, ~18 skip)
+      ✅ +174 new | ~18 already had | 0 errors
+  [5/5] preferent-infantil-s14/grup-5
+      Found 0 acta URLs
+
+      ✅ +0 new | ~0 already had | 0 errors
+
+============================================================
+  ✅ DONE — Preferent Infantil S14
+============================================================
+  Actas scraped:     765
+  New matches added: 741
+  Already existed:   24
+  Validation errors: 6
+  Total in DB now:   14904
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Divisió d'Honor Infantil S13
+  Season: 2526 | Groups: 1
+============================================================
+
+  📂 Existing DB: 14904 matches
+
+  [1/1] divisio-honor-infantil-s13/grup-unic
+      Found 0 acta URLs
+
+      ✅ +0 new | ~0 already had | 0 errors
+
+============================================================
+  ✅ DONE — Divisió d'Honor Infantil S13
+============================================================
+  Actas scraped:     0
+  New matches added: 0
+  Already existed:   0
+  Validation errors: 0
+  Total in DB now:   14904
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Preferent Infantil S13
+  Season: 2526 | Groups: 3
+============================================================
+
+  📂 Existing DB: 14904 matches
+
+  [1/3] preferent-infantil-s13/grup-1
+      Found 191 acta URLs
+      Processing acta 10/191... (+8 new, ~1 skip)      Processing acta 20/191... (+18 new, ~1 skip)      Processing acta 30/191... (+28 new, ~1 skip)      Processing acta 40/191... (+38 new, ~1 skip)      Processing acta 50/191... (+48 new, ~1 skip)      Processing acta 60/191... (+58 new, ~1 skip)      Processing acta 70/191... (+67 new, ~2 skip)      Processing acta 80/191... (+77 new, ~2 skip)      Processing acta 90/191... (+87 new, ~2 skip)      Processing acta 100/191... (+97 new, ~2 skip)      Processing acta 110/191... (+107 new, ~2 skip)      Processing acta 120/191... (+116 new, ~3 skip)      Processing acta 130/191... (+125 new, ~4 skip)      Processing acta 140/191... (+135 new, ~4 skip)      Processing acta 150/191... (+145 new, ~4 skip)      Processing acta 160/191... (+155 new, ~4 skip)      Processing acta 170/191... (+165 new, ~4 skip)      Processing acta 180/191... (+175 new, ~4 skip)      Processing acta 190/191... (+184 new, ~5 skip)      Processing acta 191/191... (+185 new, ~5 skip)
+      ✅ +186 new | ~5 already had | 2 errors
+  [2/3] preferent-infantil-s13/grup-2
+      Found 192 acta URLs
+      Processing acta 10/192... (+9 new, ~0 skip)      Processing acta 20/192... (+18 new, ~1 skip)      Processing acta 30/192... (+28 new, ~1 skip)      Processing acta 40/192... (+38 new, ~1 skip)      Processing acta 50/192... (+48 new, ~1 skip)      Processing acta 60/192... (+57 new, ~2 skip)      Processing acta 70/192... (+66 new, ~3 skip)      Processing acta 80/192... (+74 new, ~5 skip)      Processing acta 90/192... (+84 new, ~5 skip)      Processing acta 100/192... (+94 new, ~5 skip)      Processing acta 110/192... (+104 new, ~5 skip)      Processing acta 120/192... (+114 new, ~5 skip)      Processing acta 130/192... (+124 new, ~5 skip)      Processing acta 140/192... (+133 new, ~6 skip)      Processing acta 150/192... (+143 new, ~6 skip)      Processing acta 160/192... (+153 new, ~6 skip)      Processing acta 170/192... (+163 new, ~6 skip)      Processing acta 180/192... (+172 new, ~7 skip)      Processing acta 190/192... (+181 new, ~8 skip)      Processing acta 192/192... (+182 new, ~9 skip)
+      ✅ +183 new | ~9 already had | 3 errors
+  [3/3] preferent-infantil-s13/grup-3
+      Found 192 acta URLs
+      Processing acta 10/192... (+8 new, ~1 skip)      Processing acta 20/192... (+17 new, ~2 skip)      Processing acta 30/192... (+27 new, ~2 skip)      Processing acta 40/192... (+37 new, ~2 skip)      Processing acta 50/192... (+47 new, ~2 skip)      Processing acta 60/192... (+57 new, ~2 skip)      Processing acta 70/192... (+66 new, ~3 skip)      Processing acta 80/192... (+76 new, ~3 skip)      Processing acta 90/192... (+86 new, ~3 skip)      Processing acta 100/192... (+96 new, ~3 skip)      Processing acta 110/192... (+106 new, ~3 skip)      Processing acta 120/192... (+116 new, ~3 skip)      Processing acta 130/192... (+125 new, ~4 skip)      Processing acta 140/192... (+134 new, ~5 skip)      Processing acta 150/192... (+144 new, ~5 skip)      Processing acta 160/192... (+154 new, ~5 skip)      Processing acta 170/192... (+164 new, ~5 skip)      Processing acta 180/192... (+174 new, ~5 skip)      Processing acta 190/192... (+183 new, ~6 skip)      Processing acta 192/192... (+185 new, ~6 skip)
+      ✅ +186 new | ~6 already had | 3 errors
+
+============================================================
+  ✅ DONE — Preferent Infantil S13
+============================================================
+  Actas scraped:     575
+  New matches added: 555
+  Already existed:   20
+  Validation errors: 8
+  Total in DB now:   15459
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  🏗 Building Referee DB: Infantil Primera Divisió S13
+  Season: 2526 | Groups: 1
+============================================================
+
+  📂 Existing DB: 15459 matches
+
+  [1/1] infantil-primera-divisio-s13/grup-1
+      Found 157 acta URLs
+      Processing acta 10/157... (+9 new, ~0 skip)      Processing acta 20/157... (+17 new, ~2 skip)      Processing acta 30/157... (+27 new, ~2 skip)      Processing acta 40/157... (+37 new, ~2 skip)      Processing acta 50/157... (+47 new, ~2 skip)      Processing acta 60/157... (+56 new, ~3 skip)      Processing acta 70/157... (+66 new, ~3 skip)      Processing acta 80/157... (+76 new, ~3 skip)      Processing acta 90/157... (+85 new, ~4 skip)      Processing acta 100/157... (+95 new, ~4 skip)      Processing acta 110/157... (+105 new, ~4 skip)      Processing acta 120/157... (+114 new, ~5 skip)      Processing acta 130/157... (+123 new, ~6 skip)      Processing acta 140/157... (+133 new, ~6 skip)      Processing acta 150/157... (+143 new, ~6 skip)      Processing acta 157/157... (+150 new, ~6 skip)
+      ✅ +151 new | ~6 already had | 1 errors
+
+============================================================
+  ✅ DONE — Infantil Primera Divisió S13
+============================================================
+  Actas scraped:     157
+  New matches added: 151
+  Already existed:   6
+  Validation errors: 1
+  Total in DB now:   15610
+  ⚠ Errors logged to: /Users/abelvazquezsantisteban/Documents/Proyectos/Neoscout/fcfcat/data/acta_errors.log
+============================================================
+
+
+============================================================
+  ALL REFEREE COMPS DONE
+  scraped: 15893
+  new: 15610
+  skipped: 283
+  errors: 382
+============================================================
+

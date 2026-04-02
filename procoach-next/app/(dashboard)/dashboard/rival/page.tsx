@@ -425,11 +425,11 @@ export default async function RivalPage() {
 
             <div className="relative p-6 sm:p-8">
               {/* Top row: badge + export buttons */}
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                  <Crosshair size={14} className="text-cyan-400" />
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Informe Pre-Partit</span>
-                  <span className="text-[10px] font-bold text-cyan-400/80 bg-cyan-500/10 px-2 py-0.5 rounded-full">J{nextMatch.jornada}</span>
+              <div className="flex items-center justify-between gap-2 mb-5 sm:mb-8">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                  <Crosshair size={14} className="text-cyan-400 shrink-0" />
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] hidden xs:inline">Informe Pre-Partit</span>
+                  <span className="text-[10px] font-bold text-cyan-400/80 bg-cyan-500/10 px-2 py-0.5 rounded-full shrink-0">J{nextMatch.jornada}</span>
                 </div>
                 {pdfReportData && (
                   <TeamReportActions
@@ -442,36 +442,36 @@ export default async function RivalPage() {
               </div>
 
               {/* Match: Local vs Visitant */}
-              <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 sm:gap-8">
+              <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-8">
                 {/* Local */}
                 <div className="text-center">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-green-500/15 to-emerald-500/5 border border-green-500/20 flex items-center justify-center mx-auto mb-3">
-                    <span className="font-headline text-2xl sm:text-3xl font-extrabold text-green-400">{localInitial}</span>
+                  <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-green-500/15 to-emerald-500/5 border border-green-500/20 flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                    <span className="font-headline text-xl xs:text-2xl sm:text-3xl font-extrabold text-green-400">{localInitial}</span>
                   </div>
-                  <p className="text-sm sm:text-base font-bold text-white mb-1 leading-tight">{localName}</p>
+                  <p className="text-xs xs:text-sm sm:text-base font-bold text-white mb-1 leading-tight">{localName}</p>
                   <div className="flex items-baseline justify-center gap-1.5">
                     <span className="font-score text-2xl text-slate-300">#{isHome ? (report?.position || '-') : (rival.position || '-')}</span>
                     <span className="text-[10px] text-slate-500 font-medium">{isHome ? report?.points : rival.points} pts</span>
                   </div>
-                  <div className="flex gap-1 justify-center mt-3">
+                  <div className="flex gap-1 justify-center mt-2">
                     {(isHome ? report?.form : rival.form)?.slice(0, 5).reverse().map((f, i) => (
                       <FormDot key={i} result={f.result} size="sm" />
                     ))}
                   </div>
-                  <div className="text-[9px] text-green-400/60 font-semibold uppercase tracking-wider mt-2">Local</div>
+                  <div className="text-[9px] text-green-400/60 font-semibold uppercase tracking-wider mt-1 sm:mt-2">Local</div>
                 </div>
 
                 {/* Center — VS + match info */}
-                <div className="text-center px-2 sm:px-6">
-                  <div className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold mb-4 ${isHome ? 'bg-green-500/15 text-green-400 border border-green-500/20' : 'bg-sky-500/15 text-sky-400 border border-sky-500/20'}`}>
-                    {nextMatch.isHome ? 'Juguem a casa' : 'Juguem fora'}
+                <div className="text-center px-1 sm:px-6">
+                  <div className={`inline-block px-2 xs:px-3 py-0.5 xs:py-1 rounded-full text-[9px] xs:text-[10px] font-bold mb-2 sm:mb-4 ${isHome ? 'bg-green-500/15 text-green-400 border border-green-500/20' : 'bg-sky-500/15 text-sky-400 border border-sky-500/20'}`}>
+                    {nextMatch.isHome ? 'A casa' : 'Fora'}
                   </div>
-                  <div className="font-headline text-4xl sm:text-5xl font-extrabold text-slate-500/60 mb-2">VS</div>
+                  <div className="font-headline text-3xl xs:text-4xl sm:text-5xl font-extrabold text-slate-500/60 mb-1 sm:mb-2">VS</div>
                   <div className="space-y-1">
                     <p className="text-sm text-white font-semibold">{formatDate(nextMatch.date)}</p>
                     {nextMatch.time && <p className="font-score text-xl text-cyan-400">{nextMatch.time}h</p>}
                     {nextMatch.referee && (
-                      <p className="text-[10px] text-slate-500 mt-2">
+                      <p className="hidden xs:block text-[10px] text-slate-500 mt-2">
                         <Shield size={10} className="inline mr-1 -mt-0.5 text-slate-600" />
                         {nextMatch.referee}
                       </p>
@@ -481,20 +481,20 @@ export default async function RivalPage() {
 
                 {/* Visitant */}
                 <div className="text-center">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-red-500/15 to-orange-500/5 border border-red-500/20 flex items-center justify-center mx-auto mb-3">
-                    <span className="font-headline text-2xl sm:text-3xl font-extrabold text-red-400">{visitantInitial}</span>
+                  <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-red-500/15 to-orange-500/5 border border-red-500/20 flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                    <span className="font-headline text-xl xs:text-2xl sm:text-3xl font-extrabold text-red-400">{visitantInitial}</span>
                   </div>
-                  <p className="text-sm sm:text-base font-bold text-white mb-1 leading-tight">{visitantName}</p>
+                  <p className="text-xs xs:text-sm sm:text-base font-bold text-white mb-1 leading-tight">{visitantName}</p>
                   <div className="flex items-baseline justify-center gap-1.5">
                     <span className="font-score text-2xl text-slate-300">#{isHome ? (rival.position || '-') : (report?.position || '-')}</span>
                     <span className="text-[10px] text-slate-500 font-medium">{isHome ? rival.points : report?.points} pts</span>
                   </div>
-                  <div className="flex gap-1 justify-center mt-3">
+                  <div className="flex gap-1 justify-center mt-2">
                     {(isHome ? rival.form : report?.form)?.slice(0, 5).reverse().map((f, i) => (
                       <FormDot key={i} result={f.result} size="sm" />
                     ))}
                   </div>
-                  <div className="text-[9px] text-red-400/60 font-semibold uppercase tracking-wider mt-2">Visitant</div>
+                  <div className="text-[9px] text-red-400/60 font-semibold uppercase tracking-wider mt-1 sm:mt-2">Visitant</div>
                 </div>
               </div>
             </div>
@@ -508,24 +508,26 @@ export default async function RivalPage() {
           {/* Radiografia group — tighter spacing within */}
           <div className="space-y-4">
             {/* Stats band */}
-            <div className="stats-band flex">
-              {[
-                { v: rival.played, l: 'PJ', c: 'text-white' },
-                { v: rival.wins, l: 'V', c: 'text-green-400' },
-                { v: rival.draws, l: 'E', c: 'text-amber-400' },
-                { v: rival.losses, l: 'D', c: 'text-red-400' },
-                { v: `${rival.gf}-${rival.ga}`, l: 'GF-GC', c: 'text-slate-200' },
-                { v: rival.points, l: 'Pts', c: 'text-cyan-400' },
-              ].flatMap((s, i, arr) => [
-                <div key={s.l} className="stats-band-item">
-                  <div className={`font-score text-2xl sm:text-3xl whitespace-nowrap ${s.c}`}>{s.v}</div>
-                  <div className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mt-1">{s.l}</div>
-                </div>,
-                ...(i < arr.length - 1 ? [<div key={`d-${i}`} className="stats-band-divider" />] : []),
-              ])}
-              <div className="stats-band-divider" />
-              <div className="stats-band-item flex items-center justify-center overflow-visible">
-                <WinRateDonut wins={rival.wins} draws={rival.draws} losses={rival.losses} size={80} />
+            <div className="overflow-x-auto scrollbar-hide py-1 -my-1">
+              <div className="stats-band flex min-w-[480px]">
+                {[
+                  { v: rival.played, l: 'PJ', c: 'text-white' },
+                  { v: rival.wins, l: 'V', c: 'text-green-400' },
+                  { v: rival.draws, l: 'E', c: 'text-amber-400' },
+                  { v: rival.losses, l: 'D', c: 'text-red-400' },
+                  { v: `${rival.gf}-${rival.ga}`, l: 'GF-GC', c: 'text-slate-200' },
+                  { v: rival.points, l: 'Pts', c: 'text-cyan-400' },
+                ].flatMap((s, i, arr) => [
+                  <div key={s.l} className="stats-band-item">
+                    <div className={`font-score text-2xl sm:text-3xl whitespace-nowrap ${s.c}`}>{s.v}</div>
+                    <div className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mt-1">{s.l}</div>
+                  </div>,
+                  ...(i < arr.length - 1 ? [<div key={`d-${i}`} className="stats-band-divider" />] : []),
+                ])}
+                <div className="stats-band-divider" />
+                <div className="stats-band-item flex items-center justify-center overflow-visible">
+                  <WinRateDonut wins={rival.wins} draws={rival.draws} losses={rival.losses} size={80} />
+                </div>
               </div>
             </div>
 
@@ -693,25 +695,25 @@ export default async function RivalPage() {
               </div>
               <div className="px-6 pb-6">
                 {/* Header */}
-                <div className="grid grid-cols-[24px_1fr_48px_48px_48px_56px] gap-2 text-[9px] text-slate-500 uppercase tracking-wider font-semibold pb-2 border-b border-white/5">
+                <div className="grid grid-cols-[20px_1fr_40px_40px_44px] sm:grid-cols-[24px_1fr_48px_48px_48px_56px] gap-2 text-[9px] text-slate-500 uppercase tracking-wider font-semibold pb-2 border-b border-white/5">
                   <span></span>
                   <span>Nom</span>
                   <span className="text-center">PJ</span>
-                  <span className="text-center">Tit.</span>
+                  <span className="hidden sm:block text-center">Tit.</span>
                   <span className="text-center">Gols</span>
                   <span className="text-right">{hasMinutes ? 'Min.' : 'Tit.'}</span>
                 </div>
                 {rival.mostMinutes.slice(0, 11).map((p, i) => (
                   <div
                     key={i}
-                    className={`grid grid-cols-[24px_1fr_48px_48px_48px_56px] gap-2 items-center py-2.5 ${i % 2 === 0 ? 'bg-white/[0.02]' : ''}`}
+                    className={`grid grid-cols-[20px_1fr_40px_40px_44px] sm:grid-cols-[24px_1fr_48px_48px_48px_56px] gap-2 items-center py-2.5 ${i % 2 === 0 ? 'bg-white/[0.02]' : ''}`}
                   >
                     <span className="text-[10px] text-slate-600 font-bold text-center">{i + 1}</span>
                     <Link href={`/jugador/${slugify(p.name)}`} className="text-sm text-slate-200 hover:text-white truncate transition-colors font-medium">
                       {p.name}
                     </Link>
                     <span className="text-center font-score text-lg text-white">{p.appearances}</span>
-                    <span className="text-center font-score text-lg text-slate-400">{p.starts ?? p.appearances}</span>
+                    <span className="hidden sm:block text-center font-score text-lg text-slate-400">{p.starts ?? p.appearances}</span>
                     <span className={`text-center font-score text-lg ${p.goals > 0 ? 'text-green-400' : 'text-slate-600'}`}>{p.goals}</span>
                     <span className="text-right font-score text-lg text-cyan-400/80">
                       {hasMinutes ? `${p.minutes_played}'` : (p.starts ?? p.appearances)}
