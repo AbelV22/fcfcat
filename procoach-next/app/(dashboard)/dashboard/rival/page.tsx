@@ -524,8 +524,8 @@ export default async function RivalPage() {
                 ...(i < arr.length - 1 ? [<div key={`d-${i}`} className="stats-band-divider" />] : []),
               ])}
               <div className="stats-band-divider" />
-              <div className="stats-band-item flex items-center justify-center">
-                <WinRateDonut wins={rival.wins} draws={rival.draws} losses={rival.losses} size={64} />
+              <div className="stats-band-item flex items-center justify-center overflow-visible">
+                <WinRateDonut wins={rival.wins} draws={rival.draws} losses={rival.losses} size={80} />
               </div>
             </div>
 
