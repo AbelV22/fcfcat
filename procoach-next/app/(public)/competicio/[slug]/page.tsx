@@ -14,6 +14,7 @@ import {
   getCompetitionScorersDB,
   getCompetitionDisciplineDB,
   getCompetitionRefereeRankingDB,
+  getCompetitionPenaltyRankingDB,
   getFieldsDB,
 } from '@/lib/supabase-data'
 import { ListOrdered, AlertTriangle, LogIn, ChevronRight } from 'lucide-react'
@@ -69,7 +70,7 @@ export default async function CompeticionPage({
   const isPriority = PRIORITY_COMPETITIONS.has(slug)
 
   // All data fetched from Supabase at build time (parallel queries)
-  const [calendar, fcfStandings, scorers, matches, discipline, refereeRanking, teams] =
+  const [calendar, fcfStandings, scorers, matches, discipline, refereeRanking, teams, penaltyRanking] =
     await Promise.all([
       getCompetitionCalendarDB(slug),
       getCompetitionFCFStandingsDB(slug),
@@ -78,6 +79,7 @@ export default async function CompeticionPage({
       getCompetitionDisciplineDB(slug),
       getCompetitionRefereeRankingDB(slug),
       getCompetitionTeamsDB(slug),
+      getCompetitionPenaltyRankingDB(slug),
     ])
 
   // Fetch fields separately (non-blocking — don't break page if it fails)
@@ -245,6 +247,7 @@ export default async function CompeticionPage({
         totalYellows={totalYellows}
         totalReds={totalReds}
         fields={competitionFields}
+        penaltyRanking={penaltyRanking}
       />
 
       <footer className="border-t border-white/5 mt-8 py-8 text-center text-sm text-slate-600">

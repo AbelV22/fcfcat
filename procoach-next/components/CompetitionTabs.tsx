@@ -5,11 +5,11 @@ import Link from 'next/link'
 import {
   ListOrdered, Users, Calendar, Shield, AlertTriangle,
   TrendingUp, Zap, LogIn, BarChart2, Target, Clock,
-  Home, Plane, Ruler,
+  Home, Plane, Ruler, CircleDot,
 } from 'lucide-react'
 import { slugify } from '@/lib/utils'
 
-type TabId = 'resultats' | 'classificacio' | 'disciplina' | 'arbitres' | 'golejadors'
+type TabId = 'resultats' | 'classificacio' | 'disciplina' | 'arbitres' | 'golejadors' | 'penaltis'
 type StandingsFilter = 'total' | 'local' | 'visitant'
 
 /** Compute standings from match results, filtered by home/away */
@@ -95,6 +95,7 @@ export interface CompetitionTabsProps {
   totalYellows: number
   totalReds: number
   fields?: FieldInfo[]
+  penaltyRanking?: { name: string; slug: string; pens_for: number; pens_against: number; score: number }[]
 }
 
 type FieldSize = 'petit' | 'mitja' | 'gran'
@@ -132,6 +133,7 @@ export default function CompetitionTabs({
   totalYellows,
   totalReds,
   fields,
+  penaltyRanking,
 }: CompetitionTabsProps) {
   const [activeTab, setActiveTab] = useState<TabId>('resultats')
   const [standingsFilter, setStandingsFilter] = useState<StandingsFilter>('total')
@@ -147,6 +149,9 @@ export default function CompetitionTabs({
     { id: 'golejadors', label: 'Golejadors', icon: <Target size={14} />, count: scorers.length > 0 ? scorers.length : undefined },
     { id: 'disciplina', label: 'Disciplina', icon: <AlertTriangle size={14} />, count: discipline.riskPlayers.length > 0 ? discipline.riskPlayers.length : undefined },
     { id: 'arbitres', label: 'Àrbitres', icon: <Shield size={14} />, count: refereeRanking.length },
+    ...(penaltyRanking && penaltyRanking.some(t => t.pens_for > 0 || t.pens_against > 0)
+      ? [{ id: 'penaltis' as TabId, label: 'Penaltis', icon: <CircleDot size={14} />, count: penaltyRanking.reduce((s, t) => s + t.pens_for, 0) }]
+      : []),
   ]
 
   if (!hasData) {
@@ -696,6 +701,67 @@ export default function CompetitionTabs({
           )}
         </div>
       )}
+
+      {/* ─── TAB: PENALTIS ─── */}
+      {activeTab === 'penaltis' && penaltyRanking && (() => {
+        const teamsWithPens = penaltyRanking.filter(t => t.pens_for > 0 || t.pens_against > 0)
+        const totalPens = penaltyRanking.reduce((s, t) => s + t.pens_for, 0)
+
+        return (
+          <div className="space-y-6">
+            {teamsWithPens.length === 0 ? (
+              <div className="text-center py-16 text-slate-500">
+                <CircleDot size={40} className="mx-auto mb-4 opacity-30" />
+                <p className="text-lg font-medium text-slate-400">No hi ha dades de penaltis</p>
+                <p className="text-sm mt-2 max-w-sm mx-auto">Les dades de penaltis s&apos;actualitzen amb les actes de partits.</p>
+              </div>
+            ) : (
+              <>
+                <div className="bg-cyan-900/20 border border-cyan-500/20 rounded-2xl p-4">
+                  <p className="text-sm text-slate-300">
+                    <CircleDot size={14} className="inline mr-2 text-cyan-400" />
+                    <strong className="text-cyan-400">Classificació de Penaltis.</strong>
+                    {' '}Cada penalti a favor suma +1 i cada penalti en contra resta −1. Total de {totalPens} penaltis pitats a la competició.
+                  </p>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-white/8 text-slate-500 text-xs uppercase tracking-wider">
+                        <th className="text-left pb-3 pl-2 font-medium w-8">#</th>
+                        <th className="text-left pb-3 font-medium">Equip</th>
+                        <th className="text-center pb-3 font-medium text-green-400">A favor</th>
+                        <th className="text-center pb-3 font-medium text-red-400">En contra</th>
+                        <th className="text-center pb-3 font-medium text-white">Punts</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {teamsWithPens.map((t, i) => (
+                        <tr key={t.slug} className="hover:bg-white/3 transition-colors group">
+                          <td className="py-3 pl-2 text-slate-600 text-xs font-medium">{i + 1}</td>
+                          <td className="py-3">
+                            <Link href={`/equip/${t.slug}`} className="font-medium text-slate-200 group-hover:text-white transition-colors">
+                              {t.name}
+                            </Link>
+                          </td>
+                          <td className="py-3 text-center text-green-400 font-semibold">{t.pens_for}</td>
+                          <td className="py-3 text-center text-red-400 font-semibold">{t.pens_against}</td>
+                          <td className="py-3 text-center">
+                            <span className={`font-bold text-base ${t.score > 0 ? 'text-green-400' : t.score < 0 ? 'text-red-400' : 'text-slate-400'}`}>
+                              {t.score > 0 ? `+${t.score}` : t.score}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
+          </div>
+        )
+      })()}
 
       {/* Bottom CTA */}
       <div className="mt-12 bg-gradient-to-r from-[#0a1628] to-[#0f172a] border border-white/8 rounded-2xl p-8 text-center">

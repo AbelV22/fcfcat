@@ -300,6 +300,55 @@ export async function getCompetitionDisciplineDB(slug: string) {
   return { players, teams, riskPlayers }
 }
 
+// ─── Penalty Ranking ─────────────────────────────────────────────────────────
+
+/** Penalty ranking per team: penalties scored (favor) and conceded (contra).
+ *  Score = penalties_for − penalties_against */
+export async function getCompetitionPenaltyRankingDB(slug: string) {
+  const supabase = getSupabase()
+  if (!supabase) return []
+
+  const data = await fetchAllRows((from, to) =>
+    supabase
+      .from('fcf_referee_matches')
+      .select('home_team, away_team, goals')
+      .eq('competition', slug)
+      .range(from, to)
+  )
+
+  if (!data || data.length === 0) return []
+
+  const teamPens: Record<string, { name: string; slug: string; pens_for: number; pens_against: number }> = {}
+
+  for (const m of data) {
+    const goals = Array.isArray(m.goals) ? m.goals : []
+    const homeName = m.home_team || ''
+    const awayName = m.away_team || ''
+    const homeSlug = slugify(homeName)
+    const awaySlug = slugify(awayName)
+
+    if (homeName && !teamPens[homeSlug])
+      teamPens[homeSlug] = { name: homeName, slug: homeSlug, pens_for: 0, pens_against: 0 }
+    if (awayName && !teamPens[awaySlug])
+      teamPens[awaySlug] = { name: awayName, slug: awaySlug, pens_for: 0, pens_against: 0 }
+
+    for (const g of goals) {
+      if (g.goal_type !== 'penalty') continue
+      if (g.team === 'home') {
+        if (teamPens[homeSlug]) teamPens[homeSlug].pens_for++
+        if (teamPens[awaySlug]) teamPens[awaySlug].pens_against++
+      } else if (g.team === 'away') {
+        if (teamPens[awaySlug]) teamPens[awaySlug].pens_for++
+        if (teamPens[homeSlug]) teamPens[homeSlug].pens_against++
+      }
+    }
+  }
+
+  return Object.values(teamPens)
+    .map(t => ({ ...t, score: t.pens_for - t.pens_against }))
+    .sort((a, b) => b.score - a.score || b.pens_for - a.pens_for)
+}
+
 // ─── Referee Ranking ──────────────────────────────────────────────────────────
 
 /** Referee ranking for a competition from fcf_referee_matches */
