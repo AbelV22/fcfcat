@@ -10,7 +10,7 @@ interface JobStatus {
   actas_found?: number
   actas_scraped?: number
   error_msg?: string | null
-  cached?: boolean
+  cached?: boolean  // true when the scrape was already completed before this page load
 }
 
 interface Props {
@@ -40,16 +40,18 @@ export default function ScrapeProgressBanner({ slug, competition, group, teamNam
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ slug, competition, group, team_name: teamName }),
         })
-        const data: JobStatus & { cached?: boolean } = await res.json()
+        const data: JobStatus = await res.json()
         if (!mountedRef.current) return
         setJob(data)
         setTriggered(true)
-        // If done: only refresh if there's actual scraped data.
-        // actas_scraped === 0 means FCF had no data → show "no data" message,
-        // don't refresh (would cause infinite loop with 0 players forever).
+        // If done: only refresh if there's actual scraped data from a FRESH scrape.
+        // cached=true means the scrape already ran before this page load — if we
+        // still have 0 players, refreshing won't help and would cause an infinite loop.
+        // actas_scraped === 0 means FCF had no data → show "no data" message.
         if (data.status === 'done') {
           const hasData = (data.actas_scraped ?? 0) > 0
-          if (hasData && !hasRefreshed) {
+          const isFreshScrape = !data.cached
+          if (hasData && isFreshScrape && !hasRefreshed) {
             setHasRefreshed(true)
             setReloading(true)
             setTimeout(() => {
@@ -122,8 +124,8 @@ export default function ScrapeProgressBanner({ slug, competition, group, teamNam
     )
   }
 
-  // Done with actual data → show success / reloading
-  if ((job.status === 'done' && (job.actas_scraped ?? 0) > 0) || reloading) {
+  // Done with actual data from a fresh scrape → show success / reloading
+  if (reloading || (job.status === 'done' && (job.actas_scraped ?? 0) > 0 && !job.cached)) {
     return (
       <div className="bg-green-900/20 border border-green-500/30 rounded-2xl p-6 flex items-center gap-3">
         {reloading ? (
@@ -145,8 +147,8 @@ export default function ScrapeProgressBanner({ slug, competition, group, teamNam
     )
   }
 
-  // Done but 0 actas scraped → FCF had no data for this team yet
-  if (job.status === 'done' && (job.actas_scraped ?? 0) === 0) {
+  // Done but no usable player data (either 0 actas or cached result with no players on page)
+  if (job.status === 'done' && ((job.actas_scraped ?? 0) === 0 || job.cached)) {
     return (
       <div className="bg-slate-800/40 border border-slate-700/40 rounded-2xl p-6 flex items-center gap-3">
         <AlertTriangle size={18} className="text-slate-400 shrink-0" />

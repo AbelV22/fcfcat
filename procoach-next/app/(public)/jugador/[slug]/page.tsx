@@ -202,7 +202,13 @@ export default async function JugadorPage({ params }: Props) {
         {/* ─── Career Stats ──────────────────────────────────────── */}
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-2.5 sm:gap-3 mb-6">
           <StatCard value={career.appearances} label="Partits" color="text-white" />
-          <StatCard value={career.goals} label="Gols" color="text-green-400" />
+          <div className="stat-card p-3 sm:p-4 text-center">
+            <div className="text-2xl sm:text-3xl font-black mb-0.5 text-green-400">{career.goals}</div>
+            <div className="text-[10px] sm:text-xs text-slate-400">Gols</div>
+            {career.penaltyGoals > 0 && (
+              <div className="text-[10px] text-cyan-400 mt-0.5">({career.penaltyGoals} pen.)</div>
+            )}
+          </div>
           {hasMinutes ? (
             <StatCard
               value={career.appearances > 0 && career.minutesPlayed > 0
@@ -403,6 +409,14 @@ export default async function JugadorPage({ params }: Props) {
                         : '–'}
                     </span>
                   </div>
+                  {career.penaltyGoals > 0 && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-slate-500">Gols de penal</span>
+                      <span className="text-sm font-bold text-cyan-400">
+                        {career.penaltyGoals} ({career.goals > 0 ? Math.round((career.penaltyGoals / career.goals) * 100) : 0}% dels gols)
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

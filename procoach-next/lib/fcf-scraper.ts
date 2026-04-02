@@ -77,11 +77,11 @@ export async function runScrapeInBackground(opts: {
 
   try {
     // 1. Fetch all acta URLs for this team from fcf_matches
-    const actaUrls = await fetchActaUrls(slug, competition, group, season)
+    const actaRefs = await fetchActaUrls(slug, competition, group, season)
 
-    await dbPatch('scrape_jobs', jobId, { actas_found: actaUrls.length, status: 'running' })
+    await dbPatch('scrape_jobs', jobId, { actas_found: actaRefs.length, status: 'running' })
 
-    if (actaUrls.length === 0) {
+    if (actaRefs.length === 0) {
       await dbPatch('scrape_jobs', jobId, { status: 'done', actas_scraped: 0 })
       return
     }
@@ -92,22 +92,22 @@ export async function runScrapeInBackground(opts: {
     const actaResults: ActaData[] = []
     let scraped = 0
 
-    for (let i = 0; i < actaUrls.length; i += BATCH_SIZE) {
-      const batch = actaUrls.slice(i, i + BATCH_SIZE)
-      const results = await Promise.allSettled(batch.map(url => scrapeActa(url)))
+    for (let i = 0; i < actaRefs.length; i += BATCH_SIZE) {
+      const batch = actaRefs.slice(i, i + BATCH_SIZE)
+      const results = await Promise.allSettled(batch.map(ref => scrapeActa(ref.url).then(acta => ({ acta, side: ref.side }))))
 
       for (const result of results) {
-        if (result.status === 'fulfilled' && result.value) {
-          const acta = result.value
+        if (result.status === 'fulfilled' && result.value.acta) {
+          const { acta, side } = result.value
           scraped++
-          accumulatePlayerStats(playerStatsMap, acta, slug)
+          accumulatePlayerStats(playerStatsMap, acta, slug, side)
           actaResults.push(acta)
         }
       }
 
       await dbPatch('scrape_jobs', jobId, { actas_scraped: scraped, status: 'running' })
 
-      if (i + BATCH_SIZE < actaUrls.length) {
+      if (i + BATCH_SIZE < actaRefs.length) {
         await delay(300)
       }
     }
@@ -270,19 +270,25 @@ function accumulatePlayerStats(
   map: Record<string, PlayerStat>,
   acta: ActaData,
   teamSlug: string,
+  knownSide?: 'home' | 'away',
 ) {
-  const homeActaSlug = slugify(acta.home_team)
-  const awayActaSlug = slugify(acta.away_team)
+  // Use the known side from fcf_matches when available (most reliable).
+  // Fallback to slug matching only if knownSide is not provided.
+  let mySide: 'home' | 'away' | null = knownSide ?? null
 
-  let mySide: 'home' | 'away' | null = null
-  if (homeActaSlug === teamSlug) {
-    mySide = 'home'
-  } else if (awayActaSlug === teamSlug) {
-    mySide = 'away'
-  } else if (homeActaSlug.includes(teamSlug.slice(0, 10)) || teamSlug.includes(homeActaSlug.slice(0, 10))) {
-    mySide = 'home'
-  } else if (awayActaSlug.includes(teamSlug.slice(0, 10)) || teamSlug.includes(awayActaSlug.slice(0, 10))) {
-    mySide = 'away'
+  if (!mySide) {
+    const homeActaSlug = slugify(acta.home_team)
+    const awayActaSlug = slugify(acta.away_team)
+
+    if (homeActaSlug === teamSlug) {
+      mySide = 'home'
+    } else if (awayActaSlug === teamSlug) {
+      mySide = 'away'
+    } else if (homeActaSlug.includes(teamSlug.slice(0, 10)) || teamSlug.includes(homeActaSlug.slice(0, 10))) {
+      mySide = 'home'
+    } else if (awayActaSlug.includes(teamSlug.slice(0, 10)) || teamSlug.includes(awayActaSlug.slice(0, 10))) {
+      mySide = 'away'
+    }
   }
 
   if (!mySide) return
@@ -359,7 +365,12 @@ function getOrCreate(map: Record<string, PlayerStat>, playerName: string): Playe
 
 // ─── Supabase helpers ─────────────────────────────────────────────────────────
 
-async function fetchActaUrls(slug: string, competition: string, group: string, season: string): Promise<string[]> {
+interface ActaRef {
+  url: string
+  side: 'home' | 'away'
+}
+
+async function fetchActaUrls(slug: string, competition: string, group: string, season: string): Promise<ActaRef[]> {
   const base = `${SUPABASE_URL}/rest/v1/fcf_matches`
   const common = `select=acta_url&competition=eq.${enc(competition)}&group_name=eq.${enc(group)}&season=eq.${enc(season)}&acta_url=not.is.null&acta_url=neq.`
 
@@ -371,11 +382,21 @@ async function fetchActaUrls(slug: string, competition: string, group: string, s
   const homeData: Array<{ acta_url: string }> = homeRes.ok ? await homeRes.json() : []
   const awayData: Array<{ acta_url: string }> = awayRes.ok ? await awayRes.json() : []
 
-  const urls = [...homeData, ...awayData]
-    .map(r => r.acta_url)
-    .filter(u => u && u.length > 10)
-
-  return [...new Set(urls)]
+  const seen = new Set<string>()
+  const refs: ActaRef[] = []
+  for (const r of homeData) {
+    if (r.acta_url && r.acta_url.length > 10 && !seen.has(r.acta_url)) {
+      seen.add(r.acta_url)
+      refs.push({ url: r.acta_url, side: 'home' })
+    }
+  }
+  for (const r of awayData) {
+    if (r.acta_url && r.acta_url.length > 10 && !seen.has(r.acta_url)) {
+      seen.add(r.acta_url)
+      refs.push({ url: r.acta_url, side: 'away' })
+    }
+  }
+  return refs
 }
 
 async function dbUpsert(table: string, data: Record<string, unknown> | Record<string, unknown>[]) {
@@ -510,6 +531,7 @@ function extractDate(html: string): string {
 function extractMatchInfo(html: string): {
   homeTeam: string; awayTeam: string; homeScore: number; awayScore: number
 } | null {
+  // Strategy 1 (legacy): class="acta-table-header" with 3 TDs
   const headerMatch = html.match(
     /class="acta-table-header"[^>]*>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i
   )
@@ -523,6 +545,7 @@ function extractMatchInfo(html: string): {
     }
   }
 
+  // Strategy 2 (legacy): class="acta-equip" + class="acta-resultat"
   const equips = [...html.matchAll(/class="acta-equip"[^>]*>([\s\S]*?)<\/td>/gi)]
   const resultat = html.match(/class="acta-resultat"[^>]*>([\s\S]*?)<\/td>/i)
   if (equips.length >= 2 && resultat) {
@@ -531,6 +554,29 @@ function extractMatchInfo(html: string): {
     const scoreMatch = stripTags(resultat[1]).trim().match(/(\d+)\s*[-–]\s*(\d+)/)
     if (scoreMatch) {
       return { homeTeam, awayTeam, homeScore: parseInt(scoreMatch[1]), awayScore: parseInt(scoreMatch[2]) }
+    }
+  }
+
+  // Strategy 3 (2025+ FCF redesign): Extract team names from equip links near the score.
+  // New structure: <a href="...equip...">TEAM NAME</a> ... N - N ... <a href="...equip...">TEAM NAME</a>
+  // Find all team links on the page
+  const teamLinks = [...html.matchAll(/<a[^>]+href="https?:\/\/www\.fcf\.cat\/equip\/[^"]*"[^>]*>([\s\S]*?)<\/a>/gi)]
+  if (teamLinks.length >= 2) {
+    const home = stripTags(teamLinks[0][1]).trim()
+    const away = stripTags(teamLinks[1][1]).trim()
+    // Find the score between or near these team names
+    const firstTeamEnd = (teamLinks[0].index || 0) + teamLinks[0][0].length
+    const secondTeamStart = teamLinks[1].index || html.length
+    const between = html.slice(firstTeamEnd, secondTeamStart)
+    const scoreMatch = between.match(/(\d+)\s*[-–]\s*(\d+)/)
+    if (scoreMatch && home && away) {
+      return { homeTeam: home, awayTeam: away, homeScore: parseInt(scoreMatch[1]), awayScore: parseInt(scoreMatch[2]) }
+    }
+    // Score might not be between them — search broader area
+    const searchArea = html.slice(Math.max(0, (teamLinks[0].index || 0) - 200), (teamLinks[1].index || 0) + teamLinks[1][0].length + 200)
+    const broadScore = searchArea.match(/(\d+)\s*[-–]\s*(\d+)/)
+    if (broadScore && home && away) {
+      return { homeTeam: home, awayTeam: away, homeScore: parseInt(broadScore[1]), awayScore: parseInt(broadScore[2]) }
     }
   }
 
@@ -551,7 +597,9 @@ function extractPlayersFromSection(htmlPart: string): Array<{ name: string; isSt
     if (/Substitucions/i.test(row) || /Targetes/i.test(row) || /Gols/i.test(row)) { currentSection = ''; continue }
 
     if (currentSection !== 'starter' && currentSection !== 'bench') continue
-    if (!row.includes('num-samarreta-acta2')) continue
+
+    // Accept rows with either legacy class or a jugador link (2025+ format uses plain <tr><td>)
+    if (!row.includes('num-samarreta-acta2') && !row.includes('jugador')) continue
 
     const linkMatch = row.match(/<a[^>]+href="[^"]*jugador[^"]*"[^>]*>([\s\S]*?)<\/a>/i)
     if (!linkMatch) continue
@@ -611,32 +659,63 @@ function parseCardsFromSection(htmlPart: string, side: 'home' | 'away', out: Car
   const targIdx = htmlPart.toLowerCase().indexOf('targetes')
   if (targIdx === -1) return
 
+  // Cut at next major section to avoid picking up data from other sections
   const targPart = htmlPart.slice(targIdx)
-  const rows = targPart.split(/<tr[\s>]/i)
+  const sectionEnd = targPart.search(/(?:Substitucions|Gols|Alineacions|rbitr|Titulars|Suplents)/i)
+  const cardSlice = sectionEnd > 100 ? targPart.slice(0, sectionEnd) : targPart.slice(0, 5000)
+
+  const rows = cardSlice.split(/<tr[\s>]/i)
 
   for (const row of rows) {
-    if (!row.includes('samarreta-acta2') && !row.includes('acta-stat-box')) continue
-
-    const nameMatch = row.match(/class="samarreta-acta2"[^>]*>([\s\S]*?)<\/td>/i)
-    if (!nameMatch) continue
-    const player = stripTags(nameMatch[1]).trim()
-    if (!player || player.length < 2) continue
-
-    const minuteMatch = row.match(/class="acta-minut-targeta"[^>]*>([\s\S]*?)<\/td>/i)
-    const minute = minuteMatch ? parseInt(stripTags(minuteMatch[1]).replace("'", '')) || 0 : 0
-
+    // Legacy format: look for specific classes
     const isDoubleYellow = row.includes('doble-groga-s')
     const isRed = row.includes('vermella-s')
     const isYellow = row.includes('groga-s')
+    const hasLegacyClasses = isDoubleYellow || isRed || isYellow
+
+    // New format (2025+): rows have jugador links + minute pattern, no card-type classes
     const hasPlayerLink = /href="[^"]*jugador[^"]*"/.test(row)
+    const hasMinute = /\d{1,3}['′]/.test(row)
+
+    if (!hasLegacyClasses && !(hasPlayerLink && hasMinute)) continue
+
+    // Extract player name — try legacy class first, then jugador link
+    let player = ''
+    const legacyName = row.match(/class="samarreta-acta2"[^>]*>([\s\S]*?)<\/td>/i)
+    if (legacyName) {
+      player = stripTags(legacyName[1]).trim()
+    } else {
+      const linkMatch = row.match(/<a[^>]+href="[^"]*jugador[^"]*"[^>]*>([\s\S]*?)<\/a>/i)
+      if (linkMatch) player = stripTags(linkMatch[1]).trim()
+    }
+    if (!player || player.length < 2) continue
+
+    // Extract minute — try legacy class first, then generic pattern
+    let minute = 0
+    const legacyMin = row.match(/class="acta-minut-targeta"[^>]*>([\s\S]*?)<\/td>/i)
+    if (legacyMin) {
+      minute = parseInt(stripTags(legacyMin[1]).replace("'", '')) || 0
+    } else {
+      const minMatch = row.match(/(\d{1,3})['′]/)
+      minute = minMatch ? parseInt(minMatch[1]) : 0
+    }
+
     const recipientType: 'player' | 'staff' = hasPlayerLink ? 'player' : 'staff'
 
-    if (isDoubleYellow) {
-      out.push({ player, team: side, minute, card_type: 'red', is_double_yellow_dismissal: true, recipient_type: recipientType })
-    } else if (isRed) {
-      out.push({ player, team: side, minute, card_type: 'red', is_double_yellow_dismissal: false, recipient_type: recipientType })
-    } else if (isYellow) {
-      out.push({ player, team: side, minute, card_type: 'yellow', is_double_yellow_dismissal: false, recipient_type: recipientType })
+    if (hasLegacyClasses) {
+      // Legacy path — card type from CSS classes
+      if (isDoubleYellow) {
+        out.push({ player, team: side, minute, card_type: 'red', is_double_yellow_dismissal: true, recipient_type: recipientType })
+      } else if (isRed) {
+        out.push({ player, team: side, minute, card_type: 'red', is_double_yellow_dismissal: false, recipient_type: recipientType })
+      } else {
+        out.push({ player, team: side, minute, card_type: 'yellow', is_double_yellow_dismissal: false, recipient_type: recipientType })
+      }
+    } else {
+      // New format — check for vermella/groga text nearby, default to yellow
+      const lowerRow = row.toLowerCase()
+      const cardType = lowerRow.includes('vermella') ? 'red' as const : 'yellow' as const
+      out.push({ player, team: side, minute, card_type: cardType, is_double_yellow_dismissal: false, recipient_type: recipientType })
     }
   }
 }

@@ -164,7 +164,19 @@ export async function POST(req: NextRequest) {
 
   const jobId = `${season}-${competition}-${slug}`
 
-  // ── Check for existing done job ────────────────────────────────────────────
+  // ── Check if player stats already exist (most reliable indicator) ──────────
+  const statsCheckRes = await fetch(
+    `${SUPABASE_URL}/rest/v1/fcf_player_stats?team_slug=eq.${encodeURIComponent(slug)}&competition=eq.${encodeURIComponent(competition)}&limit=1&select=id`,
+    { headers: sbHeaders(), cache: 'no-store' },
+  )
+  if (statsCheckRes.ok) {
+    const existingStats: Array<{ id: string }> = await statsCheckRes.json()
+    if (existingStats.length > 0) {
+      return NextResponse.json({ jobId, status: 'done', cached: true, actas_scraped: 1 })
+    }
+  }
+
+  // ── Check for existing job ────────────────────────────────────────────────
   const checkRes = await fetch(
     `${SUPABASE_URL}/rest/v1/scrape_jobs?team_slug=eq.${encodeURIComponent(slug)}&order=created_at.desc&limit=1`,
     { headers: sbHeaders(), cache: 'no-store' },
@@ -174,27 +186,13 @@ export async function POST(req: NextRequest) {
     const existing: Array<{ id: string; status: string; actas_scraped: number }> = await checkRes.json()
     if (existing.length > 0) {
       const job = existing[0]
-      // Permanently cached — don't re-scrape
-      if (job.status === 'done') {
-        return NextResponse.json({ jobId: job.id, status: 'done', cached: true, actas_scraped: job.actas_scraped })
-      }
       // Already in progress — tell banner to poll
       if (job.status === 'running' || job.status === 'pending') {
         return NextResponse.json({ jobId: job.id, status: job.status, cached: true })
       }
-      // status === 'error': fall through and re-trigger
-    }
-  }
-
-  // ── Extra safety: check if player stats already exist ─────────────────────
-  const statsCheckRes = await fetch(
-    `${SUPABASE_URL}/rest/v1/fcf_player_stats?team_slug=eq.${encodeURIComponent(slug)}&competition=eq.${encodeURIComponent(competition)}&limit=1&select=id`,
-    { headers: sbHeaders(), cache: 'no-store' },
-  )
-  if (statsCheckRes.ok) {
-    const existingStats: Array<{ id: string }> = await statsCheckRes.json()
-    if (existingStats.length > 0) {
-      return NextResponse.json({ jobId, status: 'done', cached: true, actas_scraped: 1 })
+      // status === 'done' but NO player stats (checked above) → re-trigger scrape
+      // status === 'error' → also re-trigger
+      // Fall through to re-trigger in both cases
     }
   }
 

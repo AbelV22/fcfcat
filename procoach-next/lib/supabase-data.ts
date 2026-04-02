@@ -1060,6 +1060,13 @@ export type RefereeStatsDB = {
   predicted: boolean
 }
 
+export type TeamPenaltyStats = {
+  penalties_scored: number
+  penalties_conceded: number
+  penalties_per_match: number
+  matches_with_penalty_pct: number
+}
+
 export type RivalDataDB = {
   name: string
   slug: string
@@ -1081,6 +1088,7 @@ export type RivalDataDB = {
   goalBuckets: GoalBucketEntry[]
   awayByFieldSize: never[]  // not available from Supabase; always empty
   insights: RivalInsights | null
+  penaltyStats: TeamPenaltyStats | null
 }
 
 export type FieldDimsDB = {
@@ -1116,6 +1124,48 @@ export type FullTeamReportDB = {
   homePitch: FieldDimsDB | null
   rivalPitch: FieldDimsDB | null
   fieldSizeRecord: Record<string, { played: number; wins: number; draws: number; losses: number; gf: number; ga: number }> | null
+  penaltyStats: TeamPenaltyStats | null
+}
+
+/** Compute penalty stats for a team from its home/away match data (with goals JSONB). */
+function _computeTeamPenaltyStats(
+  homeMatches: any[],
+  awayMatches: any[],
+  teamName: string,
+): TeamPenaltyStats | null {
+  const allMatches = [...homeMatches, ...awayMatches]
+  if (allMatches.length === 0) return null
+
+  let scored = 0
+  let conceded = 0
+  let matchesWithPenalty = 0
+
+  for (const m of homeMatches) {
+    const goals: any[] = Array.isArray(m.goals) ? m.goals : []
+    const pens = goals.filter((g: any) => g.goal_type === 'penalty')
+    const teamPens = pens.filter((g: any) => g.team === 'home').length
+    const oppPens = pens.filter((g: any) => g.team === 'away').length
+    scored += teamPens
+    conceded += oppPens
+    if (pens.length > 0) matchesWithPenalty++
+  }
+  for (const m of awayMatches) {
+    const goals: any[] = Array.isArray(m.goals) ? m.goals : []
+    const pens = goals.filter((g: any) => g.goal_type === 'penalty')
+    const teamPens = pens.filter((g: any) => g.team === 'away').length
+    const oppPens = pens.filter((g: any) => g.team === 'home').length
+    scored += teamPens
+    conceded += oppPens
+    if (pens.length > 0) matchesWithPenalty++
+  }
+
+  const totalMatches = allMatches.length
+  return {
+    penalties_scored: scored,
+    penalties_conceded: conceded,
+    penalties_per_match: totalMatches > 0 ? +((scored + conceded) / totalMatches).toFixed(2) : 0,
+    matches_with_penalty_pct: totalMatches > 0 ? Math.round((matchesWithPenalty / totalMatches) * 100) : 0,
+  }
 }
 
 function _splitStats(matches: Array<{ isHome: boolean; goalsFor: number; goalsAgainst: number }>, filter?: 'home' | 'away'): SplitStats {
@@ -1431,6 +1481,13 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
   ]
   const teamGoalBuckets: GoalBucketEntry[] = computeGoalBucketsFromRefs(teamGoalMatches, slug)
 
+  // ── Compute team penalty stats ─────────────────────────────────────────────
+  const teamPenaltyStats = _computeTeamPenaltyStats(
+    teamGoalsHomeRes.data || [],
+    teamGoalsAwayRes.data || [],
+    teamName,
+  )
+
   // ── Build rival ────────────────────────────────────────────────────────────
   let rival: RivalDataDB | null = null
   if (rivalSlug && rivalName) {
@@ -1468,6 +1525,12 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       ? computeRivalInsights(rivalGoalMatches, rivalSlug)
       : null
 
+    const rivalPenaltyStats = _computeTeamPenaltyStats(
+      rivalHomeRes.data || [],
+      rivalAwayRes.data || [],
+      rivalName,
+    )
+
     rival = {
       name: rivalName,
       slug: rivalSlug,
@@ -1491,6 +1554,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       goalBuckets: rivalGoalBuckets,
       awayByFieldSize: [],    // pitch dimension data not available from Supabase
       insights: rivalInsights,
+      penaltyStats: rivalPenaltyStats,
     }
   }
 
@@ -1758,6 +1822,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     homePitch,
     rivalPitch,
     fieldSizeRecord: hasFieldSizeData ? fieldSizeRecord : null,
+    penaltyStats: teamPenaltyStats,
   }
 }
 
@@ -1789,6 +1854,7 @@ export type PlayerProfileDB = {
     appearances: number
     starts: number
     goals: number
+    penaltyGoals: number
     yellowCards: number
     redCards: number
     minutesPlayed: number
@@ -1835,7 +1901,7 @@ export async function getPlayerProfile(slug: string): Promise<PlayerProfileDB | 
       phone: null, contactEmail: null, instagram: null, whatsapp: false,
       claimed: !!profile.claimed_by, verified: profile.verified,
       optedOut: true, contactVisible: false, lookingForTeam: false,
-      career: { appearances: 0, starts: 0, goals: 0, yellowCards: 0, redCards: 0, minutesPlayed: 0 },
+      career: { appearances: 0, starts: 0, goals: 0, penaltyGoals: 0, yellowCards: 0, redCards: 0, minutesPlayed: 0 },
       seasons: [],
     }
   }
@@ -1872,18 +1938,45 @@ export async function getPlayerProfile(slug: string): Promise<PlayerProfileDB | 
     }))
   }
 
-  // 3. Aggregate career totals
+  // 3. Count penalty goals by querying fcf_referee_matches goals JSONB
+  //    Player names in goals match player_name from fcf_player_stats (same FCF source)
+  let penaltyGoals = 0
+  if (seasons.length > 0 && seasons.some(s => s.goals > 0)) {
+    const playerName = profile.display_name?.toUpperCase() || ''
+    // Query all matches for teams the player has played for
+    const teamComps = [...new Set(seasons.map(s => `${s.teamName}|${s.competition}`))]
+    const penaltyPromises = teamComps.map(tc => {
+      const [teamName, competition] = tc.split('|')
+      return Promise.all([
+        supabase.from('fcf_referee_matches').select('goals').eq('competition', competition).eq('home_team', teamName).not('goals', 'is', null),
+        supabase.from('fcf_referee_matches').select('goals').eq('competition', competition).eq('away_team', teamName).not('goals', 'is', null),
+      ])
+    })
+    const results = await Promise.all(penaltyPromises)
+    for (const [homeRes, awayRes] of results) {
+      for (const m of [...(homeRes.data || []), ...(awayRes.data || [])]) {
+        const goals: any[] = Array.isArray(m.goals) ? m.goals : []
+        penaltyGoals += goals.filter((g: any) =>
+          g.goal_type === 'penalty' && g.player?.toUpperCase() === playerName
+        ).length
+      }
+    }
+  }
+
+  // 4. Aggregate career totals
   const career = seasons.reduce(
     (acc, s) => ({
       appearances: acc.appearances + s.appearances,
       starts: acc.starts + s.starts,
       goals: acc.goals + s.goals,
+      penaltyGoals: 0,
       yellowCards: acc.yellowCards + s.yellowCards,
       redCards: acc.redCards + s.redCards,
       minutesPlayed: acc.minutesPlayed + s.minutesPlayed,
     }),
-    { appearances: 0, starts: 0, goals: 0, yellowCards: 0, redCards: 0, minutesPlayed: 0 }
+    { appearances: 0, starts: 0, goals: 0, penaltyGoals: 0, yellowCards: 0, redCards: 0, minutesPlayed: 0 }
   )
+  career.penaltyGoals = penaltyGoals
 
   return {
     id: profile.id,

@@ -176,6 +176,34 @@ export default async function IntelPage() {
               </div>
             )}
 
+            {/* Penalty stats */}
+            {report.penaltyStats && (report.penaltyStats.penalties_scored > 0 || report.penaltyStats.penalties_conceded > 0) && (
+              <div className="glass-card rounded-2xl p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Target size={18} className="text-cyan-400" />
+                  <h2 className="text-lg font-bold text-white">Penals</h2>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="bg-white/4 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-black text-green-400">{report.penaltyStats.penalties_scored}</div>
+                    <div className="text-xs text-slate-500 mt-1">A favor</div>
+                  </div>
+                  <div className="bg-white/4 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-black text-red-400">{report.penaltyStats.penalties_conceded}</div>
+                    <div className="text-xs text-slate-500 mt-1">En contra</div>
+                  </div>
+                  <div className="bg-white/4 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-black text-cyan-400">{report.penaltyStats.penalties_per_match}</div>
+                    <div className="text-xs text-slate-500 mt-1">Penals/partit</div>
+                  </div>
+                  <div className="bg-white/4 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-black text-slate-300">{report.penaltyStats.matches_with_penalty_pct}%</div>
+                    <div className="text-xs text-slate-500 mt-1">Partits amb penal</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Squad */}
             {report.players.length > 0 && (
               <div className="glass-card rounded-2xl p-6">

@@ -560,6 +560,37 @@ function FieldAnalysisSection({
             </div>
           </div>
         </div>
+
+        {/* Penalty comparison */}
+        {(report.penaltyStats || rival.penaltyStats) && (
+          <div className="space-y-3">
+            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest border-b border-white/5 pb-1.5">PENALS</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <div className="text-[10px] text-cyan-400/70 mb-1.5 font-semibold">{report.name}</div>
+                {report.penaltyStats ? (
+                  <div className="space-y-1 text-xs text-slate-400">
+                    <div>A favor: <span className="text-green-400 font-bold">{report.penaltyStats.penalties_scored}</span></div>
+                    <div>En contra: <span className="text-red-400 font-bold">{report.penaltyStats.penalties_conceded}</span></div>
+                  </div>
+                ) : (
+                  <div className="text-xs text-slate-600">–</div>
+                )}
+              </div>
+              <div>
+                <div className="text-[10px] text-red-400/70 mb-1.5 font-semibold">{rival.name}</div>
+                {rival.penaltyStats ? (
+                  <div className="space-y-1 text-xs text-slate-400">
+                    <div>A favor: <span className="text-green-400 font-bold">{rival.penaltyStats.penalties_scored}</span></div>
+                    <div>En contra: <span className="text-red-400 font-bold">{rival.penaltyStats.penalties_conceded}</span></div>
+                  </div>
+                ) : (
+                  <div className="text-xs text-slate-600 italic">Sense dades</div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
