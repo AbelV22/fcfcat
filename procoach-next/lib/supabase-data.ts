@@ -395,11 +395,25 @@ export async function getCompetitionRefereeRankingDB(slug: string) {
 // in multiple competitions (e.g. a club with adult + youth teams sharing a slug),
 // prefer the first matching competition in this list.
 const COMPETITION_PRIORITY = [
+  // Adult
   'tercera-federacio', 'lliga-elit', 'primera-catalana',
   'segona-catalana', 'tercera-catalana', 'quarta-catalana',
+  // Juvenil
   'divisio-honor-juvenil', 'lliga-nacional-juvenil',
   'preferent-juvenils', 'juvenil-primera-divisio',
-  'divisio-honor-cadet-s16', 'divisio-honor-cadet-s15',
+  'segona-catalana-juvenil', 'tercera-catalana-juvenil',
+  // Cadet S16
+  'divisio-honor-cadet-s16', 'preferent-cadet-s16',
+  'cadet-primera-divisio-s16', 'cadet-segona-divisio-s16',
+  // Cadet S15
+  'divisio-honor-cadet-s15', 'preferent-cadet-s15',
+  'cadet-primera-divisio-s15', 'cadet-segona-divisio-s15',
+  // Infantil S14
+  'divisio-honor-infantil-s14', 'preferent-infantil-s14',
+  'primera-divisio-infantil-s14',
+  // Infantil S13
+  'divisio-honor-infantil-s13', 'preferent-infantil-s13',
+  'infantil-primera-divisio-s13',
 ]
 function competitionRank(c: string) {
   const i = COMPETITION_PRIORITY.indexOf(c)
@@ -890,8 +904,23 @@ type PlayerEntry = { name: string; appearances: number; starts: number; goals: n
 /** Competitions where FCF actas lack substitution data — minutes are unreliable */
 export const COMPETITIONS_WITHOUT_MINUTES = new Set([
   'quarta-catalana',
+  'lliga-elit',
   'juvenil-primera-divisio',
   'preferent-juvenils',
+  'segona-catalana-juvenil',
+  'tercera-catalana-juvenil',
+  // Cadet
+  'divisio-honor-cadet-s16', 'preferent-cadet-s16',
+  'cadet-primera-divisio-s16', 'cadet-segona-divisio-s16',
+  'divisio-honor-cadet-s15', 'preferent-cadet-s15',
+  'cadet-primera-divisio-s15', 'cadet-segona-divisio-s15',
+  // Infantil
+  'divisio-honor-infantil-s14', 'preferent-infantil-s14',
+  'primera-divisio-infantil-s14',
+  'divisio-honor-infantil-s13', 'preferent-infantil-s13',
+  'infantil-primera-divisio-s13',
+  // Juvenil honor/nacional
+  'divisio-honor-juvenil', 'lliga-nacional-juvenil',
 ])
 type MatchEntry = { date: string; jornada: number; opponent: string; opponentSlug: string; isHome: boolean; goalsFor: number | null; goalsAgainst: number | null; result: 'W' | 'D' | 'L' | null; referee: string | null }
 type StandingEntry = { position: number; name: string; slug: string; played: number; wins: number; draws: number; losses: number; gf: number; ga: number; points: number }
@@ -1270,18 +1299,25 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
   // Adult competitions come first so that, e.g., poble-nou-at-a resolves to
   // quarta-catalana rather than juvenil-primera-divisio.
   const COMPETITION_PRIORITY = [
-    'tercera-federacio',
-    'lliga-elit',
-    'primera-catalana',
-    'segona-catalana',
-    'tercera-catalana',
-    'quarta-catalana',
-    'divisio-honor-juvenil',
-    'lliga-nacional-juvenil',
-    'preferent-juvenils',
-    'juvenil-primera-divisio',
-    'divisio-honor-cadet-s16',
-    'divisio-honor-cadet-s15',
+    // Adult
+    'tercera-federacio', 'lliga-elit', 'primera-catalana',
+    'segona-catalana', 'tercera-catalana', 'quarta-catalana',
+    // Juvenil
+    'divisio-honor-juvenil', 'lliga-nacional-juvenil',
+    'preferent-juvenils', 'juvenil-primera-divisio',
+    'segona-catalana-juvenil', 'tercera-catalana-juvenil',
+    // Cadet S16
+    'divisio-honor-cadet-s16', 'preferent-cadet-s16',
+    'cadet-primera-divisio-s16', 'cadet-segona-divisio-s16',
+    // Cadet S15
+    'divisio-honor-cadet-s15', 'preferent-cadet-s15',
+    'cadet-primera-divisio-s15', 'cadet-segona-divisio-s15',
+    // Infantil S14
+    'divisio-honor-infantil-s14', 'preferent-infantil-s14',
+    'primera-divisio-infantil-s14',
+    // Infantil S13
+    'divisio-honor-infantil-s13', 'preferent-infantil-s13',
+    'infantil-primera-divisio-s13',
   ]
 
   // ── Round 1: Find team standing ──────────────────────────────────────────
