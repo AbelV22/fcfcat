@@ -80,31 +80,31 @@ export async function upsertMatchNote(
     half_time_score_for: note.half_time_score_for ?? null,
     half_time_score_against: note.half_time_score_against ?? null,
     // Attack
-    shots_blocked_for: (note as any).shots_blocked_for ?? null,
-    shots_blocked_against: (note as any).shots_blocked_against ?? null,
-    dribbles_attempted: (note as any).dribbles_attempted ?? null,
-    dribbles_completed: (note as any).dribbles_completed ?? null,
+    shots_blocked_for: note.shots_blocked_for ?? null,
+    shots_blocked_against: note.shots_blocked_against ?? null,
+    dribbles_attempted: note.dribbles_attempted ?? null,
+    dribbles_completed: note.dribbles_completed ?? null,
     // Distribution
-    total_passes_for: (note as any).total_passes_for ?? null,
-    total_passes_against: (note as any).total_passes_against ?? null,
-    pass_accuracy: (note as any).pass_accuracy ?? null,
+    total_passes_for: note.total_passes_for ?? null,
+    total_passes_against: note.total_passes_against ?? null,
+    pass_accuracy: note.pass_accuracy ?? null,
     // Defense
-    tackles_for: (note as any).tackles_for ?? null,
-    tackles_against: (note as any).tackles_against ?? null,
-    clearances: (note as any).clearances ?? null,
-    aerial_duels_won: (note as any).aerial_duels_won ?? null,
-    aerial_duels_lost: (note as any).aerial_duels_lost ?? null,
+    tackles_for: note.tackles_for ?? null,
+    tackles_against: note.tackles_against ?? null,
+    clearances: note.clearances ?? null,
+    aerial_duels_won: note.aerial_duels_won ?? null,
+    aerial_duels_lost: note.aerial_duels_lost ?? null,
     // Set pieces
-    throw_ins_for: (note as any).throw_ins_for ?? null,
-    throw_ins_against: (note as any).throw_ins_against ?? null,
-    goal_kicks_for: (note as any).goal_kicks_for ?? null,
-    goal_kicks_against: (note as any).goal_kicks_against ?? null,
-    penalties_for: (note as any).penalties_for ?? null,
-    penalties_against: (note as any).penalties_against ?? null,
-    penalties_scored: (note as any).penalties_scored ?? null,
-    penalties_saved: (note as any).penalties_saved ?? null,
+    throw_ins_for: note.throw_ins_for ?? null,
+    throw_ins_against: note.throw_ins_against ?? null,
+    goal_kicks_for: note.goal_kicks_for ?? null,
+    goal_kicks_against: note.goal_kicks_against ?? null,
+    penalties_for: note.penalties_for ?? null,
+    penalties_against: note.penalties_against ?? null,
+    penalties_scored: note.penalties_scored ?? null,
+    penalties_saved: note.penalties_saved ?? null,
     // Goalkeeping
-    high_claims: (note as any).high_claims ?? null,
+    high_claims: note.high_claims ?? null,
     // Phase ratings
     phase_attack: note.phase_attack ?? null,
     phase_defense: note.phase_defense ?? null,
@@ -285,7 +285,7 @@ export async function saveFullMatchNote(
     weather: state.summary.weather ?? null,
     captain: state.summary.captain ?? null,
     status,
-  } as any)
+  })
 
   // 2. Upsert children in parallel
   await Promise.all([

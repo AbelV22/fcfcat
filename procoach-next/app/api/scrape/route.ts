@@ -21,6 +21,10 @@ const SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54Z3lkdXFwcnhiaHRwcXNlcGdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5OTc5NjcsImV4cCI6MjA4ODU3Mzk2N30.qb-T1ja19sGFyDIOLU6C8SM1OBOa9RnmzEakc9g2Y2U'
 
 // ── Rate limiting (in-memory, per-instance) ──────────────────────────────────
+// TODO: This rate limiting is NOT effective on Cloudflare Workers.
+// The Map resets on every deploy and is isolated per edge node.
+// Migrate to Cloudflare Workers KV or D1 for distributed rate limiting.
+// See: https://developers.cloudflare.com/workers/runtime-apis/kv/
 const RATE_LIMIT_WINDOW_MS = 60_000 // 1 minute
 const RATE_LIMIT_MAX_POST = 5       // max 5 scrape triggers per IP per minute
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
