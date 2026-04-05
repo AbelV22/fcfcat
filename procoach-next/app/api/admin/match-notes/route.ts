@@ -13,7 +13,7 @@ async function verifyAdmin(): Promise<boolean> {
 
 function getServiceClient() {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!serviceKey) throw new Error('SUPABASE_SERVICE_ROLE_KEY not configured')
+  if (!serviceKey) return null
   return createClient(SUPABASE_URL, serviceKey, { auth: { persistSession: false } })
 }
 
@@ -23,8 +23,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const id = request.nextUrl.searchParams.get('id')
   const supabase = getServiceClient()
+  if (!supabase) {
+    return NextResponse.json([], { status: 200 }) // Return empty if no service key
+  }
+
+  const id = request.nextUrl.searchParams.get('id')
 
   if (id) {
     const [noteRes, lineupsRes, eventsRes, ratingsRes] = await Promise.all([
@@ -62,6 +66,10 @@ export async function POST(request: NextRequest) {
   }
 
   const supabase = getServiceClient()
+  if (!supabase) {
+    return NextResponse.json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' }, { status: 503 })
+  }
+
   const body = await request.json()
   const { matchNoteId, matchData, formation, lineups, events, ratings, summary, status } = body
 
@@ -179,6 +187,9 @@ export async function DELETE(request: NextRequest) {
   if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
 
   const supabase = getServiceClient()
+  if (!supabase) {
+    return NextResponse.json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' }, { status: 503 })
+  }
   const { error } = await supabase.from('match_notes').delete().eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 

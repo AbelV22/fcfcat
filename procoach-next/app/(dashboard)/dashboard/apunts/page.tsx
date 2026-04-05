@@ -79,22 +79,26 @@ export default function ApuntsPage() {
       }
       setClubName(name)
 
-      try {
-        const [notesData, matchesData] = await Promise.all([
-          adminDetected
-            ? fetch('/api/admin/match-notes').then(r => r.json())
-            : fetchUserMatchNotes(),
-          name ? fetchTeamMatches(name) : Promise.resolve([]),
-        ])
-        setNotes(notesData)
-        setCalendarMatches(matchesData)
+      // Fetch notes and matches independently so one failure doesn't block the other
+      const [notesResult, matchesResult] = await Promise.allSettled([
+        adminDetected
+          ? fetch('/api/admin/match-notes').then(r => r.ok ? r.json() : [])
+          : fetchUserMatchNotes(),
+        name ? fetchTeamMatches(name) : Promise.resolve([]),
+      ])
 
-        // Merge calendar + notes
-        const mergedList = mergeCalendarWithNotes(matchesData, notesData, name)
-        setMerged(mergedList)
-      } catch (err) {
-        console.error('Error loading data:', err)
-      }
+      const notesData = notesResult.status === 'fulfilled' ? notesResult.value : []
+      const matchesData = matchesResult.status === 'fulfilled' ? matchesResult.value : []
+
+      if (notesResult.status === 'rejected') console.error('Error loading notes:', notesResult.reason)
+      if (matchesResult.status === 'rejected') console.error('Error loading matches:', matchesResult.reason)
+
+      setNotes(notesData)
+      setCalendarMatches(matchesData)
+
+      // Merge calendar + notes
+      const mergedList = mergeCalendarWithNotes(matchesData, notesData, name)
+      setMerged(mergedList)
       setLoading(false)
     }
     load()
