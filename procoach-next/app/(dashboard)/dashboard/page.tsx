@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase-server'
 import Link from 'next/link'
 import { BarChart3, Shield, Users, ListOrdered, ArrowRight, Settings, ClipboardList, RefreshCw } from 'lucide-react'
 import { getDashboardTeam, isAdminUser } from '@/lib/dashboard-auth'
+import ReferralCard from '@/components/ReferralCard'
 
 export const dynamic = 'force-dynamic'
 
@@ -67,6 +68,9 @@ export default async function DashboardPage() {
             </Link>
           </div>
         </div>
+
+        {/* Referral system */}
+        <ReferralCard />
 
         {/* Feature cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

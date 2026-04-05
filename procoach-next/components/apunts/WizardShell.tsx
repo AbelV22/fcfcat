@@ -90,11 +90,13 @@ export default function WizardShell({
   teamSlug,
   editNoteId,
   prefill,
+  isAdmin,
 }: {
   clubName: string
   teamSlug: string
   editNoteId?: string
   prefill?: Partial<WizardState>
+  isAdmin?: boolean
 }) {
   const router = useRouter()
   const [state, setState] = useState<WizardState>(getInitialState)
@@ -241,18 +243,36 @@ export default function WizardShell({
         goals_against: state.matchData.goals_against ?? goalsAgainst,
       }
 
-      await saveFullMatchNote(
-        {
-          matchNoteId: state.matchNoteId,
-          matchData,
-          formation: state.formation,
-          lineups: state.lineups,
-          events: state.events,
-          ratings: state.ratings,
-          summary: state.summary,
-        },
-        status
-      )
+      if (isAdmin) {
+        const res = await fetch('/api/admin/match-notes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            matchNoteId: state.matchNoteId,
+            matchData,
+            formation: state.formation,
+            lineups: state.lineups,
+            events: state.events,
+            ratings: state.ratings,
+            summary: state.summary,
+            status,
+          }),
+        })
+        if (!res.ok) throw new Error(await res.text())
+      } else {
+        await saveFullMatchNote(
+          {
+            matchNoteId: state.matchNoteId,
+            matchData,
+            formation: state.formation,
+            lineups: state.lineups,
+            events: state.events,
+            ratings: state.ratings,
+            summary: state.summary,
+          },
+          status
+        )
+      }
 
       // Clear draft
       localStorage.removeItem(STORAGE_KEY)

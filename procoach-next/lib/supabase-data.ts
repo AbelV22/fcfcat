@@ -904,7 +904,6 @@ type PlayerEntry = { name: string; appearances: number; starts: number; goals: n
 /** Competitions where FCF actas lack substitution data — minutes are unreliable */
 export const COMPETITIONS_WITHOUT_MINUTES = new Set([
   'quarta-catalana',
-  'lliga-elit',
   'juvenil-primera-divisio',
   'preferent-juvenils',
   'segona-catalana-juvenil',

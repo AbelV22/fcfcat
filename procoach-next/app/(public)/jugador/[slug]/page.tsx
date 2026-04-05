@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import PublicHeader from '@/components/PublicHeader'
 import PublicFooter from '@/components/PublicFooter'
+import PlayerShareCard from '@/components/PlayerShareCard'
 import { getPlayerProfile, COMPETITIONS_WITHOUT_MINUTES, type PlayerProfileDB } from '@/lib/supabase-data'
 
 interface Props {
@@ -197,6 +198,21 @@ export default async function JugadorPage({ params }: Props) {
               )}
             </div>
           </div>
+        </div>
+
+        {/* Share card */}
+        <div className="mb-6 flex items-center gap-3">
+          <PlayerShareCard
+            name={player.displayName}
+            slug={slug}
+            position={player.position || undefined}
+            currentTeam={currentTeam?.teamName}
+            appearances={career.appearances}
+            goals={career.goals}
+            yellowCards={career.yellowCards}
+            redCards={career.redCards}
+          />
+          <span className="text-xs text-slate-500">Comparteix les teves estadistiques</span>
         </div>
 
         {/* ─── Career Stats ──────────────────────────────────────── */}

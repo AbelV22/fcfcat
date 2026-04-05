@@ -4,6 +4,7 @@ import { useState, useCallback, useRef } from 'react'
 import { FileDown, Share2, Loader2 } from 'lucide-react'
 import RivalReportPDF from './RivalReportPDF'
 import type { RivalReportPDFHandle } from './RivalReportPDF'
+import ShareableRivalCard from './ShareableRivalCard'
 
 // ─── Types ──────────────────────────────────────────────────────────────
 type SplitStats = { played: number; wins: number; draws: number; losses: number; gf: number; ga: number; points: number }
@@ -90,7 +91,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
         <RivalReportPDF ref={pdfRef} data={reportData} teamSlug={teamSlug} />
       )}
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         <button
           onClick={handleExportPDF}
           disabled={exporting || !reportData.rival}
@@ -116,6 +117,37 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
           <Share2 size={16} className="group-hover:scale-110 transition-transform" />
           <span className="hidden sm:inline">WhatsApp</span>
         </button>
+        {reportData.rival && (
+          <ShareableRivalCard
+            teamName={reportData.rival.name}
+            teamSlug={teamSlug}
+            competition={competition}
+            position={reportData.rival.position}
+            played={reportData.rival.played}
+            wins={reportData.rival.wins}
+            draws={reportData.rival.draws}
+            losses={reportData.rival.losses}
+            gf={reportData.rival.gf}
+            ga={reportData.rival.ga}
+            form={reportData.rival.form.slice(-10).map(m => m.result)}
+            topScorer={
+              reportData.rival.topScorers[0]
+                ? { name: reportData.rival.topScorers[0].name, goals: reportData.rival.topScorers[0].goals }
+                : null
+            }
+            goalHighlight={
+              reportData.rival.goalBuckets.length > 0
+                ? (() => {
+                    const max = reportData.rival!.goalBuckets.reduce((a, b) => a.scored > b.scored ? a : b)
+                    const total = reportData.rival!.goalBuckets.reduce((s, b) => s + b.scored, 0)
+                    if (total === 0) return null
+                    const pct = Math.round((max.scored / total) * 100)
+                    return pct > 25 ? `${pct}% dels gols al ${max.label}` : null
+                  })()
+                : null
+            }
+          />
+        )}
       </div>
     </>
   )

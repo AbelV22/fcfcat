@@ -22,15 +22,21 @@ export default function ViewNotePage() {
 
   useEffect(() => {
     async function load() {
-      const isAdmin = document.cookie.includes('ns_admin=1')
-      if (!isAdmin) {
+      const adminDetected = document.cookie.includes('ns_admin=1')
+      if (!adminDetected) {
         const supabase = createClient()
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) { router.replace('/login'); return }
       }
 
       try {
-        const data = await fetchMatchNote(noteId)
+        let data
+        if (adminDetected) {
+          const res = await fetch(`/api/admin/match-notes?id=${noteId}`)
+          data = res.ok ? await res.json() : null
+        } else {
+          data = await fetchMatchNote(noteId)
+        }
         if (!data) { router.replace('/dashboard/apunts'); return }
         setNote(data)
       } catch { router.replace('/dashboard/apunts') }

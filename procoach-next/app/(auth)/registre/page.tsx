@@ -48,6 +48,8 @@ function RegistreForm() {
   const router = useRouter()
   const supabase = createClient()
 
+  const referralCode = searchParams.get('ref') || ''
+
   const [form, setForm] = useState({
     name: searchParams.get('name') || '',
     team: searchParams.get('team') || '',
@@ -140,6 +142,7 @@ function RegistreForm() {
             name: form.name,
             club_name: form.team,
             competition: form.competition, // slug, not label
+            ...(referralCode ? { referral_code: referralCode } : {}),
           },
         },
       })

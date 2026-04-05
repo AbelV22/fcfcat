@@ -18,6 +18,7 @@ function NouApuntInner() {
   const [loading, setLoading] = useState(true)
   const [clubName, setClubName] = useState('')
   const [teamSlug, setTeamSlug] = useState('')
+  const [isAdmin, setIsAdmin] = useState(false)
 
   // Read search params once and memoize
   const prefill = useMemo<Partial<WizardState> | undefined>(() => {
@@ -48,8 +49,9 @@ function NouApuntInner() {
 
   useEffect(() => {
     async function checkAuth() {
-      const isAdmin = getCookie('ns_admin') === '1'
-      if (isAdmin) {
+      const adminDetected = getCookie('ns_admin') === '1'
+      setIsAdmin(adminDetected)
+      if (adminDetected) {
         // In admin mode, use real team name from cookie set in /dashboard/setup
         const teamName = getCookie('ns_team_name')
         const teamSlugCookie = getCookie('ns_team_slug')
@@ -82,7 +84,7 @@ function NouApuntInner() {
     )
   }
 
-  return <WizardShell clubName={clubName} teamSlug={teamSlug} prefill={prefill} />
+  return <WizardShell clubName={clubName} teamSlug={teamSlug} prefill={prefill} isAdmin={isAdmin} />
 }
 
 export default function NouApuntPage() {

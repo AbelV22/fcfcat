@@ -59,13 +59,15 @@ export default function ApuntsPage() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<Tab>('apunts')
   const [clubName, setClubName] = useState('')
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
     async function load() {
-      const isAdmin = document.cookie.includes('ns_admin=1')
+      const adminDetected = document.cookie.includes('ns_admin=1')
+      setIsAdmin(adminDetected)
       let name = ''
 
-      if (!isAdmin) {
+      if (!adminDetected) {
         const supabase = createClient()
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) { router.replace('/login'); return }
@@ -79,7 +81,9 @@ export default function ApuntsPage() {
 
       try {
         const [notesData, matchesData] = await Promise.all([
-          fetchUserMatchNotes(),
+          adminDetected
+            ? fetch('/api/admin/match-notes').then(r => r.json())
+            : fetchUserMatchNotes(),
           name ? fetchTeamMatches(name) : Promise.resolve([]),
         ])
         setNotes(notesData)
@@ -166,7 +170,11 @@ export default function ApuntsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Segur que vols eliminar aquests apunts?')) return
     try {
-      await deleteMatchNote(id)
+      if (isAdmin) {
+        await fetch(`/api/admin/match-notes?id=${id}`, { method: 'DELETE' })
+      } else {
+        await deleteMatchNote(id)
+      }
       setNotes(notes.filter((n) => n.id !== id))
       setMerged(merged.map((m) => m.note?.id === id ? { ...m, note: null } : m))
     } catch (err) {
