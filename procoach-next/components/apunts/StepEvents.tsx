@@ -191,6 +191,26 @@ export default function StepEvents({
     onChange([...events, evt])
   }
 
+  function quickRemove(type: EventType, isOpponent: boolean = false) {
+    const idx = [...events].reverse().findIndex(
+      (e) => e.event_type === type && e.is_opponent === isOpponent
+    )
+    if (idx >= 0) {
+      const realIdx = events.length - 1 - idx
+      onChange(events.filter((_, i) => i !== realIdx))
+    }
+  }
+
+  function removePlayerStat(playerName: string, type: EventType) {
+    const idx = [...events].reverse().findIndex(
+      (e) => e.player_name === playerName && e.event_type === type && !e.is_opponent
+    )
+    if (idx >= 0) {
+      const realIdx = events.length - 1 - idx
+      onChange(events.filter((_, i) => i !== realIdx))
+    }
+  }
+
   function deleteEvent(index: number) {
     onChange(events.filter((_, i) => i !== index))
   }
@@ -368,17 +388,20 @@ export default function StepEvents({
           <div className="flex items-center gap-2 p-2 bg-white/3 rounded-xl border border-white/5">
             <Flag size={12} className="text-sky-400 shrink-0" />
             <span className="text-xs text-white flex-1">Corners</span>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-0.5">
+              <button onClick={() => quickRemove('corner', false)} className="w-6 h-6 rounded bg-white/5 text-slate-500 text-xs font-bold hover:bg-red-500/15 hover:text-red-400 transition-colors">−</button>
               <button onClick={() => quickAdd('corner', false)} className="w-6 h-6 rounded bg-green-500/15 text-green-400 text-xs font-bold hover:bg-green-500/25 transition-colors">+</button>
               <span className="text-xs text-white font-bold w-8 text-center">{cornersFor}-{cornersAgainst}</span>
               <button onClick={() => quickAdd('corner', true)} className="w-6 h-6 rounded bg-red-500/15 text-red-400 text-xs font-bold hover:bg-red-500/25 transition-colors">+</button>
+              <button onClick={() => quickRemove('corner', true)} className="w-6 h-6 rounded bg-white/5 text-slate-500 text-xs font-bold hover:bg-red-500/15 hover:text-red-400 transition-colors">−</button>
             </div>
           </div>
           {/* Offsides */}
           <div className="flex items-center gap-2 p-2 bg-white/3 rounded-xl border border-white/5">
             <Eye size={12} className="text-violet-400 shrink-0" />
             <span className="text-xs text-white flex-1">Fores de joc</span>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-0.5">
+              <button onClick={() => quickRemove('offside', false)} className="w-6 h-6 rounded bg-white/5 text-slate-500 text-xs font-bold hover:bg-red-500/15 hover:text-red-400 transition-colors">−</button>
               <button onClick={() => quickAdd('offside', false)} className="w-6 h-6 rounded bg-green-500/15 text-green-400 text-xs font-bold hover:bg-green-500/25 transition-colors">+</button>
               <span className="text-xs text-white font-bold w-8 text-center">
                 {events.filter((e) => e.event_type === 'offside' && !e.is_opponent).length}
@@ -386,6 +409,7 @@ export default function StepEvents({
                 {events.filter((e) => e.event_type === 'offside' && e.is_opponent).length}
               </span>
               <button onClick={() => quickAdd('offside', true)} className="w-6 h-6 rounded bg-red-500/15 text-red-400 text-xs font-bold hover:bg-red-500/25 transition-colors">+</button>
+              <button onClick={() => quickRemove('offside', true)} className="w-6 h-6 rounded bg-white/5 text-slate-500 text-xs font-bold hover:bg-red-500/15 hover:text-red-400 transition-colors">−</button>
             </div>
           </div>
         </div>
@@ -567,7 +591,7 @@ export default function StepEvents({
                     </div>
                     <div>
                       <p className="text-sm font-bold text-white">{statsPlayer}</p>
-                      <p className="text-[10px] text-slate-500">Toca per sumar, mantingues per restar</p>
+                      <p className="text-[10px] text-slate-500">Toca + per sumar, − per restar</p>
                     </div>
                   </div>
 
@@ -580,46 +604,49 @@ export default function StepEvents({
                         (e) => e.player_name === statsPlayer && e.event_type === type && !e.is_opponent
                       ).length
                       return (
-                        <button
+                        <div
                           key={type}
-                          onClick={() => {
-                            const evt: EventEntry = {
-                              event_type: type,
-                              minute: 0,
-                              player_name: statsPlayer,
-                              secondary_player: null,
-                              goal_type: null,
-                              goal_origin: null,
-                              shot_zone: null,
-                              note: null,
-                              is_opponent: false,
-                            }
-                            onChange([...events, evt])
-                          }}
-                          onContextMenu={(e) => {
-                            e.preventDefault()
-                            // Remove last event of this type for this player
-                            const idx = [...events].reverse().findIndex(
-                              (ev) => ev.player_name === statsPlayer && ev.event_type === type && !ev.is_opponent
-                            )
-                            if (idx >= 0) {
-                              const realIdx = events.length - 1 - idx
-                              onChange(events.filter((_, i) => i !== realIdx))
-                            }
-                          }}
-                          className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl bg-white/3 border border-white/5 hover:border-white/15 hover:bg-white/8 transition-all active:scale-95"
+                          className="flex flex-col items-center gap-1 py-2 px-2 rounded-xl bg-white/3 border border-white/5"
                         >
-                          <Icon size={16} style={{ color: `var(--color-${color}-400, #4ade80)` }} />
+                          <Icon size={14} style={{ color: `var(--color-${color}-400, #4ade80)` }} />
                           <span className="text-[9px] text-slate-400 font-medium text-center leading-tight">
                             {getEventLabel(type)}
                           </span>
-                          <span
-                            className="text-lg font-black"
-                            style={{ color: count > 0 ? `var(--color-${color}-400, #4ade80)` : '#334155' }}
-                          >
-                            {count}
-                          </span>
-                        </button>
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <button
+                              onClick={() => removePlayerStat(statsPlayer, type)}
+                              disabled={count === 0}
+                              className="w-7 h-7 rounded-lg bg-white/5 text-slate-500 text-sm font-bold hover:bg-red-500/15 hover:text-red-400 disabled:opacity-20 disabled:hover:bg-white/5 disabled:hover:text-slate-500 transition-colors"
+                            >
+                              −
+                            </button>
+                            <span
+                              className="text-lg font-black w-6 text-center"
+                              style={{ color: count > 0 ? `var(--color-${color}-400, #4ade80)` : '#334155' }}
+                            >
+                              {count}
+                            </span>
+                            <button
+                              onClick={() => {
+                                const evt: EventEntry = {
+                                  event_type: type,
+                                  minute: 0,
+                                  player_name: statsPlayer,
+                                  secondary_player: null,
+                                  goal_type: null,
+                                  goal_origin: null,
+                                  shot_zone: null,
+                                  note: null,
+                                  is_opponent: false,
+                                }
+                                onChange([...events, evt])
+                              }}
+                              className="w-7 h-7 rounded-lg bg-green-500/15 text-green-400 text-sm font-bold hover:bg-green-500/25 transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
                       )
                     })}
 
@@ -630,45 +657,49 @@ export default function StepEvents({
                         (e) => e.player_name === statsPlayer && e.event_type === customType && !e.is_opponent
                       ).length
                       return (
-                        <button
+                        <div
                           key={cs.key}
-                          onClick={() => {
-                            const evt: EventEntry = {
-                              event_type: customType,
-                              minute: 0,
-                              player_name: statsPlayer,
-                              secondary_player: null,
-                              goal_type: null,
-                              goal_origin: null,
-                              shot_zone: null,
-                              note: null,
-                              is_opponent: false,
-                            }
-                            onChange([...events, evt])
-                          }}
-                          onContextMenu={(e) => {
-                            e.preventDefault()
-                            const idx = [...events].reverse().findIndex(
-                              (ev) => ev.player_name === statsPlayer && ev.event_type === customType && !ev.is_opponent
-                            )
-                            if (idx >= 0) {
-                              const realIdx = events.length - 1 - idx
-                              onChange(events.filter((_, i) => i !== realIdx))
-                            }
-                          }}
-                          className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl bg-purple-500/5 border border-purple-500/15 hover:border-purple-500/30 hover:bg-purple-500/10 transition-all active:scale-95"
+                          className="flex flex-col items-center gap-1 py-2 px-2 rounded-xl bg-purple-500/5 border border-purple-500/15"
                         >
-                          <Zap size={16} className="text-purple-400" />
+                          <Zap size={14} className="text-purple-400" />
                           <span className="text-[9px] text-purple-300 font-medium text-center leading-tight">
                             {cs.label}
                           </span>
-                          <span
-                            className="text-lg font-black"
-                            style={{ color: count > 0 ? '#c084fc' : '#334155' }}
-                          >
-                            {count}
-                          </span>
-                        </button>
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <button
+                              onClick={() => removePlayerStat(statsPlayer, customType)}
+                              disabled={count === 0}
+                              className="w-7 h-7 rounded-lg bg-white/5 text-slate-500 text-sm font-bold hover:bg-red-500/15 hover:text-red-400 disabled:opacity-20 transition-colors"
+                            >
+                              −
+                            </button>
+                            <span
+                              className="text-lg font-black w-6 text-center"
+                              style={{ color: count > 0 ? '#c084fc' : '#334155' }}
+                            >
+                              {count}
+                            </span>
+                            <button
+                              onClick={() => {
+                                const evt: EventEntry = {
+                                  event_type: customType,
+                                  minute: 0,
+                                  player_name: statsPlayer,
+                                  secondary_player: null,
+                                  goal_type: null,
+                                  goal_origin: null,
+                                  shot_zone: null,
+                                  note: null,
+                                  is_opponent: false,
+                                }
+                                onChange([...events, evt])
+                              }}
+                              className="w-7 h-7 rounded-lg bg-purple-500/15 text-purple-400 text-sm font-bold hover:bg-purple-500/25 transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
                       )
                     })}
 
