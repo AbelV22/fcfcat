@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getDashboardTeam, isAdminUser } from '@/lib/dashboard-auth'
-import { getFullTeamReportDB, COMPETITIONS_WITHOUT_MINUTES } from '@/lib/supabase-data'
+import { getFullTeamReportDB, hasMinutesData } from '@/lib/supabase-data'
 import { Users, Target, Home, Plane, TrendingUp } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
@@ -219,7 +219,7 @@ export default async function IntelPage() {
                         <th className="text-center py-2 px-2">PJ</th>
                         <th className="text-center py-2 px-2">Gols</th>
                         <th className="text-center py-2 px-2">Tar.</th>
-                        <th className="text-center py-2 px-2">{COMPETITIONS_WITHOUT_MINUTES.has(report.competition) ? 'Tit.' : 'Min'}</th>
+                        <th className="text-center py-2 px-2">{!hasMinutesData(report.competition, report.players) ? 'Tit.' : 'Min'}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -239,7 +239,7 @@ export default async function IntelPage() {
                             {(p.yellow_cards ?? 0) === 0 && (p.red_cards ?? 0) === 0 && <span className="text-slate-600">-</span>}
                           </td>
                           <td className="py-2 px-2 text-center text-slate-400">
-                            {COMPETITIONS_WITHOUT_MINUTES.has(report.competition)
+                            {!hasMinutesData(report.competition, report.players)
                               ? (p.starts > 0 ? p.starts : '-')
                               : (p.minutes_played ?? '-')}
                           </td>

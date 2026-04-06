@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getDashboardTeam, isAdminUser } from '@/lib/dashboard-auth'
-import { getFullTeamReportDB, COMPETITIONS_WITHOUT_MINUTES } from '@/lib/supabase-data'
+import { getFullTeamReportDB, hasMinutesData } from '@/lib/supabase-data'
 import {
   Crosshair, Home, Plane, TrendingUp, AlertTriangle, Target,
   Ruler, Clock, Shield, Users,
@@ -374,7 +374,7 @@ export default async function RivalPage() {
   const rival = report?.rival
   const nextMatch = report?.nextMatch
   const h2h = report?.headToHead || []
-  const hasMinutes = !COMPETITIONS_WITHOUT_MINUTES.has(report?.competition ?? '')
+  const hasMinutes = hasMinutesData(report?.competition ?? '', rival?.players || [])
 
   const isHome = nextMatch?.isHome ?? true
   const localName = isHome ? team.name : rival?.name || ''

@@ -9,7 +9,7 @@ import {
 import PublicHeader from '@/components/PublicHeader'
 import PublicFooter from '@/components/PublicFooter'
 import PlayerShareCard from '@/components/PlayerShareCard'
-import { getPlayerProfile, COMPETITIONS_WITHOUT_MINUTES, type PlayerProfileDB } from '@/lib/supabase-data'
+import { getPlayerProfile, hasMinutesData, COMPETITIONS_WITHOUT_MINUTES, type PlayerProfileDB } from '@/lib/supabase-data'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -96,7 +96,7 @@ export default async function JugadorPage({ params }: Props) {
   const posText = POSITION_TEXT[player.position || ''] || 'text-slate-400'
 
   // Check if any of the player's seasons have reliable minutes data
-  const hasMinutes = seasons.some(s => !COMPETITIONS_WITHOUT_MINUTES.has(s.competition))
+  const hasMinutes = seasons.some(s => s.minutesPlayed > 0 && !COMPETITIONS_WITHOUT_MINUTES.has(s.competition))
   const minutesPerGoal = hasMinutes && career.goals > 0 ? Math.round(career.minutesPlayed / career.goals) : null
   const goalsPer90 = hasMinutes && career.minutesPlayed > 0 ? (career.goals / career.minutesPlayed * 90).toFixed(2) : null
 
@@ -305,9 +305,9 @@ export default async function JugadorPage({ params }: Props) {
                               : <span className="text-slate-600 text-xs">–</span>}
                           </td>
                           <td className="py-2.5 text-center text-slate-500 text-xs">
-                            {COMPETITIONS_WITHOUT_MINUTES.has(s.competition)
-                              ? (s.starts > 0 ? s.starts : '–')
-                              : (s.minutesPlayed > 0 ? `${s.minutesPlayed}'` : '–')}
+                            {s.minutesPlayed > 0 && !COMPETITIONS_WITHOUT_MINUTES.has(s.competition)
+                              ? `${s.minutesPlayed}'`
+                              : (s.starts > 0 ? s.starts : s.appearances)}
                           </td>
                         </tr>
                       ))}

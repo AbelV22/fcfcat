@@ -74,7 +74,7 @@ export default function FullSquadSection({ players, hasMinutes }: { players: Pla
               <span className={`text-center text-sm font-bold tabular-nums ${p.goals > 0 ? 'text-green-400' : 'text-slate-600'}`}>{p.goals}</span>
               <span className={`text-center text-sm font-bold tabular-nums ${p.risk ? 'text-amber-400' : p.yellow_cards > 0 ? 'text-slate-300' : 'text-slate-600'}`}>{p.yellow_cards}</span>
               <span className="text-right text-sm font-bold text-cyan-400/80 tabular-nums">
-                {hasMinutes ? `${p.minutes_played}'` : (p.starts ?? p.appearances)}
+                {hasMinutes ? (p.minutes_played > 0 ? `${p.minutes_played}'` : '–') : (p.starts ?? p.appearances)}
               </span>
             </div>
           ))}

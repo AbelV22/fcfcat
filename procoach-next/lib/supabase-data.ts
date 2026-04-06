@@ -901,6 +901,20 @@ export async function getRecentResultsDB(limit = 50) {
 type SplitStats = { played: number; wins: number; draws: number; losses: number; gf: number; ga: number; points: number }
 type PlayerEntry = { name: string; appearances: number; starts: number; goals: number; yellow_cards: number; red_cards: number; minutes_played: number; risk: boolean }
 
+/**
+ * Check whether minutes data is available for a set of players.
+ * Returns false if the competition is known to lack substitution data
+ * OR if no player in the list actually has minutes_played > 0
+ * (e.g. group not yet scraped).
+ */
+export function hasMinutesData(
+  competition: string,
+  players: { minutes_played: number }[]
+): boolean {
+  if (COMPETITIONS_WITHOUT_MINUTES.has(competition)) return false
+  return players.some(p => p.minutes_played > 0)
+}
+
 /** Competitions where FCF actas lack substitution data — minutes are unreliable */
 export const COMPETITIONS_WITHOUT_MINUTES = new Set([
   'quarta-catalana',
@@ -1631,9 +1645,9 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       players: rivalPlayers,
       form: rAllPlayed.slice(0, 5).map((m:any) => _toMatchEntry(m, m.isHome, rivalName)),
       topScorers: [...rivalPlayers].sort((a,b) => b.goals - a.goals).filter(p => p.goals > 0).slice(0, 5),
-      mostMinutes: COMPETITIONS_WITHOUT_MINUTES.has(competition)
-        ? [...rivalPlayers].sort((a,b) => b.starts - a.starts).filter(p => p.starts > 0).slice(0, 7)
-        : [...rivalPlayers].sort((a,b) => b.minutes_played - a.minutes_played).filter(p => p.minutes_played > 0).slice(0, 7),
+      mostMinutes: hasMinutesData(competition, rivalPlayers)
+        ? [...rivalPlayers].sort((a,b) => b.minutes_played - a.minutes_played).filter(p => p.minutes_played > 0).slice(0, 7)
+        : [...rivalPlayers].sort((a,b) => b.starts - a.starts).filter(p => p.starts > 0).slice(0, 7),
       apercibits: rivalPlayers.filter(p => p.risk),
       goalBuckets: rivalGoalBuckets,
       awayByFieldSize: [],    // pitch dimension data not available from Supabase

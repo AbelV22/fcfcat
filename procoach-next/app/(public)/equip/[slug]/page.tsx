@@ -3,7 +3,7 @@ import Link from 'next/link'
 import PublicHeader from '@/components/PublicHeader'
 import PublicFooter from '@/components/PublicFooter'
 import { COMPETITION_NAMES, slugify, loadTeamData } from '@/lib/data'
-import { getFullTeamReportDB, COMPETITIONS_WITHOUT_MINUTES, type FullTeamReportDB, type RivalDataDB, type RefereeStatsDB, type FieldDimsDB } from '@/lib/supabase-data'
+import { getFullTeamReportDB, hasMinutesData, type FullTeamReportDB, type RivalDataDB, type RefereeStatsDB, type FieldDimsDB } from '@/lib/supabase-data'
 import { PitchCompare } from '@/components/PitchCompare'
 import { RivalScoutCard } from '@/components/RivalScoutCard'
 import { AdminGate, AdminBadge, AdminBlurValue, AdminUpgradeLink } from '@/components/AdminGate'
@@ -1000,7 +1000,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
                   rival={report.rival as any}
                   nextMatch={{ ...report.nextMatch, referee: null, referees: [] }}
                   headToHead={report.headToHead as any}
-                  hasMinutes={!COMPETITIONS_WITHOUT_MINUTES.has(report.competition)}
+                  hasMinutes={hasMinutesData(report.competition, report.players)}
                 />
               </RegisterBlur>
             }
@@ -1009,7 +1009,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
               rival={report.rival as any}
               nextMatch={report.nextMatch as any}
               headToHead={report.headToHead as any}
-              hasMinutes={!COMPETITIONS_WITHOUT_MINUTES.has(report.competition)}
+              hasMinutes={hasMinutesData(report.competition, report.players)}
             />
           </AdminGate>
         )}
@@ -1067,7 +1067,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
                     <div key={i} className="flex items-center justify-between px-3 py-2 rounded-xl bg-amber-900/15 border border-amber-500/15">
                       <div className="min-w-0">
                         <Link href={`/jugador/${slugify(p.name)}--${slug}`} className="text-sm font-medium text-slate-200 truncate hover:text-green-400 transition-colors block">{p.name}</Link>
-                        <p className="text-xs text-slate-500">{p.appearances} partits{!COMPETITIONS_WITHOUT_MINUTES.has(report.competition) && p.minutes_played > 0 ? ` · ${p.minutes_played}'` : ''}</p>
+                        <p className="text-xs text-slate-500">{p.appearances} partits{hasMinutesData(report.competition, report.players) && p.minutes_played > 0 ? ` · ${p.minutes_played}'` : ''}</p>
                       </div>
                       <span className="text-xs font-bold text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded-full ml-3 shrink-0">🟨 {p.yellow_cards}</span>
                     </div>
@@ -1089,7 +1089,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
                         <span className="w-5 h-5 rounded-full bg-green-500/20 text-green-400 text-[10px] font-bold flex items-center justify-center shrink-0">{i + 1}</span>
                         <div className="min-w-0">
                           <Link href={`/jugador/${slugify(p.name)}--${slug}`} className="text-sm font-medium text-slate-200 truncate hover:text-green-400 transition-colors block">{p.name}</Link>
-                          <p className="text-xs text-slate-500">{p.appearances} partits{!COMPETITIONS_WITHOUT_MINUTES.has(report.competition) && p.minutes_played > 0 ? ` · ${p.minutes_played}'` : ''}</p>
+                          <p className="text-xs text-slate-500">{p.appearances} partits{hasMinutesData(report.competition, report.players) && p.minutes_played > 0 ? ` · ${p.minutes_played}'` : ''}</p>
                         </div>
                       </div>
                       <span className="text-lg font-black text-green-400 ml-3 shrink-0">{p.goals} ⚽</span>
@@ -1103,7 +1103,7 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
 
         {/* Row 6: Full squad */}
         {report.players.length > 0 ? (
-          <SquadTable players={report.players} teamSlug={slug} hasMinutes={!COMPETITIONS_WITHOUT_MINUTES.has(report.competition)} />
+          <SquadTable players={report.players} teamSlug={slug} hasMinutes={hasMinutesData(report.competition, report.players)} />
         ) : isPriority ? (
           <ScrapeProgressBanner
             slug={slug}

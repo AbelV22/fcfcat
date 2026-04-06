@@ -168,9 +168,11 @@ export async function POST(req: NextRequest) {
 
   const jobId = `${season}-${competition}-${slug}`
 
-  // ── Check if player stats already exist (most reliable indicator) ──────────
+  // ── Check if player stats WITH minutes already exist ───────────────────────
+  // Only consider the team fully scraped if at least one player has minutes data.
+  // Teams imported from standings only have appearances/goals but minutes_played=0.
   const statsCheckRes = await fetch(
-    `${SUPABASE_URL}/rest/v1/fcf_player_stats?team_slug=eq.${encodeURIComponent(slug)}&competition=eq.${encodeURIComponent(competition)}&limit=1&select=id`,
+    `${SUPABASE_URL}/rest/v1/fcf_player_stats?team_slug=eq.${encodeURIComponent(slug)}&competition=eq.${encodeURIComponent(competition)}&minutes_played=gt.0&limit=1&select=id`,
     { headers: sbHeaders(), cache: 'no-store' },
   )
   if (statsCheckRes.ok) {

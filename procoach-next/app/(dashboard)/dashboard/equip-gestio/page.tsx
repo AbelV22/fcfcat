@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getDashboardTeam, isAdminUser } from '@/lib/dashboard-auth'
-import { getFullTeamReportDB, COMPETITIONS_WITHOUT_MINUTES } from '@/lib/supabase-data'
+import { getFullTeamReportDB, hasMinutesData } from '@/lib/supabase-data'
 import { Users, AlertTriangle } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
@@ -88,7 +88,7 @@ export default async function EquipGestioPage() {
                       <th className="text-center py-3 px-2">PJ</th>
                       <th className="text-center py-3 px-2">Titular</th>
                       <th className="text-center py-3 px-2">Gols</th>
-                      <th className="text-center py-3 px-2">{COMPETITIONS_WITHOUT_MINUTES.has(report?.competition || '') ? 'Tit.' : 'Min'}</th>
+                      <th className="text-center py-3 px-2">{!hasMinutesData(report?.competition || '', report?.players || []) ? 'Tit.' : 'Min'}</th>
                       <th className="text-center py-3 px-2">🟡</th>
                       <th className="text-center py-3 px-2">🔴</th>
                     </tr>
@@ -108,7 +108,7 @@ export default async function EquipGestioPage() {
                             <td className="py-3 px-2 text-center text-slate-400">-</td>
                             <td className="py-3 px-2 text-center text-green-400 font-bold">{p.goals ?? 0}</td>
                             <td className="py-3 px-2 text-center text-slate-400">
-                              {COMPETITIONS_WITHOUT_MINUTES.has(report?.competition || '')
+                              {!hasMinutesData(report?.competition || '', report?.players || [])
                                 ? (p.starts > 0 ? p.starts : '-')
                                 : (p.minutes_played ?? '-')}
                             </td>
