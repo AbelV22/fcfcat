@@ -18,7 +18,7 @@ export default async function EquipGestioPage() {
 
   const report = await getFullTeamReportDB(team.slug, team.competition || undefined)
   const players = report?.players || []
-  const apercibits = players.filter(p => (p.yellow_cards ?? 0) >= 4)
+  const apercibits = players.filter(p => { const y = p.yellow_cards ?? 0; return y > 0 && y % 5 === 4 })
   const sanctioned = players.filter(p => (p.red_cards ?? 0) > 0)
 
   return (
@@ -52,7 +52,7 @@ export default async function EquipGestioPage() {
                         </div>
                       ))}
                     </div>
-                    <p className="text-[10px] text-slate-500 mt-2">Jugadors amb 4+ grogues: una mes = sancionats</p>
+                    <p className="text-[10px] text-slate-500 mt-2">Jugadors a 1 groga de sanció (cicle de 5)</p>
                   </div>
                 )}
                 {sanctioned.length > 0 && (
@@ -97,7 +97,7 @@ export default async function EquipGestioPage() {
                     {players
                       .sort((a, b) => (b.appearances ?? 0) - (a.appearances ?? 0))
                       .map((p, i) => {
-                        const isApercebit = (p.yellow_cards ?? 0) >= 4
+                        const isApercebit = (p.yellow_cards ?? 0) > 0 && (p.yellow_cards ?? 0) % 5 === 4
                         return (
                           <tr key={i} className={`border-b border-white/5 hover:bg-white/3 transition-colors ${isApercebit ? 'bg-amber-500/5' : ''}`}>
                             <td className="py-3 px-2 text-white font-medium">
@@ -112,7 +112,7 @@ export default async function EquipGestioPage() {
                                 ? (p.starts > 0 ? p.starts : '-')
                                 : (p.minutes_played ?? '-')}
                             </td>
-                            <td className={`py-3 px-2 text-center font-bold ${(p.yellow_cards ?? 0) >= 4 ? 'text-amber-400' : 'text-slate-500'}`}>
+                            <td className={`py-3 px-2 text-center font-bold ${(p.yellow_cards ?? 0) > 0 && (p.yellow_cards ?? 0) % 5 === 4 ? 'text-amber-400' : 'text-slate-500'}`}>
                               {p.yellow_cards ?? 0}
                             </td>
                             <td className={`py-3 px-2 text-center font-bold ${(p.red_cards ?? 0) > 0 ? 'text-red-400' : 'text-slate-500'}`}>
