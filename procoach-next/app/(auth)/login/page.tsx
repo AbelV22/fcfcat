@@ -3,13 +3,15 @@
 import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, CheckCircle, AlertTriangle } from 'lucide-react'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase-client'
 
 function LoginForm() {
   const searchParams = useSearchParams()
   const confirmed = searchParams.get('confirmed') === '1'
+  const passwordUpdated = searchParams.get('password_updated') === '1'
+  const callbackError = searchParams.get('error')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPass, setShowPass] = useState(false)
@@ -60,6 +62,26 @@ function LoginForm() {
             <div className="mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-xl flex items-center gap-2 text-sm text-green-400">
               <CheckCircle size={16} />
               Compte confirmat! Ja pots iniciar sessió.
+            </div>
+          )}
+
+          {/* Password updated banner */}
+          {passwordUpdated && (
+            <div className="mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-xl flex items-center gap-2 text-sm text-green-400">
+              <CheckCircle size={16} />
+              Contrasenya actualitzada! Inicia sessió amb la nova contrasenya.
+            </div>
+          )}
+
+          {/* Callback error banner */}
+          {callbackError && !confirmed && (
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-2 text-sm text-red-400">
+              <AlertTriangle size={16} />
+              {callbackError === 'confirmation_failed'
+                ? "No s'ha pogut confirmar el compte. L'enllaç pot haver caducat. Torna a registrar-te."
+                : callbackError === 'missing_code'
+                  ? "Enllaç de confirmació invàlid. Comprova el teu correu."
+                  : "Error durant la confirmació. Torna-ho a intentar."}
             </div>
           )}
 

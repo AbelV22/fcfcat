@@ -36,6 +36,22 @@ const COMPETITIONS: { label: string; slug: string }[] = [
   { label: 'Preferent Infantil S13',       slug: 'preferent-infantil-s13' },
 ]
 
+/* ── Translate common Supabase auth errors to Catalan ── */
+function translateAuthError(msg: string): string {
+  const lower = msg.toLowerCase()
+  if (lower.includes('rate limit') || lower.includes('too many'))
+    return "S'han enviat massa correus. Torna-ho a intentar en uns minuts."
+  if (lower.includes('already registered') || lower.includes('already been registered'))
+    return 'Aquest correu ja està registrat. Prova d\'iniciar sessió.'
+  if (lower.includes('invalid email'))
+    return 'Correu electrònic no vàlid.'
+  if (lower.includes('password') && lower.includes('6'))
+    return 'La contrasenya ha de tenir mínim 6 caràcters.'
+  if (lower.includes('signup is disabled'))
+    return 'El registre està temporalment desactivat.'
+  return 'Error inesperat. Torna-ho a intentar.'
+}
+
 const CATEGORY_GROUPS: { label: string; slugs: string[] }[] = [
   { label: 'Sènior', slugs: ['primera-catalana', 'segona-catalana', 'tercera-catalana', 'quarta-catalana', 'lliga-elit', 'tercera-federacio'] },
   { label: 'Juvenil', slugs: ['divisio-honor-juvenil', 'lliga-nacional-juvenil', 'preferent-juvenils', 'juvenil-primera-divisio'] },
@@ -147,7 +163,7 @@ function RegistreForm() {
         },
       })
       if (err) {
-        setError(err.message)
+        setError(translateAuthError(err.message))
         return
       }
       setStep('confirm')
