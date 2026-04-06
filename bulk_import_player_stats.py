@@ -199,7 +199,7 @@ def compute_stats_from_actas(actas: list[dict], target_team: str, competition: s
     return rows
 
 
-def run(competitions: list[str], team_filter: str | None = None, dry_run: bool = False):
+def run(competitions, team_filter=None, dry_run=False):
     if not DB_PATH.exists():
         logger.error(f"SQLite DB not found: {DB_PATH}")
         return

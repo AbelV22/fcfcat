@@ -32,7 +32,7 @@ logger = logging.getLogger("fcf_uploader")
 
 # ── Supabase client (lazy init) ───────────────────────────────────────────────
 
-_client: Client | None = None
+_client = None  # type: Client
 
 
 def _check_connectivity(url: str) -> None:

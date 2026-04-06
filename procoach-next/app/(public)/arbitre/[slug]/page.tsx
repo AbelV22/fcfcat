@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Shield, ArrowLeft, Calendar, AlertTriangle, Lock, TrendingUp } from 'lucide-react'
+import { Shield, Calendar, AlertTriangle, Lock, TrendingUp, UserPlus } from 'lucide-react'
 import PublicHeader from '@/components/PublicHeader'
 import PublicFooter from '@/components/PublicFooter'
 import { COMPETITION_NAMES } from '@/lib/data'
@@ -29,10 +29,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // SSR — rendered on each request
 export const dynamic = 'force-dynamic'
 
-function StatBadge({ value, label, color }: { value: string | number; label: string; color: string }) {
+function StatBadge({ value, label, color, blurred }: { value: string | number; label: string; color: string; blurred?: boolean }) {
   return (
     <div className="stat-card p-5 text-center">
-      <div className={`text-3xl font-black mb-1 ${color}`}>{value}</div>
+      <div className={`text-3xl font-black mb-1 ${color} ${blurred ? 'blur-sm select-none' : ''}`}>{value}</div>
       <div className="text-xs text-slate-400">{label}</div>
     </div>
   )
@@ -92,19 +92,41 @@ export default async function ArbitrePage({ params }: Props) {
           </div>
         </div>
 
-        {/* Stats grid */}
+        {/* Register CTA banner */}
+        <div className="glass-card rounded-2xl p-5 mb-6 border-purple-500/25 bg-gradient-to-r from-purple-950/40 to-indigo-950/40">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center shrink-0">
+              <Lock size={18} className="text-purple-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-white text-sm">Estadistiques protegides</h3>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Registra&apos;t gratis per veure totes les estadistiques i l&apos;informe complet d&apos;aquest arbitre.
+              </p>
+            </div>
+            <Link
+              href="/registre"
+              className="shrink-0 flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-sm font-semibold rounded-xl transition-all"
+            >
+              <UserPlus size={14} />
+              Registra&apos;t gratis
+            </Link>
+          </div>
+        </div>
+
+        {/* Stats grid — all blurred */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4 mb-6">
-          <StatBadge value={ref.matches} label="Partits" color="text-white" />
-          <StatBadge value={ref.yellows_per_match} label="🟨 per part." color="text-yellow-400" />
-          <StatBadge value={ref.reds_per_match} label="🟥 per part." color="text-red-400" />
-          <StatBadge value={ref.penalties_per_match} label="Penals/part." color="text-cyan-400" />
-          <StatBadge value={`${expulsionPct}%`} label="Amb expulsió" color="text-orange-400" />
+          <StatBadge value={ref.matches} label="Partits" color="text-white" blurred />
+          <StatBadge value={ref.yellows_per_match} label="🟨 per part." color="text-yellow-400" blurred />
+          <StatBadge value={ref.reds_per_match} label="🟥 per part." color="text-red-400" blurred />
+          <StatBadge value={ref.penalties_per_match} label="Penals/part." color="text-cyan-400" blurred />
+          <StatBadge value={`${expulsionPct}%`} label="Amb expulsió" color="text-orange-400" blurred />
         </div>
 
         {/* Two column: history + premium CTA */}
         <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
 
-          {/* Match history */}
+          {/* Match history — blurred scores */}
           <div className="lg:col-span-2 glass-card rounded-2xl p-4 sm:p-6">
             <h2 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
               <Calendar size={16} className="text-green-400" />
@@ -116,12 +138,12 @@ export default async function ArbitrePage({ params }: Props) {
                   <span className="text-[10px] sm:text-xs text-slate-500 shrink-0 w-16 sm:w-20">{formatDate(match.date)}</span>
                   <div className="flex-1 grid grid-cols-[1fr_auto_1fr] items-center gap-1.5 sm:gap-2 min-w-0">
                     <span className="text-xs sm:text-sm text-slate-300 text-right truncate">{match.home_team}</span>
-                    <span className="text-xs sm:text-sm font-bold text-white bg-white/8 px-2 sm:px-2.5 py-1 rounded-lg shrink-0 font-mono">
+                    <span className="text-xs sm:text-sm font-bold text-white bg-white/8 px-2 sm:px-2.5 py-1 rounded-lg shrink-0 font-mono blur-sm select-none">
                       {match.home_score ?? '–'}–{match.away_score ?? '–'}
                     </span>
                     <span className="text-xs sm:text-sm text-slate-300 truncate">{match.away_team}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 shrink-0">
+                  <div className="flex items-center gap-1.5 shrink-0 blur-sm select-none">
                     {match.yellows > 0 && (
                       <span className="text-xs text-yellow-400 font-semibold">🟨{match.yellows}</span>
                     )}
@@ -143,7 +165,7 @@ export default async function ArbitrePage({ params }: Props) {
           {/* Premium CTA */}
           <div className="space-y-4">
 
-            {/* Trend chart placeholder */}
+            {/* Trend chart — blurred values */}
             <div className="glass-card rounded-2xl p-6">
               <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
                 <TrendingUp size={14} className="text-cyan-400" />
@@ -158,7 +180,7 @@ export default async function ArbitrePage({ params }: Props) {
                     <div key={label}>
                       <div className="flex justify-between text-xs text-slate-400 mb-1">
                         <span>{label}</span>
-                        <span className="text-white">{values[i]}</span>
+                        <span className="text-white blur-sm select-none">{values[i]}</span>
                       </div>
                       <div className="h-1.5 bg-white/8 rounded-full overflow-hidden">
                         <div
@@ -202,7 +224,7 @@ export default async function ArbitrePage({ params }: Props) {
                   href="/registre"
                   className="block text-center py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-xl transition-colors"
                 >
-                  Desbloqueja l'informe
+                  Desbloqueja l&apos;informe
                 </Link>
               </div>
             </div>

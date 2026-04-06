@@ -44,8 +44,32 @@ export async function getDashboardTeam(): Promise<DashboardTeam | null> {
 }
 
 /**
- * Check if the current request is from a verified admin (HMAC-signed token).
+ * Check if the current request is from a verified admin.
+ * Only returns true for pure admin-cookie sessions (no Supabase user logged in).
  */
 export async function isAdminUser(): Promise<boolean> {
-  return isAdminVerified()
+  const adminCookie = await isAdminVerified()
+  if (!adminCookie) return false
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  return !user
+}
+
+/**
+ * Check if the current user has PRO status (3+ referrals or admin).
+ */
+export async function isProUser(): Promise<boolean> {
+  if (await isAdminVerified()) return true
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return false
+
+  const { data } = await supabase
+    .from('user_referral_codes')
+    .select('pro_unlocked, referral_count')
+    .eq('user_id', user.id)
+    .single()
+
+  return data?.pro_unlocked || (data?.referral_count ?? 0) >= 3
 }

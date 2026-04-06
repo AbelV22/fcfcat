@@ -64,8 +64,12 @@ export async function GET() {
 }
 
 /**
- * POST /api/referral — Record a referral (called during signup)
+ * POST /api/referral — Record a referral (called during signup callback)
  * Body: { referral_code: string, referred_user_id: string }
+ *
+ * Uses a SECURITY DEFINER Postgres function (record_referral) so that
+ * referral_count and pro_unlocked are updated atomically — even when
+ * the caller is unauthenticated (server-to-server fetch from /auth/callback).
  */
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -76,53 +80,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
   }
 
-  // Find referrer by code
-  const { data: codeRow } = await supabase
-    .from('user_referral_codes')
-    .select('user_id')
-    .eq('referral_code', referral_code.toUpperCase())
-    .single()
-
-  if (!codeRow) {
-    return NextResponse.json({ error: 'Invalid referral code' }, { status: 404 })
-  }
-
-  // Don't allow self-referral
-  if (codeRow.user_id === referred_user_id) {
-    return NextResponse.json({ error: 'Cannot refer yourself' }, { status: 400 })
-  }
-
-  // Create referral record
-  const { error } = await supabase
-    .from('referrals')
-    .insert({
-      referrer_id: codeRow.user_id,
-      referred_id: referred_user_id,
-      referral_code: referral_code.toUpperCase(),
-    })
+  const { data, error } = await supabase.rpc('record_referral', {
+    p_referral_code: referral_code,
+    p_referred_user_id: referred_user_id,
+  })
 
   if (error) {
-    if (error.code === '23505') {
-      return NextResponse.json({ error: 'User already referred' }, { status: 409 })
-    }
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  // Update referral count
-  const { count } = await supabase
-    .from('referrals')
-    .select('*', { count: 'exact', head: true })
-    .eq('referrer_id', codeRow.user_id)
+  // The function returns a JSONB object
+  const result = data as { error?: string; status?: number; success?: boolean; referral_count?: number }
 
-  const newCount = count || 0
+  if (result.error) {
+    return NextResponse.json({ error: result.error }, { status: result.status || 400 })
+  }
 
-  await supabase
-    .from('user_referral_codes')
-    .update({
-      referral_count: newCount,
-      pro_unlocked: newCount >= 3,
-    })
-    .eq('user_id', codeRow.user_id)
-
-  return NextResponse.json({ success: true, referral_count: newCount })
+  return NextResponse.json({ success: true, referral_count: result.referral_count })
 }
