@@ -1660,7 +1660,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     supabase.from('fields').select('name, team, fcf_venue, length_m, width_m').order('name'),
     // Global referee stats for percentile computation — senior-level only
     refereeName
-      ? supabase.from('fcf_referee_matches').select('main_referee, competition, yellow_cards, red_cards, home_score, away_score').in('competition', SENIOR_LEVEL_COMPETITIONS).not('main_referee', 'is', null).limit(5000)
+      ? supabase.from('fcf_referee_matches').select('main_referee, competition, yellow_cards, red_cards, home_score, away_score').in('competition', SENIOR_LEVEL_COMPETITIONS).not('main_referee', 'is', null).order('match_date', { ascending: false }).limit(5000)
       : Promise.resolve({ data: [] as any[] }),
     // Team goals data for goal timing (home matches)
     supabase.from('fcf_referee_matches').select('competition, group_name, home_team, away_team, home_score, away_score, goals').eq('competition', competition).eq('home_team', teamName).not('home_score', 'is', null).order('jornada', { ascending: false }),
@@ -1860,6 +1860,10 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
           divisionRefMap[name].reds += rc
         }
       }
+      // Ensure the focal referee's entry in the pool matches exactly the stats
+      // computed from rm (50 most-recent matches), avoiding cross-source inconsistency.
+      globalRefMap[refereeName] = { matches: rm.length, yellows: totalYellows, reds: totalReds }
+
       // Global percentiles — referees with ≥3 matches
       const qualified = Object.values(globalRefMap).filter(r => r.matches >= 3)
       if (qualified.length > 1) {
@@ -1871,13 +1875,25 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
         reds_percentile = Math.round((rBelow / qualified.length) * 100)
       }
       // Division-specific percentiles — referees with ≥2 matches in this competition
+      // For the focal referee, derive stats directly from rm filtered to this competition
+      // (more reliable than divisionRefMap which depends on the 5000-row sample).
+      const rmInDivision = rm.filter((m: any) => m.competition === competition)
+      const divFocalYellows = rmInDivision.flatMap((m: any) =>
+        (Array.isArray(m.yellow_cards) ? m.yellow_cards : []).filter((c: any) => c.recipient_type === 'player')
+      ).length
+      const divFocalReds = rmInDivision.flatMap((m: any) =>
+        (Array.isArray(m.red_cards) ? m.red_cards : []).filter((c: any) => c.recipient_type === 'player')
+      ).length
+      const divFocalMatches = rmInDivision.length
+      // Also ensure the focal referee's entry in divisionRefMap uses the same source
+      if (divFocalMatches > 0) {
+        divisionRefMap[refereeName] = { matches: divFocalMatches, yellows: divFocalYellows, reds: divFocalReds }
+      }
       const divQualified = Object.values(divisionRefMap).filter(r => r.matches >= 2)
       division_referee_count = divQualified.length
-      if (divQualified.length > 1) {
-        // Use this referee's stats within the division only
-        const divRef = divisionRefMap[refereeName]
-        const divYpm = divRef ? divRef.yellows / divRef.matches : yellows_per_match
-        const divRpm = divRef ? divRef.reds / divRef.matches : reds_per_match
+      if (divQualified.length > 1 && divFocalMatches > 0) {
+        const divYpm = divFocalYellows / divFocalMatches
+        const divRpm = divFocalReds / divFocalMatches
         const dypm = divQualified.map(r => r.yellows / r.matches)
         const drpm = divQualified.map(r => r.reds / r.matches)
         division_yellows_percentile = Math.round((dypm.filter(v => v < divYpm).length / divQualified.length) * 100)
