@@ -69,7 +69,7 @@ export function ProUnlockBanner() {
         <div className="flex-1 min-w-0">
           <h3 className="font-bold text-white text-sm">Informe bloquejat</h3>
           <p className="text-xs text-slate-400 mt-0.5">
-            Convida 3 entrenadors per desbloquejar l&apos;Informe PRO d&apos;Arbitre complet.
+            Convida 2 entrenadors per desbloquejar l&apos;Informe PRO d&apos;Arbitre complet.
           </p>
         </div>
         <Link

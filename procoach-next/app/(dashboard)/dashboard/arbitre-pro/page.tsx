@@ -260,7 +260,7 @@ export default async function ArbitreProPage() {
               <ProBlurSection
                 blurred={blurred}
                 ctaHref="/dashboard"
-                ctaText="Convida 3 entrenadors per veure la tendencia completa"
+                ctaText="Convida 2 entrenadors per veure la tendencia completa"
                 ctaLabel="Desbloquejar"
               >
                 <div className="glass-card rounded-2xl p-5">
@@ -308,7 +308,7 @@ export default async function ArbitreProPage() {
             <ProBlurSection
               blurred={blurred}
               ctaHref="/dashboard"
-              ctaText="Convida 3 entrenadors per veure els percentils globals"
+              ctaText="Convida 2 entrenadors per veure els percentils globals"
               ctaLabel="Desbloquejar"
             >
               <div className="glass-card rounded-2xl p-6">

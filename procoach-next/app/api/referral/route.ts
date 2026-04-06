@@ -58,8 +58,8 @@ export async function GET() {
   return NextResponse.json({
     referral_code: codeRow.referral_code,
     referral_count: count || 0,
-    pro_unlocked: codeRow.pro_unlocked || (count || 0) >= 3,
-    target: 3,
+    pro_unlocked: codeRow.pro_unlocked || (count || 0) >= 2,
+    target: 2,
   })
 }
 

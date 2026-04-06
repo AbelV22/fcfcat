@@ -56,7 +56,7 @@ export async function isAdminUser(): Promise<boolean> {
 }
 
 /**
- * Check if the current user has PRO status (3+ referrals or admin).
+ * Check if the current user has PRO status (2+ referrals or admin).
  */
 export async function isProUser(): Promise<boolean> {
   if (await isAdminVerified()) return true
@@ -71,5 +71,5 @@ export async function isProUser(): Promise<boolean> {
     .eq('user_id', user.id)
     .single()
 
-  return data?.pro_unlocked || (data?.referral_count ?? 0) >= 3
+  return data?.pro_unlocked || (data?.referral_count ?? 0) >= 2
 }
