@@ -408,6 +408,44 @@ function parseActaRow(data: any): ActaData {
   }
 }
 
+/**
+ * Fallback: fetch player names from fcf_player_stats when acta has no lineups.
+ * Returns formatted player names sorted by appearances (most played first).
+ */
+export async function fetchTeamPlayerNames(
+  teamSlug: string,
+  competition?: string | null,
+): Promise<string[]> {
+  const supabase = createClient()
+
+  let query = supabase
+    .from('fcf_player_stats')
+    .select('player_name, appearances')
+    .eq('team_slug', teamSlug)
+    .gt('appearances', 0)
+    .order('appearances', { ascending: false })
+    .limit(30)
+
+  if (competition) {
+    query = query.eq('competition', competition)
+  }
+
+  const { data } = await query
+  if (!data || data.length === 0) return []
+
+  return data.map((p: { player_name: string }) => {
+    // Format "SURNAME, NAME" → "Name Surname" if needed
+    const name = p.player_name || ''
+    const parts = name.split(',').map((s: string) => s.trim())
+    if (parts.length === 2) {
+      const [surname, first] = parts
+      return first.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') + ' ' +
+        surname.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
+    }
+    return name.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
+  }).filter(Boolean)
+}
+
 /** Convert acta data into wizard events (pre-fill) — includes both teams */
 export function actaToWizardEvents(
   acta: ActaData,

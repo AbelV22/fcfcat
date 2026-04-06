@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, ArrowRight, ClipboardList, Save, Check, Zap, SkipForward } from 'lucide-react'
 import type { WizardState } from '@/lib/match-notes-types'
-import { saveFullMatchNote, fetchActaDataForMatch, actaToWizardEvents, actaToWizardLineups } from '@/lib/match-notes-data'
+import { saveFullMatchNote, fetchActaDataForMatch, fetchTeamPlayerNames, actaToWizardEvents, actaToWizardLineups } from '@/lib/match-notes-data'
 import StepSelectMatch from './StepSelectMatch'
 import StepLineup from './StepLineup'
 import StepEvents from './StepEvents'
@@ -174,7 +174,7 @@ export default function WizardShell({
         // Extract all player names from acta (starters + bench)
         const lineup = isHome ? acta.home_lineup : acta.away_lineup
         const bench = isHome ? acta.home_bench : acta.away_bench
-        const allActaPlayers = [...lineup, ...bench]
+        let allActaPlayers = [...lineup, ...bench]
           .map((p) => {
             // Format names from "SURNAME, NAME" to "Name Surname"
             const parts = p.name.split(',').map((s: string) => s.trim())
@@ -187,16 +187,10 @@ export default function WizardShell({
           })
           .filter(Boolean)
 
-        // Separate starters and bench for ordering (starters first)
-        const starterNames = lineup.map((p) => {
-          const parts = p.name.split(',').map((s: string) => s.trim())
-          if (parts.length === 2) {
-            const [surname, name] = parts
-            return name.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') + ' ' +
-              surname.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
-          }
-          return p.name.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
-        }).filter(Boolean)
+        // Fallback: if acta has no lineup data, load from fcf_player_stats
+        if (allActaPlayers.length === 0) {
+          allActaPlayers = await fetchTeamPlayerNames(teamSlug, matchData.competition)
+        }
 
         setState((prev) => ({
           ...prev,
@@ -205,13 +199,22 @@ export default function WizardShell({
           actaPrefilled: events.length > 0 || hasLineups,
           actaPlayers: allActaPlayers.length > 0 ? allActaPlayers : prev.actaPlayers,
         }))
+      } else {
+        // No acta at all — still load player names from stats
+        const fallbackPlayers = await fetchTeamPlayerNames(teamSlug, matchData.competition)
+        if (fallbackPlayers.length > 0) {
+          setState((prev) => ({
+            ...prev,
+            actaPlayers: fallbackPlayers,
+          }))
+        }
       }
     } catch (err) {
       console.warn('Could not load acta data:', err)
     } finally {
       setLoadingActa(false)
     }
-  }, [clubName])
+  }, [clubName, teamSlug])
 
   const canAdvance = () => {
     if (state.step === 0) return !!state.matchData
