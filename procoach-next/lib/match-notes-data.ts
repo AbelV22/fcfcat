@@ -410,7 +410,8 @@ function parseActaRow(data: any): ActaData {
 
 /**
  * Fallback: fetch player names from fcf_player_stats when acta has no lineups.
- * Returns formatted player names sorted by appearances (most played first).
+ * Returns formatted player names sorted by minutes_played desc (most minutes first),
+ * falling back to appearances if no minutes data.
  */
 export async function fetchTeamPlayerNames(
   teamSlug: string,
@@ -420,9 +421,10 @@ export async function fetchTeamPlayerNames(
 
   let query = supabase
     .from('fcf_player_stats')
-    .select('player_name, appearances')
+    .select('player_name, appearances, minutes_played')
     .eq('team_slug', teamSlug)
     .gt('appearances', 0)
+    .order('minutes_played', { ascending: false })
     .order('appearances', { ascending: false })
     .limit(30)
 
@@ -434,7 +436,6 @@ export async function fetchTeamPlayerNames(
   if (!data || data.length === 0) return []
 
   return data.map((p: { player_name: string }) => {
-    // Format "SURNAME, NAME" → "Name Surname" if needed
     const name = p.player_name || ''
     const parts = name.split(',').map((s: string) => s.trim())
     if (parts.length === 2) {
