@@ -331,6 +331,7 @@ const RivalReportPDF = forwardRef<RivalReportPDFHandle, { data: PDFReportData; t
                   </div>
                   <div style={{ fontSize: 13, fontWeight: 800, color: WHITE, marginBottom: 3, fontFamily: FONT, lineHeight: '18px' }}>{r.name.length > 22 ? r.name.slice(0, 20) + '...' : r.name}</div>
                   <div style={{ fontSize: 10, color: S400, fontFamily: FONT, lineHeight: '16px' }}>#{r.position || '-'} · {r.points} pts</div>
+                  {r.formPosition && <div style={{ fontSize: 8, color: AMBER, fontWeight: 700, fontFamily: FONT, lineHeight: '14px', marginTop: 1 }}>Racha #{r.formPosition}</div>}
                   <div style={{ display: 'flex', gap: 4, justifyContent: 'center', marginTop: 8 }}>
                     {r.form.slice(0, 5).reverse().map((f, i) => <PDFFormDot key={i} result={f.result} />)}
                   </div>
@@ -355,6 +356,7 @@ const RivalReportPDF = forwardRef<RivalReportPDFHandle, { data: PDFReportData; t
                   </div>
                   <div style={{ fontSize: 13, fontWeight: 800, color: WHITE, marginBottom: 3, fontFamily: FONT, lineHeight: '18px' }}>{rival.name.length > 22 ? rival.name.slice(0, 20) + '...' : rival.name}</div>
                   <div style={{ fontSize: 10, color: S400, fontFamily: FONT, lineHeight: '16px' }}>#{rival.position || '-'} · {rival.points} pts</div>
+                  {r.rivalFormPosition && <div style={{ fontSize: 8, color: AMBER, fontWeight: 700, fontFamily: FONT, lineHeight: '14px', marginTop: 1 }}>Racha #{r.rivalFormPosition}</div>}
                   <div style={{ display: 'flex', gap: 4, justifyContent: 'center', marginTop: 8 }}>
                     {rival.form.slice(0, 5).reverse().map((f, i) => <PDFFormDot key={i} result={f.result} />)}
                   </div>

@@ -376,11 +376,16 @@ export default async function RivalPage() {
   const h2h = report?.headToHead || []
   const hasMinutes = hasMinutesData(report?.competition ?? '', rival?.players || [])
 
+  const formStandings = report?.formStandings || []
   const isHome = nextMatch?.isHome ?? true
   const localName = isHome ? team.name : rival?.name || ''
   const localInitial = localName.charAt(0)
   const visitantName = isHome ? rival?.name || '' : team.name
   const visitantInitial = visitantName.charAt(0)
+
+  // Form (racha) positions
+  const myFormPos = formStandings.find(f => f.slug === team.slug)?.position ?? null
+  const rivalFormPos = rival ? (formStandings.find(f => f.slug === rival.slug)?.position ?? null) : null
 
   // Build PDFReportData
   const pdfReportData: PDFReportData | null = (report && rival && nextMatch) ? {
@@ -402,6 +407,8 @@ export default async function RivalPage() {
     nextMatch: { opponent: nextMatch.opponent, date: nextMatch.date, jornada: nextMatch.jornada, isHome: nextMatch.isHome, time: nextMatch.time, referee: nextMatch.referee },
     homePitch: report.homePitch ? { length_m: report.homePitch.length_m, width_m: report.homePitch.width_m, field_name: report.homePitch.field_name } : null,
     rivalPitch: report.rivalPitch ? { length_m: report.rivalPitch.length_m, width_m: report.rivalPitch.width_m, field_name: report.rivalPitch.field_name } : null,
+    formPosition: myFormPos,
+    rivalFormPosition: rivalFormPos,
   } : null
 
   return (
@@ -453,6 +460,11 @@ export default async function RivalPage() {
                     <span className="font-score text-2xl text-slate-300">#{isHome ? (report?.position || '-') : (rival.position || '-')}</span>
                     <span className="text-[10px] text-slate-500 font-medium">{isHome ? report?.points : rival.points} pts</span>
                   </div>
+                  {(isHome ? myFormPos : rivalFormPos) && (
+                    <div className="text-[10px] text-orange-400/80 font-semibold mt-0.5">
+                      Racha #{isHome ? myFormPos : rivalFormPos}
+                    </div>
+                  )}
                   <div className="flex gap-1 justify-center mt-2">
                     {(isHome ? report?.form : rival.form)?.slice(0, 5).reverse().map((f, i) => (
                       <FormDot key={i} result={f.result} size="sm" />
@@ -489,6 +501,11 @@ export default async function RivalPage() {
                     <span className="font-score text-2xl text-slate-300">#{isHome ? (rival.position || '-') : (report?.position || '-')}</span>
                     <span className="text-[10px] text-slate-500 font-medium">{isHome ? rival.points : report?.points} pts</span>
                   </div>
+                  {(isHome ? rivalFormPos : myFormPos) && (
+                    <div className="text-[10px] text-orange-400/80 font-semibold mt-0.5">
+                      Racha #{isHome ? rivalFormPos : myFormPos}
+                    </div>
+                  )}
                   <div className="flex gap-1 justify-center mt-2">
                     {(isHome ? rival.form : report?.form)?.slice(0, 5).reverse().map((f, i) => (
                       <FormDot key={i} result={f.result} size="sm" />

@@ -47,6 +47,8 @@ export interface PDFReportData {
   nextMatch: { opponent: string; date: string; jornada: number; isHome: boolean; time?: string; referee?: string | null } | null
   homePitch: { length_m: number; width_m: number; field_name?: string } | null
   rivalPitch: { length_m: number; width_m: number; field_name?: string } | null
+  formPosition: number | null
+  rivalFormPosition: number | null
 }
 
 interface TeamReportActionsProps {

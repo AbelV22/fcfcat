@@ -1158,6 +1158,20 @@ export type TeamPenaltyStats = {
   matches_with_penalty_pct: number
 }
 
+export type FormStandingEntry = {
+  position: number
+  name: string
+  slug: string
+  played: number      // partidos jugados (max 5)
+  wins: number
+  draws: number
+  losses: number
+  gf: number
+  ga: number
+  points: number      // puntos en ultimos 5
+  form: ('W' | 'D' | 'L')[]  // resultados recientes (mas reciente primero)
+}
+
 export type RivalDataDB = {
   name: string
   slug: string
@@ -1216,6 +1230,7 @@ export type FullTeamReportDB = {
   rivalPitch: FieldDimsDB | null
   fieldSizeRecord: Record<string, { played: number; wins: number; draws: number; losses: number; gf: number; ga: number }> | null
   penaltyStats: TeamPenaltyStats | null
+  formStandings: FormStandingEntry[]
 }
 
 /** Compute penalty stats for a team from its home/away match data (with goals JSONB). */
@@ -1295,6 +1310,88 @@ function _parseMatchDate(d: string): Date | null {
   const m = (d || '').match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/)
   if (!m) return null
   return new Date(parseInt(m[3]), parseInt(m[2]) - 1, parseInt(m[1]))
+}
+
+/**
+ * Compute form standings (last 5 matches) for ALL teams in a competition+group.
+ * Returns teams ranked by points earned in their last 5 played matches.
+ */
+async function _computeFormStandings(
+  competition: string,
+  groupName: string,
+  standingsTeams: StandingEntry[],
+): Promise<FormStandingEntry[]> {
+  const supabase = getSupabase()
+  if (!supabase || !competition || !groupName || standingsTeams.length === 0) return []
+
+  // Get all team names from standings
+  const teamNames = standingsTeams.map(t => t.name)
+
+  // Fetch recent matches for ALL teams in the group at once
+  const { data: matches, error } = await supabase
+    .from('fcf_referee_matches')
+    .select('jornada, home_team, away_team, home_score, away_score')
+    .eq('competition', competition)
+    .eq('group_name', groupName)
+    .not('home_score', 'is', null)
+    .order('jornada', { ascending: false })
+    .limit(200)
+
+  if (error || !matches || matches.length === 0) return []
+
+  // Group matches by team and take last 5 for each
+  const teamMap = new Map<string, { gf: number; ga: number; result: 'W' | 'D' | 'L' }[]>()
+  for (const name of teamNames) teamMap.set(name, [])
+
+  for (const m of matches) {
+    const home = m.home_team as string
+    const away = m.away_team as string
+    const hs = m.home_score as number
+    const as_ = m.away_score as number
+
+    // Home team entry
+    const homeArr = teamMap.get(home)
+    if (homeArr && homeArr.length < 5) {
+      homeArr.push({ gf: hs, ga: as_, result: hs > as_ ? 'W' : hs < as_ ? 'L' : 'D' })
+    }
+
+    // Away team entry
+    const awayArr = teamMap.get(away)
+    if (awayArr && awayArr.length < 5) {
+      awayArr.push({ gf: as_, ga: hs, result: as_ > hs ? 'W' : as_ < hs ? 'L' : 'D' })
+    }
+  }
+
+  // Build form standings
+  const entries: Omit<FormStandingEntry, 'position'>[] = []
+  for (const t of standingsTeams) {
+    const last5 = teamMap.get(t.name) || []
+    if (last5.length === 0) continue
+    const wins = last5.filter(m => m.result === 'W').length
+    const draws = last5.filter(m => m.result === 'D').length
+    const losses = last5.filter(m => m.result === 'L').length
+    const gf = last5.reduce((s, m) => s + m.gf, 0)
+    const ga = last5.reduce((s, m) => s + m.ga, 0)
+    entries.push({
+      name: t.name,
+      slug: t.slug,
+      played: last5.length,
+      wins, draws, losses,
+      gf, ga,
+      points: wins * 3 + draws,
+      form: last5.map(m => m.result),
+    })
+  }
+
+  // Sort by points desc, then goal diff desc, then goals scored desc
+  entries.sort((a, b) => {
+    if (b.points !== a.points) return b.points - a.points
+    const diffA = a.gf - a.ga, diffB = b.gf - b.ga
+    if (diffB !== diffA) return diffB - diffA
+    return b.gf - a.gf
+  })
+
+  return entries.map((e, i) => ({ ...e, position: i + 1 }))
 }
 
 /**
@@ -1921,6 +2018,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     rivalPitch,
     fieldSizeRecord: hasFieldSizeData ? fieldSizeRecord : null,
     penaltyStats: teamPenaltyStats,
+    formStandings: await _computeFormStandings(competition, groupName, standings),
   }
 }
 

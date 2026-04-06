@@ -952,6 +952,8 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
                 nextMatch: report.nextMatch ? { opponent: report.nextMatch.opponent, date: report.nextMatch.date, jornada: report.nextMatch.jornada, isHome: report.nextMatch.isHome, time: report.nextMatch.time, referee: report.nextMatch.referee } : null,
                 homePitch: report.homePitch ? { length_m: report.homePitch.length_m, width_m: report.homePitch.width_m, field_name: report.homePitch.field_name } : null,
                 rivalPitch: report.rivalPitch ? { length_m: report.rivalPitch.length_m, width_m: report.rivalPitch.width_m, field_name: report.rivalPitch.field_name } : null,
+                formPosition: report.formStandings?.find(f => f.slug === slug)?.position ?? null,
+                rivalFormPosition: report.rival ? (report.formStandings?.find(f => f.slug === report.rival!.slug)?.position ?? null) : null,
               } satisfies PDFReportData}
             />
           </div>
