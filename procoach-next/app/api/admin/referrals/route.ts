@@ -2,8 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import { isAdminUser } from '@/lib/admin-auth'
 import { createClient } from '@/lib/supabase-server'
 
+function generateCode(): string {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  let code = ''
+  for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)]
+  return code
+}
+
 /**
- * GET /api/admin/referrals — List all users with referral data
+ * GET /api/admin/referrals — List ALL users with referral data.
+ * Auto-creates referral codes for users who don't have one yet.
  */
 export async function GET() {
   if (!(await isAdminUser())) {
@@ -12,7 +20,41 @@ export async function GET() {
 
   const supabase = await createClient()
 
-  // Get all users with their referral codes and stats
+  // Get ALL auth users (via admin function)
+  const { data: authUsers } = await supabase.rpc('get_user_emails_for_admin', {})
+
+  // Build email map
+  const emailMap: Record<string, { email: string; name: string }> = {}
+  if (Array.isArray(authUsers)) {
+    for (const u of authUsers) {
+      emailMap[u.id] = { email: u.email, name: u.name || '' }
+    }
+  }
+
+  // Get existing referral codes
+  const { data: existingCodes } = await supabase
+    .from('user_referral_codes')
+    .select('user_id, referral_code, referral_count, pro_unlocked, created_at')
+
+  const existingSet = new Set((existingCodes || []).map(c => c.user_id))
+
+  // Auto-create codes for users who don't have one
+  const missingUserIds = Object.keys(emailMap).filter(id => !existingSet.has(id))
+  for (const userId of missingUserIds) {
+    const code = generateCode()
+    const { error } = await supabase
+      .from('user_referral_codes')
+      .insert({ user_id: userId, referral_code: code })
+
+    if (error?.code === '23505') {
+      // Code collision — retry
+      await supabase
+        .from('user_referral_codes')
+        .insert({ user_id: userId, referral_code: generateCode() })
+    }
+  }
+
+  // Re-fetch all codes after backfill
   const { data: users, error: usersErr } = await supabase
     .from('user_referral_codes')
     .select('user_id, referral_code, referral_count, pro_unlocked, created_at')
@@ -27,17 +69,6 @@ export async function GET() {
     .from('referrals')
     .select('referrer_id, referred_id, referral_code, created_at')
     .order('created_at', { ascending: false })
-
-  // Get user emails from auth (via admin function)
-  const { data: authUsers } = await supabase.rpc('get_user_emails_for_admin', {})
-
-  // Build email map
-  const emailMap: Record<string, { email: string; name: string }> = {}
-  if (Array.isArray(authUsers)) {
-    for (const u of authUsers) {
-      emailMap[u.id] = { email: u.email, name: u.name || '' }
-    }
-  }
 
   return NextResponse.json({
     users: (users || []).map(u => ({
