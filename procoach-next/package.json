@@ -11,6 +11,8 @@
     "cf:build": "npx @opennextjs/cloudflare build && node scripts/cf-postbuild.mjs"
   },
   "dependencies": {
+    "@remotion/bundler": "^4.0.446",
+    "@remotion/cli": "^4.0.446",
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.98.0",
     "html-to-image": "^1.11.13",
@@ -19,11 +21,11 @@
     "lucide-react": "^0.577.0",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "remotion": "^4.0.446"
   },
   "devDependencies": {
     "@opennextjs/cloudflare": "^1.17.1",
-    "esbuild": "^0.27.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -31,6 +33,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.0.1",
+    "esbuild": "^0.27.0",
     "jsdom": "^29.0.1",
     "pdf-to-img": "^5.0.0",
     "tailwindcss": "^4",
