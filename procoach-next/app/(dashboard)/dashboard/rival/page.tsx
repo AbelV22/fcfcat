@@ -874,6 +874,8 @@ export default async function RivalPage() {
               <div className="card-elevated rounded-2xl p-6">
                 <div className="space-y-0">
                   {h2h.map((m, i) => {
+                    const localTeam = m.isHome ? team.name : m.opponent
+                    const visitantTeam = m.isHome ? m.opponent : team.name
                     const homeScore = m.isHome ? m.goalsFor : m.goalsAgainst
                     const awayScore = m.isHome ? m.goalsAgainst : m.goalsFor
                     return (
@@ -882,7 +884,7 @@ export default async function RivalPage() {
                         <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold shrink-0 ${m.isHome ? 'bg-green-500/15 text-green-400' : 'bg-sky-500/15 text-sky-400'}`}>
                           {m.isHome ? 'L' : 'V'}
                         </span>
-                        <span className="flex-1 text-white truncate font-medium">{team.name}</span>
+                        <span className="flex-1 text-white truncate font-medium">{localTeam}</span>
                         {homeScore !== null && awayScore !== null ? (
                           <span className="font-score text-xl tabular-nums flex items-center gap-1 shrink-0">
                             <span className={m.result === 'W' ? 'text-green-400' : m.result === 'L' ? 'text-red-400' : 'text-slate-300'}>{homeScore}</span>
@@ -890,7 +892,7 @@ export default async function RivalPage() {
                             <span className={m.result === 'L' ? 'text-green-400' : m.result === 'W' ? 'text-red-400' : 'text-slate-300'}>{awayScore}</span>
                           </span>
                         ) : <span className="text-slate-600">-</span>}
-                        <span className="flex-1 text-white text-right truncate font-medium">{m.opponent}</span>
+                        <span className="flex-1 text-white text-right truncate font-medium">{visitantTeam}</span>
                       </div>
                     )
                   })}
