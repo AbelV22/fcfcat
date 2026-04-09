@@ -600,7 +600,7 @@ export async function getTeamBasicDataDB(slug: string) {
       .limit(30),
     supabase
       .from('fcf_standings')
-      .select('position, team_name, team_slug, played, won, drawn, lost, goals_for, goals_against, goal_diff, points')
+      .select('position, team_name, team_slug, played, won, drawn, lost, goals_for, goals_against, goal_diff, points, home_won, home_drawn, home_lost, away_won, away_drawn, away_lost')
       .eq('competition', competition)
       .eq('group_name', standing.group_name)
       .order('position', { ascending: true }),
@@ -695,9 +695,8 @@ export async function getTeamBasicDataDB(slug: string) {
       gf: s.goals_for || 0,
       ga: s.goals_against || 0,
       points: s.points || 0,
-      // Home/away split not available from standings table
-      home_won: 0, home_drawn: 0, home_lost: 0,
-      away_won: 0, away_drawn: 0, away_lost: 0,
+      home_won: s.home_won || 0, home_drawn: s.home_drawn || 0, home_lost: s.home_lost || 0,
+      away_won: s.away_won || 0, away_drawn: s.away_drawn || 0, away_lost: s.away_lost || 0,
     })),
     recentMatches,
     nextMatch: nextMatch ? {
@@ -936,7 +935,7 @@ export const COMPETITIONS_WITHOUT_MINUTES = new Set([
   'divisio-honor-juvenil', 'lliga-nacional-juvenil',
 ])
 type MatchEntry = { date: string; jornada: number; opponent: string; opponentSlug: string; isHome: boolean; goalsFor: number | null; goalsAgainst: number | null; result: 'W' | 'D' | 'L' | null; referee: string | null }
-type StandingEntry = { position: number; name: string; slug: string; played: number; wins: number; draws: number; losses: number; gf: number; ga: number; points: number }
+export type StandingEntry = { position: number; name: string; slug: string; played: number; wins: number; draws: number; losses: number; gf: number; ga: number; points: number; home_won: number; home_drawn: number; home_lost: number; away_won: number; away_drawn: number; away_lost: number }
 type GoalBucketEntry = { label: string; scored: number; conceded: number }
 
 export type RivalInsights = {
@@ -1242,6 +1241,16 @@ function _computeTeamPenaltyStats(
   const allMatches = [...homeMatches, ...awayMatches]
   if (allMatches.length === 0) return null
 
+  // Check data quality: if goals exist but none have goal_type, data is incomplete
+  let totalGoals = 0
+  let goalsWithType = 0
+  for (const m of allMatches) {
+    const goals: any[] = Array.isArray(m.goals) ? m.goals : []
+    totalGoals += goals.length
+    goalsWithType += goals.filter((g: any) => g.goal_type != null).length
+  }
+  if (totalGoals > 0 && goalsWithType === 0) return null
+
   let scored = 0
   let conceded = 0
   let matchesWithPenalty = 0
@@ -1511,7 +1520,7 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
       .limit(35),
     supabase
       .from('fcf_standings')
-      .select('position, team_name, team_slug, played, won, drawn, lost, goals_for, goals_against, points')
+      .select('position, team_name, team_slug, played, won, drawn, lost, goals_for, goals_against, points, home_won, home_drawn, home_lost, away_won, away_drawn, away_lost')
       .eq('competition', competition)
       .eq('group_name', groupName)
       .order('position', { ascending: true }),
@@ -1579,6 +1588,8 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     gf: s.goals_for || 0,
     ga: s.goals_against || 0,
     points: s.points || 0,
+    home_won: s.home_won || 0, home_drawn: s.home_drawn || 0, home_lost: s.home_lost || 0,
+    away_won: s.away_won || 0, away_drawn: s.away_drawn || 0, away_lost: s.away_lost || 0,
   }))
 
   // Form (last 8 played, most recent first)
