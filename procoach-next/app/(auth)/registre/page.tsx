@@ -281,7 +281,6 @@ function RegistreForm() {
               setForm(f => ({ ...f, team: '' }))
               setTeamOpen(true)
             }}
-            onFocus={() => form.competition && setTeamOpen(true)}
             placeholder={!form.competition ? 'Selecciona primer la competició' : teamsLoading ? 'Carregant equips...' : `Cerca entre ${teams.length} equips...`}
             style={{
               ...inputStyle,
@@ -289,7 +288,7 @@ function RegistreForm() {
               opacity: !form.competition ? 0.4 : 1,
               cursor: !form.competition ? 'not-allowed' : 'text',
             }}
-            onFocus={e => { if (form.competition) e.currentTarget.style.boxShadow = '0 0 0 1px rgba(34,197,94,0.3)' }}
+            onFocus={e => { if (form.competition) { setTeamOpen(true); e.currentTarget.style.boxShadow = '0 0 0 1px rgba(34,197,94,0.3)' } }}
             onBlur={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(255,255,255,0.06)')}
           />
           {form.team ? (
