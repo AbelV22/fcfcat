@@ -51,10 +51,10 @@ function FormDot({ result, size = 'md' }: { result: 'W' | 'D' | 'L' | null; size
   const cls =
     result === 'W' ? 'bg-green-500 text-white' :
     result === 'D' ? 'bg-amber-400 text-white' :
-    result === 'L' ? 'bg-red-500 text-white' : 'bg-white/10 text-slate-500'
+    result === 'L' ? 'bg-red-500 text-white' : 'bg-white/10 text-[#62666d]'
   const sz = size === 'sm' ? 'w-5 h-5 text-[9px]' : 'w-7 h-7 text-xs'
   return (
-    <span className={`inline-flex items-center justify-center rounded-full font-black ${cls} ${sz}`}>
+    <span className={`inline-flex items-center justify-center rounded-full font-medium ${cls} ${sz}`}>
       {result ? RESULT_LABEL[result] : '?'}
     </span>
   )
@@ -84,7 +84,7 @@ function WinRateDonut({ wins, draws, losses, size = 100 }: { wins: number; draws
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="font-score text-3xl text-white">{Math.round(winPct)}%</span>
-        <span className="text-[8px] text-slate-500 font-semibold tracking-widest uppercase">Vic.</span>
+        <span className="text-[8px] text-[#62666d] font-semibold tracking-widest uppercase">Vic.</span>
       </div>
     </div>
   )
@@ -96,11 +96,11 @@ function GoalTimingChart({ buckets }: { buckets: { label: string; scored: number
   if (!buckets || buckets.length === 0) return null
   const maxVal = Math.max(...buckets.flatMap(b => [b.scored, b.conceded]), 1)
   return (
-    <div className="card-spotlight rounded-2xl p-6">
+    <div className="v2-card p-6">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2.5">
-          <Clock size={16} className="text-cyan-400" />
-          <h3 className="text-sm font-bold text-white">Gols per minut</h3>
+          <Clock size={16} className="text-[#8a8f98]" />
+          <h3 className="text-sm font-medium text-white">Gols per minut</h3>
         </div>
         <div className="flex items-center gap-4 text-[10px] font-semibold">
           <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-green-500" /> Marca</span>
@@ -117,7 +117,7 @@ function GoalTimingChart({ buckets }: { buckets: { label: string; scored: number
                 <div className="w-[40%] bg-green-500/80 rounded-t transition-all duration-500" style={{ height: `${scoredH}%`, minHeight: b.scored > 0 ? '4px' : 0 }} />
                 <div className="w-[40%] bg-red-500/80 rounded-t transition-all duration-500" style={{ height: `${concededH}%`, minHeight: b.conceded > 0 ? '4px' : 0 }} />
               </div>
-              <span className="text-[9px] text-slate-500 font-medium">{b.label}</span>
+              <span className="text-[9px] text-[#62666d] font-medium">{b.label}</span>
             </div>
           )
         })}
@@ -163,12 +163,12 @@ function GoalProbabilityChart({
   const peakConcede = segments.reduce((best, s) => s.concedePct > best.concedePct ? s : best, segments[0])
 
   return (
-    <div className="card-spotlight rounded-2xl p-6">
+    <div className="v2-card p-6">
       <div className="flex items-center gap-2.5 mb-2">
-        <Target size={16} className="text-cyan-400" />
-        <h3 className="text-sm font-bold text-white">Probabilitat creuada de gol</h3>
+        <Target size={16} className="text-[#8a8f98]" />
+        <h3 className="text-sm font-medium text-white">Probabilitat creuada de gol</h3>
       </div>
-      <p className="text-[11px] text-slate-500 mb-5 leading-relaxed">
+      <p className="text-[11px] text-[#62666d] mb-5 leading-relaxed">
         Creua quan el teu equip marca/encaixa amb quan el rival marca/encaixa
       </p>
       <div className="flex items-center gap-4 mb-4 text-[10px] font-semibold">
@@ -193,10 +193,10 @@ function GoalProbabilityChart({
                   style={{ height: `${concedeH}%`, minHeight: s.concedePct > 0 ? '4px' : 0 }}
                 />
               </div>
-              <span className="text-[9px] text-slate-500 font-medium">{s.label}</span>
+              <span className="text-[9px] text-[#62666d] font-medium">{s.label}</span>
               <div className="flex gap-1.5 text-[10px] tabular-nums">
-                <span className="text-emerald-400 font-bold">{s.scorePct}%</span>
-                <span className="text-rose-400 font-bold">{s.concedePct}%</span>
+                <span className="text-emerald-400 font-medium">{s.scorePct}%</span>
+                <span className="text-rose-400 font-medium">{s.concedePct}%</span>
               </div>
             </div>
           )
@@ -205,17 +205,17 @@ function GoalProbabilityChart({
       {/* Insights */}
       <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
         {peakScore.scorePct > 0 && (
-          <div className="bg-emerald-500/8 border border-emerald-500/15 rounded-xl p-4">
-            <div className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider mb-1">Millor moment per marcar</div>
+          <div className="bg-emerald-500/8 border border-emerald-500/15 rounded-lg p-4">
+            <div className="text-[10px] text-emerald-400 font-medium uppercase tracking-wider mb-1">Millor moment per marcar</div>
             <div className="text-white text-lg font-headline font-extrabold">{peakScore.label}</div>
-            <div className="text-[10px] text-slate-400 mt-1">{peakScore.scorePct}% de probabilitat creuada</div>
+            <div className="text-[10px] text-[#8a8f98] mt-1">{peakScore.scorePct}% de probabilitat creuada</div>
           </div>
         )}
         {peakConcede.concedePct > 0 && (
-          <div className="bg-rose-500/8 border border-rose-500/15 rounded-xl p-4">
-            <div className="text-[10px] text-rose-400 font-bold uppercase tracking-wider mb-1">Minut de major perill</div>
+          <div className="bg-rose-500/8 border border-rose-500/15 rounded-lg p-4">
+            <div className="text-[10px] text-rose-400 font-medium uppercase tracking-wider mb-1">Minut de major perill</div>
             <div className="text-white text-lg font-headline font-extrabold">{peakConcede.label}</div>
-            <div className="text-[10px] text-slate-400 mt-1">{peakConcede.concedePct}% de probabilitat creuada</div>
+            <div className="text-[10px] text-[#8a8f98] mt-1">{peakConcede.concedePct}% de probabilitat creuada</div>
           </div>
         )}
       </div>
@@ -280,31 +280,31 @@ function PitchCompareOverlay({ homePitch, rivalPitch, homeLabel, rivalLabel }: {
   const stripeW = 28, stripeCount = Math.ceil(canvasW / stripeW)
 
   return (
-    <div className="card-spotlight rounded-2xl p-6">
+    <div className="v2-card p-6">
       <div className="flex items-center justify-between mb-5 flex-wrap gap-2">
         <div className="flex items-center gap-2.5">
           <Ruler size={16} className="text-emerald-400" />
-          <h3 className="text-sm font-bold text-white">Comparativa de camps</h3>
+          <h3 className="text-sm font-medium text-white">Comparativa de camps</h3>
         </div>
         {diffMsg && (
-          <span className="text-[11px] font-semibold text-slate-400 bg-white/5 px-3 py-1 rounded-full">{diffMsg}</span>
+          <span className="text-[11px] font-semibold text-[#8a8f98] bg-white/5 px-3 py-1 rounded-full">{diffMsg}</span>
         )}
       </div>
       {bothMissing ? (
         <div className="text-center py-8">
           <Ruler size={28} className="text-slate-700 mx-auto mb-3" />
-          <p className="text-sm text-slate-400">Dimensions no disponibles</p>
+          <p className="text-sm text-[#8a8f98]">Dimensions no disponibles</p>
         </div>
       ) : (
         <>
           <div className="flex items-center gap-5 mb-4 text-[11px] font-medium">
             <span className="flex items-center gap-2">
               <span className="w-3 h-3 rounded bg-green-500/40 border-2 border-green-500" />
-              <span className="text-slate-300">{homeLabel}</span>
+              <span className="text-[#d0d6e0]">{homeLabel}</span>
             </span>
             <span className="flex items-center gap-2">
               <span className="w-3 h-3 rounded bg-orange-500/40 border-2 border-orange-400" />
-              <span className="text-slate-300">{rivalLabel}</span>
+              <span className="text-[#d0d6e0]">{rivalLabel}</span>
             </span>
           </div>
           <div className="w-full mb-5">
@@ -331,12 +331,12 @@ function PitchCompareOverlay({ homePitch, rivalPitch, homeLabel, rivalLabel }: {
               { pitch: homePitch, area: homeArea, label: homeLabel, border: 'border-green-500/15', bg: 'bg-green-500/5' },
               { pitch: rivalPitch, area: rivalArea, label: rivalLabel, border: 'border-orange-500/15', bg: 'bg-orange-500/5' },
             ].map(({ pitch, area, label, border, bg }) => (
-              <div key={label} className={`${bg} ${border} border rounded-xl p-4 text-center`}>
-                <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold mb-2">{label}</p>
+              <div key={label} className={`${bg} ${border} border rounded-lg p-4 text-center`}>
+                <p className="text-[10px] text-[#62666d] uppercase tracking-wider font-semibold mb-2">{label}</p>
                 {pitch ? (
                   <>
-                    <p className="text-lg font-black text-white tabular-nums">{pitch.length_m} x {pitch.width_m} m</p>
-                    <p className="text-sm text-slate-400 tabular-nums">{(pitch.length_m * pitch.width_m).toLocaleString('ca-ES')} m2</p>
+                    <p className="text-lg font-medium text-white tabular-nums">{pitch.length_m} x {pitch.width_m} m</p>
+                    <p className="text-sm text-[#8a8f98] tabular-nums">{(pitch.length_m * pitch.width_m).toLocaleString('ca-ES')} m2</p>
                     {area && (
                       <span className={`inline-block mt-2 text-xs font-semibold px-2 py-0.5 rounded-full ${fieldCategory(area).bg} ${fieldCategory(area).color}`}>
                         {fieldCategory(area).label}
@@ -415,9 +415,9 @@ export default async function RivalPage() {
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       {!nextMatch || !rival ? (
         <div className="card-spotlight rounded-3xl p-16 text-center">
-          <Crosshair size={36} className="text-slate-600 mx-auto mb-5" />
+          <Crosshair size={36} className="text-[#62666d] mx-auto mb-5" />
           <h2 className="font-headline text-2xl font-extrabold text-white mb-3">No hi ha proper rival programat</h2>
-          <p className="text-slate-400 text-sm max-w-sm mx-auto leading-relaxed">Quan es publiqui el proper partit, apareixera aqui l&apos;analisi completa del rival.</p>
+          <p className="text-[#8a8f98] text-sm max-w-sm mx-auto leading-relaxed">Quan es publiqui el proper partit, apareixera aqui l&apos;analisi completa del rival.</p>
         </div>
       ) : (
         <div className="space-y-8">
@@ -434,9 +434,9 @@ export default async function RivalPage() {
               {/* Top row: badge + export buttons */}
               <div className="flex items-center justify-between gap-2 mb-5 sm:mb-8">
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                  <Crosshair size={14} className="text-cyan-400 shrink-0" />
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] hidden xs:inline">Informe Pre-Partit</span>
-                  <span className="text-[10px] font-bold text-cyan-400/80 bg-cyan-500/10 px-2 py-0.5 rounded-full shrink-0">J{nextMatch.jornada}</span>
+                  <Crosshair size={14} className="text-[#8a8f98] shrink-0" />
+                  <span className="text-[10px] font-medium text-[#8a8f98] uppercase tracking-[0.2em] hidden xs:inline">Informe Pre-Partit</span>
+                  <span className="text-[10px] font-medium text-[#8a8f98]/80 bg-cyan-500/10 px-2 py-0.5 rounded-full shrink-0">J{nextMatch.jornada}</span>
                 </div>
                 {pdfReportData && (
                   <TeamReportActions
@@ -452,13 +452,13 @@ export default async function RivalPage() {
               <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-8">
                 {/* Local */}
                 <div className="text-center">
-                  <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-green-500/15 to-emerald-500/5 border border-green-500/20 flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                  <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-20 sm:h-20 rounded-lg bg-gradient-to-br from-green-500/15 to-emerald-500/5 border border-green-500/20 flex items-center justify-center mx-auto mb-2 sm:mb-3">
                     <span className="font-headline text-xl xs:text-2xl sm:text-3xl font-extrabold text-green-400">{localInitial}</span>
                   </div>
-                  <p className="text-xs xs:text-sm sm:text-base font-bold text-white mb-1 leading-tight">{localName}</p>
+                  <p className="text-xs xs:text-sm sm:text-base font-medium text-white mb-1 leading-tight">{localName}</p>
                   <div className="flex items-baseline justify-center gap-1.5">
-                    <span className="font-score text-2xl text-slate-300">#{isHome ? (report?.position || '-') : (rival.position || '-')}</span>
-                    <span className="text-[10px] text-slate-500 font-medium">{isHome ? report?.points : rival.points} pts</span>
+                    <span className="font-score text-2xl text-[#d0d6e0]">#{isHome ? (report?.position || '-') : (rival.position || '-')}</span>
+                    <span className="text-[10px] text-[#62666d] font-medium">{isHome ? report?.points : rival.points} pts</span>
                   </div>
                   {(isHome ? myFormPos : rivalFormPos) && (
                     <div className="text-[10px] text-orange-400/80 font-semibold mt-0.5">
@@ -475,16 +475,16 @@ export default async function RivalPage() {
 
                 {/* Center — VS + match info */}
                 <div className="text-center px-1 sm:px-6">
-                  <div className={`inline-block px-2 xs:px-3 py-0.5 xs:py-1 rounded-full text-[9px] xs:text-[10px] font-bold mb-2 sm:mb-4 ${isHome ? 'bg-green-500/15 text-green-400 border border-green-500/20' : 'bg-sky-500/15 text-sky-400 border border-sky-500/20'}`}>
+                  <div className={`inline-block px-2 xs:px-3 py-0.5 xs:py-1 rounded-full text-[9px] xs:text-[10px] font-medium mb-2 sm:mb-4 ${isHome ? 'bg-green-500/15 text-green-400 border border-green-500/20' : 'bg-sky-500/15 text-sky-400 border border-sky-500/20'}`}>
                     {nextMatch.isHome ? 'A casa' : 'Fora'}
                   </div>
-                  <div className="font-headline text-3xl xs:text-4xl sm:text-5xl font-extrabold text-slate-500/60 mb-1 sm:mb-2">VS</div>
+                  <div className="font-headline text-3xl xs:text-4xl sm:text-5xl font-extrabold text-[#62666d]/60 mb-1 sm:mb-2">VS</div>
                   <div className="space-y-1">
                     <p className="text-sm text-white font-semibold">{formatDate(nextMatch.date)}</p>
-                    {nextMatch.time && <p className="font-score text-xl text-cyan-400">{nextMatch.time}h</p>}
+                    {nextMatch.time && <p className="font-score text-xl text-[#8a8f98]">{nextMatch.time}h</p>}
                     {nextMatch.referee && (
-                      <p className="hidden xs:block text-[10px] text-slate-500 mt-2">
-                        <Shield size={10} className="inline mr-1 -mt-0.5 text-slate-600" />
+                      <p className="hidden xs:block text-[10px] text-[#62666d] mt-2">
+                        <Shield size={10} className="inline mr-1 -mt-0.5 text-[#62666d]" />
                         {nextMatch.referee}
                       </p>
                     )}
@@ -493,13 +493,13 @@ export default async function RivalPage() {
 
                 {/* Visitant */}
                 <div className="text-center">
-                  <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-red-500/15 to-orange-500/5 border border-red-500/20 flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                  <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-20 sm:h-20 rounded-lg bg-gradient-to-br from-red-500/15 to-orange-500/5 border border-red-500/20 flex items-center justify-center mx-auto mb-2 sm:mb-3">
                     <span className="font-headline text-xl xs:text-2xl sm:text-3xl font-extrabold text-red-400">{visitantInitial}</span>
                   </div>
-                  <p className="text-xs xs:text-sm sm:text-base font-bold text-white mb-1 leading-tight">{visitantName}</p>
+                  <p className="text-xs xs:text-sm sm:text-base font-medium text-white mb-1 leading-tight">{visitantName}</p>
                   <div className="flex items-baseline justify-center gap-1.5">
-                    <span className="font-score text-2xl text-slate-300">#{isHome ? (rival.position || '-') : (report?.position || '-')}</span>
-                    <span className="text-[10px] text-slate-500 font-medium">{isHome ? rival.points : report?.points} pts</span>
+                    <span className="font-score text-2xl text-[#d0d6e0]">#{isHome ? (rival.position || '-') : (report?.position || '-')}</span>
+                    <span className="text-[10px] text-[#62666d] font-medium">{isHome ? rival.points : report?.points} pts</span>
                   </div>
                   {(isHome ? rivalFormPos : myFormPos) && (
                     <div className="text-[10px] text-orange-400/80 font-semibold mt-0.5">
@@ -533,11 +533,11 @@ export default async function RivalPage() {
                   { v: rival.draws, l: 'E', c: 'text-amber-400' },
                   { v: rival.losses, l: 'D', c: 'text-red-400' },
                   { v: `${rival.gf}-${rival.ga}`, l: 'GF-GC', c: 'text-slate-200' },
-                  { v: rival.points, l: 'Pts', c: 'text-cyan-400' },
+                  { v: rival.points, l: 'Pts', c: 'text-[#8a8f98]' },
                 ].flatMap((s, i, arr) => [
                   <div key={s.l} className="stats-band-item">
                     <div className={`font-score text-2xl sm:text-3xl whitespace-nowrap ${s.c}`}>{s.v}</div>
-                    <div className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mt-1">{s.l}</div>
+                    <div className="text-[9px] text-[#62666d] uppercase tracking-wider font-semibold mt-1">{s.l}</div>
                   </div>,
                   ...(i < arr.length - 1 ? [<div key={`d-${i}`} className="stats-band-divider" />] : []),
                 ])}
@@ -554,12 +554,12 @@ export default async function RivalPage() {
                 { label: 'Local', data: rival.home, icon: <Home size={14} className="text-green-400" />, accentColor: 'text-green-400', bgAccent: 'from-green-500/8 to-transparent' },
                 { label: 'Visitant', data: rival.away, icon: <Plane size={14} className="text-sky-400" />, accentColor: 'text-sky-400', bgAccent: 'from-sky-500/8 to-transparent' },
               ].map(({ label, data, icon, accentColor, bgAccent }) => (
-                <div key={label} className={`card-elevated rounded-2xl p-5 bg-gradient-to-br ${bgAccent}`}>
+                <div key={label} className={`card-elevated rounded-lg p-5 bg-gradient-to-br ${bgAccent}`}>
                   <div className="flex items-center gap-2 mb-4">
                     {icon}
-                    <span className="font-bold text-white text-sm">{label}</span>
+                    <span className="font-medium text-white text-sm">{label}</span>
                     {data.played > 0 && (
-                      <span className={`ml-auto text-xs ${accentColor} font-bold`}>
+                      <span className={`ml-auto text-xs ${accentColor} font-medium`}>
                         {Math.round((data.wins / data.played) * 100)}% vic.
                       </span>
                     )}
@@ -573,13 +573,13 @@ export default async function RivalPage() {
                     ].map(s => (
                       <div key={s.l}>
                         <div className={`font-score text-xl ${s.c}`}>{s.v}</div>
-                        <div className="text-[9px] text-slate-500 font-medium">{s.l}</div>
+                        <div className="text-[9px] text-[#62666d] font-medium">{s.l}</div>
                       </div>
                     ))}
                   </div>
-                  <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+                  <div className="flex items-center justify-between text-xs text-[#8a8f98] mb-2">
                     <span>Gols: {data.gf}-{data.ga}</span>
-                    <span className="text-slate-500">{data.points} pts</span>
+                    <span className="text-[#62666d]">{data.points} pts</span>
                   </div>
                   {data.played > 0 && (
                     <div className="h-1.5 bg-white/5 rounded-full overflow-hidden flex">
@@ -594,12 +594,12 @@ export default async function RivalPage() {
 
             {/* Recent form */}
             {rival.form.length > 0 && (
-              <div className="card-elevated rounded-2xl p-5">
-                <h3 className="text-sm font-bold text-white mb-3">Forma recent</h3>
+              <div className="card-elevated rounded-lg p-5">
+                <h3 className="text-sm font-medium text-white mb-3">Forma recent</h3>
                 <div className="flex gap-1.5 flex-wrap mb-3">
                   {rival.form.slice(-8).map((m, i) => <FormDot key={i} result={m.result} />)}
                 </div>
-                <div className="flex gap-3 text-[10px] text-slate-500 font-medium">
+                <div className="flex gap-3 text-[10px] text-[#62666d] font-medium">
                   <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500" /> Victòria</span>
                   <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-400" /> Empat</span>
                   <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500" /> Derrota</span>
@@ -615,26 +615,26 @@ export default async function RivalPage() {
 
           {/* Insights / Patrons */}
           {rival.insights && (
-            <div className="card-spotlight rounded-2xl p-6">
+            <div className="v2-card p-6">
               <div className="flex items-center gap-2.5 mb-5">
                 <TrendingUp size={16} className="text-purple-400" />
-                <h3 className="text-sm font-bold text-white">Patrons del Rival</h3>
+                <h3 className="text-sm font-medium text-white">Patrons del Rival</h3>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {[
-                  { v: rival.insights.cleanSheetRate, l: 'Porteria a 0', s: '%', color: 'text-cyan-400', barBg: 'bg-cyan-500' },
+                  { v: rival.insights.cleanSheetRate, l: 'Porteria a 0', s: '%', color: 'text-[#8a8f98]', barBg: 'bg-cyan-500' },
                   { v: rival.insights.lateGoalRate, l: 'Gols tardans (75+)', s: '%', color: 'text-amber-400', barBg: 'bg-amber-500' },
                   { v: rival.insights.scoreFirstWinRate, l: 'Guanya si marca 1r', s: '%', color: 'text-green-400', barBg: 'bg-green-500' },
                   { v: rival.insights.concededFirstWinRate, l: 'Remunta si encaixa 1r', s: '%', color: 'text-red-400', barBg: 'bg-red-500' },
                   { v: rival.insights.firstHalfGoals, l: 'Gols 1a part', s: '', color: 'text-violet-400', barBg: 'bg-violet-500' },
                   { v: rival.insights.secondHalfGoals, l: 'Gols 2a part', s: '', color: 'text-violet-400', barBg: 'bg-violet-500' },
                 ].map(item => (
-                  <div key={item.l} className="bg-white/[0.03] rounded-xl p-4 text-center relative overflow-hidden">
+                  <div key={item.l} className="bg-white/[0.03] rounded-lg p-4 text-center relative overflow-hidden">
                     {item.v !== null && item.s === '%' && (
                       <div className={`absolute bottom-0 left-0 right-0 ${item.barBg}/8`} style={{ height: `${item.v}%` }} />
                     )}
                     <div className={`font-score text-3xl ${item.color} relative`}>{item.v !== null ? `${item.v}${item.s}` : '-'}</div>
-                    <div className="text-[10px] text-slate-300 mt-1 relative font-medium leading-tight">{item.l}</div>
+                    <div className="text-[10px] text-[#d0d6e0] mt-1 relative font-medium leading-tight">{item.l}</div>
                   </div>
                 ))}
               </div>
@@ -655,39 +655,39 @@ export default async function RivalPage() {
 
           {/* Penalty comparison */}
           {(report!.penaltyStats || rival.penaltyStats) && (
-            <div className="card-spotlight rounded-2xl p-6">
+            <div className="v2-card p-6">
               <div className="flex items-center gap-2.5 mb-5">
-                <Target size={16} className="text-cyan-400" />
-                <h3 className="text-sm font-bold text-white">Penals</h3>
+                <Target size={16} className="text-[#8a8f98]" />
+                <h3 className="text-sm font-medium text-white">Penals</h3>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 {[
                   { label: team.name, stats: report!.penaltyStats },
                   { label: rival.name, stats: rival.penaltyStats },
                 ].map(({ label, stats }) => (
-                  <div key={label} className="bg-white/[0.03] rounded-xl p-4">
-                    <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold mb-3 truncate">{label}</p>
+                  <div key={label} className="bg-white/[0.03] rounded-lg p-4">
+                    <p className="text-[10px] text-[#62666d] uppercase tracking-wider font-semibold mb-3 truncate">{label}</p>
                     {stats ? (
                       <div className="grid grid-cols-2 gap-3 text-center">
                         <div>
                           <div className="font-score text-2xl text-green-400">{stats.penalties_scored}</div>
-                          <div className="text-[9px] text-slate-500">A favor</div>
+                          <div className="text-[9px] text-[#62666d]">A favor</div>
                         </div>
                         <div>
                           <div className="font-score text-2xl text-red-400">{stats.penalties_conceded}</div>
-                          <div className="text-[9px] text-slate-500">En contra</div>
+                          <div className="text-[9px] text-[#62666d]">En contra</div>
                         </div>
                         <div>
-                          <div className="font-score text-xl text-cyan-400">{stats.penalties_per_match}</div>
-                          <div className="text-[9px] text-slate-500">Per partit</div>
+                          <div className="font-score text-xl text-[#8a8f98]">{stats.penalties_per_match}</div>
+                          <div className="text-[9px] text-[#62666d]">Per partit</div>
                         </div>
                         <div>
-                          <div className="font-score text-xl text-slate-300">{stats.matches_with_penalty_pct}%</div>
-                          <div className="text-[9px] text-slate-500">Partits amb penal</div>
+                          <div className="font-score text-xl text-[#d0d6e0]">{stats.matches_with_penalty_pct}%</div>
+                          <div className="text-[9px] text-[#62666d]">Partits amb penal</div>
                         </div>
                       </div>
                     ) : (
-                      <p className="text-sm text-slate-600 text-center py-4">Sense dades</p>
+                      <p className="text-sm text-[#62666d] text-center py-4">Sense dades</p>
                     )}
                   </div>
                 ))}
@@ -702,17 +702,17 @@ export default async function RivalPage() {
 
           {/* Titulars Habituals — top 11 */}
           {rival.mostMinutes.length > 0 && (
-            <div className="card-spotlight rounded-2xl overflow-hidden">
+            <div className="v2-card overflow-hidden">
               <div className="p-6 pb-0">
                 <div className="flex items-center gap-2.5 mb-5">
-                  <Users size={16} className="text-cyan-400" />
-                  <h3 className="text-sm font-bold text-white">Titulars Habituals</h3>
-                  <span className="text-[10px] text-slate-500 ml-auto font-medium">Top {Math.min(rival.mostMinutes.length, 11)}</span>
+                  <Users size={16} className="text-[#8a8f98]" />
+                  <h3 className="text-sm font-medium text-white">Titulars Habituals</h3>
+                  <span className="text-[10px] text-[#62666d] ml-auto font-medium">Top {Math.min(rival.mostMinutes.length, 11)}</span>
                 </div>
               </div>
               <div className="px-6 pb-6">
                 {/* Header */}
-                <div className="grid grid-cols-[20px_1fr_40px_40px_44px] sm:grid-cols-[24px_1fr_48px_48px_48px_56px] gap-2 text-[9px] text-slate-500 uppercase tracking-wider font-semibold pb-2 border-b border-white/5">
+                <div className="grid grid-cols-[20px_1fr_40px_40px_44px] sm:grid-cols-[24px_1fr_48px_48px_48px_56px] gap-2 text-[9px] text-[#62666d] uppercase tracking-wider font-semibold pb-2 border-b border-white/[0.04]">
                   <span></span>
                   <span>Nom</span>
                   <span className="text-center">PJ</span>
@@ -725,14 +725,14 @@ export default async function RivalPage() {
                     key={i}
                     className={`grid grid-cols-[20px_1fr_40px_40px_44px] sm:grid-cols-[24px_1fr_48px_48px_48px_56px] gap-2 items-center py-2.5 ${i % 2 === 0 ? 'bg-white/[0.02]' : ''}`}
                   >
-                    <span className="text-[10px] text-slate-600 font-bold text-center">{i + 1}</span>
+                    <span className="text-[10px] text-[#62666d] font-medium text-center">{i + 1}</span>
                     <Link href={`/jugador/${slugify(p.name)}`} className="text-sm text-slate-200 hover:text-white truncate transition-colors font-medium">
                       {p.name}
                     </Link>
                     <span className="text-center font-score text-lg text-white">{p.appearances}</span>
-                    <span className="hidden sm:block text-center font-score text-lg text-slate-400">{p.starts ?? p.appearances}</span>
-                    <span className={`text-center font-score text-lg ${p.goals > 0 ? 'text-green-400' : 'text-slate-600'}`}>{p.goals}</span>
-                    <span className="text-right font-score text-lg text-cyan-400/80">
+                    <span className="hidden sm:block text-center font-score text-lg text-[#8a8f98]">{p.starts ?? p.appearances}</span>
+                    <span className={`text-center font-score text-lg ${p.goals > 0 ? 'text-green-400' : 'text-[#62666d]'}`}>{p.goals}</span>
+                    <span className="text-right font-score text-lg text-[#8a8f98]/80">
                       {hasMinutes ? `${p.minutes_played}'` : (p.starts ?? p.appearances)}
                     </span>
                   </div>
@@ -743,10 +743,10 @@ export default async function RivalPage() {
 
           {/* Top scorers */}
           {rival.topScorers.length > 0 && (
-            <div className="card-elevated rounded-2xl p-6">
+            <div className="card-elevated rounded-lg p-6">
               <div className="flex items-center gap-2.5 mb-5">
                 <Target size={16} className="text-green-400" />
-                <h3 className="text-sm font-bold text-white">Golejadors del rival</h3>
+                <h3 className="text-sm font-medium text-white">Golejadors del rival</h3>
               </div>
               <div className="space-y-1.5">
                 {rival.topScorers.slice(0, 8).map((p, i) => {
@@ -756,11 +756,11 @@ export default async function RivalPage() {
                       <div className="absolute inset-0 rounded-lg bg-green-500/6 transition-all" style={{ width: `${(p.goals / maxGoals) * 100}%` }} />
                       <div className="relative flex items-center justify-between py-3 px-4">
                         <div className="flex items-center gap-3">
-                          <span className="text-[10px] text-slate-500 w-4 font-bold tabular-nums">{i + 1}</span>
+                          <span className="text-[10px] text-[#62666d] w-4 font-medium tabular-nums">{i + 1}</span>
                           <Link href={`/jugador/${slugify(p.name)}`} className="text-white text-sm font-medium hover:text-green-400 transition-colors">{p.name}</Link>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className="text-[10px] text-slate-500">{p.appearances} PJ</span>
+                          <span className="text-[10px] text-[#62666d]">{p.appearances} PJ</span>
                           <span className="font-score text-xl text-green-400">{p.goals}</span>
                         </div>
                       </div>
@@ -773,10 +773,10 @@ export default async function RivalPage() {
 
           {/* Apercibits */}
           {rival.apercibits.length > 0 && (
-            <div className="card-elevated rounded-2xl p-6 border-amber-500/15">
+            <div className="card-elevated rounded-lg p-6 border-amber-500/15">
               <div className="flex items-center gap-2.5 mb-5">
                 <AlertTriangle size={16} className="text-amber-400" />
-                <h3 className="text-sm font-bold text-white">Jugadors apercibits</h3>
+                <h3 className="text-sm font-medium text-white">Jugadors apercibits</h3>
                 <span className="text-[10px] text-amber-400/60 ml-auto font-medium">4+ grogues</span>
               </div>
               <div className="space-y-1.5">
@@ -822,19 +822,19 @@ export default async function RivalPage() {
             const sizeBg = area < 5500 ? 'bg-red-500/8 border-red-500/15' : area < 6300 ? 'bg-amber-500/8 border-amber-500/15' : 'bg-green-500/8 border-green-500/15'
             const record = report?.fieldSizeRecord?.[cat]
             return (
-              <div className={`border rounded-2xl p-6 ${sizeBg}`}>
+              <div className={`border rounded-lg p-6 ${sizeBg}`}>
                 <div className="flex items-center gap-2 mb-4">
                   <Ruler size={14} className={sizeColor} />
-                  <span className="text-sm font-bold text-white">
+                  <span className="text-sm font-medium text-white">
                     Jugues en camp <span className={sizeColor}>{sizeLabel}</span>
                   </span>
-                  <span className="text-[10px] text-slate-500 ml-auto">
+                  <span className="text-[10px] text-[#62666d] ml-auto">
                     {matchPitch.length_m}x{matchPitch.width_m}m
                   </span>
                 </div>
                 {record && record.played > 0 ? (
                   <div>
-                    <p className="text-xs text-slate-400 mb-4">
+                    <p className="text-xs text-[#8a8f98] mb-4">
                       El teu equip ha jugat <span className="text-white font-semibold">{record.played} partits</span> en camps d&apos;aquesta mida:
                     </p>
                     <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center mb-4">
@@ -843,12 +843,12 @@ export default async function RivalPage() {
                         { v: record.wins, l: 'V', c: 'text-green-400' },
                         { v: record.draws, l: 'E', c: 'text-amber-400' },
                         { v: record.losses, l: 'D', c: 'text-red-400' },
-                        { v: record.gf, l: 'GF', c: 'text-cyan-400' },
+                        { v: record.gf, l: 'GF', c: 'text-[#8a8f98]' },
                         { v: record.ga, l: 'GC', c: 'text-rose-400' },
                       ].map(s => (
                         <div key={s.l} className="bg-white/5 rounded-lg py-2.5">
                           <div className={`font-score text-xl ${s.c}`}>{s.v}</div>
-                          <div className="text-[9px] text-slate-500 font-medium">{s.l}</div>
+                          <div className="text-[9px] text-[#62666d] font-medium">{s.l}</div>
                         </div>
                       ))}
                     </div>
@@ -859,7 +859,7 @@ export default async function RivalPage() {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-xs text-slate-500">Sense prou partits en camps d&apos;aquesta mida.</p>
+                  <p className="text-xs text-[#62666d]">Sense prou partits en camps d&apos;aquesta mida.</p>
                 )}
               </div>
             )
@@ -871,7 +871,7 @@ export default async function RivalPage() {
           {h2h.length > 0 && (
             <>
               <SectionHeading>Historial Directe</SectionHeading>
-              <div className="card-elevated rounded-2xl p-6">
+              <div className="card-elevated rounded-lg p-6">
                 <div className="space-y-0">
                   {h2h.map((m, i) => {
                     const localTeam = m.isHome ? team.name : m.opponent
@@ -879,19 +879,19 @@ export default async function RivalPage() {
                     const homeScore = m.isHome ? m.goalsFor : m.goalsAgainst
                     const awayScore = m.isHome ? m.goalsAgainst : m.goalsFor
                     return (
-                      <div key={i} className="flex items-center gap-3 text-sm py-3 border-b border-white/5 last:border-0">
-                        <span className="text-slate-500 text-xs w-14 shrink-0 font-medium">{formatDate(m.date)}</span>
-                        <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold shrink-0 ${m.isHome ? 'bg-green-500/15 text-green-400' : 'bg-sky-500/15 text-sky-400'}`}>
+                      <div key={i} className="flex items-center gap-3 text-sm py-3 border-b border-white/[0.04] last:border-0">
+                        <span className="text-[#62666d] text-xs w-14 shrink-0 font-medium">{formatDate(m.date)}</span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium shrink-0 ${m.isHome ? 'bg-green-500/15 text-green-400' : 'bg-sky-500/15 text-sky-400'}`}>
                           {m.isHome ? 'L' : 'V'}
                         </span>
                         <span className="flex-1 text-white truncate font-medium">{localTeam}</span>
                         {homeScore !== null && awayScore !== null ? (
                           <span className="font-score text-xl tabular-nums flex items-center gap-1 shrink-0">
-                            <span className={m.result === 'W' ? 'text-green-400' : m.result === 'L' ? 'text-red-400' : 'text-slate-300'}>{homeScore}</span>
-                            <span className="text-slate-600 text-sm">-</span>
-                            <span className={m.result === 'L' ? 'text-green-400' : m.result === 'W' ? 'text-red-400' : 'text-slate-300'}>{awayScore}</span>
+                            <span className={m.result === 'W' ? 'text-green-400' : m.result === 'L' ? 'text-red-400' : 'text-[#d0d6e0]'}>{homeScore}</span>
+                            <span className="text-[#62666d] text-sm">-</span>
+                            <span className={m.result === 'L' ? 'text-green-400' : m.result === 'W' ? 'text-red-400' : 'text-[#d0d6e0]'}>{awayScore}</span>
                           </span>
-                        ) : <span className="text-slate-600">-</span>}
+                        ) : <span className="text-[#62666d]">-</span>}
                         <span className="flex-1 text-white text-right truncate font-medium">{visitantTeam}</span>
                       </div>
                     )

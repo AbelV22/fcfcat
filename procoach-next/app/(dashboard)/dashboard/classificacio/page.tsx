@@ -21,10 +21,10 @@ export default async function ClassificacioPage() {
   const formStandings = report?.formStandings || []
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 lg:py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-black text-white mb-1">Classificacio</h1>
-          <p className="text-slate-400 text-sm">{report?.competition || team.competition} — {report?.group || ''} — Temporada 2025/26</p>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6" style={{ paddingTop: 24, paddingBottom: 48, fontFamily: 'var(--font-inter)' }}>
+        <div style={{ marginBottom: 28 }}>
+          <h1 style={{ fontSize: 22, fontWeight: 510, color: '#f7f8f8', letterSpacing: '-0.02em', marginBottom: 4 }}>Classificació</h1>
+          <p style={{ fontSize: 13, color: '#8a8f98' }}>{report?.competition || team.competition} — {report?.group || ''} — Temporada 2025/26</p>
         </div>
 
         <StandingsTabs

@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import PublicHeader from '@/components/PublicHeader'
-import { ListOrdered, Shield, TrendingUp, Users, CheckCircle, Star, Zap } from 'lucide-react'
+import { Shield, TrendingUp, Users, ListOrdered, Bell, BarChart2 } from 'lucide-react'
 
 const COMPETITIONS = [
   'Primera Catalana', 'Segona Catalana', 'Tercera Catalana', 'Quarta Catalana',
@@ -13,18 +12,20 @@ const COMPETITIONS = [
   'Divisió Honor Infantil S14', 'Preferent Infantil S14', 'Divisió Honor Infantil S13', 'Preferent Infantil S13',
 ]
 
-const FREE_FEATURES = [
-  { icon: Shield, text: 'Informes bàsics dels àrbitres que us arbitren' },
-  { icon: TrendingUp, text: 'Estadístiques de la temporada del teu equip' },
-  { icon: Users, text: 'Perfil públic dels teus jugadors' },
-  { icon: ListOrdered, text: 'Resultats i classificació en temps real' },
+const FEATURES = [
+  { icon: Shield, text: 'Informe de l\'àrbitre que us arbitrarà — historial i tendències' },
+  { icon: TrendingUp, text: 'Anàlisi tàctica del rival: formació, gols i targetes' },
+  { icon: Users, text: 'Plantilla i estadístiques individuals dels teus jugadors' },
+  { icon: ListOrdered, text: 'Classificació i resultats en temps real' },
+  { icon: Bell, text: 'Avís automàtic quan es confirmi l\'àrbitre del proper partit' },
+  { icon: BarChart2, text: 'Comparativa del rendiment per jornada' },
 ]
 
-const PRO_FEATURES = [
-  { icon: Shield, text: 'Informe arbitral complet amb historial i tendències' },
-  { icon: TrendingUp, text: 'Anàlisi tàctica del rival (formació, gols, targetes)' },
-  { icon: Zap, text: 'Alertes automàtiques quan es confirmi l\'àrbitre del proper partit' },
-  { icon: Star, text: 'Comparativa àrbitre vs la resta de la categoria' },
+const STATS = [
+  { value: '15.000+', label: 'Partits analitzats' },
+  { value: '200+', label: 'Àrbitres al sistema' },
+  { value: '14', label: 'Categories FCF' },
+  { value: '100%', label: 'Gratis per entrenadors' },
 ]
 
 export default function EntrenadorPage() {
@@ -33,7 +34,6 @@ export default function EntrenadorPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.team || !form.competition || !form.email) return
-    // Redirect to full signup page with pre-filled data
     const params = new URLSearchParams({
       team: form.team,
       competition: form.competition,
@@ -44,39 +44,59 @@ export default function EntrenadorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white">
-      <PublicHeader />
+    <div style={{ fontFamily: 'var(--font-inter)', color: '#f7f8f8' }}>
 
-      {/* Hero — Gancho arbitro */}
-      <div className="bg-gradient-to-b from-[#0a1628] to-[#0f172a] border-b border-white/5">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-400 text-xs font-semibold mb-5">
-            <Shield size={12} />
-            INFORME ARBITRAL · GRATIS
+      {/* Hero */}
+      <div style={{ background: '#0f1011', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6" style={{ paddingTop: 56, paddingBottom: 56 }}>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.18)',
+            borderRadius: 9999, padding: '4px 12px', marginBottom: 24,
+            fontSize: 11, fontWeight: 510, color: '#22c55e', letterSpacing: '0.06em',
+            textTransform: 'uppercase',
+          }}>
+            <Shield size={11} />
+            Informe arbitral · Gratis
           </div>
-          <h1 className="text-3xl sm:text-5xl font-bold mb-4 leading-tight">
-            Saps qui t&apos;arbitrar&agrave;{' '}
-            <span className="bg-gradient-to-r from-amber-400 to-red-400 bg-clip-text text-transparent">
-              aquest cap de setmana?
-            </span>
+          <h1 style={{
+            fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 510,
+            letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: 20, color: '#f7f8f8',
+          }}>
+            El partit es guanya{' '}
+            <span style={{ color: '#22c55e' }}>entre setmana</span>
           </h1>
-          <p className="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto mb-4">
-            Descobreix si el teu &agrave;rbitre &eacute;s estricte o permissiu abans del partit.
-            Informe complet amb hist&ograve;ric, tend&egrave;ncies i percentils.
+          <p style={{ fontSize: 16, color: '#8a8f98', lineHeight: 1.6, marginBottom: 8, maxWidth: 520 }}>
+            Accedeix a l&apos;informe de l&apos;àrbitre que us arbitrarà, analitza el proper rival i prepara cada partit amb dades reals de la FCF.
           </p>
-          <p className="text-sm text-slate-500 max-w-lg mx-auto mb-8">
-            + An&agrave;lisi del rival, XI probable, goleadors, patrons de gol i molt m&eacute;s. Tot gratis.
+          <p style={{ fontSize: 14, color: '#62666d', marginBottom: 36 }}>
+            14 categories · Dades oficials FCF · Totalment gratuït per a entrenadors
           </p>
-          <div className="flex flex-col xs:flex-row items-center justify-center gap-3">
-            <Link
-              href="/registre"
-              className="w-full xs:w-auto px-6 sm:px-8 py-4 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-green-900/30 text-base sm:text-lg text-center"
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <a
+              href="#registre"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                padding: '10px 20px', borderRadius: 6,
+                background: '#22c55e', color: '#fff', fontSize: 14, fontWeight: 510,
+                textDecoration: 'none', transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = '#34d399')}
+              onMouseLeave={e => (e.currentTarget.style.background = '#22c55e')}
             >
-              Descobreix el teu &agrave;rbitre — Gratis
-            </Link>
+              Descobreix el teu àrbitre — Gratis
+            </a>
             <Link
               href="/cerca"
-              className="w-full xs:w-auto px-5 sm:px-6 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 font-medium rounded-xl transition-all text-center text-sm sm:text-base"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                padding: '10px 20px', borderRadius: 6,
+                background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                color: '#d0d6e0', fontSize: 14, fontWeight: 510, textDecoration: 'none',
+                transition: 'all 0.15s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.07)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
             >
               Explorar la plataforma
             </Link>
@@ -84,127 +104,169 @@ export default function EntrenadorPage() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16 space-y-14 sm:space-y-20">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6" style={{ paddingTop: 56, paddingBottom: 80, display: 'flex', flexDirection: 'column', gap: 56 }}>
 
-        {/* Free vs Pro */}
+        {/* Features */}
         <div>
-          <h2 className="text-2xl font-bold text-center mb-3">Tot el que obtens gratis</h2>
-          <p className="text-slate-400 text-center mb-10">Sense necessitat de compte. Registra el teu equip i accedeix immediatament.</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-            {FREE_FEATURES.map((f, i) => (
-              <div key={i} className="flex items-start gap-3 bg-white/4 border border-green-500/10 rounded-xl p-4">
-                <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center shrink-0">
-                  <f.icon size={16} className="text-green-400" />
-                </div>
-                <p className="text-sm text-slate-300">{f.text}</p>
+          <h2 style={{ fontSize: 22, fontWeight: 510, letterSpacing: '-0.02em', color: '#f7f8f8', marginBottom: 8 }}>
+            Tot el que obtens gratis
+          </h2>
+          <p style={{ fontSize: 14, color: '#8a8f98', marginBottom: 28 }}>
+            Registra el teu equip i accedeix immediatament, sense targeta de crèdit.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 10 }}>
+            {FEATURES.map((f, i) => (
+              <div
+                key={i}
+                style={{
+                  display: 'flex', alignItems: 'flex-start', gap: 12,
+                  padding: '16px 18px',
+                  background: 'rgba(255,255,255,0.02)',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                  borderRadius: 8,
+                }}
+              >
+                <f.icon size={15} style={{ color: '#8a8f98', marginTop: 1, flexShrink: 0 }} />
+                <p style={{ fontSize: 13, color: '#d0d6e0', lineHeight: 1.5, margin: 0 }}>{f.text}</p>
               </div>
             ))}
-          </div>
-
-          <div className="bg-gradient-to-r from-amber-900/20 to-orange-900/20 border border-amber-500/20 rounded-2xl p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Star size={18} className="text-amber-400" />
-              <span className="font-semibold text-amber-400">Aviat disponible — Versió Pro</span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {PRO_FEATURES.map((f, i) => (
-                <div key={i} className="flex items-start gap-2">
-                  <CheckCircle size={14} className="text-amber-400 mt-0.5 shrink-0" />
-                  <p className="text-sm text-slate-400">{f.text}</p>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
 
-        {/* Social proof */}
-        <div className="text-center">
-          <div className="grid grid-cols-2 sm:flex sm:justify-center gap-6 sm:gap-10">
-            {[
-              { value: '1.400+', label: 'Partits analitzats' },
-              { value: '200+', label: 'Àrbitres al sistema' },
-              { value: '6', label: 'Categories FCF' },
-              { value: '100%', label: 'Gratis per entrenadors' },
-            ].map(s => (
-              <div key={s.label} className="text-center py-4 bg-white/3 sm:bg-transparent border sm:border-0 border-white/6 rounded-2xl sm:rounded-none px-4 sm:px-0">
-                <div className="text-2xl sm:text-3xl font-bold text-green-400">{s.value}</div>
-                <div className="text-xs sm:text-sm text-slate-500 mt-1">{s.label}</div>
+        {/* Stats */}
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 8, overflow: 'hidden',
+        }}>
+          {STATS.map((s, i) => (
+            <div key={i} style={{ background: '#08090a', padding: '20px 24px', textAlign: 'center' }}>
+              <div style={{ fontSize: 24, fontWeight: 510, color: '#22c55e', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>
+                {s.value}
               </div>
-            ))}
-          </div>
+              <div style={{ fontSize: 12, color: '#62666d', marginTop: 4 }}>{s.label}</div>
+            </div>
+          ))}
         </div>
 
         {/* Registration form */}
-        <div id="registre" className="bg-white/4 border border-white/10 rounded-2xl p-5 sm:p-8">
-          <>
-            <h2 className="text-2xl font-bold mb-2 text-center">Descobreix el teu &agrave;rbitre</h2>
-            <p className="text-slate-400 text-center text-sm mb-8">Registra&apos;t gratis i accedeix a informes arbitrals, an&agrave;lisi de rivals i molt m&eacute;s.</p>
-              <form onSubmit={handleSubmit} className="space-y-4 max-w-lg mx-auto">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1.5">Nom de l&apos;equip *</label>
-                  <input
-                    type="text"
-                    value={form.team}
-                    onChange={e => setForm(f => ({ ...f, team: e.target.value }))}
-                    placeholder="Ex: CE Mollet A"
-                    required
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1.5">Competició *</label>
-                  <select
-                    value={form.competition}
-                    onChange={e => setForm(f => ({ ...f, competition: e.target.value }))}
-                    required
-                    className="w-full px-4 py-3 bg-[#1e293b] border border-white/10 rounded-xl text-white focus:outline-none focus:border-green-500/50 transition-all"
-                  >
-                    <option value="">Selecciona la competició...</option>
-                    {COMPETITIONS.map(c => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1.5">El teu nom *</label>
-                  <input
-                    type="text"
-                    value={form.name}
-                    onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                    placeholder="Nom i cognoms"
-                    required
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1.5">Email *</label>
-                  <input
-                    type="email"
-                    value={form.email}
-                    onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                    placeholder="entrenador@exemple.com"
-                    required
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full py-4 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-green-900/30 text-lg mt-2"
-                >
-                  Continuar i crear compte →
-                </button>
-                <p className="text-xs text-slate-600 text-center">
-                  Sense spam. Les teves dades no es compartiran amb tercers.
-                </p>
-              </form>
-          </>
+        <div id="registre" style={{
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: 8, padding: '32px 28px',
+        }}>
+          <h2 style={{ fontSize: 20, fontWeight: 510, letterSpacing: '-0.02em', color: '#f7f8f8', marginBottom: 6, textAlign: 'center' }}>
+            Descobreix el teu àrbitre
+          </h2>
+          <p style={{ fontSize: 13, color: '#8a8f98', marginBottom: 28, textAlign: 'center' }}>
+            Registra&apos;t gratis i accedeix a informes arbitrals, anàlisi de rivals i molt més.
+          </p>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 440, margin: '0 auto' }}>
+            {/* Team name */}
+            <div>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 510, color: '#8a8f98', marginBottom: 6 }}>
+                Nom de l&apos;equip *
+              </label>
+              <input
+                type="text"
+                value={form.team}
+                onChange={e => setForm(f => ({ ...f, team: e.target.value }))}
+                placeholder="Ex: CE Mollet A"
+                required
+                style={{
+                  width: '100%', padding: '10px 14px', borderRadius: 6, border: 'none',
+                  background: 'rgba(255,255,255,0.03)', boxShadow: '0 0 0 1px rgba(255,255,255,0.06)',
+                  color: '#f7f8f8', fontSize: 14, outline: 'none',
+                  fontFamily: 'var(--font-inter)', boxSizing: 'border-box',
+                }}
+                onFocus={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(34,197,94,0.3)')}
+                onBlur={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(255,255,255,0.06)')}
+              />
+            </div>
+            {/* Competition */}
+            <div>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 510, color: '#8a8f98', marginBottom: 6 }}>
+                Competició *
+              </label>
+              <select
+                value={form.competition}
+                onChange={e => setForm(f => ({ ...f, competition: e.target.value }))}
+                required
+                style={{
+                  width: '100%', padding: '10px 14px', borderRadius: 6, border: 'none',
+                  background: '#191a1b', boxShadow: '0 0 0 1px rgba(255,255,255,0.06)',
+                  color: form.competition ? '#f7f8f8' : '#62666d',
+                  fontSize: 14, outline: 'none', fontFamily: 'var(--font-inter)',
+                  boxSizing: 'border-box', cursor: 'pointer',
+                }}
+                onFocus={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(34,197,94,0.3)')}
+                onBlur={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(255,255,255,0.06)')}
+              >
+                <option value="">Selecciona la competició...</option>
+                {COMPETITIONS.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+            {/* Name */}
+            <div>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 510, color: '#8a8f98', marginBottom: 6 }}>
+                El teu nom *
+              </label>
+              <input
+                type="text"
+                value={form.name}
+                onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                placeholder="Nom i cognoms"
+                required
+                style={{
+                  width: '100%', padding: '10px 14px', borderRadius: 6, border: 'none',
+                  background: 'rgba(255,255,255,0.03)', boxShadow: '0 0 0 1px rgba(255,255,255,0.06)',
+                  color: '#f7f8f8', fontSize: 14, outline: 'none',
+                  fontFamily: 'var(--font-inter)', boxSizing: 'border-box',
+                }}
+                onFocus={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(34,197,94,0.3)')}
+                onBlur={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(255,255,255,0.06)')}
+              />
+            </div>
+            {/* Email */}
+            <div>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 510, color: '#8a8f98', marginBottom: 6 }}>
+                Email *
+              </label>
+              <input
+                type="email"
+                value={form.email}
+                onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                placeholder="entrenador@exemple.com"
+                required
+                style={{
+                  width: '100%', padding: '10px 14px', borderRadius: 6, border: 'none',
+                  background: 'rgba(255,255,255,0.03)', boxShadow: '0 0 0 1px rgba(255,255,255,0.06)',
+                  color: '#f7f8f8', fontSize: 14, outline: 'none',
+                  fontFamily: 'var(--font-inter)', boxSizing: 'border-box',
+                }}
+                onFocus={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(34,197,94,0.3)')}
+                onBlur={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(255,255,255,0.06)')}
+              />
+            </div>
+            <button
+              type="submit"
+              style={{
+                width: '100%', padding: '11px 20px', marginTop: 4,
+                borderRadius: 6, border: 'none', cursor: 'pointer',
+                background: '#22c55e', color: '#fff', fontSize: 14, fontWeight: 510,
+                fontFamily: 'var(--font-inter)', transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = '#34d399')}
+              onMouseLeave={e => (e.currentTarget.style.background = '#22c55e')}
+            >
+              Continuar i crear compte →
+            </button>
+            <p style={{ fontSize: 11, color: '#62666d', textAlign: 'center', margin: 0 }}>
+              Sense spam. Les teves dades no es compartiran amb tercers.
+            </p>
+          </form>
         </div>
 
       </div>
-
-      <footer className="border-t border-white/5 mt-8 py-8 text-center text-sm text-slate-600">
-        <p>NeoScout · Estadístiques del futbol català · Temporada 2025/26</p>
-      </footer>
     </div>
   )
 }

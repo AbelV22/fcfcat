@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, User, Search, ChevronDown, X } from 'lucide-react'
@@ -137,8 +137,6 @@ function RegistreForm() {
     setTeamSearch('')
   }
 
-  const competitionLabel = COMPETITIONS.find(c => c.slug === form.competition)?.label || ''
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.name || !form.team || !form.competition || !form.email || !form.password) return
@@ -157,7 +155,7 @@ function RegistreForm() {
           data: {
             name: form.name,
             club_name: form.team,
-            competition: form.competition, // slug, not label
+            competition: form.competition,
             ...(referralCode ? { referral_code: referralCode } : {}),
           },
         },
@@ -174,52 +172,88 @@ function RegistreForm() {
     }
   }
 
+  const inputStyle: React.CSSProperties = {
+    width: '100%', padding: '12px 16px 12px 44px',
+    background: 'rgba(255,255,255,0.02)',
+    boxShadow: '0 0 0 1px rgba(255,255,255,0.06)',
+    border: 'none', borderRadius: 6,
+    color: '#f7f8f8', fontSize: 14, outline: 'none',
+    fontFamily: 'var(--font-inter)',
+  }
+
+  const labelStyle: React.CSSProperties = {
+    display: 'block', fontSize: 13, fontWeight: 510,
+    color: '#d0d6e0', marginBottom: 6,
+  }
+
   if (step === 'confirm') {
     return (
-      <div className="text-center py-4">
-        <div className="w-16 h-16 rounded-2xl bg-green-500/15 flex items-center justify-center mx-auto mb-5">
-          <Mail size={28} className="text-green-400" />
+      <div style={{ textAlign: 'center', padding: '16px 0' }}>
+        <div style={{
+          width: 56, height: 56, borderRadius: 8,
+          background: 'rgba(34,197,94,0.08)',
+          border: '1px solid rgba(34,197,94,0.15)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          margin: '0 auto 20px',
+        }}>
+          <Mail size={24} style={{ color: '#22c55e' }} />
         </div>
-        <h2 className="text-2xl font-black text-white mb-2">Comprova el teu correu</h2>
-        <p className="text-slate-400 text-sm mb-6">
-          T&apos;hem enviat un enllaç de confirmació a <span className="text-white font-medium">{form.email}</span>.
+        <h2 style={{ fontSize: 22, fontWeight: 510, color: '#f7f8f8', marginBottom: 8, letterSpacing: '-0.02em' }}>
+          Comprova el teu correu
+        </h2>
+        <p style={{ fontSize: 14, color: '#8a8f98', marginBottom: 24, lineHeight: 1.6 }}>
+          T&apos;hem enviat un enllaç de confirmació a{' '}
+          <span style={{ color: '#f7f8f8', fontWeight: 510 }}>{form.email}</span>.{' '}
           Fes clic a l&apos;enllaç per activar el teu compte.
         </p>
-        <p className="text-xs text-slate-600">
+        <p style={{ fontSize: 12, color: '#62666d' }}>
           Un cop confirmat, podràs{' '}
-          <Link href="/login" className="text-green-400 hover:text-green-300">iniciar sessió</Link>.
+          <Link href="/login" style={{ color: '#22c55e', textDecoration: 'none' }}>iniciar sessió</Link>.
         </p>
       </div>
     )
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
       {/* Name */}
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1.5">Nom complet</label>
-        <div className="relative">
-          <User size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+        <label style={labelStyle}>Nom complet</label>
+        <div style={{ position: 'relative' }}>
+          <User size={15} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#62666d', pointerEvents: 'none' }} />
           <input
             type="text"
             required
             value={form.name}
             onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
             placeholder="Nom i cognoms"
-            className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all text-sm"
+            style={inputStyle}
+            onFocus={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(34,197,94,0.3)')}
+            onBlur={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(255,255,255,0.06)')}
           />
         </div>
       </div>
 
-      {/* Competition — select FIRST so teams can filter */}
+      {/* Competition */}
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1.5">Competició</label>
+        <label style={labelStyle}>Competició</label>
         <select
           required
           value={form.competition}
           onChange={e => setForm(f => ({ ...f, competition: e.target.value }))}
-          className="w-full px-4 py-3 bg-[#1e293b] border border-white/10 rounded-xl text-white focus:outline-none focus:border-green-500/50 transition-all text-sm"
+          style={{
+            width: '100%', padding: '12px 16px',
+            background: '#0f1011',
+            boxShadow: '0 0 0 1px rgba(255,255,255,0.06)',
+            border: 'none', borderRadius: 6,
+            color: form.competition ? '#f7f8f8' : '#62666d',
+            fontSize: 14, outline: 'none',
+            fontFamily: 'var(--font-inter)',
+            appearance: 'auto',
+          }}
+          onFocus={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(34,197,94,0.3)')}
+          onBlur={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(255,255,255,0.06)')}
         >
           <option value="">Selecciona la competició...</option>
           {CATEGORY_GROUPS.map(group => (
@@ -232,11 +266,11 @@ function RegistreForm() {
         </select>
       </div>
 
-      {/* Team — searchable combobox, enabled after competition is selected */}
+      {/* Team — searchable combobox */}
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1.5">Equip</label>
-        <div className="relative" ref={teamRef}>
-          <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 z-10" />
+        <label style={labelStyle}>Equip</label>
+        <div style={{ position: 'relative' }} ref={teamRef}>
+          <Search size={15} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#62666d', pointerEvents: 'none', zIndex: 1 }} />
           <input
             type="text"
             required
@@ -249,25 +283,41 @@ function RegistreForm() {
             }}
             onFocus={() => form.competition && setTeamOpen(true)}
             placeholder={!form.competition ? 'Selecciona primer la competició' : teamsLoading ? 'Carregant equips...' : `Cerca entre ${teams.length} equips...`}
-            className="w-full pl-11 pr-10 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+            style={{
+              ...inputStyle,
+              paddingRight: 40,
+              opacity: !form.competition ? 0.4 : 1,
+              cursor: !form.competition ? 'not-allowed' : 'text',
+            }}
+            onFocus={e => { if (form.competition) e.currentTarget.style.boxShadow = '0 0 0 1px rgba(34,197,94,0.3)' }}
+            onBlur={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(255,255,255,0.06)')}
           />
           {form.team ? (
             <button
               type="button"
               onClick={clearTeam}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+              style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#62666d', padding: 0, display: 'flex' }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#8a8f98')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#62666d')}
             >
-              <X size={16} />
+              <X size={15} />
             </button>
           ) : (
-            <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
+            <ChevronDown size={15} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: '#62666d', pointerEvents: 'none' }} />
           )}
 
           {/* Dropdown */}
           {teamOpen && form.competition && !teamsLoading && (
-            <div className="absolute z-50 left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-[#1e293b] border border-white/10 rounded-xl shadow-xl">
+            <div style={{
+              position: 'absolute', zIndex: 50, left: 0, right: 0, top: '100%', marginTop: 4,
+              maxHeight: 224, overflowY: 'auto',
+              background: '#0f1011',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: 8,
+              boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            }}>
               {filteredTeams.length === 0 ? (
-                <div className="px-4 py-3 text-sm text-slate-500">
+                <div style={{ padding: '12px 16px', fontSize: 13, color: '#62666d' }}>
                   {teamSearch ? 'Cap equip trobat' : 'No hi ha equips'}
                 </div>
               ) : (
@@ -276,19 +326,32 @@ function RegistreForm() {
                     key={t.name}
                     type="button"
                     onClick={() => selectTeam(t.name)}
-                    className="w-full text-left px-4 py-2.5 text-sm text-white hover:bg-white/10 transition-colors flex items-center justify-between"
+                    style={{
+                      width: '100%', textAlign: 'left',
+                      padding: '10px 16px', fontSize: 13,
+                      color: '#d0d6e0', background: 'none', border: 'none',
+                      cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      fontFamily: 'var(--font-inter)',
+                      transition: 'background 0.1s',
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'none')}
                   >
                     <span>{t.name}</span>
-                    {t.group && <span className="text-xs text-slate-500 ml-2">{t.group}</span>}
+                    {t.group && <span style={{ fontSize: 11, color: '#62666d', marginLeft: 8 }}>{t.group}</span>}
                   </button>
                 ))
               )}
             </div>
           )}
           {teamOpen && teamsLoading && (
-            <div className="absolute z-50 left-0 right-0 mt-1 bg-[#1e293b] border border-white/10 rounded-xl shadow-xl px-4 py-3">
-              <div className="flex items-center gap-2 text-sm text-slate-400">
-                <div className="w-3.5 h-3.5 border-2 border-white/20 border-t-green-400 rounded-full animate-spin" />
+            <div style={{
+              position: 'absolute', zIndex: 50, left: 0, right: 0, top: '100%', marginTop: 4,
+              background: '#0f1011', border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: 8, padding: '12px 16px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#8a8f98' }}>
+                <div style={{ width: 14, height: 14, border: '1.5px solid rgba(255,255,255,0.15)', borderTopColor: '#22c55e', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />
                 Carregant equips...
               </div>
             </div>
@@ -298,25 +361,27 @@ function RegistreForm() {
 
       {/* Email */}
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1.5">Correu electrònic</label>
-        <div className="relative">
-          <Mail size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+        <label style={labelStyle}>Correu electrònic</label>
+        <div style={{ position: 'relative' }}>
+          <Mail size={15} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#62666d', pointerEvents: 'none' }} />
           <input
             type="email"
             required
             value={form.email}
             onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
             placeholder="tu@email.com"
-            className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all text-sm"
+            style={inputStyle}
+            onFocus={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(34,197,94,0.3)')}
+            onBlur={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(255,255,255,0.06)')}
           />
         </div>
       </div>
 
       {/* Password */}
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1.5">Contrasenya</label>
-        <div className="relative">
-          <Lock size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+        <label style={labelStyle}>Contrasenya</label>
+        <div style={{ position: 'relative' }}>
+          <Lock size={15} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#62666d', pointerEvents: 'none' }} />
           <input
             type={showPass ? 'text' : 'password'}
             required
@@ -324,12 +389,16 @@ function RegistreForm() {
             onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
             placeholder="Mínim 6 caràcters"
             minLength={6}
-            className="w-full pl-11 pr-11 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all text-sm"
+            style={{ ...inputStyle, paddingRight: 44 }}
+            onFocus={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(34,197,94,0.3)')}
+            onBlur={e => (e.currentTarget.style.boxShadow = '0 0 0 1px rgba(255,255,255,0.06)')}
           />
           <button
             type="button"
             onClick={() => setShowPass(!showPass)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+            style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#62666d', padding: 0, display: 'flex' }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#8a8f98')}
+            onMouseLeave={e => (e.currentTarget.style.color = '#62666d')}
           >
             {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
@@ -337,7 +406,12 @@ function RegistreForm() {
       </div>
 
       {error && (
-        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-sm text-red-400">
+        <div style={{
+          padding: '10px 14px',
+          background: 'rgba(248,113,113,0.06)',
+          boxShadow: '0 0 0 1px rgba(248,113,113,0.15)',
+          borderRadius: 6, fontSize: 13, color: '#f87171',
+        }}>
           {error}
         </div>
       )}
@@ -345,24 +419,37 @@ function RegistreForm() {
       <button
         type="submit"
         disabled={loading || !form.team}
-        className="w-full py-3 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500
-                   disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl
-                   transition-all flex items-center justify-center gap-2 shadow-lg shadow-green-900/30 mt-2"
+        style={{
+          width: '100%', padding: '13px 0', marginTop: 4,
+          background: '#22c55e', color: '#fff',
+          border: 'none', borderRadius: 6,
+          fontSize: 14, fontWeight: 510,
+          cursor: loading || !form.team ? 'not-allowed' : 'pointer',
+          opacity: loading || !form.team ? 0.5 : 1,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+          fontFamily: 'var(--font-inter)',
+          transition: 'background 0.15s',
+        }}
+        onMouseEnter={e => { if (!loading && form.team) e.currentTarget.style.background = '#34d399' }}
+        onMouseLeave={e => { e.currentTarget.style.background = '#22c55e' }}
       >
         {loading ? (
-          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          <div style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />
         ) : (
           <>
             Crear compte — Gratis
-            <ArrowRight size={16} />
+            <ArrowRight size={15} />
           </>
         )}
       </button>
 
-      <div className="pt-4 border-t border-white/8 text-center">
-        <p className="text-sm text-slate-400">
+      <div style={{ paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.06)', textAlign: 'center' }}>
+        <p style={{ fontSize: 13, color: '#8a8f98' }}>
           Ja tens compte?{' '}
-          <Link href="/login" className="text-green-400 hover:text-green-300 font-medium transition-colors">
+          <Link href="/login" style={{ color: '#22c55e', fontWeight: 510, textDecoration: 'none' }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#34d399')}
+            onMouseLeave={e => (e.currentTarget.style.color = '#22c55e')}
+          >
             Inicia sessió
           </Link>
         </p>
@@ -373,32 +460,46 @@ function RegistreForm() {
 
 export default function RegistrePage() {
   return (
-    <div className="min-h-screen bg-[#0f172a] flex flex-col">
-      <header className="p-4">
-        <Link href="/entrenador" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm">
+    <div style={{ minHeight: '100vh', background: '#08090a', display: 'flex', flexDirection: 'column', fontFamily: 'var(--font-inter)' }}>
+      <header style={{ padding: 16 }}>
+        <Link href="/entrenador" style={{
+          display: 'inline-flex', alignItems: 'center', gap: 8,
+          color: '#8a8f98', textDecoration: 'none', fontSize: 14,
+          transition: 'color 0.15s',
+        }}
+          onMouseEnter={e => (e.currentTarget.style.color = '#d0d6e0')}
+          onMouseLeave={e => (e.currentTarget.style.color = '#8a8f98')}
+        >
           <ArrowLeft size={14} />
           Tornar
         </Link>
       </header>
 
-      <div className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+        <div style={{ width: '100%', maxWidth: 448 }}>
           {/* Logo */}
-          <div className="text-center mb-8">
-            <Image src="/logo_neoscout.png" alt="NeoScout" width={64} height={64} className="mx-auto mb-4 rounded-2xl" />
-            <h1 className="text-2xl font-black text-white mb-1">Crea el teu compte</h1>
-            <p className="text-slate-400 text-sm">Gratuït. Accés immediat al teu panell d&apos;entrenador.</p>
+          <div style={{ textAlign: 'center', marginBottom: 32 }}>
+            <Image src="/logo_neoscout.png" alt="NeoScout" width={56} height={56} style={{ borderRadius: 8, margin: '0 auto 16px' }} />
+            <h1 style={{ fontSize: 24, fontWeight: 510, color: '#f7f8f8', marginBottom: 6, letterSpacing: '-0.02em' }}>
+              Crea el teu compte
+            </h1>
+            <p style={{ fontSize: 14, color: '#8a8f98' }}>Gratuït. Accés immediat al teu panell d&apos;entrenador.</p>
           </div>
 
-          <div className="glass-card rounded-2xl p-8">
-            <Suspense fallback={<div className="text-slate-400 text-sm text-center py-4">Carregant...</div>}>
+          <div style={{
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: 8,
+            padding: 32,
+          }}>
+            <Suspense fallback={<div style={{ fontSize: 13, color: '#8a8f98', textAlign: 'center', padding: '16px 0' }}>Carregant...</div>}>
               <RegistreForm />
             </Suspense>
           </div>
 
-          <p className="text-center text-xs text-slate-600 mt-6">
+          <p style={{ textAlign: 'center', fontSize: 11, color: '#3a3d42', marginTop: 24 }}>
             Registrant-te acceptes els{' '}
-            <Link href="/termes" className="text-slate-500 hover:text-slate-400">termes d&apos;ús</Link>
+            <Link href="/termes" style={{ color: '#62666d', textDecoration: 'none' }}>termes d&apos;ús</Link>
           </p>
         </div>
       </div>

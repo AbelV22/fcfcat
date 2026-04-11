@@ -11,7 +11,7 @@ export default async function DashboardLayout({
   const teamName = team?.name || null
 
   return (
-    <div className="min-h-screen bg-[#0f172a]">
+    <div className="min-h-screen bg-[#08090a]">
       {/* Desktop sidebar */}
       <DashboardSidebar teamName={teamName} isAdmin={isAdmin} />
 

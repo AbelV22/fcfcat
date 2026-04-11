@@ -1,9 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Shield, Calendar, AlertTriangle, Lock, TrendingUp, UserPlus } from 'lucide-react'
-import PublicHeader from '@/components/PublicHeader'
-import PublicFooter from '@/components/PublicFooter'
+import { Calendar, TrendingUp, Lock, UserPlus } from 'lucide-react'
 import { COMPETITION_NAMES } from '@/lib/data'
 import { getRefereeBySlugDB } from '@/lib/supabase-data'
 
@@ -26,14 +24,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-// SSR — rendered on each request
 export const dynamic = 'force-dynamic'
 
-function StatBadge({ value, label, color, blurred }: { value: string | number; label: string; color: string; blurred?: boolean }) {
+function StatCard({ value, label, blurred }: { value: string | number; label: string; blurred?: boolean }) {
   return (
-    <div className="stat-card p-5 text-center">
-      <div className={`text-3xl font-black mb-1 ${color} ${blurred ? 'blur-sm select-none' : ''}`}>{value}</div>
-      <div className="text-xs text-slate-400">{label}</div>
+    <div style={{
+      background: 'rgba(255,255,255,0.02)',
+      border: '1px solid rgba(255,255,255,0.06)',
+      borderRadius: 8, padding: '18px 16px', textAlign: 'center',
+    }}>
+      <div style={{
+        fontSize: 26, fontWeight: 510, color: '#f7f8f8', fontVariantNumeric: 'tabular-nums',
+        ...(blurred ? { filter: 'blur(6px)', userSelect: 'none' } : {}),
+      }}>
+        {value}
+      </div>
+      <div style={{ fontSize: 11, color: '#62666d', marginTop: 4 }}>{label}</div>
     </div>
   )
 }
@@ -56,35 +62,48 @@ export default async function ArbitrePage({ params }: Props) {
     : '0'
 
   return (
-    <div className="min-h-screen bg-[#0f172a]">
-      <PublicHeader />
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
+    <div style={{ fontFamily: 'var(--font-inter)' }}>
+      <main className="max-w-4xl mx-auto px-4 sm:px-6" style={{ paddingTop: 40, paddingBottom: 80 }}>
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-slate-500 mb-8">
-          <Link href="/" className="hover:text-slate-300 transition-colors">Inici</Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#62666d', marginBottom: 28 }}>
+          <Link href="/" style={{ color: '#62666d', textDecoration: 'none' }} className="hover:text-[#d0d6e0]">Inici</Link>
           <span>/</span>
-          <Link href="/cerca?type=arbitre" className="hover:text-slate-300 transition-colors">Àrbitres</Link>
+          <Link href="/cerca?type=arbitre" style={{ color: '#62666d', textDecoration: 'none' }} className="hover:text-[#d0d6e0]">Àrbitres</Link>
           <span>/</span>
-          <span className="text-slate-300">{ref.name}</span>
+          <span style={{ color: '#8a8f98' }}>{ref.name}</span>
         </div>
 
-        {/* Header */}
-        <div className="glass-card rounded-2xl p-5 sm:p-8 mb-6">
-          <div className="flex items-start gap-4 sm:gap-6">
-            <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-2xl sm:text-3xl font-black text-white shrink-0">
+        {/* Header card */}
+        <div style={{
+          background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: 8, padding: '24px', marginBottom: 16,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+            <div style={{
+              width: 56, height: 56, borderRadius: 8, flexShrink: 0,
+              background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.15)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 22, fontWeight: 510, color: '#22c55e',
+            }}>
               {ref.name.split(' ')[0]?.[0] || 'A'}
             </div>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-3xl font-black text-white mb-1 leading-tight">{ref.name}</h1>
-              <div className="flex flex-wrap items-center gap-2 mt-1.5">
-                <span className="text-sm text-slate-400 flex items-center gap-1.5">
-                  <Shield size={13} className="text-purple-400" />
-                  Àrbitre FCF
-                </span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <h1 style={{ fontSize: 'clamp(18px, 2.5vw, 26px)', fontWeight: 510, color: '#f7f8f8', letterSpacing: '-0.02em', marginBottom: 8, lineHeight: 1.2 }}>
+                {ref.name}
+              </h1>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                <span style={{ fontSize: 12, color: '#8a8f98' }}>Àrbitre FCF</span>
                 {ref.competitions.slice(0, 2).map(c => (
-                  <span key={c} className="text-xs px-2 py-0.5 bg-white/6 border border-white/10 rounded-full text-slate-400">
-                    {COMPETITION_NAMES[c] || c}
+                  <span
+                    key={c}
+                    style={{
+                      fontSize: 11, fontWeight: 510, color: '#62666d',
+                      background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)',
+                      borderRadius: 9999, padding: '2px 8px',
+                    }}
+                  >
+                    {(COMPETITION_NAMES as Record<string, string>)[c] || c}
                   </span>
                 ))}
               </div>
@@ -92,159 +111,147 @@ export default async function ArbitrePage({ params }: Props) {
           </div>
         </div>
 
-        {/* Register CTA banner */}
-        <div className="glass-card rounded-2xl p-5 mb-6 border-purple-500/25 bg-gradient-to-r from-purple-950/40 to-indigo-950/40">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center shrink-0">
-              <Lock size={18} className="text-purple-400" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-white text-sm">Estadistiques protegides</h3>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Registra&apos;t gratis per veure totes les estadistiques i l&apos;informe complet d&apos;aquest arbitre.
-              </p>
-            </div>
-            <Link
-              href="/registre"
-              className="shrink-0 flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-sm font-semibold rounded-xl transition-all"
-            >
-              <UserPlus size={14} />
-              Registra&apos;t gratis
-            </Link>
+        {/* Register CTA */}
+        <div style={{
+          background: 'rgba(34,197,94,0.04)', border: '1px solid rgba(34,197,94,0.12)',
+          borderRadius: 8, padding: '16px 20px', marginBottom: 16,
+          display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap',
+        }}>
+          <Lock size={16} style={{ color: '#22c55e', flexShrink: 0 }} />
+          <div style={{ flex: 1, minWidth: 200 }}>
+            <div style={{ fontSize: 13, fontWeight: 510, color: '#f7f8f8', marginBottom: 2 }}>Estadístiques protegides</div>
+            <p style={{ fontSize: 12, color: '#8a8f98', margin: 0 }}>
+              Registra&apos;t gratis per veure totes les estadístiques i l&apos;informe complet d&apos;aquest àrbitre.
+            </p>
           </div>
+          <Link
+            href="/registre"
+            className="hover:bg-[#34d399]"
+            style={{
+              flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: 6,
+              padding: '8px 16px', borderRadius: 6,
+              background: '#22c55e', color: '#fff', fontSize: 13, fontWeight: 510, textDecoration: 'none',
+              transition: 'background 0.15s',
+            }}
+          >
+            <UserPlus size={13} />
+            Registra&apos;t gratis
+          </Link>
         </div>
 
-        {/* Stats grid — all blurred */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4 mb-6">
-          <StatBadge value={ref.matches} label="Partits" color="text-white" blurred />
-          <StatBadge value={ref.yellows_per_match} label="🟨 per part." color="text-yellow-400" blurred />
-          <StatBadge value={ref.reds_per_match} label="🟥 per part." color="text-red-400" blurred />
-          <StatBadge value={ref.penalties_per_match} label="Penals/part." color="text-cyan-400" blurred />
-          <StatBadge value={`${expulsionPct}%`} label="Amb expulsió" color="text-orange-400" blurred />
+        {/* Stats grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-5" style={{ gap: 8, marginBottom: 24 }}>
+          <StatCard value={ref.matches} label="Partits" blurred />
+          <StatCard value={ref.yellows_per_match} label="🟨 per part." blurred />
+          <StatCard value={ref.reds_per_match} label="🟥 per part." blurred />
+          <StatCard value={ref.penalties_per_match} label="Penals/part." blurred />
+          <StatCard value={`${expulsionPct}%`} label="Amb expulsió" blurred />
         </div>
 
-        {/* Two column: history + premium CTA */}
-        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
+        {/* Two column layout */}
+        <div className="grid lg:grid-cols-3" style={{ gap: 16 }}>
 
-          {/* Match history — blurred scores */}
-          <div className="lg:col-span-2 glass-card rounded-2xl p-4 sm:p-6">
-            <h2 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <Calendar size={16} className="text-green-400" />
+          {/* Match history */}
+          <div style={{
+            gridColumn: 'span 2', background: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '20px 20px',
+          }}>
+            <h2 style={{ fontSize: 14, fontWeight: 510, color: '#f7f8f8', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Calendar size={14} style={{ color: '#22c55e' }} />
               Últims {ref.recentMatches.length} partits arbitrats
             </h2>
-            <div className="space-y-2">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               {ref.recentMatches.map((match, i) => (
-                <div key={i} className="flex items-center gap-2 p-2.5 sm:p-3 rounded-xl hover:bg-white/5 active:bg-white/8 transition-colors border border-white/5">
-                  <span className="text-[10px] sm:text-xs text-slate-500 shrink-0 w-16 sm:w-20">{formatDate(match.date)}</span>
-                  <div className="flex-1 grid grid-cols-[1fr_auto_1fr] items-center gap-1.5 sm:gap-2 min-w-0">
-                    <span className="text-xs sm:text-sm text-slate-300 text-right truncate">{match.home_team}</span>
-                    <span className="text-xs sm:text-sm font-bold text-white bg-white/8 px-2 sm:px-2.5 py-1 rounded-lg shrink-0 font-mono blur-sm select-none">
+                <div
+                  key={i}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    padding: '9px 12px', borderRadius: 6,
+                    border: '1px solid rgba(255,255,255,0.04)',
+                  }}
+                >
+                  <span style={{ fontSize: 11, color: '#62666d', flexShrink: 0, width: 60 }}>{formatDate(match.date)}</span>
+                  <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: 6, minWidth: 0 }}>
+                    <span style={{ fontSize: 12, color: '#d0d6e0', textAlign: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{match.home_team}</span>
+                    <span style={{ fontSize: 12, fontWeight: 510, color: '#f7f8f8', background: 'rgba(255,255,255,0.06)', padding: '3px 8px', borderRadius: 4, flexShrink: 0, filter: 'blur(6px)', userSelect: 'none', fontVariantNumeric: 'tabular-nums' }}>
                       {match.home_score ?? '–'}–{match.away_score ?? '–'}
                     </span>
-                    <span className="text-xs sm:text-sm text-slate-300 truncate">{match.away_team}</span>
+                    <span style={{ fontSize: 12, color: '#d0d6e0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{match.away_team}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 shrink-0 blur-sm select-none">
-                    {match.yellows > 0 && (
-                      <span className="text-xs text-yellow-400 font-semibold">🟨{match.yellows}</span>
-                    )}
-                    {match.reds > 0 && (
-                      <span className="text-xs text-red-400 font-semibold">🟥{match.reds}</span>
-                    )}
-                    {(match as any).penalties > 0 && (
-                      <span className="text-xs text-cyan-400 font-semibold">P{(match as any).penalties}</span>
-                    )}
-                    {match.yellows === 0 && match.reds === 0 && (
-                      <span className="text-[10px] text-slate-700">–</span>
-                    )}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, filter: 'blur(6px)', userSelect: 'none' }}>
+                    {match.yellows > 0 && <span style={{ fontSize: 11, color: '#fbbf24', fontWeight: 510 }}>🟨{match.yellows}</span>}
+                    {match.reds > 0 && <span style={{ fontSize: 11, color: '#f87171', fontWeight: 510 }}>🟥{match.reds}</span>}
+                    {match.yellows === 0 && match.reds === 0 && <span style={{ fontSize: 10, color: '#62666d' }}>–</span>}
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Premium CTA */}
-          <div className="space-y-4">
+          {/* Sidebar */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 
-            {/* Trend chart — blurred values */}
-            <div className="glass-card rounded-2xl p-6">
-              <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                <TrendingUp size={14} className="text-cyan-400" />
-                Tendència de targetes
+            {/* Trend */}
+            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '20px' }}>
+              <h3 style={{ fontSize: 13, fontWeight: 510, color: '#f7f8f8', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <TrendingUp size={13} style={{ color: '#22c55e' }} />
+                Tendència
               </h3>
-              <div className="space-y-2">
-                {['🟨 Grogues/partit', '🟥 Vermelles/partit', 'Partits amb expulsió'].map((label, i) => {
-                  const values = [ref.yellows_per_match, ref.reds_per_match, parseFloat(expulsionPct) / 100]
-                  const max = [6, 0.5, 1]
-                  const pct = Math.min((values[i] / max[i]) * 100, 100)
-                  return (
-                    <div key={label}>
-                      <div className="flex justify-between text-xs text-slate-400 mb-1">
-                        <span>{label}</span>
-                        <span className="text-white blur-sm select-none">{values[i]}</span>
-                      </div>
-                      <div className="h-1.5 bg-white/8 rounded-full overflow-hidden">
-                        <div
-                          className="h-full rounded-full bg-gradient-to-r from-green-500 to-cyan-500"
-                          style={{ width: `${pct}%` }}
-                        />
-                      </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {[
+                  { label: '🟨 Grogues/partit', value: ref.yellows_per_match, max: 6 },
+                  { label: '🟥 Vermelles/partit', value: ref.reds_per_match, max: 0.5 },
+                  { label: 'Partits amb expulsió', value: parseFloat(expulsionPct) / 100, max: 1 },
+                ].map(row => (
+                  <div key={row.label}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#8a8f98', marginBottom: 4 }}>
+                      <span>{row.label}</span>
+                      <span style={{ color: '#f7f8f8', filter: 'blur(6px)', userSelect: 'none' }}>{row.value}</span>
                     </div>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* Premium lock card */}
-            <div className="relative rounded-2xl p-6 bg-gradient-to-br from-indigo-950/60 to-slate-900 border border-indigo-500/25 overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-2xl" />
-              <div className="relative">
-                <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center mb-4">
-                  <Lock size={18} className="text-indigo-400" />
-                </div>
-                <h3 className="font-bold text-white mb-2">Informe complet</h3>
-                <p className="text-xs text-slate-400 mb-4 leading-relaxed">
-                  Percentil de severitat, biaix local/visitant, patrons per període i historial amb el teu equip.
-                </p>
-                <ul className="space-y-1.5 mb-5">
-                  {[
-                    'Percentil vs altres àrbitres',
-                    'Targetes 1a vs 2a meitat',
-                    'Historial vs el teu equip',
-                    'Predicció de conducta',
-                  ].map(f => (
-                    <li key={f} className="flex items-center gap-2 text-xs text-slate-400">
-                      <span className="w-3 h-3 rounded-full bg-indigo-500/30 flex items-center justify-center shrink-0">
-                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
-                      </span>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href="/registre"
-                  className="block text-center py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-xl transition-colors"
-                >
-                  Desbloqueja l&apos;informe
-                </Link>
-              </div>
-            </div>
-
-            {/* Warning: severity */}
-            {ref.yellows_per_match > 4 && (
-              <div className="flex items-start gap-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl">
-                <AlertTriangle size={16} className="text-amber-400 shrink-0 mt-0.5" />
-                <div>
-                  <div className="text-xs font-semibold text-amber-400 mb-0.5">Àrbitre exigent</div>
-                  <div className="text-xs text-slate-400">
-                    Mostra més de {ref.yellows_per_match} targetes de mitjana per partit.
+                    <div style={{ height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
+                      <div style={{ width: `${Math.min((row.value / row.max) * 100, 100)}%`, height: '100%', background: '#22c55e', borderRadius: 2 }} />
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            )}
+            </div>
+
+            {/* Premium lock */}
+            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '20px' }}>
+              <Lock size={16} style={{ color: '#8a8f98', marginBottom: 12 }} />
+              <h3 style={{ fontSize: 14, fontWeight: 510, color: '#f7f8f8', marginBottom: 8 }}>Informe complet</h3>
+              <p style={{ fontSize: 12, color: '#8a8f98', marginBottom: 16, lineHeight: 1.5 }}>
+                Percentil de severitat, biaix local/visitant, patrons per període i historial amb el teu equip.
+              </p>
+              <ul style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16, listStyle: 'none', padding: 0 }}>
+                {[
+                  'Percentil vs altres àrbitres',
+                  'Targetes 1a vs 2a meitat',
+                  'Historial vs el teu equip',
+                  'Predicció de conducta',
+                ].map(f => (
+                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#8a8f98' }}>
+                    <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'rgba(34,197,94,0.4)', flexShrink: 0 }} />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/registre"
+                className="hover:bg-[#34d399]"
+                style={{
+                  display: 'block', textAlign: 'center', padding: '9px 16px',
+                  borderRadius: 6, background: '#22c55e', color: '#fff',
+                  fontSize: 13, fontWeight: 510, textDecoration: 'none', transition: 'background 0.15s',
+                }}
+              >
+                Desbloqueja l&apos;informe
+              </Link>
+            </div>
+
           </div>
         </div>
       </main>
-      <PublicFooter />
     </div>
   )
 }

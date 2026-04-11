@@ -1,5 +1,5 @@
 function Skeleton({ className = '' }: { className?: string }) {
-  return <div className={`animate-pulse bg-white/5 rounded-xl ${className}`} />
+  return <div className={`animate-pulse bg-white/5 rounded-lg ${className}`} />
 }
 
 export default function DashboardLoading() {
@@ -12,12 +12,12 @@ export default function DashboardLoading() {
       </div>
 
       {/* Setup CTA */}
-      <Skeleton className="h-32 rounded-2xl mb-8" />
+      <Skeleton className="h-32 rounded-lg mb-8" />
 
       {/* Cards grid */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} className="h-40 rounded-2xl" />
+          <Skeleton key={i} className="h-40 rounded-lg" />
         ))}
       </div>
     </div>

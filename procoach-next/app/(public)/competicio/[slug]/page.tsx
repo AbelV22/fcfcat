@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import PublicHeader from '@/components/PublicHeader'
 import CompetitionTabs from '@/components/CompetitionTabs'
 import {
   COMPETITION_NAMES,
@@ -17,7 +16,7 @@ import {
   getCompetitionPenaltyRankingDB,
   getFieldsDB,
 } from '@/lib/supabase-data'
-import { ListOrdered, AlertTriangle, LogIn, ChevronRight } from 'lucide-react'
+import { AlertTriangle, ChevronRight } from 'lucide-react'
 
 // SSR — rendered on each request so data is always fresh
 export const dynamic = 'force-dynamic'
@@ -150,18 +149,17 @@ export default async function CompeticionPage({
   }
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white">
+    <div style={{ fontFamily: 'var(--font-inter)' }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
-      <PublicHeader />
 
       {/* Beta disclaimer for non-priority competitions */}
       {!isPriority && (
-        <div className="bg-amber-500/10 border-b border-amber-500/20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center gap-2.5">
-            <AlertTriangle size={14} className="text-amber-400 shrink-0" />
-            <p className="text-xs text-amber-300/80">
-              <span className="font-semibold text-amber-300">Fase beta:</span>{' '}
+        <div style={{ background: 'rgba(251,191,36,0.06)', borderBottom: '1px solid rgba(251,191,36,0.12)' }}>
+          <div className="max-w-5xl mx-auto px-4 sm:px-6" style={{ paddingTop: 10, paddingBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <AlertTriangle size={13} style={{ color: '#fbbf24', flexShrink: 0 }} />
+            <p style={{ fontSize: 12, color: '#fbbf24' }}>
+              <span style={{ fontWeight: 510 }}>Fase beta:</span>{' '}
               En aquesta primera fase, NeoScout prioritza les categories Segona Catalana, Tercera Catalana, Preferent Juvenil i Primera Divisió Juvenil. Les dades d&apos;aquesta competició poden no estar completament actualitzades.
             </p>
           </div>
@@ -169,62 +167,32 @@ export default async function CompeticionPage({
       )}
 
       {/* Hero */}
-      <div className="bg-gradient-to-b from-[#0a1628] to-[#0f172a] border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-          <div className="flex items-center gap-2 text-xs text-slate-500 mb-5">
-            <Link href="/" className="hover:text-slate-300 transition-colors">Inici</Link>
-            <ChevronRight size={12} />
-            <span className="text-slate-400">{CATEGORY_LABEL[category] || 'Competició'}</span>
-            <ChevronRight size={12} />
-            <span className="text-white">{name}</span>
+      <div style={{ background: '#0f1011', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6" style={{ paddingTop: 32, paddingBottom: 28 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#62666d', marginBottom: 20 }}>
+            <Link href="/" className="hover:text-[#d0d6e0]" style={{ color: '#62666d', textDecoration: 'none' }}>Inici</Link>
+            <ChevronRight size={11} />
+            <span style={{ color: '#8a8f98' }}>{CATEGORY_LABEL[category] || 'Competició'}</span>
+            <ChevronRight size={11} />
+            <span style={{ color: '#f7f8f8' }}>{name}</span>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6">
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-green-500/20 to-cyan-500/20 border border-green-500/30 flex items-center justify-center shrink-0">
-                <ListOrdered size={22} className="text-green-400" />
-              </div>
-              <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider font-medium mb-0.5">{CATEGORY_LABEL[category]}</p>
-                <h1 className="text-xl sm:text-3xl font-bold leading-tight">{name}</h1>
-                <p className="text-xs text-slate-500 mt-0.5">Temporada 2025/26</p>
-              </div>
-            </div>
+          <p style={{ fontSize: 10, color: '#62666d', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 510, marginBottom: 6 }}>{CATEGORY_LABEL[category]}</p>
+          <h1 style={{ fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 510, color: '#f7f8f8', letterSpacing: '-0.02em', lineHeight: 1.2 }}>{name}</h1>
+          <p style={{ fontSize: 11, color: '#62666d', marginTop: 4, marginBottom: playedMatches.length > 0 ? 16 : 0 }}>Temporada 2025/26</p>
 
-            {playedMatches.length > 0 && (
-              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide sm:flex-wrap -mx-4 px-4 sm:mx-0 sm:px-0">
-                {[
-                  { label: 'Equips', value: teams.length, color: 'text-white' },
-                  { label: 'Partits', value: playedMatches.length, color: 'text-cyan-400' },
-                  { label: 'Gols', value: totalGoals, color: 'text-green-400' },
-                  { label: '🟨', value: totalYellows, color: 'text-amber-400' },
-                  { label: '🟥', value: totalReds, color: 'text-red-400' },
-                ].map(s => (
-                  <div key={s.label} className="bg-white/5 border border-white/8 rounded-xl px-3 py-2 text-center shrink-0 min-w-[52px]">
-                    <div className={`text-lg font-bold ${s.color}`}>{s.value}</div>
-                    <div className="text-[10px] text-slate-500 mt-0.5 whitespace-nowrap">{s.label}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Coach CTA strip */}
-      <div className="bg-gradient-to-r from-green-900/40 to-cyan-900/40 border-b border-green-500/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
-          <p className="text-sm text-slate-300">
-            <span className="text-green-400 font-semibold">Ets entrenador de {name}?</span>
-            {' '}<span className="text-slate-400">Accedeix als informes arbitrals — gratis.</span>
-          </p>
-          <Link
-            href="/entrenador"
-            className="shrink-0 flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-green-900/30 self-start sm:self-auto"
-          >
-            <LogIn size={14} />
-            Registra el teu equip
-          </Link>
+          {playedMatches.length > 0 && (
+            <p style={{ fontSize: 13, color: '#8a8f98', lineHeight: 1.6 }}>
+              <span style={{ color: '#f7f8f8', fontWeight: 510 }}>{teams.length}</span> equips
+              <span style={{ color: '#62666d', margin: '0 6px' }}>·</span>
+              <span style={{ color: '#f7f8f8', fontWeight: 510 }}>{playedMatches.length}</span> partits
+              <span style={{ color: '#62666d', margin: '0 6px' }}>·</span>
+              <span style={{ color: '#f7f8f8', fontWeight: 510 }}>{totalGoals}</span> gols
+              <span style={{ color: '#62666d', margin: '0 6px' }}>·</span>
+              <span style={{ color: '#f7f8f8', fontWeight: 510 }}>{(totalGoals / playedMatches.length).toFixed(1)}</span>{' '}
+              <span style={{ fontSize: 12 }}>gols/p</span>
+            </p>
+          )}
         </div>
       </div>
 
@@ -250,9 +218,6 @@ export default async function CompeticionPage({
         penaltyRanking={penaltyRanking}
       />
 
-      <footer className="border-t border-white/5 mt-8 py-8 text-center text-sm text-slate-600">
-        <p>NeoScout · Estadístiques del futbol català · Temporada 2025/26</p>
-      </footer>
     </div>
   )
 }

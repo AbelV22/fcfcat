@@ -194,17 +194,31 @@ export default function PlayerShareCard(props: PlayerShareCardProps) {
       <div className="flex items-center gap-2">
         <button
           onClick={handleShare}
-          className="group inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-purple-500/20"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '8px 14px', borderRadius: 6, border: 'none', cursor: 'pointer',
+            background: '#22c55e', color: '#fff', fontSize: 13, fontWeight: 510,
+            fontFamily: 'var(--font-inter)', transition: 'background 0.15s',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.background = '#34d399')}
+          onMouseLeave={e => (e.currentTarget.style.background = '#22c55e')}
         >
-          <Share2 size={16} className="group-hover:scale-110 transition-transform" />
-          Compartir a Instagram
+          <Share2 size={14} />
+          Compartir
         </button>
         <button
           onClick={handleDownload}
-          className="group inline-flex items-center gap-2 px-3 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white text-sm rounded-xl transition-all"
+          style={{
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            padding: '8px 10px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.08)',
+            background: 'rgba(255,255,255,0.04)', color: '#8a8f98', cursor: 'pointer',
+            transition: 'all 0.15s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.07)'; e.currentTarget.style.color = '#d0d6e0' }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = '#8a8f98' }}
           title="Descarregar imatge"
         >
-          <Download size={16} />
+          <Download size={14} />
         </button>
       </div>
     </>

@@ -895,6 +895,108 @@ export async function getRecentResultsDB(limit = 50) {
   }))
 }
 
+// ─── Temporada overview (cross-competition season stats) ──────────────────────
+
+/** Aggregated season data across all competitions for the /temporada page */
+export async function getTemporadaDataDB() {
+  const supabase = getSupabase()
+  if (!supabase) return null
+
+  const [scorersRes, matchesData, standingsRes] = await Promise.all([
+    supabase
+      .from('fcf_scorers')
+      .select('player_name, team_name, goals, matches, competition')
+      .gt('goals', 0)
+      .order('goals', { ascending: false })
+      .limit(200),
+    fetchAllRows((from, to) =>
+      supabase
+        .from('fcf_referee_matches')
+        .select('yellow_cards, red_cards, goals')
+        .range(from, to)
+    ),
+    supabase
+      .from('fcf_standings')
+      .select('team_name, team_slug, played, goals_for, goals_against, won, competition')
+      .gte('played', 10),
+  ])
+
+  // ── Scorers: aggregate by player+team across competitions ──
+  const playerMap: Record<string, { name: string; slug: string; team: string; goals: number; matches: number }> = {}
+  for (const s of scorersRes.data || []) {
+    const key = `${s.player_name}__${s.team_name}`
+    if (!playerMap[key]) {
+      playerMap[key] = {
+        name: s.player_name || '',
+        slug: slugify(s.player_name || ''),
+        team: s.team_name || '',
+        goals: 0,
+        matches: 0,
+      }
+    }
+    playerMap[key].goals += s.goals || 0
+    playerMap[key].matches += s.matches || 0
+  }
+  const topScorers = Object.values(playerMap)
+    .sort((a, b) => b.goals - a.goals)
+    .slice(0, 15)
+
+  // ── Season totals from referee matches ──
+  let totalMatches = 0
+  let totalYellows = 0
+  let totalReds = 0
+  let totalGoals = 0
+
+  for (const m of matchesData || []) {
+    totalMatches++
+    totalYellows += (Array.isArray(m.yellow_cards) ? m.yellow_cards : []).filter((c: any) => c.recipient_type === 'player').length
+    totalReds += (Array.isArray(m.red_cards) ? m.red_cards : []).filter((c: any) => c.recipient_type === 'player').length
+    totalGoals += (Array.isArray(m.goals) ? m.goals : []).length
+  }
+
+  // ── Team attack & defense rankings from standings ──
+  // Deduplicate by team slug — pick the entry with most goals_for (top category)
+  const teamMap: Record<string, { name: string; slug: string; played: number; goals_for: number; goals_against: number; won: number }> = {}
+  for (const s of standingsRes.data || []) {
+    const ts = s.team_slug || slugify(s.team_name || '')
+    if (!teamMap[ts] || (s.goals_for || 0) > teamMap[ts].goals_for) {
+      teamMap[ts] = {
+        name: s.team_name || '',
+        slug: ts,
+        played: s.played || 0,
+        goals_for: s.goals_for || 0,
+        goals_against: s.goals_against || 0,
+        won: s.won || 0,
+      }
+    }
+  }
+
+  const allTeams = Object.values(teamMap)
+
+  // Best attack: most goals scored (min 10 matches)
+  const bestAttack = [...allTeams]
+    .sort((a, b) => b.goals_for - a.goals_for)
+    .slice(0, 8)
+    .map(t => ({ ...t, goals_per_match: +(t.goals_for / t.played).toFixed(2) }))
+
+  // Best defense: fewest goals conceded per match (min 10 matches)
+  const bestDefense = [...allTeams]
+    .filter(t => t.goals_against >= 0)
+    .sort((a, b) => (a.goals_against / a.played) - (b.goals_against / b.played))
+    .slice(0, 8)
+    .map(t => ({ ...t, goals_against_per_match: +(t.goals_against / t.played).toFixed(2) }))
+
+  return {
+    totalMatches,
+    totalGoals,
+    totalYellows,
+    totalReds,
+    topScorers,
+    bestAttack,
+    bestDefense,
+  }
+}
+
 // ─── Full team report (SSR — replaces buildTeamReport filesystem reader) ──────
 
 type SplitStats = { played: number; wins: number; draws: number; losses: number; gf: number; ga: number; points: number }
@@ -2251,27 +2353,27 @@ export async function getAllPlayersDB() {
       .range(from, to)
   )
 
-  // Aggregate stats by player_slug
+  // Aggregate stats by canonical key (player_slug--team_slug) to match canonical_slug
   const statsMap: Record<string, {
     team: string; teamSlug: string; competition: string
     appearances: number; goals: number; yellowCards: number; redCards: number
   }> = {}
 
   for (const s of allStats || []) {
-    const slug = s.player_slug
-    if (!slug) continue
-    if (!statsMap[slug]) {
-      statsMap[slug] = {
+    if (!s.player_slug || !s.team_slug) continue
+    const key = `${s.player_slug}--${s.team_slug}` // matches canonical_slug format
+    if (!statsMap[key]) {
+      statsMap[key] = {
         team: s.team_name, teamSlug: s.team_slug, competition: s.competition,
         appearances: 0, goals: 0, yellowCards: 0, redCards: 0,
       }
     }
-    const entry = statsMap[slug]
+    const entry = statsMap[key]
     entry.appearances += s.appearances || 0
     entry.goals += s.goals || 0
     entry.yellowCards += s.yellow_cards || 0
     entry.redCards += s.red_cards || 0
-    // Keep the team with most appearances as "main team"
+    // Keep the competition with most appearances
     if ((s.appearances || 0) > (entry.appearances - (s.appearances || 0))) {
       entry.team = s.team_name
       entry.teamSlug = s.team_slug

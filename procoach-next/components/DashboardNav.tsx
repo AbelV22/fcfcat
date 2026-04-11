@@ -15,22 +15,21 @@ type NavItem = {
   label: string
   shortLabel: string
   href: string
-  color: string
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { icon: Home, label: 'Inici', shortLabel: 'Inici', href: '/dashboard', color: 'text-white' },
-  { icon: BarChart3, label: "Intel·ligencia", shortLabel: 'Intel', href: '/dashboard/intel', color: 'text-green-400' },
-  { icon: Users, label: 'Rival', shortLabel: 'Rival', href: '/dashboard/rival', color: 'text-cyan-400' },
-  { icon: Shield, label: 'Arbitre', shortLabel: 'Arbit.', href: '/dashboard/arbitre-pro', color: 'text-purple-400' },
-  { icon: Calendar, label: 'Calendari', shortLabel: 'Calen.', href: '/dashboard/calendari', color: 'text-amber-400' },
-  { icon: ListOrdered, label: 'Classificacio', shortLabel: 'Class.', href: '/dashboard/classificacio', color: 'text-yellow-400' },
-  { icon: ClipboardList, label: 'Apunts', shortLabel: 'Apunts', href: '/dashboard/apunts', color: 'text-emerald-400' },
-  { icon: Settings, label: 'Plantilla', shortLabel: 'Plant.', href: '/dashboard/equip-gestio', color: 'text-slate-400' },
+  { icon: Home, label: 'Inici', shortLabel: 'Inici', href: '/dashboard' },
+  { icon: BarChart3, label: "Intel·ligencia", shortLabel: 'Intel', href: '/dashboard/intel' },
+  { icon: Users, label: 'Rival', shortLabel: 'Rival', href: '/dashboard/rival' },
+  { icon: Shield, label: 'Arbitre', shortLabel: 'Arbit.', href: '/dashboard/arbitre-pro' },
+  { icon: Calendar, label: 'Calendari', shortLabel: 'Calen.', href: '/dashboard/calendari' },
+  { icon: ListOrdered, label: 'Classificacio', shortLabel: 'Class.', href: '/dashboard/classificacio' },
+  { icon: ClipboardList, label: 'Apunts', shortLabel: 'Apunts', href: '/dashboard/apunts' },
+  { icon: Settings, label: 'Plantilla', shortLabel: 'Plant.', href: '/dashboard/equip-gestio' },
 ]
 
-// Bottom nav shows first 5 items (Inici, Intel, Rival, Calendari, Apunts) + "Mes" for the rest
-const BOTTOM_MAIN = [0, 1, 2, 4, 6] // indices: Inici, Intel, Rival, Calendari, Apunts
+// Bottom nav shows first 5 items + "Mes" for the rest
+const BOTTOM_MAIN = [0, 1, 2, 4, 6] // Inici, Intel, Rival, Calendari, Apunts
 const BOTTOM_MORE = [3, 5, 7] // Arbitre, Classificacio, Plantilla
 
 export function DashboardSidebar({
@@ -45,40 +44,39 @@ export function DashboardSidebar({
 
   return (
     <aside
-      className={`hidden lg:flex flex-col fixed top-0 left-0 h-screen z-50
-        bg-[#0a1628]/95 backdrop-blur-xl border-r border-white/8
-        transition-all duration-300 ${collapsed ? 'w-[68px]' : 'w-[220px]'}`}
+      className={`hidden lg:flex flex-col fixed top-0 left-0 h-screen z-50 transition-all duration-300 ${collapsed ? 'w-[68px]' : 'w-[220px]'}`}
+      style={{ background: '#0f1011', borderRight: '1px solid rgba(255,255,255,0.06)' }}
     >
       {/* Logo */}
-      <div className="h-16 flex items-center gap-2.5 px-4 border-b border-white/8 shrink-0">
-        <Image src="/logo_neoscout.png" alt="NeoScout" width={32} height={32} className="rounded-lg shrink-0" />
+      <div style={{ height: 56, display: 'flex', alignItems: 'center', gap: 10, padding: '0 16px', borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0 }}>
+        <Image src="/logo_neoscout.png" alt="NeoScout" width={28} height={28} style={{ borderRadius: 6, flexShrink: 0 }} />
         {!collapsed && (
-          <span className="font-bold text-white text-sm truncate">
-            Neo<span className="text-green-400">Scout</span>
+          <span style={{ fontWeight: 510, color: '#f7f8f8', fontSize: 14, fontFamily: 'var(--font-inter)' }}>
+            Neo<span style={{ color: '#22c55e' }}>Scout</span>
           </span>
         )}
       </div>
 
       {/* Team info */}
       {!collapsed && teamName && (
-        <div className="px-4 py-3 border-b border-white/5">
-          <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Equip</div>
-          <div className="text-xs text-green-400 font-semibold truncate">{teamName}</div>
+        <div style={{ padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+          <div style={{ fontSize: 10, color: '#62666d', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>Equip</div>
+          <div style={{ fontSize: 12, color: '#22c55e', fontWeight: 510, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{teamName}</div>
           {isAdmin && (
-            <span className="inline-block mt-1 text-[10px] px-1.5 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/25 rounded-full font-bold">
+            <span style={{ display: 'inline-block', marginTop: 4, fontSize: 10, padding: '1px 6px', background: 'rgba(255,255,255,0.06)', color: '#8a8f98', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 9999, fontWeight: 510 }}>
               ADMIN
             </span>
           )}
         </div>
       )}
       {collapsed && isAdmin && (
-        <div className="flex justify-center py-2 border-b border-white/5">
-          <span className="w-2 h-2 rounded-full bg-amber-400" title="Admin" />
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+          <span style={{ width: 6, height: 6, borderRadius: 3, background: '#8a8f98' }} title="Admin" />
         </div>
       )}
 
       {/* Nav items */}
-      <nav className="flex-1 py-3 overflow-y-auto scrollbar-hide">
+      <nav style={{ flex: 1, padding: '8px 0', overflowY: 'auto' }}>
         {NAV_ITEMS.map(item => {
           const isActive = item.href === '/dashboard'
             ? pathname === '/dashboard'
@@ -89,16 +87,23 @@ export function DashboardSidebar({
               key={item.href}
               href={item.href}
               title={collapsed ? item.label : undefined}
-              className={`flex items-center gap-3 mx-2 mb-0.5 rounded-xl transition-all duration-200
-                ${collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2.5'}
-                ${isActive
-                  ? 'bg-green-500/10 border-l-2 border-green-400 text-white'
-                  : 'border-l-2 border-transparent text-slate-400 hover:text-white hover:bg-white/5'
-                }`}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 10,
+                margin: '0 8px 2px', padding: collapsed ? '10px 0' : '10px 12px',
+                borderRadius: 6, textDecoration: 'none',
+                justifyContent: collapsed ? 'center' : undefined,
+                background: isActive ? 'rgba(34,197,94,0.08)' : 'transparent',
+                borderLeft: isActive ? '2px solid #22c55e' : '2px solid transparent',
+                color: isActive ? '#f7f8f8' : '#8a8f98',
+                transition: 'all 0.15s',
+                fontFamily: 'var(--font-inter)',
+              }}
+              onMouseEnter={e => { if (!isActive) { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.color = '#d0d6e0' } }}
+              onMouseLeave={e => { if (!isActive) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#8a8f98' } }}
             >
-              <Icon size={18} className={isActive ? 'text-green-400' : item.color} />
+              <Icon size={18} style={{ color: isActive ? '#22c55e' : '#8a8f98', flexShrink: 0 }} />
               {!collapsed && (
-                <span className="text-sm font-medium truncate">{item.label}</span>
+                <span style={{ fontSize: 13, fontWeight: 510, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>
               )}
             </Link>
           )
@@ -106,19 +111,31 @@ export function DashboardSidebar({
       </nav>
 
       {/* Bottom section */}
-      <div className="border-t border-white/8 p-2 shrink-0 space-y-1">
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: 8, flexShrink: 0 }}>
         {!collapsed && (
           <Link
             href="/dashboard/setup"
-            className="flex items-center gap-2.5 px-3 py-2 text-slate-500 hover:text-green-400 transition-colors rounded-lg hover:bg-white/5"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px',
+              color: '#62666d', textDecoration: 'none', borderRadius: 6,
+              transition: 'all 0.15s', fontFamily: 'var(--font-inter)',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#22c55e'; e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+            onMouseLeave={e => { e.currentTarget.style.color = '#62666d'; e.currentTarget.style.background = 'transparent' }}
           >
             <RefreshCw size={14} />
-            <span className="text-xs">Canviar equip</span>
+            <span style={{ fontSize: 12 }}>Canviar equip</span>
           </Link>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="flex items-center justify-center w-full py-2 text-slate-600 hover:text-slate-400 transition-colors rounded-lg hover:bg-white/5"
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: '100%', padding: '8px 0', color: '#62666d', background: 'none',
+            border: 'none', borderRadius: 6, cursor: 'pointer', transition: 'color 0.15s',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.color = '#8a8f98')}
+          onMouseLeave={e => (e.currentTarget.style.color = '#62666d')}
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
@@ -136,8 +153,12 @@ export function DashboardBottomNav() {
       {/* More overlay */}
       {moreOpen && (
         <div className="lg:hidden fixed inset-0 z-50">
-          <div className="absolute inset-0 bg-black/60" onClick={() => setMoreOpen(false)} />
-          <div className="absolute bottom-16 left-0 right-0 bg-[#0a1628] border-t border-white/10 rounded-t-2xl p-4 space-y-1">
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)' }} onClick={() => setMoreOpen(false)} />
+          <div style={{
+            position: 'absolute', bottom: 56, left: 0, right: 0,
+            background: '#0f1011', borderTop: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: '8px 8px 0 0', padding: 12,
+          }}>
             {BOTTOM_MORE.map(idx => {
               const item = NAV_ITEMS[idx]
               const isActive = pathname.startsWith(item.href)
@@ -147,29 +168,38 @@ export function DashboardBottomNav() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setMoreOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors
-                    ${isActive ? 'bg-green-500/10 text-white' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
+                    borderRadius: 6, textDecoration: 'none', marginBottom: 2,
+                    background: isActive ? 'rgba(34,197,94,0.08)' : 'transparent',
+                    color: isActive ? '#f7f8f8' : '#8a8f98',
+                    transition: 'all 0.15s', fontFamily: 'var(--font-inter)',
+                  }}
                 >
-                  <Icon size={18} className={isActive ? 'text-green-400' : item.color} />
-                  <span className="text-sm font-medium">{item.label}</span>
+                  <Icon size={18} style={{ color: isActive ? '#22c55e' : '#8a8f98' }} />
+                  <span style={{ fontSize: 13, fontWeight: 510 }}>{item.label}</span>
                 </Link>
               )
             })}
             <Link
               href="/dashboard/setup"
               onClick={() => setMoreOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:text-green-400 hover:bg-white/5 transition-colors"
+              style={{
+                display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
+                borderRadius: 6, textDecoration: 'none', color: '#62666d',
+                transition: 'all 0.15s', fontFamily: 'var(--font-inter)',
+              }}
             >
               <RefreshCw size={18} />
-              <span className="text-sm font-medium">Canviar equip</span>
+              <span style={{ fontSize: 13, fontWeight: 510 }}>Canviar equip</span>
             </Link>
           </div>
         </div>
       )}
 
       {/* Bottom bar */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0a1628]/95 backdrop-blur-xl border-t border-white/10 pb-[env(safe-area-inset-bottom)]">
-        <div className="flex items-center justify-around h-14">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40" style={{ background: '#0f1011', borderTop: '1px solid rgba(255,255,255,0.06)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', height: 56 }}>
           {BOTTOM_MAIN.map(idx => {
             const item = NAV_ITEMS[idx]
             const isActive = item.href === '/dashboard'
@@ -180,21 +210,29 @@ export function DashboardBottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center justify-center gap-0.5 py-1 px-3 rounded-lg transition-colors
-                  ${isActive ? 'text-green-400' : 'text-slate-500 hover:text-slate-300'}`}
+                style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  gap: 2, padding: '4px 12px', borderRadius: 6, textDecoration: 'none',
+                  color: isActive ? '#22c55e' : '#62666d',
+                  transition: 'color 0.15s',
+                }}
               >
                 <Icon size={20} />
-                <span className="text-[10px] font-medium">{item.shortLabel}</span>
+                <span style={{ fontSize: 10, fontWeight: 510 }}>{item.shortLabel}</span>
               </Link>
             )
           })}
           <button
             onClick={() => setMoreOpen(!moreOpen)}
-            className={`flex flex-col items-center justify-center gap-0.5 py-1 px-3 rounded-lg transition-colors
-              ${moreOpen ? 'text-green-400' : 'text-slate-500 hover:text-slate-300'}`}
+            style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              gap: 2, padding: '4px 12px', borderRadius: 6, background: 'none', border: 'none',
+              color: moreOpen ? '#22c55e' : '#62666d', cursor: 'pointer',
+              transition: 'color 0.15s',
+            }}
           >
             {moreOpen ? <X size={20} /> : <MoreHorizontal size={20} />}
-            <span className="text-[10px] font-medium">Mes</span>
+            <span style={{ fontSize: 10, fontWeight: 510 }}>Mes</span>
           </button>
         </div>
       </nav>
@@ -211,37 +249,37 @@ export function DashboardTopBar({
 }) {
   const pathname = usePathname()
 
-  // Find current page title
   const current = NAV_ITEMS.find(item =>
     item.href === '/dashboard'
       ? pathname === '/dashboard'
       : pathname.startsWith(item.href)
   )
   const isSetup = pathname.includes('/setup')
-  const pageTitle = isSetup ? 'Configuracio' : current?.label || 'Dashboard'
-  const PageIcon = isSetup ? Settings : current?.icon || Home
 
   return (
-    <header className="lg:hidden border-b border-white/8 bg-[#0a1628]/90 backdrop-blur-xl sticky top-0 z-40">
-      <div className="px-4 h-14 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <Image src="/logo_neoscout.png" alt="NeoScout" width={28} height={28} className="rounded-lg" />
-          <span className="font-bold text-white text-sm">
-            Neo<span className="text-green-400">Scout</span>
+    <header
+      className="lg:hidden sticky top-0 z-40"
+      style={{ background: '#0f1011', borderBottom: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(12px)' }}
+    >
+      <div style={{ padding: '0 16px', height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Image src="/logo_neoscout.png" alt="NeoScout" width={26} height={26} style={{ borderRadius: 6 }} />
+          <span style={{ fontWeight: 510, color: '#f7f8f8', fontSize: 14, fontFamily: 'var(--font-inter)' }}>
+            Neo<span style={{ color: '#22c55e' }}>Scout</span>
           </span>
         </div>
-        <div className="flex items-center gap-2">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           {isAdmin && (
-            <span className="text-[10px] px-1.5 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/25 rounded-full font-bold">
+            <span style={{ fontSize: 10, padding: '1px 6px', background: 'rgba(255,255,255,0.06)', color: '#8a8f98', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 9999, fontWeight: 510 }}>
               ADMIN
             </span>
           )}
           {teamName && (
-            <span className="text-[10px] px-2 py-0.5 bg-green-500/15 text-green-400 border border-green-500/20 rounded-full font-medium truncate max-w-[120px]">
+            <span style={{ fontSize: 10, padding: '2px 8px', background: 'rgba(34,197,94,0.08)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.15)', borderRadius: 9999, fontWeight: 510, maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {teamName}
             </span>
           )}
-          <Link href="/" className="text-[10px] text-slate-600 hover:text-slate-400">
+          <Link href="/" style={{ fontSize: 10, color: '#62666d', textDecoration: 'none' }}>
             Inici
           </Link>
         </div>

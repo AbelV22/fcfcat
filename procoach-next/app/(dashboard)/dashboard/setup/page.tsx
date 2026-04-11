@@ -96,19 +96,19 @@ export default function SetupPage() {
   return (
     <div className="max-w-lg mx-auto px-4 py-6 lg:py-8">
         <div className="text-center mb-10">
-          <Image src="/logo_neoscout.png" alt="NeoScout" width={64} height={64} className="mx-auto mb-4 rounded-2xl" />
-          <h1 className="text-2xl font-black text-white mb-2">Configura el teu equip</h1>
-          <p className="text-slate-400 text-sm">Selecciona competicio i equip per activar totes les funcionalitats del dashboard.</p>
+          <Image src="/logo_neoscout.png" alt="NeoScout" width={64} height={64} className="mx-auto mb-4 rounded-lg" />
+          <h1 className="text-2xl font-medium text-white mb-2">Configura el teu equip</h1>
+          <p className="text-[#8a8f98] text-sm">Selecciona competicio i equip per activar totes les funcionalitats del dashboard.</p>
         </div>
 
-        <div className="glass-card rounded-2xl p-8 space-y-5">
+        <div className="v2-card p-8 space-y-5">
           {/* Competition */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1.5">Competicio</label>
+            <label className="block text-sm font-medium text-[#d0d6e0] mb-1.5">Competicio</label>
             <select
               value={competition}
               onChange={e => setCompetition(e.target.value)}
-              className="w-full px-4 py-3 bg-[#1e293b] border border-white/10 rounded-xl text-white focus:outline-none focus:border-green-500/50 transition-all text-sm"
+              className="w-full px-4 py-3 bg-[#1e293b] border border-white/[0.06] rounded-lg text-white focus:outline-none focus:border-green-500/50 transition-all text-sm"
             >
               <option value="">Selecciona la competicio...</option>
               {CATEGORY_GROUPS.map(group => (
@@ -123,9 +123,9 @@ export default function SetupPage() {
 
           {/* Team selector */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1.5">Equip</label>
+            <label className="block text-sm font-medium text-[#d0d6e0] mb-1.5">Equip</label>
             <div className="relative" ref={teamRef}>
-              <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 z-10" />
+              <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#62666d] z-10" />
               <input
                 type="text"
                 disabled={!competition}
@@ -133,33 +133,33 @@ export default function SetupPage() {
                 onChange={e => { setTeamSearch(e.target.value); setTeam(''); setTeamOpen(true) }}
                 onFocus={() => competition && setTeamOpen(true)}
                 placeholder={!competition ? 'Selecciona primer la competicio' : teamsLoading ? 'Carregant equips...' : `Cerca entre ${teams.length} equips...`}
-                className="w-full pl-11 pr-10 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full pl-11 pr-10 py-3 bg-white/5 border border-white/[0.06] rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all text-sm disabled:opacity-40 disabled:cursor-not-allowed"
               />
               {team ? (
                 <button type="button" onClick={() => { setTeam(''); setTeamSearch('') }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#62666d] hover:text-[#d0d6e0]">
                   <X size={16} />
                 </button>
               ) : (
-                <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
+                <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#62666d] pointer-events-none" />
               )}
               {teamOpen && competition && !teamsLoading && (
-                <div className="absolute z-50 left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-[#1e293b] border border-white/10 rounded-xl shadow-xl">
+                <div className="absolute z-50 left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-[#1e293b] border border-white/[0.06] rounded-lg shadow-xl">
                   {filteredTeams.length === 0 ? (
-                    <div className="px-4 py-3 text-sm text-slate-500">{teamSearch ? 'Cap equip trobat' : 'No hi ha equips'}</div>
+                    <div className="px-4 py-3 text-sm text-[#62666d]">{teamSearch ? 'Cap equip trobat' : 'No hi ha equips'}</div>
                   ) : filteredTeams.map(t => (
                     <button key={t.name} type="button"
                       onClick={() => { setTeam(t.name); setTeamSearch(t.name); setTeamOpen(false) }}
                       className="w-full text-left px-4 py-2.5 text-sm text-white hover:bg-white/10 transition-colors flex items-center justify-between">
                       <span>{t.name}</span>
-                      {t.group && <span className="text-xs text-slate-500 ml-2">{t.group}</span>}
+                      {t.group && <span className="text-xs text-[#62666d] ml-2">{t.group}</span>}
                     </button>
                   ))}
                 </div>
               )}
               {teamOpen && teamsLoading && (
-                <div className="absolute z-50 left-0 right-0 mt-1 bg-[#1e293b] border border-white/10 rounded-xl shadow-xl px-4 py-3">
-                  <div className="flex items-center gap-2 text-sm text-slate-400">
+                <div className="absolute z-50 left-0 right-0 mt-1 bg-[#1e293b] border border-white/[0.06] rounded-lg shadow-xl px-4 py-3">
+                  <div className="flex items-center gap-2 text-sm text-[#8a8f98]">
                     <div className="w-3.5 h-3.5 border-2 border-white/20 border-t-green-400 rounded-full animate-spin" />
                     Carregant equips...
                   </div>
@@ -169,14 +169,14 @@ export default function SetupPage() {
           </div>
 
           {error && (
-            <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-sm text-red-400">{error}</div>
+            <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-sm text-red-400">{error}</div>
           )}
 
           <button
             onClick={handleSave}
             disabled={saving || !team}
-            className="w-full py-3 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500
-                       disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl
+            className="w-full py-3 bg-[#22c55e] hover:bg-[#34d399]
+                       disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg
                        transition-all flex items-center justify-center gap-2 shadow-lg shadow-green-900/30"
           >
             {saving ? (

@@ -2,12 +2,9 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import {
-  Users, ListOrdered, Shield, ArrowRight, Target, Clock,
-  AlertTriangle, User, Footprints, Ruler, Weight,
-  Instagram, Phone, Mail, CheckCircle2, Search,
+  ListOrdered, Target, User, Instagram, ArrowRight,
+  CheckCircle2, Share2,
 } from 'lucide-react'
-import PublicHeader from '@/components/PublicHeader'
-import PublicFooter from '@/components/PublicFooter'
 import PlayerShareCard from '@/components/PlayerShareCard'
 import { getPlayerProfile, hasMinutesData, COMPETITIONS_WITHOUT_MINUTES, type PlayerProfileDB } from '@/lib/supabase-data'
 
@@ -41,29 +38,6 @@ const POSITION_LABELS: Record<string, string> = {
   davanter: 'Davanter',
 }
 
-const POSITION_COLORS: Record<string, string> = {
-  porter: 'from-yellow-600 to-amber-600',
-  defensa: 'from-blue-600 to-indigo-600',
-  migcampista: 'from-green-600 to-emerald-600',
-  davanter: 'from-red-600 to-rose-600',
-}
-
-const POSITION_TEXT: Record<string, string> = {
-  porter: 'text-yellow-400',
-  defensa: 'text-blue-400',
-  migcampista: 'text-green-400',
-  davanter: 'text-red-400',
-}
-
-function StatCard({ value, label, color }: { value: string | number; label: string; color: string }) {
-  return (
-    <div className="bg-white/4 border border-white/8 rounded-xl p-4 text-center">
-      <div className={`text-2xl sm:text-3xl font-black mb-0.5 ${color}`}>{value}</div>
-      <div className="text-[11px] text-slate-500 uppercase tracking-wider">{label}</div>
-    </div>
-  )
-}
-
 export default async function JugadorPage({ params }: Props) {
   const { slug } = await params
   const player = await getPlayerProfile(slug)
@@ -73,414 +47,255 @@ export default async function JugadorPage({ params }: Props) {
   // GDPR opt-out
   if (player.optedOut) {
     return (
-      <div className="min-h-screen bg-[#0f172a]">
-        <PublicHeader />
-        <main className="max-w-3xl mx-auto px-4 sm:px-6 py-20 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-4">
-            <User size={28} className="text-slate-500" />
+      <div style={{ fontFamily: 'var(--font-inter)' }}>
+        <main className="max-w-4xl mx-auto px-4 sm:px-6" style={{ paddingTop: 80, paddingBottom: 80, textAlign: 'center' }}>
+          <div style={{ width: 48, height: 48, borderRadius: 8, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+            <User size={22} style={{ color: '#62666d' }} />
           </div>
-          <h1 className="text-xl font-bold text-white mb-2">Perfil no disponible</h1>
-          <p className="text-slate-500 text-sm">
+          <h1 style={{ fontSize: 18, fontWeight: 510, color: '#f7f8f8', marginBottom: 8 }}>Perfil no disponible</h1>
+          <p style={{ fontSize: 13, color: '#8a8f98' }}>
             Aquest jugador ha sol·licitat que el seu perfil no sigui visible públicament.
           </p>
         </main>
-        <PublicFooter />
       </div>
     )
   }
 
   const { career, seasons } = player
-  const currentTeam = seasons[0] // most recent season first
+  const currentTeam = seasons[0]
   const posLabel = POSITION_LABELS[player.position || ''] || null
-  const posGradient = POSITION_COLORS[player.position || ''] || 'from-slate-600 to-slate-700'
-  const posText = POSITION_TEXT[player.position || ''] || 'text-slate-400'
 
-  // Check if any of the player's seasons have reliable minutes data
   const hasMinutes = seasons.some(s => s.minutesPlayed > 0 && !COMPETITIONS_WITHOUT_MINUTES.has(s.competition))
   const minutesPerGoal = hasMinutes && career.goals > 0 ? Math.round(career.minutesPlayed / career.goals) : null
   const goalsPer90 = hasMinutes && career.minutesPlayed > 0 ? (career.goals / career.minutesPlayed * 90).toFixed(2) : null
+  const goalsPerMatch = career.goals > 0 && career.appearances > 0 ? (career.goals / career.appearances).toFixed(2) : null
 
   return (
-    <div className="min-h-screen bg-[#0f172a]">
-      <PublicHeader />
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    <div style={{ fontFamily: 'var(--font-inter)' }}>
+      <main className="max-w-4xl mx-auto px-4 sm:px-6" style={{ paddingTop: 40, paddingBottom: 80 }}>
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-          <Link href="/" className="hover:text-slate-300 transition-colors">Inici</Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#62666d', marginBottom: 28 }}>
+          <Link href="/" style={{ color: '#62666d', textDecoration: 'none' }} className="hover:text-[#d0d6e0]">Inici</Link>
           <span>/</span>
-          <Link href="/cerca?type=jugador" className="hover:text-slate-300 transition-colors">Jugadors</Link>
+          <Link href="/cerca?type=jugador" style={{ color: '#62666d', textDecoration: 'none' }} className="hover:text-[#d0d6e0]">Jugadors</Link>
           <span>/</span>
-          <span className="text-slate-300">{player.displayName}</span>
+          <span style={{ color: '#8a8f98' }}>{player.displayName}</span>
         </div>
 
-        {/* ─── Header Card ───────────────────────────────────────── */}
-        <div className="glass-card rounded-2xl p-5 sm:p-8 mb-6">
-          <div className="flex items-start gap-4 sm:gap-6">
+        {/* ─── Unified Header Card ─────────────────────────────── */}
+        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '24px', marginBottom: 20 }}>
+
+          {/* Top: Avatar + Name + Share */}
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
             {/* Avatar */}
             {player.photoUrl ? (
-              <img
-                src={player.photoUrl}
-                alt={player.displayName}
-                className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl object-cover shrink-0"
-              />
+              <img src={player.photoUrl} alt={player.displayName} style={{ width: 56, height: 56, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
             ) : (
-              <div className={`w-16 h-16 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br ${posGradient} flex items-center justify-center text-2xl sm:text-4xl font-black text-white shrink-0`}>
+              <div style={{ width: 56, height: 56, borderRadius: 8, flexShrink: 0, background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 510, color: '#22c55e' }}>
                 {player.displayName.split(' ')[0]?.[0] || '?'}
               </div>
             )}
 
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-xl sm:text-3xl font-black text-white leading-tight">{player.displayName}</h1>
-                {player.verified && (
-                  <CheckCircle2 size={18} className="text-green-400 shrink-0" />
-                )}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <h1 style={{ fontSize: 'clamp(18px, 2.5vw, 24px)', fontWeight: 510, color: '#f7f8f8', letterSpacing: '-0.02em', lineHeight: 1.2 }}>{player.displayName}</h1>
+                {player.verified && <CheckCircle2 size={16} style={{ color: '#22c55e', flexShrink: 0 }} />}
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 mt-2">
+              {/* Position + Team + Competition */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginTop: 8 }}>
                 {posLabel && (
-                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full bg-white/6 border border-white/10 ${posText}`}>
+                  <span style={{ fontSize: 11, fontWeight: 510, color: '#22c55e', background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.15)', borderRadius: 9999, padding: '2px 8px' }}>
                     {posLabel}
                   </span>
                 )}
                 {currentTeam && (
-                  <Link
-                    href={`/equip/${currentTeam.teamSlug}`}
-                    className="text-xs text-slate-400 hover:text-green-400 transition-colors flex items-center gap-1"
-                  >
-                    <ListOrdered size={11} className="text-green-400" />
+                  <Link href={`/equip/${currentTeam.teamSlug}`} style={{ fontSize: 12, color: '#8a8f98', textDecoration: 'none' }} className="hover:text-[#22c55e]">
                     {currentTeam.teamName}
                   </Link>
                 )}
-                {currentTeam && (
-                  <span className="text-xs text-slate-600">
-                    {currentTeam.competitionName}
-                  </span>
-                )}
+                {currentTeam && <span style={{ fontSize: 12, color: '#62666d' }}>{currentTeam.competitionName}</span>}
               </div>
 
-              {/* Badges */}
-              <div className="flex flex-wrap gap-2 mt-3">
+              {/* Meta badges + Instagram */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
                 {player.lookingForTeam && (
-                  <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-green-500/15 border border-green-500/30 text-green-400">
-                    Busco equip
-                  </span>
+                  <span style={{ fontSize: 11, fontWeight: 510, color: '#22c55e', background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.18)', borderRadius: 9999, padding: '2px 8px' }}>Busco equip</span>
                 )}
                 {player.preferredFoot && (
-                  <span className="text-[11px] px-2 py-0.5 bg-white/5 border border-white/8 rounded-full text-slate-400 flex items-center gap-1">
-                    <Footprints size={10} />
+                  <span style={{ fontSize: 11, color: '#62666d', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 9999, padding: '2px 8px' }}>
                     Peu {player.preferredFoot}
                   </span>
                 )}
                 {player.heightCm && (
-                  <span className="text-[11px] px-2 py-0.5 bg-white/5 border border-white/8 rounded-full text-slate-400 flex items-center gap-1">
-                    <Ruler size={10} />
+                  <span style={{ fontSize: 11, color: '#62666d', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 9999, padding: '2px 8px' }}>
                     {player.heightCm} cm
                   </span>
                 )}
-                {player.weightKg && (
-                  <span className="text-[11px] px-2 py-0.5 bg-white/5 border border-white/8 rounded-full text-slate-400 flex items-center gap-1">
-                    <Weight size={10} />
-                    {player.weightKg} kg
-                  </span>
-                )}
                 {player.birthYear && (
-                  <span className="text-[11px] px-2 py-0.5 bg-white/5 border border-white/8 rounded-full text-slate-400">
+                  <span style={{ fontSize: 11, color: '#62666d', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 9999, padding: '2px 8px' }}>
                     Nascut {player.birthYear}
                   </span>
                 )}
-              </div>
-
-              {/* Bio */}
-              {player.bio && (
-                <p className="text-sm text-slate-400 mt-3 leading-relaxed max-w-xl">{player.bio}</p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Share card */}
-        <div className="mb-6 flex items-center gap-3">
-          <PlayerShareCard
-            name={player.displayName}
-            slug={slug}
-            position={player.position || undefined}
-            currentTeam={currentTeam?.teamName}
-            appearances={career.appearances}
-            goals={career.goals}
-            yellowCards={career.yellowCards}
-            redCards={career.redCards}
-          />
-          <span className="text-xs text-slate-500">Comparteix les teves estadistiques</span>
-        </div>
-
-        {/* ─── Career Stats ──────────────────────────────────────── */}
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2.5 sm:gap-3 mb-6">
-          <StatCard value={career.appearances} label="Partits" color="text-white" />
-          <div className="stat-card p-3 sm:p-4 text-center">
-            <div className="text-2xl sm:text-3xl font-black mb-0.5 text-green-400">{career.goals}</div>
-            <div className="text-[10px] sm:text-xs text-slate-400">Gols</div>
-            {career.penaltyGoals > 0 && (
-              <div className="text-[10px] text-cyan-400 mt-0.5">({career.penaltyGoals} pen.)</div>
-            )}
-          </div>
-          {hasMinutes ? (
-            <StatCard
-              value={career.appearances > 0 && career.minutesPlayed > 0
-                ? `${Math.round(career.minutesPlayed / (career.appearances * 90) * 100)}%`
-                : '–'}
-              label="% Minuts"
-              color="text-cyan-400"
-            />
-          ) : (
-            <StatCard value={career.starts} label="Titularitats" color="text-cyan-400" />
-          )}
-          <StatCard value={career.yellowCards} label="Grogues" color="text-yellow-400" />
-          <StatCard value={career.redCards} label="Vermelles" color="text-red-400" />
-          {hasMinutes ? (
-            <StatCard
-              value={goalsPer90 || '–'}
-              label="Gols/90'"
-              color="text-emerald-400"
-            />
-          ) : (
-            <StatCard
-              value={career.goals > 0 && career.appearances > 0
-                ? (career.goals / career.appearances).toFixed(2)
-                : '–'}
-              label="Gols/Partit"
-              color="text-emerald-400"
-            />
-          )}
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
-
-          {/* ─── Season Breakdown (main column) ──────────────────── */}
-          <div className="lg:col-span-2 space-y-4">
-            {seasons.length > 0 && (
-              <div className="glass-card rounded-2xl p-5">
-                <div className="flex items-center gap-2 mb-4">
-                  <ListOrdered size={16} className="text-green-400" />
-                  <h2 className="font-bold text-white text-sm">Historial per temporada</h2>
-                </div>
-                <div className="overflow-x-auto -mx-5 px-5">
-                  <table className="w-full text-sm min-w-[500px]">
-                    <thead>
-                      <tr className="border-b border-white/8 text-slate-500 text-[11px] uppercase tracking-wider">
-                        <th className="text-left pb-2.5 font-medium">Temporada</th>
-                        <th className="text-left pb-2.5 font-medium">Equip</th>
-                        <th className="text-left pb-2.5 font-medium">Competició</th>
-                        <th className="text-center pb-2.5 font-medium w-10">PJ</th>
-                        <th className="text-center pb-2.5 font-medium w-10">⚽</th>
-                        <th className="text-center pb-2.5 font-medium w-10">🟨</th>
-                        <th className="text-center pb-2.5 font-medium w-10">🟥</th>
-                        <th className="text-center pb-2.5 font-medium w-14">{hasMinutes ? 'Min' : 'Tit.'}</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
-                      {seasons.map((s, i) => (
-                        <tr key={i} className="hover:bg-white/3 transition-colors">
-                          <td className="py-2.5 text-slate-400 text-xs font-mono">{s.season}</td>
-                          <td className="py-2.5 pr-3">
-                            <Link
-                              href={`/equip/${s.teamSlug}`}
-                              className="text-slate-200 hover:text-green-400 transition-colors text-xs font-medium"
-                            >
-                              {s.teamName}
-                            </Link>
-                          </td>
-                          <td className="py-2.5 text-slate-500 text-xs">{s.competitionName}</td>
-                          <td className="py-2.5 text-center text-slate-400 text-xs">{s.appearances || '–'}</td>
-                          <td className="py-2.5 text-center">
-                            {s.goals > 0
-                              ? <span className="text-green-400 font-bold text-xs">{s.goals}</span>
-                              : <span className="text-slate-600 text-xs">–</span>}
-                          </td>
-                          <td className="py-2.5 text-center text-slate-400 text-xs">{s.yellowCards || '–'}</td>
-                          <td className="py-2.5 text-center">
-                            {s.redCards > 0
-                              ? <span className="text-red-400 font-bold text-xs">{s.redCards}</span>
-                              : <span className="text-slate-600 text-xs">–</span>}
-                          </td>
-                          <td className="py-2.5 text-center text-slate-500 text-xs">
-                            {s.minutesPlayed > 0 && !COMPETITIONS_WITHOUT_MINUTES.has(s.competition)
-                              ? `${s.minutesPlayed}'`
-                              : (s.starts > 0 ? s.starts : s.appearances)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {/* Highlight video */}
-            {player.highlightUrl && (
-              <div className="glass-card rounded-2xl p-5">
-                <div className="flex items-center gap-2 mb-4">
-                  <Target size={16} className="text-purple-400" />
-                  <h2 className="font-bold text-white text-sm">Highlights</h2>
-                </div>
-                <div className="aspect-video rounded-xl overflow-hidden bg-black">
-                  <iframe
-                    src={getEmbedUrl(player.highlightUrl)}
-                    className="w-full h-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* ─── Sidebar ─────────────────────────────────────────── */}
-          <div className="space-y-4">
-
-            {/* Contact (gated — placeholder for premium) */}
-            {player.claimed && player.contactVisible && (
-              <div className="glass-card rounded-2xl p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <Phone size={16} className="text-green-400" />
-                  <h3 className="font-bold text-white text-sm">Contacte</h3>
-                </div>
-                <div className="relative">
-                  <div className="blur-sm pointer-events-none select-none space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-slate-300">
-                      <Phone size={13} /> +34 6XX XXX XXX
-                    </div>
-                    {player.instagram && (
-                      <div className="flex items-center gap-2 text-sm text-slate-300">
-                        <Instagram size={13} /> @{player.instagram}
-                      </div>
-                    )}
-                  </div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Link
-                      href="/registre"
-                      className="text-xs font-semibold px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors"
-                    >
-                      Pro per veure contacte
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Social links (public) */}
-            {player.instagram && !player.contactVisible && (
-              <div className="glass-card rounded-2xl p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <Instagram size={16} className="text-pink-400" />
-                  <h3 className="font-bold text-white text-sm">Xarxes socials</h3>
-                </div>
-                <a
-                  href={`https://instagram.com/${player.instagram}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sm text-slate-400 hover:text-pink-400 transition-colors"
-                >
-                  <Instagram size={14} />
-                  @{player.instagram}
-                  <ArrowRight size={12} className="ml-auto" />
-                </a>
-              </div>
-            )}
-
-            {/* Advanced stats */}
-            {career.appearances > 0 && (
-              <div className="glass-card rounded-2xl p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <Target size={16} className="text-cyan-400" />
-                  <h3 className="font-bold text-white text-sm">Estadístiques avançades</h3>
-                </div>
-                <div className="space-y-3">
-                  {hasMinutes && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-slate-500">Min. per gol</span>
-                      <span className="text-sm font-bold text-white">{minutesPerGoal ? `${minutesPerGoal}'` : '–'}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-slate-500">Titularitats</span>
-                    <span className="text-sm font-bold text-white">
-                      {career.starts > 0 ? `${career.starts} (${Math.round(career.starts / career.appearances * 100)}%)` : '–'}
-                    </span>
-                  </div>
-                  {hasMinutes && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-slate-500">Min. per partit</span>
-                      <span className="text-sm font-bold text-white">
-                        {career.appearances > 0 ? `${Math.round(career.minutesPlayed / career.appearances)}'` : '–'}
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-slate-500">Targetes / partit</span>
-                    <span className="text-sm font-bold text-white">
-                      {career.appearances > 0
-                        ? ((career.yellowCards + career.redCards) / career.appearances).toFixed(2)
-                        : '–'}
-                    </span>
-                  </div>
-                  {career.penaltyGoals > 0 && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-slate-500">Gols de penal</span>
-                      <span className="text-sm font-bold text-cyan-400">
-                        {career.penaltyGoals} ({career.goals > 0 ? Math.round((career.penaltyGoals / career.goals) * 100) : 0}% dels gols)
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Claim CTA */}
-            {!player.claimed && (
-              <div className="glass-card rounded-2xl p-5 border-green-500/20">
-                <div className="text-center">
-                  <div className="w-10 h-10 rounded-full bg-green-500/15 border border-green-500/30 flex items-center justify-center mx-auto mb-3">
-                    <User size={18} className="text-green-400" />
-                  </div>
-                  <h3 className="font-bold text-white text-sm mb-1">Ets tu?</h3>
-                  <p className="text-xs text-slate-500 mb-3">
-                    Reclama el teu perfil per afegir foto, bio, highlights i que els entrenadors et puguin contactar.
-                  </p>
-                  <Link
-                    href={`/registre?claim=${slug}`}
-                    className="block w-full text-center text-sm font-semibold px-4 py-2.5 bg-green-600 hover:bg-green-500 text-white rounded-xl transition-colors"
+                {player.instagram && (
+                  <a href={`https://instagram.com/${player.instagram}`} target="_blank" rel="noopener noreferrer"
+                    style={{ fontSize: 11, color: '#8a8f98', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 9999, padding: '2px 8px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                    className="hover:text-[#d0d6e0]"
                   >
-                    Reclama el teu perfil
-                  </Link>
-                </div>
+                    <Instagram size={10} />
+                    @{player.instagram}
+                  </a>
+                )}
               </div>
-            )}
 
-            {/* Data source */}
-            <div className="text-[10px] text-slate-600 text-center leading-relaxed">
-              Les estadístiques provenen de les actes públiques de la{' '}
-              <a href="https://www.fcf.cat" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-500">FCF</a>.
-              <br />
-              Si vols modificar o eliminar les teves dades, contacta&apos;ns a{' '}
-              <Link href="/privacitat" className="underline hover:text-slate-500">privacitat</Link>.
+              {player.bio && <p style={{ fontSize: 13, color: '#8a8f98', marginTop: 10, lineHeight: 1.5 }}>{player.bio}</p>}
+            </div>
+
+            {/* Share button — ghost icon */}
+            <div style={{ flexShrink: 0 }}>
+              <PlayerShareCard
+                name={player.displayName}
+                slug={slug}
+                position={player.position || undefined}
+                currentTeam={currentTeam?.teamName}
+                appearances={career.appearances}
+                goals={career.goals}
+                yellowCards={career.yellowCards}
+                redCards={career.redCards}
+              />
             </div>
           </div>
+
+          {/* Divider */}
+          <div style={{ height: 1, background: 'rgba(255,255,255,0.04)', margin: '20px 0 16px' }} />
+
+          {/* Stats row — 4 key metrics */}
+          <div className="grid grid-cols-4" style={{ gap: 8 }}>
+            {[
+              { value: career.appearances, label: 'Partits', highlight: false },
+              { value: career.goals, label: 'Gols', highlight: career.goals > 0 },
+              { value: career.yellowCards, label: 'Grogues', highlight: false },
+              { value: hasMinutes ? (goalsPer90 || '–') : (goalsPerMatch || '–'), label: hasMinutes ? 'Gols/90\'' : 'Gols/P', highlight: true },
+            ].map(s => (
+              <div key={s.label} style={{ textAlign: 'center', padding: '8px 4px' }}>
+                <div style={{ fontSize: 20, fontWeight: 510, color: s.highlight ? '#22c55e' : '#f7f8f8', fontVariantNumeric: 'tabular-nums' }}>{s.value}</div>
+                <div style={{ fontSize: 10, fontWeight: 510, color: '#62666d', letterSpacing: '0.04em', textTransform: 'uppercase', marginTop: 2 }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ─── Season Breakdown (full-width) ────────────────────── */}
+        {seasons.length > 0 && (
+          <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '20px', marginBottom: 20 }}>
+            <h2 style={{ fontSize: 13, fontWeight: 510, color: '#f7f8f8', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <ListOrdered size={13} style={{ color: '#22c55e' }} />
+              Historial per temporada
+            </h2>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 480 }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                    {['Temporada', 'Equip', 'Competició', 'PJ', '⚽', '🟨', '🟥', hasMinutes ? 'Min' : 'Tit.'].map((h, i) => (
+                      <th key={i} style={{ fontSize: 10, fontWeight: 510, color: '#62666d', letterSpacing: '0.04em', textTransform: 'uppercase', textAlign: i > 2 ? 'center' : 'left', paddingBottom: 8, paddingRight: i < 7 ? 12 : 0 }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {seasons.map((s, i) => (
+                    <tr key={i} style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }} className="hover:bg-white/[0.02]">
+                      <td style={{ padding: '9px 12px 9px 0', fontSize: 11, color: '#62666d', fontVariantNumeric: 'tabular-nums' }}>{s.season}</td>
+                      <td style={{ padding: '9px 12px 9px 0' }}>
+                        <Link href={`/equip/${s.teamSlug}`} style={{ fontSize: 12, fontWeight: 510, color: '#d0d6e0', textDecoration: 'none' }} className="hover:text-[#22c55e]">{s.teamName}</Link>
+                      </td>
+                      <td style={{ padding: '9px 12px 9px 0', fontSize: 11, color: '#62666d' }}>{s.competitionName}</td>
+                      <td style={{ padding: '9px 0', fontSize: 12, color: '#8a8f98', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>{s.appearances || '–'}</td>
+                      <td style={{ padding: '9px 0', fontSize: 12, fontWeight: s.goals > 0 ? 510 : 400, color: s.goals > 0 ? '#22c55e' : '#62666d', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>{s.goals || '–'}</td>
+                      <td style={{ padding: '9px 0', fontSize: 12, color: '#8a8f98', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>{s.yellowCards || '–'}</td>
+                      <td style={{ padding: '9px 0', fontSize: 12, color: s.redCards > 0 ? '#f87171' : '#62666d', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>{s.redCards || '–'}</td>
+                      <td style={{ padding: '9px 0', fontSize: 11, color: '#62666d', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>
+                        {s.minutesPlayed > 0 && !COMPETITIONS_WITHOUT_MINUTES.has(s.competition) ? `${s.minutesPlayed}'` : (s.starts > 0 ? s.starts : s.appearances)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* ─── Bottom Row: Advanced Stats + Claim CTA ───────────── */}
+        <div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: 16, marginBottom: 20 }}>
+
+          {/* Advanced stats */}
+          {career.appearances > 0 && (
+            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '20px' }}>
+              <h3 style={{ fontSize: 13, fontWeight: 510, color: '#f7f8f8', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Target size={13} style={{ color: '#8a8f98' }} />
+                Estadístiques avançades
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {[
+                  ...(hasMinutes && minutesPerGoal ? [{ label: 'Min. per gol', value: `${minutesPerGoal}'` }] : []),
+                  { label: 'Titularitats', value: career.starts > 0 ? `${career.starts} (${Math.round(career.starts / career.appearances * 100)}%)` : '–' },
+                  ...(hasMinutes ? [{ label: 'Min. per partit', value: career.appearances > 0 ? `${Math.round(career.minutesPlayed / career.appearances)}'` : '–' }] : []),
+                  { label: 'Targetes / partit', value: career.appearances > 0 ? ((career.yellowCards + career.redCards) / career.appearances).toFixed(2) : '–' },
+                  { label: 'Vermelles', value: String(career.redCards) },
+                  ...(career.penaltyGoals > 0 ? [{ label: 'Gols de penal', value: `${career.penaltyGoals} (${career.goals > 0 ? Math.round((career.penaltyGoals / career.goals) * 100) : 0}%)` }] : []),
+                ].map(row => (
+                  <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: 12, color: '#8a8f98' }}>{row.label}</span>
+                    <span style={{ fontSize: 13, fontWeight: 510, color: '#f7f8f8', fontVariantNumeric: 'tabular-nums' }}>{row.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Claim CTA */}
+          {!player.claimed && (
+            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(34,197,94,0.12)', borderRadius: 8, padding: '20px', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                <User size={16} style={{ color: '#22c55e' }} />
+              </div>
+              <h3 style={{ fontSize: 13, fontWeight: 510, color: '#f7f8f8', marginBottom: 6 }}>Ets tu?</h3>
+              <p style={{ fontSize: 12, color: '#8a8f98', marginBottom: 14, lineHeight: 1.5 }}>
+                Reclama el teu perfil per afegir foto, bio, highlights i que els entrenadors et puguin contactar.
+              </p>
+              <Link href={`/registre?claim=${slug}`} className="v2-btn-primary hover:bg-[#34d399]" style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}>
+                Reclama el teu perfil
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* ─── Highlight Video ──────────────────────────────────── */}
+        {player.highlightUrl && (
+          <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '20px', marginBottom: 20 }}>
+            <h2 style={{ fontSize: 13, fontWeight: 510, color: '#f7f8f8', marginBottom: 14 }}>Highlights</h2>
+            <div style={{ aspectRatio: '16/9', borderRadius: 6, overflow: 'hidden', background: '#000' }}>
+              <iframe src={getEmbedUrl(player.highlightUrl)} style={{ width: '100%', height: '100%' }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+            </div>
+          </div>
+        )}
+
+        {/* Data source */}
+        <div style={{ fontSize: 10, color: '#62666d', textAlign: 'center', lineHeight: 1.6 }}>
+          Estadístiques de les actes públiques de la{' '}
+          <a href="https://www.fcf.cat" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline' }}>FCF</a>.{' '}
+          <Link href="/privacitat" style={{ textDecoration: 'underline', color: '#62666d' }}>Privacitat</Link>.
         </div>
       </main>
-      <PublicFooter />
     </div>
   )
 }
 
 /** Convert YouTube/Vimeo URLs to embed format */
 function getEmbedUrl(url: string): string {
-  // YouTube
   const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/)
   if (ytMatch) return `https://www.youtube-nocookie.com/embed/${ytMatch[1]}`
 
-  // Vimeo
   const vimeoMatch = url.match(/vimeo\.com\/(\d+)/)
   if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`
 

@@ -1,6 +1,4 @@
 import type { Metadata } from 'next'
-import PublicHeader from '@/components/PublicHeader'
-import PublicFooter from '@/components/PublicFooter'
 import CercaClient from '@/components/CercaClient'
 import { getAllReferees, getAllPlayers, getAllTeamsFromJSON } from '@/lib/data'
 import { getAllRefereesDB, getAllTeamsDB, getAllPlayersDB } from '@/lib/supabase-data'
@@ -32,14 +30,12 @@ export default async function CercaPage() {
   const players = playersDB.length > 0 ? playersDB : getAllPlayers()
 
   return (
-    <div className="min-h-screen bg-[#0f172a]">
-      <PublicHeader />
+    <div>
       <CercaClient
         referees={referees}
         players={players}
         teams={teams}
       />
-      <PublicFooter />
     </div>
   )
 }

@@ -237,21 +237,21 @@ export default function ApuntsPage() {
   const pending = totalPast - completed - drafts
 
   return (
-    <div className="min-h-screen bg-[#0f172a]">
+    <div className="min-h-screen bg-[#08090a]">
       {/* Header */}
-      <header className="border-b border-white/8 bg-[#0a1628]/80 backdrop-blur sticky top-0 z-40">
+      <header className="border-b border-white/[0.06] bg-[#0a1628]/80 backdrop-blur sticky top-0 z-40">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link href="/dashboard" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm">
+          <Link href="/dashboard" className="flex items-center gap-2 text-[#8a8f98] hover:text-white transition-colors text-sm">
             <ArrowLeft size={16} />
             Dashboard
           </Link>
           <div className="flex items-center gap-2">
             <ListOrdered size={14} className="text-green-400" />
-            <span className="text-sm font-semibold text-white">Apunts de Partit</span>
+            <span className="text-sm font-medium text-white">Apunts de Partit</span>
           </div>
           <Link
             href="/dashboard/apunts/nou"
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 text-white text-xs font-semibold rounded-lg transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#22c55e] hover:bg-[#34d399] text-white text-xs font-medium rounded-lg transition-all"
           >
             <Plus size={12} />
             Nou
@@ -261,15 +261,15 @@ export default function ApuntsPage() {
 
       {/* Tabs */}
       <div className="max-w-5xl mx-auto px-4 pt-4">
-        <div className="flex gap-1 bg-white/3 rounded-xl p-1">
+        <div className="flex gap-1 bg-white/3 rounded-lg p-1">
           {TABS.map(({ key, label, icon: Icon }) => (
             <button
               key={key}
               onClick={() => setActiveTab(key)}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all ${
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === key
                   ? 'bg-white/8 text-white'
-                  : 'text-slate-500 hover:text-slate-300'
+                  : 'text-[#62666d] hover:text-[#d0d6e0]'
               }`}
             >
               <Icon size={13} />
@@ -291,8 +291,8 @@ export default function ApuntsPage() {
             {totalPast > 0 && (
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-slate-500">Progrés dels apunts</span>
-                  <span className="text-xs font-bold text-green-400">{completed}/{totalPast} completats</span>
+                  <span className="text-xs text-[#62666d]">Progrés dels apunts</span>
+                  <span className="text-xs font-medium text-green-400">{completed}/{totalPast} completats</span>
                 </div>
                 <div className="h-2 bg-white/5 rounded-full overflow-hidden flex">
                   {completed > 0 && (
@@ -309,13 +309,13 @@ export default function ApuntsPage() {
                   )}
                 </div>
                 <div className="flex gap-4 mt-2">
-                  <span className="text-[10px] text-slate-600 flex items-center gap-1">
+                  <span className="text-[10px] text-[#62666d] flex items-center gap-1">
                     <span className="w-2 h-2 rounded-full bg-green-500" /> {completed} completats
                   </span>
-                  <span className="text-[10px] text-slate-600 flex items-center gap-1">
+                  <span className="text-[10px] text-[#62666d] flex items-center gap-1">
                     <span className="w-2 h-2 rounded-full bg-amber-500" /> {drafts} esborranys
                   </span>
-                  <span className="text-[10px] text-slate-600 flex items-center gap-1">
+                  <span className="text-[10px] text-[#62666d] flex items-center gap-1">
                     <span className="w-2 h-2 rounded-full bg-white/10" /> {pending} per omplir
                   </span>
                 </div>
@@ -325,13 +325,13 @@ export default function ApuntsPage() {
             {merged.length === 0 ? (
               <div className="text-center py-16">
                 <Calendar size={40} className="text-slate-700 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-white mb-2">No hi ha partits al calendari</h3>
-                <p className="text-sm text-slate-500 mb-6">
+                <h3 className="text-lg font-medium text-white mb-2">No hi ha partits al calendari</h3>
+                <p className="text-sm text-[#62666d] mb-6">
                   Configura el teu equip al dashboard per carregar el calendari automàticament, o crea apunts manualment.
                 </p>
                 <Link
                   href="/dashboard/apunts/nou"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 text-white font-semibold rounded-xl transition-all"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#22c55e] hover:bg-[#34d399] text-white font-medium rounded-lg transition-all"
                 >
                   <Plus size={16} />
                   Crear apunts manualment
@@ -342,7 +342,7 @@ export default function ApuntsPage() {
                 {/* Future matches */}
                 {futureMatches.length > 0 && (
                   <div className="mb-8">
-                    <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+                    <h3 className="text-xs font-medium text-[#62666d] uppercase tracking-wider mb-3">
                       Pròxims partits
                     </h3>
                     <div className="space-y-2">
@@ -356,7 +356,7 @@ export default function ApuntsPage() {
                 {/* Past matches */}
                 {pastMatches.length > 0 && (
                   <div>
-                    <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+                    <h3 className="text-xs font-medium text-[#62666d] uppercase tracking-wider mb-3">
                       Partits jugats
                     </h3>
                     <div className="space-y-2">
@@ -402,7 +402,7 @@ function MatchRow({
     : noteStatus === 'draft'
     ? { icon: FileEdit, label: 'Esborrany', color: 'amber', bg: 'bg-amber-500/8 border-amber-500/20' }
     : m.isPast
-    ? { icon: CircleDot, label: 'Per omplir', color: 'slate', bg: 'bg-white/3 border-white/8 hover:border-green-500/30' }
+    ? { icon: CircleDot, label: 'Per omplir', color: 'slate', bg: 'bg-white/3 border-white/[0.06] hover:border-green-500/30' }
     : { icon: Calendar, label: 'Pròxim', color: 'cyan', bg: 'bg-cyan-500/5 border-cyan-500/15' }
 
   const StatusIcon = statusConfig.icon
@@ -410,14 +410,14 @@ function MatchRow({
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center gap-3 p-3 sm:p-4 rounded-xl border transition-all group text-left ${statusConfig.bg} ${
+      className={`w-full flex items-center gap-3 p-3 sm:p-4 rounded-lg border transition-all group text-left ${statusConfig.bg} ${
         !noteStatus && m.isPast ? 'hover:bg-green-500/5' : ''
       }`}
     >
       {/* Jornada */}
       <div className="w-8 text-center shrink-0">
         {m.jornada ? (
-          <span className="text-[10px] text-slate-600 font-mono">J{m.jornada}</span>
+          <span className="text-[10px] text-[#62666d] font-mono">J{m.jornada}</span>
         ) : (
           <span className="text-[10px] text-slate-700">—</span>
         )}
@@ -425,7 +425,7 @@ function MatchRow({
 
       {/* Date */}
       <div className="w-12 text-center shrink-0">
-        <span className="text-xs text-slate-400 font-medium">{formatDate(m.matchDate)}</span>
+        <span className="text-xs text-[#8a8f98] font-medium">{formatDate(m.matchDate)}</span>
       </div>
 
       {/* Home/Away indicator */}
@@ -439,13 +439,13 @@ function MatchRow({
 
       {/* Opponent */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-white truncate">{m.opponent}</p>
+        <p className="text-sm font-medium text-white truncate">{m.opponent}</p>
       </div>
 
       {/* Score */}
       <div className="w-14 text-center shrink-0">
         {hasScore ? (
-          <span className={`text-sm font-black ${
+          <span className={`text-sm font-medium ${
             m.goalsFor! > m.goalsAgainst! ? 'text-green-400' :
             m.goalsFor === m.goalsAgainst ? 'text-amber-400' : 'text-red-400'
           }`}>
@@ -477,7 +477,7 @@ function MatchRow({
             <Trash2 size={12} />
           </span>
         )}
-        <ChevronRight size={14} className="text-slate-700 group-hover:text-slate-400 transition-colors" />
+        <ChevronRight size={14} className="text-slate-700 group-hover:text-[#8a8f98] transition-colors" />
       </div>
     </button>
   )

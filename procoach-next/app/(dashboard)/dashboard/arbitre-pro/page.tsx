@@ -72,11 +72,11 @@ function SeverityGauge({ score, blurred }: { score: number; blurred: boolean }) 
         <path d={bgPath} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="12" strokeLinecap="round" />
         <path d={activePath} fill="none" stroke={color} strokeWidth="12" strokeLinecap="round" style={{ filter: `drop-shadow(0 0 6px ${color}40)` }} />
         {/* Needle */}
-        <circle cx={activeEnd.x} cy={activeEnd.y} r="6" fill={color} stroke="#0f172a" strokeWidth="2" />
-        <text x={cx} y={cy - 5} textAnchor="middle" className={`text-3xl font-black ${blurred ? 'blur-sm' : ''}`} fill="white" fontSize="28">{clampedScore}</text>
+        <circle cx={activeEnd.x} cy={activeEnd.y} r="6" fill={color} stroke="#08090a" strokeWidth="2" />
+        <text x={cx} y={cy - 5} textAnchor="middle" className={`text-3xl font-medium ${blurred ? 'blur-sm' : ''}`} fill="white" fontSize="28">{clampedScore}</text>
         <text x={cx} y={cy + 14} textAnchor="middle" fill="rgba(148,163,184,0.8)" fontSize="10">/100</text>
       </svg>
-      <span className={`text-sm font-bold mt-1 ${blurred ? 'blur-sm select-none' : ''}`} style={{ color }}>{label}</span>
+      <span className={`text-sm font-medium mt-1 ${blurred ? 'blur-sm select-none' : ''}`} style={{ color }}>{label}</span>
     </div>
   )
 }
@@ -100,10 +100,10 @@ function RadialPercentile({ value, label, sublabel, size = 90, blurred }: { valu
         />
       </svg>
       <div className="absolute flex flex-col items-center justify-center" style={{ width: size, height: size }}>
-        <span className={`text-lg font-black text-white ${blurred ? 'blur-sm select-none' : ''}`}>{value}%</span>
+        <span className={`text-lg font-medium text-white ${blurred ? 'blur-sm select-none' : ''}`}>{value}%</span>
       </div>
-      <span className="text-[11px] text-slate-400 text-center leading-tight mt-0.5">{label}</span>
-      {sublabel && <span className="text-[9px] text-slate-500 text-center">{sublabel}</span>}
+      <span className="text-[11px] text-[#8a8f98] text-center leading-tight mt-0.5">{label}</span>
+      {sublabel && <span className="text-[9px] text-[#62666d] text-center">{sublabel}</span>}
     </div>
   )
 }
@@ -118,8 +118,8 @@ function SplitBar({ left, right, leftLabel, rightLabel, leftColor, rightColor, b
   return (
     <div>
       <div className="flex justify-between text-xs mb-1.5">
-        <span className="text-slate-400">{leftLabel} <span className={`font-bold ${blurred ? 'blur-sm select-none' : ''}`} style={{ color: leftColor }}>{left}</span></span>
-        <span className="text-slate-400"><span className={`font-bold ${blurred ? 'blur-sm select-none' : ''}`} style={{ color: rightColor }}>{right}</span> {rightLabel}</span>
+        <span className="text-[#8a8f98]">{leftLabel} <span className={`font-medium ${blurred ? 'blur-sm select-none' : ''}`} style={{ color: leftColor }}>{left}</span></span>
+        <span className="text-[#8a8f98]"><span className={`font-medium ${blurred ? 'blur-sm select-none' : ''}`} style={{ color: rightColor }}>{right}</span> {rightLabel}</span>
       </div>
       <div className="w-full h-3 rounded-full overflow-hidden flex" style={{ background: 'rgba(255,255,255,0.06)' }}>
         <div className="h-full rounded-l-full transition-all" style={{ width: `${leftPct}%`, background: leftColor, opacity: 0.8 }} />
@@ -152,12 +152,12 @@ function CardSparkline({ matches }: { matches: Array<{ yellows: number; reds: nu
         {/* Dots */}
         {data.map((m, i) => (
           <circle key={i} cx={i * step} cy={h - ((m.yellows + m.reds) / max) * (h - 8)} r="3"
-            fill={m.reds > 0 ? '#ef4444' : '#f59e0b'} stroke="#0f172a" strokeWidth="1.5" />
+            fill={m.reds > 0 ? '#ef4444' : '#f59e0b'} stroke="#08090a" strokeWidth="1.5" />
         ))}
       </svg>
-      <div className="flex justify-between text-[9px] text-slate-600 px-0.5 -mt-1">
+      <div className="flex justify-between text-[9px] text-[#62666d] px-0.5 -mt-1">
         <span>Antic</span>
-        <span className="text-purple-400/50">avg {avgLine.toFixed(1)}</span>
+        <span className="text-[#8a8f98]/50">avg {avgLine.toFixed(1)}</span>
         <span>Recent</span>
       </div>
     </div>
@@ -188,29 +188,29 @@ export default async function ArbitreProPage() {
         {blurred && <ProUnlockBanner />}
 
         {!ref ? (
-          <div className="glass-card rounded-2xl p-12 text-center">
-            <Shield size={40} className="text-slate-600 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-white mb-2">Sense informacio arbitral</h2>
-            <p className="text-slate-400 text-sm">
+          <div className="v2-card p-12 text-center">
+            <Shield size={40} className="text-[#62666d] mx-auto mb-4" />
+            <h2 className="text-xl font-medium text-white mb-2">Sense informacio arbitral</h2>
+            <p className="text-[#8a8f98] text-sm">
               {nextMatch ? 'Encara no hi ha dades sobre l\'arbitre assignat.' : 'No hi ha proxim partit programat.'}
             </p>
           </div>
         ) : (
           <div className="space-y-5">
             {/* ── Header + Severity Gauge ──────────────────────────────────────── */}
-            <div className="glass-card rounded-2xl p-6 border-purple-500/20">
+            <div className="v2-card p-6 border-white/[0.06]">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
                 <div className="flex items-center gap-4 flex-1 min-w-0">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/25 flex items-center justify-center shrink-0">
-                    <Shield size={24} className="text-purple-400" />
+                  <div style={{ width: 48, height: 48, borderRadius: 8, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Shield size={20} style={{ color: '#8a8f98' }} />
                   </div>
                   <div className="min-w-0">
-                    <h1 className="text-2xl font-black text-white truncate">{ref.name}</h1>
-                    <div className="flex items-center gap-2 text-sm text-slate-400">
+                    <h1 className="text-2xl font-medium text-white truncate">{ref.name}</h1>
+                    <div className="flex items-center gap-2 text-sm text-[#8a8f98]">
                       <span><ProBlurValue value={`${ref.matches} partits (senior)`} blurred={blurred} /></span>
                       {ref.predicted && <span className="text-xs px-2 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/25 rounded-full">Prediccio</span>}
                     </div>
-                    <p className="text-[10px] text-slate-600 mt-0.5">Nomes categories senior i preferent juvenil</p>
+                    <p className="text-[10px] text-[#62666d] mt-0.5">Nomes categories senior i preferent juvenil</p>
                   </div>
                 </div>
                 <SeverityGauge score={ref.severity_score} blurred={blurred} />
@@ -226,30 +226,30 @@ export default async function ArbitreProPage() {
                 { v: ref.penalties_per_match.toFixed(2), l: 'Penals/partit', c: 'text-cyan-400', bg: 'bg-cyan-500/10 border-cyan-500/20' },
                 { v: ref.avg_goals_per_match.toFixed(1), l: 'Gols/partit', c: 'text-green-400', bg: 'bg-green-500/10 border-green-500/20' },
               ].map(s => (
-                <div key={s.l} className={`rounded-xl p-4 text-center border ${s.bg}`}>
-                  <div className={`text-2xl font-black ${s.c}`}>
+                <div key={s.l} className={`rounded-lg p-4 text-center border ${s.bg}`}>
+                  <div className={`text-2xl font-medium ${s.c}`}>
                     <ProBlurValue value={s.v} blurred={blurred} />
                   </div>
-                  <div className="text-[10px] text-slate-500 mt-1">{s.l}</div>
+                  <div className="text-[10px] text-[#62666d] mt-1">{s.l}</div>
                 </div>
               ))}
             </div>
 
             {/* ── Penalty Detail ───────────────────────────────────────────────── */}
             {ref.penalties_total > 0 && (
-              <div className="glass-card rounded-2xl p-5 border-cyan-500/15">
+              <div className="v2-card p-5 border-white/[0.06]">
                 <div className="flex items-center gap-2 mb-3">
                   <Target size={16} className="text-cyan-400" />
-                  <h3 className="text-sm font-bold text-white">Penals</h3>
+                  <h3 className="text-sm font-medium text-white">Penals</h3>
                 </div>
                 <div className="flex items-center gap-6 text-sm">
                   <div>
-                    <span className="text-slate-400">Total penals pitats: </span>
-                    <span className="font-bold text-cyan-400"><ProBlurValue value={ref.penalties_total} blurred={blurred} /></span>
+                    <span className="text-[#8a8f98]">Total penals pitats: </span>
+                    <span className="font-medium text-cyan-400"><ProBlurValue value={ref.penalties_total} blurred={blurred} /></span>
                   </div>
                   <div>
-                    <span className="text-slate-400">Partits amb penal: </span>
-                    <span className="font-bold text-cyan-400"><ProBlurValue value={`${ref.matches_with_penalty_pct}%`} blurred={blurred} /></span>
+                    <span className="text-[#8a8f98]">Partits amb penal: </span>
+                    <span className="font-medium text-cyan-400"><ProBlurValue value={`${ref.matches_with_penalty_pct}%`} blurred={blurred} /></span>
                   </div>
                 </div>
               </div>
@@ -263,10 +263,10 @@ export default async function ArbitreProPage() {
                 ctaText="Convida 2 entrenadors per veure la tendencia completa"
                 ctaLabel="Desbloquejar"
               >
-                <div className="glass-card rounded-2xl p-5">
+                <div className="v2-card p-5">
                   <div className="flex items-center gap-2 mb-3">
                     <TrendingUp size={16} className="text-amber-400" />
-                    <h3 className="text-sm font-bold text-white">Tendencia de targetes</h3>
+                    <h3 className="text-sm font-medium text-white">Tendencia de targetes</h3>
                   </div>
                   <CardSparkline matches={ref.recentMatches} />
                 </div>
@@ -281,12 +281,12 @@ export default async function ArbitreProPage() {
                 ctaText="Comparteix NeoScout per desbloquejar els percentils"
                 ctaLabel="Desbloquejar"
               >
-                <div className="glass-card rounded-2xl p-6 border-blue-500/15">
+                <div className="v2-card p-6 border-white/[0.06]">
                   <div className="flex items-center gap-2 mb-1">
-                    <Target size={18} className="text-blue-400" />
-                    <h2 className="text-lg font-bold text-white">Percentil a la teva divisio</h2>
+                    <Target size={18} className="text-[#8a8f98]" />
+                    <h2 className="text-lg font-medium text-white">Percentil a la teva divisio</h2>
                   </div>
-                  <p className="text-xs text-slate-500 mb-5">
+                  <p className="text-xs text-[#62666d] mb-5">
                     Comparat amb {ref.division_referee_count} arbitres que han dirigit a {ref.division_name}
                   </p>
                   <div className="flex items-center justify-center gap-8 sm:gap-12">
@@ -297,7 +297,7 @@ export default async function ArbitreProPage() {
                       <RadialPercentile value={ref.division_reds_percentile} label="Vermelles" sublabel={`a ${ref.division_name}`} size={100} blurred={blurred} />
                     </div>
                   </div>
-                  <p className="text-[10px] text-slate-600 text-center mt-4">
+                  <p className="text-[10px] text-[#62666d] text-center mt-4">
                     Percentil 80+ = mes estricte que el 80% dels arbitres que han dirigit a la teva competicio.
                   </p>
                 </div>
@@ -311,12 +311,12 @@ export default async function ArbitreProPage() {
               ctaText="Convida 2 entrenadors per veure els percentils globals"
               ctaLabel="Desbloquejar"
             >
-              <div className="glass-card rounded-2xl p-6">
+              <div className="v2-card p-6">
                 <div className="flex items-center gap-2 mb-1">
-                  <BarChart2 size={18} className="text-purple-400" />
-                  <h2 className="text-lg font-bold text-white">Percentils globals</h2>
+                  <BarChart2 size={18} className="text-[#8a8f98]" />
+                  <h2 className="text-lg font-medium text-white">Percentils globals</h2>
                 </div>
-                <p className="text-xs text-slate-500 mb-4">Totes les categories senior + preferent juvenil</p>
+                <p className="text-xs text-[#62666d] mb-4">Totes les categories senior + preferent juvenil</p>
                 <div className="flex items-center justify-center gap-8 sm:gap-12">
                   <div className="relative">
                     <RadialPercentile value={ref.yellows_percentile} label="Grogues" size={100} blurred={blurred} />
@@ -331,8 +331,8 @@ export default async function ArbitreProPage() {
             {/* ── Visual Distributions ─────────────────────────────────────────── */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Home/Away */}
-              <div className="glass-card rounded-2xl p-5">
-                <h3 className="font-bold text-white text-sm mb-4">Local vs Visitant</h3>
+              <div className="v2-card p-5">
+                <h3 className="font-medium text-white text-sm mb-4">Local vs Visitant</h3>
                 <div className="space-y-3">
                   <SplitBar
                     left={ref.home_yellows} right={ref.away_yellows}
@@ -347,9 +347,9 @@ export default async function ArbitreProPage() {
                     blurred={blurred}
                   />
                   {ref.home_bias !== null && (
-                    <div className="flex items-center justify-between text-sm pt-2 border-t border-white/8">
-                      <span className="text-slate-400">Biaix local</span>
-                      <span className={`font-bold ${blurred ? 'blur-sm select-none' : ''} ${ref.home_bias > 60 ? 'text-red-400' : ref.home_bias < 40 ? 'text-green-400' : 'text-slate-300'}`}>
+                    <div className="flex items-center justify-between text-sm pt-2 border-t border-white/[0.06]">
+                      <span className="text-[#8a8f98]">Biaix local</span>
+                      <span className={`font-medium ${blurred ? 'blur-sm select-none' : ''} ${ref.home_bias > 60 ? 'text-red-400' : ref.home_bias < 40 ? 'text-green-400' : 'text-[#d0d6e0]'}`}>
                         {ref.home_bias.toFixed(0)}%
                       </span>
                     </div>
@@ -358,10 +358,10 @@ export default async function ArbitreProPage() {
               </div>
 
               {/* Half-time split */}
-              <div className="glass-card rounded-2xl p-5">
+              <div className="v2-card p-5">
                 <div className="flex items-center gap-2 mb-4">
-                  <Clock size={14} className="text-blue-400" />
-                  <h3 className="font-bold text-white text-sm">Targetes per temps</h3>
+                  <Clock size={14} className="text-[#8a8f98]" />
+                  <h3 className="font-medium text-white text-sm">Targetes per temps</h3>
                 </div>
                 <div className="space-y-3">
                   <SplitBar
@@ -376,10 +376,10 @@ export default async function ArbitreProPage() {
                     leftColor="#ef4444" rightColor="#f87171"
                     blurred={blurred}
                   />
-                  <div className={`flex items-center justify-between text-[10px] text-slate-500 pt-2 border-t border-white/8 ${blurred ? 'blur-sm select-none' : ''}`}>
+                  <div className={`flex items-center justify-between text-[10px] text-[#62666d] pt-2 border-t border-white/[0.06] ${blurred ? 'blur-sm select-none' : ''}`}>
                     <span>Total 1a: {ref.first_half_cards}</span>
                     <span>Total 2a: {ref.second_half_cards}</span>
-                    <span className={ref.second_half_cards > ref.first_half_cards * 1.5 ? 'text-amber-400 font-bold' : ''}>
+                    <span className={ref.second_half_cards > ref.first_half_cards * 1.5 ? 'text-amber-400 font-medium' : ''}>
                       {ref.second_half_cards > ref.first_half_cards * 1.5 ? '⚡ Mes actiu a la 2a' : ''}
                     </span>
                   </div>
@@ -395,12 +395,12 @@ export default async function ArbitreProPage() {
                 ctaText="Comparteix per veure el desglos per competicio"
                 ctaLabel="Desbloquejar"
               >
-                <div className="glass-card rounded-2xl p-6">
-                  <h2 className="text-lg font-bold text-white mb-4">Desglos per competicio</h2>
+                <div className="v2-card p-6">
+                  <h2 className="text-lg font-medium text-white mb-4">Desglos per competicio</h2>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="text-xs text-slate-500 border-b border-white/8">
+                        <tr className="text-xs text-[#62666d] border-b border-white/[0.06]">
                           <th className="text-left py-2 px-2">Competicio</th>
                           <th className="text-center py-2 px-2">Partits</th>
                           <th className="text-center py-2 px-2">Grogues</th>
@@ -412,15 +412,15 @@ export default async function ArbitreProPage() {
                         {ref.competitionBreakdown.map((c, i) => {
                           const isCoachDiv = c.competition === teamCompetition
                           return (
-                            <tr key={i} className={`border-b border-white/5 ${isCoachDiv ? 'bg-blue-500/5' : ''}`}>
+                            <tr key={i} className={`border-b border-white/[0.04] ${isCoachDiv ? 'bg-blue-500/5' : ''}`}>
                               <td className="py-2 px-2 text-white">
                                 {COMPETITION_NAMES[c.competition] || c.competition}
-                                {isCoachDiv && <span className="ml-1.5 text-[9px] px-1.5 py-0.5 bg-blue-500/20 text-blue-400 rounded-full">La teva</span>}
+                                {isCoachDiv && <span className="ml-1.5 text-[9px] px-1.5 py-0.5 bg-blue-500/20 text-[#8a8f98] rounded-full">La teva</span>}
                               </td>
-                              <td className="py-2 px-2 text-center text-slate-300">{c.matches}</td>
+                              <td className="py-2 px-2 text-center text-[#d0d6e0]">{c.matches}</td>
                               <td className="py-2 px-2 text-center text-amber-400">{c.yellows}</td>
                               <td className="py-2 px-2 text-center text-red-400">{c.reds}</td>
-                              <td className="py-2 px-2 text-center text-slate-400">{c.matches > 0 ? (c.yellows / c.matches).toFixed(1) : '-'}</td>
+                              <td className="py-2 px-2 text-center text-[#8a8f98]">{c.matches > 0 ? (c.yellows / c.matches).toFixed(1) : '-'}</td>
                             </tr>
                           )
                         })}
@@ -433,16 +433,16 @@ export default async function ArbitreProPage() {
 
             {/* ── Recent Matches ───────────────────────────────────────────────── */}
             {ref.recentMatches.length > 0 && (
-              <div className="glass-card rounded-2xl p-6">
-                <h2 className="text-lg font-bold text-white mb-4">Ultims partits arbitrats</h2>
+              <div className="v2-card p-6">
+                <h2 className="text-lg font-medium text-white mb-4">Ultims partits arbitrats</h2>
                 <div className="space-y-1">
                   {ref.recentMatches.slice(0, 10).map((m, i) => {
                     const isCoachDiv = m.competition === teamCompetition
                     return (
-                      <div key={i} className={`flex items-center gap-3 text-sm py-2 border-b border-white/5 last:border-0 ${isCoachDiv ? 'bg-blue-500/5 rounded-lg px-2 -mx-2' : ''}`}>
-                        <span className="text-slate-500 text-xs w-14 shrink-0">{formatDate(m.date)}</span>
+                      <div key={i} className={`flex items-center gap-3 text-sm py-2 border-b border-white/[0.04] last:border-0 ${isCoachDiv ? 'bg-blue-500/5 rounded-lg px-2 -mx-2' : ''}`}>
+                        <span className="text-[#62666d] text-xs w-14 shrink-0">{formatDate(m.date)}</span>
                         <span className="text-white flex-1 truncate">{m.home_team} vs {m.away_team}</span>
-                        <span className={`font-bold tabular-nums text-slate-300 shrink-0 ${blurred ? 'blur-sm select-none' : ''}`}>
+                        <span className={`font-medium tabular-nums text-[#d0d6e0] shrink-0 ${blurred ? 'blur-sm select-none' : ''}`}>
                           {m.home_score !== null ? `${m.home_score}-${m.away_score}` : '-'}
                         </span>
                         <span className={`text-amber-400 text-xs shrink-0 ${blurred ? 'blur-sm select-none' : ''}`}>{m.yellows}🟡</span>

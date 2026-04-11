@@ -78,7 +78,7 @@ function NouApuntInner() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f172a] flex items-center justify-center">
+      <div className="min-h-screen bg-[#08090a] flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
       </div>
     )
@@ -90,7 +90,7 @@ function NouApuntInner() {
 export default function NouApuntPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#0f172a] flex items-center justify-center">
+      <div className="min-h-screen bg-[#08090a] flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
       </div>
     }>

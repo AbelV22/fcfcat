@@ -47,52 +47,61 @@ export default async function CalendariPage() {
   })
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 lg:py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-black text-white mb-1">{report?.name || team.name}</h1>
-          <p className="text-slate-400 text-sm">{team.competition} — Temporada 2025/26</p>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6" style={{ paddingTop: 24, paddingBottom: 48, fontFamily: 'var(--font-inter)' }}>
+        <div style={{ marginBottom: 28 }}>
+          <h1 style={{ fontSize: 22, fontWeight: 510, color: '#f7f8f8', letterSpacing: '-0.02em', marginBottom: 4 }}>{report?.name || team.name}</h1>
+          <p style={{ fontSize: 13, color: '#8a8f98' }}>{team.competition} — Temporada 2025/26</p>
         </div>
 
         {form.length === 0 ? (
-          <div className="glass-card rounded-2xl p-12 text-center">
-            <Calendar size={40} className="text-slate-600 mx-auto mb-4" />
-            <p className="text-slate-400">No s&apos;han trobat partits.</p>
+          <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: 48, textAlign: 'center' }}>
+            <Calendar size={36} style={{ color: '#62666d', margin: '0 auto 16px', opacity: 0.4 }} />
+            <p style={{ color: '#8a8f98', fontSize: 14 }}>No s&apos;han trobat partits.</p>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             {/* Next match highlight */}
             {nextMatch && (
-              <div className="glass-card rounded-2xl p-6 border-cyan-500/20">
-                <div className="flex items-center gap-2 mb-4">
-                  <Crosshair size={18} className="text-cyan-400" />
-                  <h2 className="font-bold text-white">Proper partit — J{nextMatch.jornada}</h2>
-                  <span className={`ml-auto text-xs px-2 py-0.5 rounded-full font-semibold ${nextMatch.isHome ? 'bg-green-500/20 text-green-400 border border-green-500/25' : 'bg-sky-500/20 text-sky-400 border border-sky-500/25'}`}>
+              <div style={{ background: 'rgba(34,197,94,0.03)', border: '1px solid rgba(34,197,94,0.1)', borderRadius: 8, padding: 20 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                  <Crosshair size={16} style={{ color: '#22c55e' }} />
+                  <h2 style={{ fontWeight: 510, color: '#f7f8f8', fontSize: 14 }}>Proper partit — J{nextMatch.jornada}</h2>
+                  <span style={{
+                    marginLeft: 'auto', fontSize: 11, padding: '2px 8px', borderRadius: 9999, fontWeight: 510,
+                    background: nextMatch.isHome ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.04)',
+                    color: nextMatch.isHome ? '#22c55e' : '#8a8f98',
+                    border: nextMatch.isHome ? '1px solid rgba(34,197,94,0.15)' : '1px solid rgba(255,255,255,0.06)',
+                  }}>
                     {nextMatch.isHome ? 'Local' : 'Visitant'}
                   </span>
                 </div>
-                <div className="flex items-center gap-4">
-                  <span className="text-slate-400 text-sm">{formatDate(nextMatch.date)}</span>
-                  {nextMatch.time && <span className="text-cyan-400 font-bold text-sm">{nextMatch.time}h</span>}
-                  <span className="text-white font-semibold">{nextMatch.opponent}</span>
-                  {nextMatch.venue && <span className="text-slate-500 text-xs ml-auto">{nextMatch.venue}</span>}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <span style={{ color: '#8a8f98', fontSize: 13 }}>{formatDate(nextMatch.date)}</span>
+                  {nextMatch.time && <span style={{ color: '#22c55e', fontWeight: 510, fontSize: 13 }}>{nextMatch.time}h</span>}
+                  <span style={{ color: '#f7f8f8', fontWeight: 510, fontSize: 14 }}>{nextMatch.opponent}</span>
+                  {nextMatch.venue && <span style={{ color: '#62666d', fontSize: 11, marginLeft: 'auto' }}>{nextMatch.venue}</span>}
                 </div>
               </div>
             )}
 
             {/* Future matches */}
             {futureMatches.length > 0 && (
-              <div className="glass-card rounded-2xl p-6">
-                <h2 className="text-lg font-bold text-white mb-4">Propers partits ({futureMatches.length})</h2>
-                <div className="space-y-1">
+              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: 24 }}>
+                <h2 style={{ fontSize: 15, fontWeight: 510, color: '#f7f8f8', marginBottom: 14 }}>Pròxims partits ({futureMatches.length})</h2>
+                <div>
                   {futureMatches.map((m, i) => (
-                    <div key={i} className="flex items-center gap-3 text-sm py-2.5 border-b border-white/5 last:border-0">
-                      <span className="text-slate-500 text-xs w-14">{formatDate(m.date)}</span>
-                      <span className="text-slate-400 text-xs w-8">J{m.jornada}</span>
-                      <span className={`text-xs px-1.5 py-0.5 rounded font-bold ${m.isHome ? 'bg-green-500/15 text-green-400' : 'bg-sky-500/15 text-sky-400'}`}>
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                      <span style={{ color: '#62666d', fontSize: 11, width: 48, flexShrink: 0 }}>{formatDate(m.date)}</span>
+                      <span style={{ color: '#62666d', fontSize: 11, width: 28 }}>J{m.jornada}</span>
+                      <span style={{
+                        fontSize: 10, padding: '1px 6px', borderRadius: 4, fontWeight: 510,
+                        background: m.isHome ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.04)',
+                        color: m.isHome ? '#22c55e' : '#8a8f98',
+                      }}>
                         {m.isHome ? 'L' : 'V'}
                       </span>
-                      <span className="text-white flex-1 truncate">{m.opponent}</span>
-                      <span className="text-slate-600 text-sm">-</span>
+                      <span style={{ color: '#f7f8f8', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.opponent}</span>
+                      <span style={{ color: '#62666d', fontSize: 12 }}>-</span>
                     </div>
                   ))}
                 </div>
@@ -101,25 +110,38 @@ export default async function CalendariPage() {
 
             {/* Past results */}
             {pastMatches.length > 0 && (
-              <div className="glass-card rounded-2xl p-6">
-                <h2 className="text-lg font-bold text-white mb-4">Resultats ({pastMatches.length})</h2>
-                <div className="space-y-1">
+              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: 24 }}>
+                <h2 style={{ fontSize: 15, fontWeight: 510, color: '#f7f8f8', marginBottom: 14 }}>Resultats ({pastMatches.length})</h2>
+                <div>
                   {pastMatches.map((m, i) => {
                     const res = m.result
                     return (
-                      <div key={i} className={`flex items-center gap-3 text-sm py-2.5 border-b border-white/5 last:border-0 ${res === 'W' ? 'bg-green-500/5' : res === 'L' ? 'bg-red-500/5' : ''} rounded-lg px-2 -mx-2`}>
-                        <span className="text-slate-500 text-xs w-14">{formatDate(m.date)}</span>
-                        <span className="text-slate-400 text-xs w-8">J{m.jornada}</span>
-                        <span className={`text-xs px-1.5 py-0.5 rounded font-bold ${m.isHome ? 'bg-green-500/15 text-green-400' : 'bg-sky-500/15 text-sky-400'}`}>
+                      <div key={i} style={{
+                        display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, padding: '8px 4px',
+                        borderBottom: '1px solid rgba(255,255,255,0.04)', borderRadius: 4,
+                        background: res === 'W' ? 'rgba(34,197,94,0.03)' : res === 'L' ? 'rgba(248,113,113,0.03)' : 'transparent',
+                      }}>
+                        <span style={{ color: '#62666d', fontSize: 11, width: 48, flexShrink: 0 }}>{formatDate(m.date)}</span>
+                        <span style={{ color: '#62666d', fontSize: 11, width: 28 }}>J{m.jornada}</span>
+                        <span style={{
+                          fontSize: 10, padding: '1px 6px', borderRadius: 4, fontWeight: 510,
+                          background: m.isHome ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.04)',
+                          color: m.isHome ? '#22c55e' : '#8a8f98',
+                        }}>
                           {m.isHome ? 'L' : 'V'}
                         </span>
-                        <span className="text-white flex-1 truncate">{m.opponent}</span>
-                        <span className="font-bold tabular-nums">
-                          <span className={res === 'W' ? 'text-green-400' : res === 'L' ? 'text-red-400' : 'text-slate-300'}>{m.goalsFor}</span>
-                          <span className="text-slate-600 mx-0.5">-</span>
-                          <span className={res === 'L' ? 'text-green-400' : res === 'W' ? 'text-red-400' : 'text-slate-300'}>{m.goalsAgainst}</span>
+                        <span style={{ color: '#f7f8f8', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.opponent}</span>
+                        <span style={{ fontWeight: 510, fontVariantNumeric: 'tabular-nums' }}>
+                          <span style={{ color: res === 'W' ? '#22c55e' : res === 'L' ? '#f87171' : '#d0d6e0' }}>{m.goalsFor}</span>
+                          <span style={{ color: '#62666d', margin: '0 2px' }}>-</span>
+                          <span style={{ color: res === 'L' ? '#22c55e' : res === 'W' ? '#f87171' : '#d0d6e0' }}>{m.goalsAgainst}</span>
                         </span>
-                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${res === 'W' ? 'bg-green-500 text-white' : res === 'D' ? 'bg-amber-400 text-white' : res === 'L' ? 'bg-red-500 text-white' : 'bg-white/10 text-slate-500'}`}>
+                        <span style={{
+                          width: 20, height: 20, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: 10, fontWeight: 510,
+                          background: res === 'W' ? '#22c55e' : res === 'D' ? '#62666d' : res === 'L' ? '#f87171' : 'rgba(255,255,255,0.08)',
+                          color: res ? '#fff' : '#62666d',
+                        }}>
                           {res || '?'}
                         </span>
                       </div>

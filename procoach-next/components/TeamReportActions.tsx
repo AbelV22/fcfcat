@@ -98,7 +98,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
           onClick={handleExportPDF}
           disabled={exporting || !reportData.rival}
           title={!reportData.rival ? 'Cal tenir un rival assignat per generar el PDF' : undefined}
-          className="group inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-600/90 to-cyan-600/90 hover:from-green-500 hover:to-cyan-500 disabled:from-slate-700 disabled:to-slate-700 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-green-500/20 hover:shadow-green-500/30 disabled:shadow-none disabled:cursor-not-allowed"
+          className="group inline-flex items-center gap-2 px-4 py-2.5 bg-[#22c55e] hover:bg-[#34d399] disabled:from-slate-700 disabled:to-slate-700 text-white text-sm font-medium rounded-lg transition-all shadow-lg shadow-green-500/20 hover:shadow-green-500/30 disabled:shadow-none disabled:cursor-not-allowed"
         >
           {exporting ? (
             <>
@@ -114,7 +114,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
         </button>
         <button
           onClick={handleWhatsApp}
-          className="group inline-flex items-center gap-2 px-4 py-2.5 bg-[#25D366]/90 hover:bg-[#25D366] text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-[#25D366]/20 hover:shadow-[#25D366]/30"
+          className="group inline-flex items-center gap-2 px-4 py-2.5 bg-[#25D366]/90 hover:bg-[#25D366] text-white text-sm font-medium rounded-lg transition-all shadow-lg shadow-[#25D366]/20 hover:shadow-[#25D366]/30"
         >
           <Share2 size={16} className="group-hover:scale-110 transition-transform" />
           <span className="hidden sm:inline">WhatsApp</span>

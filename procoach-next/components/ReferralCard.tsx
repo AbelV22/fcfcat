@@ -49,19 +49,19 @@ export default function ReferralCard() {
   const remaining = Math.max(data.target - data.referral_count, 0)
 
   return (
-    <div className="glass-card rounded-2xl p-6 mb-8 border-cyan-500/20">
+    <div className="v2-card p-6 mb-8 border-cyan-500/20">
       <div className="flex items-start gap-4 mb-5">
-        <div className="w-12 h-12 rounded-2xl bg-cyan-500/15 flex items-center justify-center shrink-0">
-          <Gift size={22} className="text-cyan-400" />
+        <div className="w-12 h-12 rounded-lg bg-cyan-500/15 flex items-center justify-center shrink-0">
+          <Gift size={22} className="text-[#8a8f98]" />
         </div>
         <div className="flex-1 min-w-0">
-          <h2 className="text-lg font-bold text-white mb-1">
+          <h2 className="text-lg font-medium text-white mb-1">
             {data.pro_unlocked
               ? 'PRO desbloquejat!'
               : 'Convida entrenadors, desbloqueja PRO'
             }
           </h2>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-[#8a8f98]">
             {data.pro_unlocked
               ? "Ja tens acces a totes les funcionalitats PRO. Gracies per compartir!"
               : `Convida ${remaining} entrenador${remaining !== 1 ? 's' : ''} mes per desbloquejar l'Informe Pro d'Arbitre i mes.`
@@ -74,18 +74,18 @@ export default function ReferralCard() {
       <div className="mb-5">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <Users size={14} className="text-slate-400" />
-            <span className="text-sm text-slate-300">
+            <Users size={14} className="text-[#8a8f98]" />
+            <span className="text-sm text-[#d0d6e0]">
               {data.referral_count} / {data.target} convidats
             </span>
           </div>
           {data.pro_unlocked ? (
             <div className="flex items-center gap-1 text-green-400">
               <Unlock size={14} />
-              <span className="text-xs font-bold">PRO ACTIU</span>
+              <span className="text-xs font-medium">PRO ACTIU</span>
             </div>
           ) : (
-            <div className="flex items-center gap-1 text-slate-500">
+            <div className="flex items-center gap-1 text-[#62666d]">
               <Lock size={14} />
               <span className="text-xs">PRO bloquejat</span>
             </div>
@@ -116,8 +116,8 @@ export default function ReferralCard() {
 
       {/* Referral link + share */}
       <div className="flex flex-col sm:flex-row gap-2">
-        <div className="flex-1 flex items-center gap-2 bg-white/5 rounded-xl px-4 py-2.5 min-w-0">
-          <span className="text-xs text-slate-500 truncate flex-1 font-mono">
+        <div className="flex-1 flex items-center gap-2 bg-white/5 rounded-lg px-4 py-2.5 min-w-0">
+          <span className="text-xs text-[#62666d] truncate flex-1 font-mono">
             neoscout.es/registre?ref={data.referral_code}
           </span>
           <button
@@ -128,13 +128,13 @@ export default function ReferralCard() {
             {copied ? (
               <Check size={14} className="text-green-400" />
             ) : (
-              <Copy size={14} className="text-slate-400" />
+              <Copy size={14} className="text-[#8a8f98]" />
             )}
           </button>
         </div>
         <button
           onClick={handleWhatsApp}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-[#25D366] hover:bg-[#20bd5a] text-white text-sm font-bold rounded-xl transition-all shrink-0"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-[#25D366] hover:bg-[#20bd5a] text-white text-sm font-medium rounded-lg transition-all shrink-0"
         >
           <Share2 size={14} />
           <span>WhatsApp</span>
@@ -143,15 +143,15 @@ export default function ReferralCard() {
 
       {/* What you unlock */}
       {!data.pro_unlocked && (
-        <div className="mt-4 pt-4 border-t border-white/5">
-          <p className="text-xs text-slate-500 mb-2">Que desbloquejares:</p>
+        <div className="mt-4 pt-4 border-t border-white/[0.04]">
+          <p className="text-xs text-[#62666d] mb-2">Que desbloquejares:</p>
           <div className="flex flex-wrap gap-2">
             {[
               'Informe arbitral complet',
               'Comparativa de camps',
               'Percentils arbitrals',
             ].map(f => (
-              <span key={f} className="text-xs px-2.5 py-1 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-full">
+              <span key={f} className="text-xs px-2.5 py-1 bg-purple-500/10 text-[#8a8f98] border border-purple-500/20 rounded-full">
                 {f}
               </span>
             ))}

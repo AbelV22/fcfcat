@@ -12,7 +12,6 @@ export default async function DashboardPage() {
 
   const team = await getDashboardTeam()
 
-  // Try to get real user name from Supabase session (works for both admin and regular users)
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -21,38 +20,47 @@ export default async function DashboardPage() {
   const userName = user?.user_metadata?.name || user?.email?.split('@')[0] || (isAdmin ? 'Admin' : 'Entrenador')
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 lg:py-12">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6" style={{ paddingTop: 32, paddingBottom: 48, fontFamily: 'var(--font-inter)' }}>
 
         {/* Welcome */}
-        <div className="mb-10">
-          <h1 className="text-3xl font-black text-white mb-2">
-            Bon dia, <span className="gradient-text">{userName}</span>
+        <div style={{ marginBottom: 32 }}>
+          <h1 style={{ fontSize: 28, fontWeight: 510, color: '#f7f8f8', letterSpacing: '-0.02em', marginBottom: 8 }}>
+            Bon dia, <span style={{ color: '#22c55e' }}>{userName}</span>
           </h1>
           {team ? (
-            <p className="text-slate-400">
-              Panell de scouting de <span className="text-white font-medium">{team.name}</span>.
+            <p style={{ fontSize: 14, color: '#8a8f98' }}>
+              Panell de scouting de <span style={{ color: '#f7f8f8', fontWeight: 510 }}>{team.name}</span>.
             </p>
           ) : (
-            <p className="text-slate-400">Configura el teu equip per activar totes les funcionalitats.</p>
+            <p style={{ fontSize: 14, color: '#8a8f98' }}>Configura el teu equip per activar totes les funcionalitats.</p>
           )}
         </div>
 
         {/* Setup CTA / Change team */}
-        <div className="glass-card rounded-2xl p-8 mb-8 border-green-500/20">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-            <div className="w-14 h-14 rounded-2xl bg-green-500/15 flex items-center justify-center shrink-0">
-              {team ? <RefreshCw size={24} className="text-green-400" /> : <Settings size={24} className="text-green-400" />}
+        <div style={{
+          background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: 8, padding: '24px 28px', marginBottom: 24,
+        }}>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center" style={{ gap: 20 }}>
+            <div style={{
+              width: 48, height: 48, borderRadius: 8, flexShrink: 0,
+              background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.15)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              {team ? <RefreshCw size={20} style={{ color: '#22c55e' }} /> : <Settings size={20} style={{ color: '#22c55e' }} />}
             </div>
-            <div className="flex-1">
+            <div style={{ flex: 1 }}>
               {team ? (
                 <>
-                  <h2 className="text-xl font-bold text-white mb-1">Equip configurat: <span className="text-green-400">{team.name}</span></h2>
-                  <p className="text-slate-400 text-sm">{team.competition}</p>
+                  <h2 style={{ fontSize: 16, fontWeight: 510, color: '#f7f8f8', marginBottom: 4 }}>
+                    Equip configurat: <span style={{ color: '#22c55e' }}>{team.name}</span>
+                  </h2>
+                  <p style={{ fontSize: 13, color: '#8a8f98' }}>{team.competition}</p>
                 </>
               ) : (
                 <>
-                  <h2 className="text-xl font-bold text-white mb-1">Configura el teu equip</h2>
-                  <p className="text-slate-400 text-sm">
+                  <h2 style={{ fontSize: 16, fontWeight: 510, color: '#f7f8f8', marginBottom: 4 }}>Configura el teu equip</h2>
+                  <p style={{ fontSize: 13, color: '#8a8f98' }}>
                     Cerca el teu equip a la FCF i activa l&apos;anàlisi complet: actes, intel·ligència de rivals, informes arbitrals i molt més.
                   </p>
                 </>
@@ -60,11 +68,16 @@ export default async function DashboardPage() {
             </div>
             <Link
               href="/dashboard/setup"
-              className="shrink-0 flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-cyan-600
-                         hover:from-green-500 hover:to-cyan-500 text-white font-semibold rounded-xl transition-all"
+              className="hover:bg-[#34d399]"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8, flexShrink: 0,
+                padding: '10px 20px', borderRadius: 6,
+                background: '#22c55e', color: '#fff', fontSize: 14, fontWeight: 510,
+                textDecoration: 'none', transition: 'background 0.15s',
+              }}
             >
               {team ? 'Canviar equip' : 'Configurar ara'}
-              <ArrowRight size={16} />
+              <ArrowRight size={15} />
             </Link>
           </div>
         </div>
@@ -73,81 +86,54 @@ export default async function DashboardPage() {
         <ReferralCard />
 
         {/* Feature cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" style={{ gap: 12 }}>
           {[
-            {
-              icon: <BarChart3 size={22} className="text-green-400" />,
-              title: "Intel·ligència de l'equip",
-              desc: 'Estadístiques detallades de tots els teus jugadors per temporada.',
-              href: '/dashboard/intel',
-              badge: null,
-            },
-            {
-              icon: <Users size={22} className="text-cyan-400" />,
-              title: 'Anàlisi del rival',
-              desc: "XI probable, goleadors, patrons de joc i targetes de l'equip rival.",
-              href: '/dashboard/rival',
-              badge: null,
-            },
-            {
-              icon: <Shield size={22} className="text-purple-400" />,
-              title: 'Informe arbitral complet',
-              desc: "Percentils, patrons per període i historial del pròxim àrbitre.",
-              href: '/dashboard/arbitre-pro',
-              badge: 'PRO',
-            },
-            {
-              icon: <Shield size={22} className="text-amber-400" />,
-              title: 'Equips',
-              desc: 'Cerca i explora tots els equips de les competicions FCF.',
-              href: '/entrenador',
-              badge: null,
-            },
-            {
-              icon: <ListOrdered size={22} className="text-yellow-400" />,
-              title: 'Classificació',
-              desc: 'La taula de classificació del teu grup en temps real.',
-              href: '/dashboard/classificacio',
-              badge: null,
-            },
-            {
-              icon: <ClipboardList size={22} className="text-emerald-400" />,
-              title: 'Apunts de Partit',
-              desc: 'Registra lineups, esdeveniments, valoracions i notes tàctiques de cada partit.',
-              href: '/dashboard/apunts',
-              badge: 'NOU',
-            },
-            {
-              icon: <Settings size={22} className="text-slate-400" />,
-              title: 'Gestió de la plantilla',
-              desc: "Disponibilitat, sancions i convocatòries del teu equip.",
-              href: '/dashboard/equip-gestio',
-              badge: null,
-            },
-          ].map(card => (
-            <Link
-              key={card.href + card.title}
-              href={card.href}
-              className="glass-card rounded-2xl p-6 hover:border-green-500/30 transition-all duration-300 hover:-translate-y-1 group"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
-                  {card.icon}
+            { icon: BarChart3, title: "Intel·ligència de l'equip", desc: 'Estadístiques detallades de tots els teus jugadors per temporada.', href: '/dashboard/intel', badge: null },
+            { icon: Users, title: 'Anàlisi del rival', desc: "XI probable, goleadors, patrons de joc i targetes de l'equip rival.", href: '/dashboard/rival', badge: null },
+            { icon: Shield, title: 'Informe arbitral complet', desc: "Percentils, patrons per període i historial del pròxim àrbitre.", href: '/dashboard/arbitre-pro', badge: 'PRO' },
+            { icon: Shield, title: 'Equips', desc: 'Cerca i explora tots els equips de les competicions FCF.', href: '/entrenador', badge: null },
+            { icon: ListOrdered, title: 'Classificació', desc: 'La taula de classificació del teu grup en temps real.', href: '/dashboard/classificacio', badge: null },
+            { icon: ClipboardList, title: 'Apunts de Partit', desc: 'Registra lineups, esdeveniments, valoracions i notes tàctiques de cada partit.', href: '/dashboard/apunts', badge: 'NOU' },
+            { icon: Settings, title: 'Gestió de la plantilla', desc: "Disponibilitat, sancions i convocatòries del teu equip.", href: '/dashboard/equip-gestio', badge: null },
+          ].map(card => {
+            const Icon = card.icon
+            return (
+              <Link
+                key={card.href + card.title}
+                href={card.href}
+                className="hover:border-[rgba(255,255,255,0.12)]"
+                style={{
+                  display: 'block', textDecoration: 'none',
+                  background: 'rgba(255,255,255,0.02)',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                  borderRadius: 8, padding: '20px',
+                  transition: 'border-color 0.15s, transform 0.15s',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
+                  <div style={{
+                    width: 36, height: 36, borderRadius: 8,
+                    background: 'rgba(255,255,255,0.03)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Icon size={18} style={{ color: '#8a8f98' }} />
+                  </div>
+                  {card.badge && (
+                    <span style={{
+                      fontSize: 10, padding: '2px 8px', borderRadius: 9999, fontWeight: 510,
+                      background: card.badge === 'NOU' ? 'rgba(34,197,94,0.1)' : 'rgba(255,255,255,0.06)',
+                      color: card.badge === 'NOU' ? '#22c55e' : '#8a8f98',
+                      border: card.badge === 'NOU' ? '1px solid rgba(34,197,94,0.2)' : '1px solid rgba(255,255,255,0.08)',
+                    }}>
+                      {card.badge}
+                    </span>
+                  )}
                 </div>
-                {card.badge && (
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
-                    card.badge === 'NOU'
-                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/25'
-                      : 'bg-purple-500/20 text-purple-400 border border-purple-500/25'
-                  }`}>
-                    {card.badge}
-                  </span>
-                )}
-              </div>
-              <h3 className="font-bold text-white mb-1 group-hover:text-green-400 transition-colors">{card.title}</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">{card.desc}</p>
-            </Link>
-          ))}
+                <h3 style={{ fontSize: 14, fontWeight: 510, color: '#f7f8f8', marginBottom: 4 }}>{card.title}</h3>
+                <p style={{ fontSize: 12, color: '#62666d', lineHeight: 1.5 }}>{card.desc}</p>
+              </Link>
+            )
+          })}
         </div>
       </div>
   )

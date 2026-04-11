@@ -7,11 +7,11 @@ import type { FormStandingEntry, StandingEntry } from '@/lib/supabase-data'
 
 type TabId = 'general' | 'local' | 'visitant' | 'racha'
 
-const TABS: { id: TabId; label: string; icon: typeof ListOrdered }[] = [
-  { id: 'general', label: 'General', icon: ListOrdered },
-  { id: 'local', label: 'Local', icon: Home },
-  { id: 'visitant', label: 'Visitant', icon: Plane },
-  { id: 'racha', label: 'Racha (5)', icon: Flame },
+const TABS: { id: TabId; label: string }[] = [
+  { id: 'general', label: 'General' },
+  { id: 'local', label: 'Local' },
+  { id: 'visitant', label: 'Visitant' },
+  { id: 'racha', label: 'Racha (5)' },
 ]
 
 function computeSplitStandings(standings: StandingEntry[], mode: 'local' | 'visitant') {
@@ -26,6 +26,11 @@ function computeSplitStandings(standings: StandingEntry[], mode: 'local' | 'visi
     })
     .sort((a, b) => b.points - a.points || (b.wins - a.wins) || a.name.localeCompare(b.name))
     .map((s, i) => ({ ...s, position: i + 1 }))
+}
+
+const thStyle: React.CSSProperties = {
+  fontSize: 10, fontWeight: 510, color: '#62666d', textTransform: 'uppercase',
+  letterSpacing: '0.04em', padding: '10px 6px', textAlign: 'center',
 }
 
 export default function StandingsTabs({
@@ -44,9 +49,9 @@ export default function StandingsTabs({
 
   if (standings.length === 0) {
     return (
-      <div className="glass-card rounded-2xl p-12 text-center">
-        <ListOrdered size={40} className="text-slate-600 mx-auto mb-4" />
-        <p className="text-slate-400">No s&apos;ha trobat la classificacio.</p>
+      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: 48, textAlign: 'center' }}>
+        <ListOrdered size={36} style={{ color: '#62666d', margin: '0 auto 16px', opacity: 0.4 }} />
+        <p style={{ color: '#8a8f98', fontSize: 14 }}>No s&apos;ha trobat la classificació.</p>
       </div>
     )
   }
@@ -57,51 +62,52 @@ export default function StandingsTabs({
     tab === 'visitant' ? awayStandings :
     standings
 
-  const accentColor =
-    tab === 'local' ? 'cyan' :
-    tab === 'visitant' ? 'purple' :
-    tab === 'racha' ? 'orange' : 'green'
-
   return (
     <>
-      {/* Tab bar */}
-      <div className="flex gap-1 mb-6 overflow-x-auto scrollbar-hide -mx-1 px-1">
-        {TABS.map(({ id, label, icon: Icon }) => (
-          <button
-            key={id}
-            onClick={() => setTab(id)}
-            className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all shrink-0 ${
-              tab === id
-                ? 'bg-white/10 text-white'
-                : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
-            }`}
-          >
-            <Icon size={14} />
-            {label}
-          </button>
-        ))}
+      {/* Tab bar — underline style */}
+      <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', marginBottom: 20, display: 'flex', gap: 0, overflowX: 'auto' }}>
+        {TABS.map(({ id, label }) => {
+          const isActive = tab === id
+          return (
+            <button
+              key={id}
+              onClick={() => setTab(id)}
+              style={{
+                padding: '10px 14px', fontSize: 13, fontWeight: 510,
+                cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+                border: 'none', borderBottom: isActive ? '2px solid #22c55e' : '2px solid transparent',
+                background: 'none', marginBottom: -1,
+                color: isActive ? '#f7f8f8' : '#8a8f98',
+                transition: 'color 0.15s, border-color 0.15s',
+                fontFamily: 'var(--font-inter)',
+              }}
+            >
+              {label}
+            </button>
+          )
+        })}
       </div>
 
-      {/* Main standings table (General, Local, Visitant) */}
+      {/* Main standings table */}
       {tab !== 'racha' && (
-        <div className="glass-card rounded-2xl p-4 sm:p-6 overflow-x-auto">
-          <table className="w-full text-sm">
+        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '16px 20px', overflowX: 'auto' }}>
+          <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
             <thead>
-              <tr className="text-xs text-slate-500 border-b border-white/10">
-                <th className="text-center py-3 px-1.5 sm:px-2 w-8">#</th>
-                <th className="text-left py-3 px-1.5 sm:px-2">Equip</th>
-                <th className="text-center py-3 px-1.5 sm:px-2">PJ</th>
-                <th className="text-center py-3 px-1.5 sm:px-2">PG</th>
-                <th className="text-center py-3 px-1.5 sm:px-2">PE</th>
-                <th className="text-center py-3 px-1.5 sm:px-2">PP</th>
+              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                <th style={{ ...thStyle, textAlign: 'center', width: 32 }}>#</th>
+                <th style={{ ...thStyle, textAlign: 'left' }}>Equip</th>
+                <th style={thStyle}>PJ</th>
+                <th style={thStyle}>PG</th>
+                <th style={thStyle}>PE</th>
+                <th style={thStyle}>PP</th>
                 {showGfGa && (
                   <>
-                    <th className="text-center py-3 px-1.5 sm:px-2">GF</th>
-                    <th className="text-center py-3 px-1.5 sm:px-2">GC</th>
-                    <th className="text-center py-3 px-1.5 sm:px-2">Dif</th>
+                    <th style={thStyle}>GF</th>
+                    <th style={thStyle}>GC</th>
+                    <th style={thStyle}>Dif</th>
                   </>
                 )}
-                <th className="text-center py-3 px-1.5 sm:px-2 font-bold">Pts</th>
+                <th style={{ ...thStyle, color: '#f7f8f8' }}>Pts</th>
               </tr>
             </thead>
             <tbody>
@@ -111,38 +117,41 @@ export default function StandingsTabs({
                 return (
                   <tr
                     key={s.slug}
-                    className={`border-b border-white/5 transition-colors ${isMyTeam ? `bg-${accentColor}-500/10` : 'hover:bg-white/3'}`}
-                    style={isMyTeam ? { backgroundColor: `color-mix(in srgb, var(--color-${accentColor}-500, #22c55e) 10%, transparent)` } : undefined}
+                    className="hover:bg-white/[0.02]"
+                    style={{
+                      borderTop: '1px solid rgba(255,255,255,0.05)',
+                      transition: 'background 0.15s',
+                      background: isMyTeam ? 'rgba(34,197,94,0.06)' : undefined,
+                    }}
                   >
-                    <td className={`py-3 px-1.5 sm:px-2 text-center font-bold ${isMyTeam ? `text-${accentColor}-400` : i < 3 ? 'text-cyan-400' : 'text-slate-500'}`}>
+                    <td style={{ padding: '10px 6px', textAlign: 'center', fontWeight: 510, fontSize: 11, color: isMyTeam ? '#22c55e' : '#62666d', borderLeft: isMyTeam ? '2px solid #22c55e' : '2px solid transparent' }}>
                       {s.position}
                     </td>
-                    <td className="py-3 px-1.5 sm:px-2">
+                    <td style={{ padding: '10px 6px' }}>
                       <Link
                         href={`/equip/${s.slug}`}
-                        className={`hover:text-green-400 transition-colors ${isMyTeam ? 'text-white font-bold' : 'text-slate-200'}`}
+                        className="hover:text-[#22c55e]"
+                        style={{ color: isMyTeam ? '#f7f8f8' : '#d0d6e0', fontWeight: 510, textDecoration: 'none', transition: 'color 0.15s' }}
                       >
                         <span className="hidden sm:inline">{s.name}</span>
                         <span className="sm:hidden">{s.name.length > 16 ? s.name.slice(0, 14) + '...' : s.name}</span>
-                        {isMyTeam && <span className="ml-1.5 text-green-400 text-xs">(tu)</span>}
+                        {isMyTeam && <span style={{ marginLeft: 6, color: '#22c55e', fontSize: 11 }}>(tu)</span>}
                       </Link>
                     </td>
-                    <td className="py-3 px-1.5 sm:px-2 text-center text-slate-300">{s.played}</td>
-                    <td className="py-3 px-1.5 sm:px-2 text-center text-green-400">{s.wins}</td>
-                    <td className="py-3 px-1.5 sm:px-2 text-center text-amber-400">{s.draws}</td>
-                    <td className="py-3 px-1.5 sm:px-2 text-center text-red-400">{s.losses}</td>
+                    <td style={{ padding: '10px 6px', textAlign: 'center', color: '#8a8f98', fontVariantNumeric: 'tabular-nums' }}>{s.played}</td>
+                    <td style={{ padding: '10px 6px', textAlign: 'center', color: '#22c55e', fontVariantNumeric: 'tabular-nums' }}>{s.wins}</td>
+                    <td style={{ padding: '10px 6px', textAlign: 'center', color: '#8a8f98', fontVariantNumeric: 'tabular-nums' }}>{s.draws}</td>
+                    <td style={{ padding: '10px 6px', textAlign: 'center', color: '#8a8f98', fontVariantNumeric: 'tabular-nums' }}>{s.losses}</td>
                     {showGfGa && (
                       <>
-                        <td className="py-3 px-1.5 sm:px-2 text-center text-slate-300">{s.gf}</td>
-                        <td className="py-3 px-1.5 sm:px-2 text-center text-slate-400">{s.ga}</td>
-                        <td className={`py-3 px-1.5 sm:px-2 text-center font-bold ${diff > 0 ? 'text-green-400' : diff < 0 ? 'text-red-400' : 'text-slate-400'}`}>
+                        <td style={{ padding: '10px 6px', textAlign: 'center', color: '#8a8f98', fontVariantNumeric: 'tabular-nums' }}>{s.gf}</td>
+                        <td style={{ padding: '10px 6px', textAlign: 'center', color: '#8a8f98', fontVariantNumeric: 'tabular-nums' }}>{s.ga}</td>
+                        <td style={{ padding: '10px 6px', textAlign: 'center', fontWeight: 510, color: diff > 0 ? '#22c55e' : diff < 0 ? '#f87171' : '#8a8f98', fontVariantNumeric: 'tabular-nums' }}>
                           {diff > 0 ? '+' : ''}{diff}
                         </td>
                       </>
                     )}
-                    <td className={`py-3 px-1.5 sm:px-2 text-center font-black text-lg ${isMyTeam ? `text-${accentColor}-400` : 'text-white'}`}
-                      style={isMyTeam ? { color: `var(--color-${accentColor}-400, #4ade80)` } : undefined}
-                    >
+                    <td style={{ padding: '10px 6px', textAlign: 'center', fontWeight: 510, fontSize: 15, color: isMyTeam ? '#22c55e' : '#f7f8f8', fontVariantNumeric: 'tabular-nums' }}>
                       {s.points}
                     </td>
                   </tr>
@@ -155,21 +164,21 @@ export default function StandingsTabs({
 
       {/* Form standings (Racha tab) */}
       {tab === 'racha' && formStandings.length > 0 && (
-        <div className="glass-card rounded-2xl p-4 sm:p-6 overflow-x-auto">
-          <p className="text-slate-400 text-sm mb-4">Classificacio basada en els punts obtinguts als ultims 5 partits jugats</p>
-          <table className="w-full text-sm">
+        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '16px 20px', overflowX: 'auto' }}>
+          <p style={{ fontSize: 13, color: '#8a8f98', marginBottom: 14 }}>Classificació basada en els punts obtinguts als últims 5 partits jugats</p>
+          <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
             <thead>
-              <tr className="text-xs text-slate-500 border-b border-white/10">
-                <th className="text-center py-3 px-1.5 sm:px-2 w-8">#</th>
-                <th className="text-left py-3 px-1.5 sm:px-2">Equip</th>
-                <th className="text-center py-3 px-1.5 sm:px-2">Ultims 5</th>
-                <th className="text-center py-3 px-1.5 sm:px-2">PJ</th>
-                <th className="text-center py-3 px-1.5 sm:px-2">PG</th>
-                <th className="text-center py-3 px-1.5 sm:px-2">PE</th>
-                <th className="text-center py-3 px-1.5 sm:px-2">PP</th>
-                <th className="text-center py-3 px-1.5 sm:px-2">GF</th>
-                <th className="text-center py-3 px-1.5 sm:px-2">GC</th>
-                <th className="text-center py-3 px-1.5 sm:px-2 font-bold">Pts</th>
+              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                <th style={{ ...thStyle, width: 32 }}>#</th>
+                <th style={{ ...thStyle, textAlign: 'left' }}>Equip</th>
+                <th style={thStyle}>Últims 5</th>
+                <th style={thStyle}>PJ</th>
+                <th style={thStyle}>PG</th>
+                <th style={thStyle}>PE</th>
+                <th style={thStyle}>PP</th>
+                <th style={thStyle}>GF</th>
+                <th style={thStyle}>GC</th>
+                <th style={{ ...thStyle, color: '#f7f8f8' }}>Pts</th>
               </tr>
             </thead>
             <tbody>
@@ -178,44 +187,51 @@ export default function StandingsTabs({
                 return (
                   <tr
                     key={s.slug}
-                    className={`border-b border-white/5 transition-colors ${isMyTeam ? 'bg-orange-500/10' : 'hover:bg-white/3'}`}
+                    className="hover:bg-white/[0.02]"
+                    style={{
+                      borderTop: '1px solid rgba(255,255,255,0.05)',
+                      transition: 'background 0.15s',
+                      background: isMyTeam ? 'rgba(34,197,94,0.06)' : undefined,
+                    }}
                   >
-                    <td className={`py-3 px-1.5 sm:px-2 text-center font-bold ${isMyTeam ? 'text-orange-400' : i < 3 ? 'text-orange-400/70' : 'text-slate-500'}`}>
+                    <td style={{ padding: '10px 6px', textAlign: 'center', fontWeight: 510, fontSize: 11, color: isMyTeam ? '#22c55e' : '#62666d', borderLeft: isMyTeam ? '2px solid #22c55e' : '2px solid transparent' }}>
                       {s.position}
                     </td>
-                    <td className="py-3 px-1.5 sm:px-2">
+                    <td style={{ padding: '10px 6px' }}>
                       <Link
                         href={`/equip/${s.slug}`}
-                        className={`hover:text-green-400 transition-colors ${isMyTeam ? 'text-white font-bold' : 'text-slate-200'}`}
+                        className="hover:text-[#22c55e]"
+                        style={{ color: isMyTeam ? '#f7f8f8' : '#d0d6e0', fontWeight: 510, textDecoration: 'none', transition: 'color 0.15s' }}
                       >
                         <span className="hidden sm:inline">{s.name}</span>
                         <span className="sm:hidden">{s.name.length > 16 ? s.name.slice(0, 14) + '...' : s.name}</span>
-                        {isMyTeam && <span className="ml-1.5 text-green-400 text-xs">(tu)</span>}
+                        {isMyTeam && <span style={{ marginLeft: 6, color: '#22c55e', fontSize: 11 }}>(tu)</span>}
                       </Link>
                     </td>
-                    <td className="py-3 px-1.5 sm:px-2">
-                      <div className="flex gap-1 justify-center">
+                    <td style={{ padding: '10px 6px' }}>
+                      <div style={{ display: 'flex', gap: 3, justifyContent: 'center' }}>
                         {s.form.slice().reverse().map((r, fi) => (
                           <span
                             key={fi}
-                            className={`w-5 h-5 rounded-full text-[9px] font-bold flex items-center justify-center ${
-                              r === 'W' ? 'bg-green-500/20 text-green-400' :
-                              r === 'D' ? 'bg-amber-500/20 text-amber-400' :
-                              'bg-red-500/20 text-red-400'
-                            }`}
+                            style={{
+                              width: 18, height: 18, borderRadius: 9, fontSize: 9, fontWeight: 510,
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              background: r === 'W' ? 'rgba(34,197,94,0.15)' : r === 'D' ? 'rgba(255,255,255,0.06)' : 'rgba(248,113,113,0.15)',
+                              color: r === 'W' ? '#22c55e' : r === 'D' ? '#8a8f98' : '#f87171',
+                            }}
                           >
                             {r === 'W' ? 'V' : r === 'D' ? 'E' : 'D'}
                           </span>
                         ))}
                       </div>
                     </td>
-                    <td className="py-3 px-1.5 sm:px-2 text-center text-slate-300">{s.played}</td>
-                    <td className="py-3 px-1.5 sm:px-2 text-center text-green-400">{s.wins}</td>
-                    <td className="py-3 px-1.5 sm:px-2 text-center text-amber-400">{s.draws}</td>
-                    <td className="py-3 px-1.5 sm:px-2 text-center text-red-400">{s.losses}</td>
-                    <td className="py-3 px-1.5 sm:px-2 text-center text-slate-300">{s.gf}</td>
-                    <td className="py-3 px-1.5 sm:px-2 text-center text-slate-400">{s.ga}</td>
-                    <td className={`py-3 px-1.5 sm:px-2 text-center font-black text-lg ${isMyTeam ? 'text-orange-400' : 'text-white'}`}>
+                    <td style={{ padding: '10px 6px', textAlign: 'center', color: '#8a8f98', fontVariantNumeric: 'tabular-nums' }}>{s.played}</td>
+                    <td style={{ padding: '10px 6px', textAlign: 'center', color: '#22c55e', fontVariantNumeric: 'tabular-nums' }}>{s.wins}</td>
+                    <td style={{ padding: '10px 6px', textAlign: 'center', color: '#8a8f98', fontVariantNumeric: 'tabular-nums' }}>{s.draws}</td>
+                    <td style={{ padding: '10px 6px', textAlign: 'center', color: '#8a8f98', fontVariantNumeric: 'tabular-nums' }}>{s.losses}</td>
+                    <td style={{ padding: '10px 6px', textAlign: 'center', color: '#8a8f98', fontVariantNumeric: 'tabular-nums' }}>{s.gf}</td>
+                    <td style={{ padding: '10px 6px', textAlign: 'center', color: '#8a8f98', fontVariantNumeric: 'tabular-nums' }}>{s.ga}</td>
+                    <td style={{ padding: '10px 6px', textAlign: 'center', fontWeight: 510, fontSize: 15, color: isMyTeam ? '#22c55e' : '#f7f8f8', fontVariantNumeric: 'tabular-nums' }}>
                       {s.points}
                     </td>
                   </tr>
@@ -227,9 +243,9 @@ export default function StandingsTabs({
       )}
 
       {tab === 'racha' && formStandings.length === 0 && (
-        <div className="glass-card rounded-2xl p-12 text-center">
-          <Flame size={40} className="text-slate-600 mx-auto mb-4" />
-          <p className="text-slate-400">No hi ha dades de racha disponibles.</p>
+        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: 48, textAlign: 'center' }}>
+          <Flame size={36} style={{ color: '#62666d', margin: '0 auto 16px', opacity: 0.4 }} />
+          <p style={{ color: '#8a8f98', fontSize: 14 }}>No hi ha dades de ratxa disponibles.</p>
         </div>
       )}
     </>
