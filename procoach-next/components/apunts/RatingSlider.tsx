@@ -11,7 +11,7 @@ export default function RatingSlider({
     if (v <= 3) return { bg: 'rgba(239,68,68,0.15)', text: '#f87171', bar: '#ef4444' }
     if (v <= 5) return { bg: 'rgba(245,158,11,0.15)', text: '#fbbf24', bar: '#f59e0b' }
     if (v <= 8) return { bg: 'rgba(34,197,94,0.15)', text: '#4ade80', bar: '#22c55e' }
-    return { bg: 'rgba(6,182,212,0.15)', text: '#22d3ee', bar: '#06b6d4' }
+    return { bg: 'rgba(6,182,212,0.15)', text: '#22d3ee', bar: '#22c55e' }
   }
 
   const colors = getColor(value)

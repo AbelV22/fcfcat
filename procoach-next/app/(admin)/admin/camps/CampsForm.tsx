@@ -243,7 +243,7 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
     <div className="space-y-6">
 
       {/* ── Table ── */}
-      <div className="bg-white/4 border border-white/8 rounded-2xl overflow-hidden">
+      <div className="bg-white/4 border border-white/8 rounded-lg overflow-hidden">
         <div className="px-5 py-4 border-b border-white/8 flex items-center justify-between">
           <h2 className="font-bold text-white text-sm">Camps registrats ({fields.length})</h2>
           <button
@@ -256,7 +256,7 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
-              <tr className="border-b border-white/8 text-slate-500 text-[11px] uppercase tracking-wider">
+              <tr className="border-b border-white/8 text-[#8a8f98] text-[11px] uppercase tracking-wider">
                 <th className="text-left px-4 py-3 font-medium">Camp</th>
                 <th className="text-left px-4 py-3 font-medium hidden lg:table-cell">Equip</th>
                 <th className="text-center px-3 py-3 font-medium">Long.</th>
@@ -269,7 +269,7 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
             <tbody className="divide-y divide-white/5">
               {fields.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-slate-600">Cap camp registrat encara.</td>
+                  <td colSpan={7} className="px-4 py-8 text-center text-[#62666d]">Cap camp registrat encara.</td>
                 </tr>
               )}
               {fields.map((f, i) => {
@@ -279,23 +279,23 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
                 return (
                   <tr key={i} className={`transition-colors ${isEditing ? 'bg-green-500/8 border-l-2 border-green-500/50' : 'hover:bg-white/3'}`}>
                     <td className="px-4 py-3">
-                      <div className="font-medium text-slate-200">{f.name}</div>
-                      {f.fcf_venue && <div className="text-[10px] text-slate-600 mt-0.5 truncate max-w-[200px]" title={f.fcf_venue}>{f.fcf_venue.split('  ')[0]}</div>}
-                      {f.city && <div className="text-[10px] text-slate-600">{f.city}</div>}
+                      <div className="font-medium text-[#d0d6e0]">{f.name}</div>
+                      {f.fcf_venue && <div className="text-[10px] text-[#62666d] mt-0.5 truncate max-w-[200px]" title={f.fcf_venue}>{f.fcf_venue.split('  ')[0]}</div>}
+                      {f.city && <div className="text-[10px] text-[#62666d]">{f.city}</div>}
                     </td>
                     <td className="px-4 py-3 hidden lg:table-cell">
                       {f.team
-                        ? <span className="text-slate-400 text-[11px]">{f.team}</span>
-                        : <span className="text-slate-700 italic text-[11px]">sense assignar</span>}
+                        ? <span className="text-[#8a8f98] text-[11px]">{f.team}</span>
+                        : <span className="text-[#62666d] italic text-[11px]">sense assignar</span>}
                     </td>
-                    <td className="px-3 py-3 text-center text-slate-300 tabular-nums">{f.length_m}</td>
-                    <td className="px-3 py-3 text-center text-slate-300 tabular-nums">{f.width_m}</td>
+                    <td className="px-3 py-3 text-center text-[#d0d6e0] tabular-nums">{f.length_m}</td>
+                    <td className="px-3 py-3 text-center text-[#d0d6e0] tabular-nums">{f.width_m}</td>
                     <td className={`px-3 py-3 text-center font-bold tabular-nums ${aColor}`}>{a.toLocaleString('ca-ES')}</td>
                     <td className="px-3 py-3 text-center hidden sm:table-cell">
-                      {f.confirmed ? <span className="text-green-400">✓</span> : <span className="text-slate-700">·</span>}
+                      {f.confirmed ? <span className="text-green-400">✓</span> : <span className="text-[#62666d]">·</span>}
                     </td>
                     <td className="px-3 py-3 text-right">
-                      <button onClick={() => startEdit(f)} className="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/8 transition-all">
+                      <button onClick={() => startEdit(f)} className="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[#8a8f98] hover:text-white border border-white/8 transition-all">
                         Editar
                       </button>
                     </td>
@@ -308,18 +308,18 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
       </div>
 
       {/* ── Form ── */}
-      <div id="camps-form-section" className="bg-white/4 border border-white/8 rounded-2xl p-5 sm:p-6">
+      <div id="camps-form-section" className="bg-white/4 border border-white/8 rounded-lg p-5 sm:p-6">
         <div className="flex items-center justify-between mb-5">
           <div>
             <h2 className="font-bold text-white text-sm">
               {editingName ? `Editant: ${editingName}` : 'Afegir / actualitzar camp'}
             </h2>
-            <p className="text-[11px] text-slate-500 mt-0.5">
+            <p className="text-[11px] text-[#8a8f98] mt-0.5">
               Cerca l&apos;equip per detectar automàticament el seu camp
             </p>
           </div>
           {(editingName || form.team) && (
-            <button onClick={resetForm} className="text-xs px-3 py-1.5 bg-white/5 hover:bg-white/10 text-slate-400 border border-white/10 rounded-lg transition-colors">
+            <button onClick={resetForm} className="text-xs px-3 py-1.5 bg-white/5 hover:bg-white/10 text-[#8a8f98] border border-white/10 rounded-lg transition-colors">
               ✕ Netejar
             </button>
           )}
@@ -345,7 +345,7 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
 
             {/* Step 1 — Team search */}
             <div className="sm:col-span-2 relative">
-              <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">
+              <label className="block text-xs font-semibold text-[#8a8f98] mb-1.5 uppercase tracking-wide">
                 1. Selecciona l&apos;equip <span className="text-red-400">*</span>
               </label>
               <input
@@ -356,7 +356,7 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
                 placeholder="Escriu el nom de l'equip... ex: MATARONESA"
                 autoComplete="off"
-                className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-600 text-sm focus:outline-none focus:border-green-500/50 focus:ring-1 focus:ring-green-500/30 transition-all"
+                className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-[#62666d] text-sm focus:outline-none focus:border-green-500/50 focus:ring-1 focus:ring-green-500/30 transition-all"
               />
               {showSuggestions && (filteredTeams.length > 0 || canUseManualName) && (
                 <div className="absolute z-20 top-full mt-1 w-full bg-[#0d1a2e] border border-white/15 rounded-xl shadow-xl overflow-hidden">
@@ -373,12 +373,12 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
                         onMouseDown={() => selectTeam(t)}
                         className="w-full text-left px-4 py-2.5 hover:bg-white/8 transition-colors flex items-center justify-between gap-3 border-b border-white/5 last:border-0"
                       >
-                        <span className="text-sm text-slate-200 truncate">{t.name}</span>
+                        <span className="text-sm text-[#d0d6e0] truncate">{t.name}</span>
                         <div className="flex items-center gap-1.5 shrink-0">
-                          <span className="text-[10px] text-slate-600">{t.competitionName}</span>
+                          <span className="text-[10px] text-[#62666d]">{t.competitionName}</span>
                           {hasField && <span className="text-[10px] px-1.5 py-0.5 bg-green-500/20 text-green-400 rounded font-semibold">camp ✓</span>}
                           {mateHasField && <span className="text-[10px] px-1.5 py-0.5 bg-purple-500/20 text-purple-400 rounded font-semibold">mateix club ✓</span>}
-                          {hasVenue && !hasField && !mateHasField && <span className="text-[10px] px-1.5 py-0.5 bg-cyan-500/20 text-cyan-400 rounded font-semibold">venue ✓</span>}
+                          {hasVenue && !hasField && !mateHasField && <span className="text-[10px] px-1.5 py-0.5 bg-[#22c55e]/20 text-[#22c55e] rounded font-semibold">venue ✓</span>}
                         </div>
                       </button>
                     )
@@ -403,17 +403,17 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
             {/* Step 2 — Detected venue */}
             {hasTeamSelected && (
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">
+                <label className="block text-xs font-semibold text-[#8a8f98] mb-1.5 uppercase tracking-wide">
                   2. Venue detectat a les actes FCF
                 </label>
                 {hasDetectedVenue ? (
-                  <div className="px-3 py-2.5 bg-cyan-500/8 border border-cyan-500/20 rounded-xl">
+                  <div className="px-3 py-2.5 bg-[#22c55e]/8 border border-[#22c55e]/20 rounded-xl">
                     <div className="flex items-start gap-2">
-                      <span className="text-cyan-400 mt-0.5 shrink-0">✓</span>
+                      <span className="text-[#22c55e] mt-0.5 shrink-0">✓</span>
                       <div>
-                        <p className="text-sm text-slate-200 font-medium">{form.fcf_venue.split('  ')[0]}</p>
+                        <p className="text-sm text-[#d0d6e0] font-medium">{form.fcf_venue.split('  ')[0]}</p>
                         {form.fcf_venue.includes('  ') && (
-                          <p className="text-[11px] text-slate-500 mt-0.5">{form.fcf_venue.split('  ').slice(1).join('').trim()}</p>
+                          <p className="text-[11px] text-[#8a8f98] mt-0.5">{form.fcf_venue.split('  ').slice(1).join('').trim()}</p>
                         )}
                       </div>
                     </div>
@@ -429,7 +429,7 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
                       value={form.fcf_venue}
                       onChange={e => set('fcf_venue', e.target.value)}
                       placeholder="ex: CAMP DE FUTBOL MPAL. ..."
-                      className="mt-2 w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-600 text-sm focus:outline-none focus:border-amber-500/50 transition-all"
+                      className="mt-2 w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-[#62666d] text-sm focus:outline-none focus:border-amber-500/50 transition-all"
                     />
                   </div>
                 )}
@@ -465,16 +465,16 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
             {/* Step 3 — Field name (auto-suggested, editable) */}
             {hasTeamSelected && (
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">
+                <label className="block text-xs font-semibold text-[#8a8f98] mb-1.5 uppercase tracking-wide">
                   3. Nom del camp <span className="text-red-400">*</span>
-                  {hasDetectedVenue && <span className="text-slate-600 font-normal normal-case ml-1">(generat automàticament, pots editar-lo)</span>}
+                  {hasDetectedVenue && <span className="text-[#62666d] font-normal normal-case ml-1">(generat automàticament, pots editar-lo)</span>}
                 </label>
                 <input
                   type="text"
                   value={form.name}
                   onChange={e => set('name', e.target.value)}
                   placeholder="ex: Camp Municipal de Futbol de Mataró"
-                  className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-600 text-sm focus:outline-none focus:border-green-500/50 focus:ring-1 focus:ring-green-500/30 transition-all"
+                  className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-[#62666d] text-sm focus:outline-none focus:border-green-500/50 focus:ring-1 focus:ring-green-500/30 transition-all"
                 />
               </div>
             )}
@@ -483,7 +483,7 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
             {hasTeamSelected && (
               <>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">
+                  <label className="block text-xs font-semibold text-[#8a8f98] mb-1.5 uppercase tracking-wide">
                     4. Longitud (m) <span className="text-red-400">*</span>
                   </label>
                   <input
@@ -493,12 +493,12 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
                     value={form.length_m}
                     onChange={e => set('length_m', e.target.value)}
                     placeholder="ex: 100"
-                    className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-600 text-sm focus:outline-none focus:border-green-500/50 focus:ring-1 focus:ring-green-500/30 transition-all"
+                    className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-[#62666d] text-sm focus:outline-none focus:border-green-500/50 focus:ring-1 focus:ring-green-500/30 transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">
+                  <label className="block text-xs font-semibold text-[#8a8f98] mb-1.5 uppercase tracking-wide">
                     Amplada (m) <span className="text-red-400">*</span>
                   </label>
                   <input
@@ -508,29 +508,29 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
                     value={form.width_m}
                     onChange={e => set('width_m', e.target.value)}
                     placeholder="ex: 62"
-                    className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-600 text-sm focus:outline-none focus:border-green-500/50 focus:ring-1 focus:ring-green-500/30 transition-all"
+                    className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-[#62666d] text-sm focus:outline-none focus:border-green-500/50 focus:ring-1 focus:ring-green-500/30 transition-all"
                   />
                 </div>
 
                 {area && !isNaN(area) && (
                   <div className="sm:col-span-2 flex items-center gap-3 px-4 py-3 rounded-xl bg-white/3 border border-white/8">
-                    <span className="text-xs text-slate-500">Àrea:</span>
+                    <span className="text-xs text-[#8a8f98]">Àrea:</span>
                     <span className={`font-bold tabular-nums text-sm ${area < 5500 ? 'text-red-400' : area < 6300 ? 'text-amber-400' : 'text-green-400'}`}>
                       {area.toLocaleString('ca-ES')} m²
                     </span>
-                    <span className="text-xs text-slate-600">{area < 5500 ? '· Camp petit' : area < 6300 ? '· Camp mitjà' : '· Camp gran'}</span>
+                    <span className="text-xs text-[#62666d]">{area < 5500 ? '· Camp petit' : area < 6300 ? '· Camp mitjà' : '· Camp gran'}</span>
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Ciutat</label>
+                  <label className="block text-xs font-semibold text-[#8a8f98] mb-1.5 uppercase tracking-wide">Ciutat</label>
                   <input
                     name="city"
                     type="text"
                     value={form.city}
                     onChange={e => set('city', e.target.value)}
                     placeholder="ex: Mataró"
-                    className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-600 text-sm focus:outline-none focus:border-green-500/50 focus:ring-1 focus:ring-green-500/30 transition-all"
+                    className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-[#62666d] text-sm focus:outline-none focus:border-green-500/50 focus:ring-1 focus:ring-green-500/30 transition-all"
                   />
                 </div>
 
@@ -543,28 +543,28 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
                       className="w-4 h-4 rounded accent-green-500"
                     />
                     <div>
-                      <span className="text-sm font-medium text-slate-300 block">Confirmat</span>
-                      <span className="text-[10px] text-slate-600">Dimensions verificades</span>
+                      <span className="text-sm font-medium text-[#d0d6e0] block">Confirmat</span>
+                      <span className="text-[10px] text-[#62666d]">Dimensions verificades</span>
                     </div>
                   </label>
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Notes</label>
+                  <label className="block text-xs font-semibold text-[#8a8f98] mb-1.5 uppercase tracking-wide">Notes</label>
                   <textarea
                     name="notes"
                     rows={2}
                     value={form.notes}
                     onChange={e => set('notes', e.target.value)}
                     placeholder="Font de dades, observacions..."
-                    className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-600 text-sm focus:outline-none focus:border-green-500/50 focus:ring-1 focus:ring-green-500/30 transition-all resize-none"
+                    className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-[#62666d] text-sm focus:outline-none focus:border-green-500/50 focus:ring-1 focus:ring-green-500/30 transition-all resize-none"
                   />
                 </div>
               </>
             )}
 
             {!hasTeamSelected && (
-              <div className="sm:col-span-2 py-6 text-center text-slate-600 text-sm">
+              <div className="sm:col-span-2 py-6 text-center text-[#62666d] text-sm">
                 Cerca i selecciona un equip per continuar
               </div>
             )}
@@ -575,7 +575,7 @@ export default function CampsForm({ teams, fields, teamVenueMap }: Props) {
               <button
                 type="submit"
                 disabled={isPending || !form.name || !form.length_m || !form.width_m}
-                className="px-5 py-2.5 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold rounded-xl text-sm transition-all"
+                className="px-5 py-2.5 bg-gradient-to-r bg-[#22c55e] hover:from-green-500 hover:to-[#22c55e] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold rounded-xl text-sm transition-all"
               >
                 {isPending ? 'Desant...' : editingName ? 'Actualitzar camp' : 'Desar camp'}
               </button>

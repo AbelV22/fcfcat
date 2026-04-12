@@ -34,7 +34,7 @@ function FormDot({ result }: { result: 'W' | 'D' | 'L' | null }) {
   const cls =
     result === 'W' ? 'bg-green-500 text-white' :
     result === 'D' ? 'bg-amber-400 text-white' :
-    result === 'L' ? 'bg-red-500 text-white' : 'bg-white/10 text-slate-500'
+    result === 'L' ? 'bg-red-500 text-white' : 'bg-white/10 text-[#8a8f98]'
   return (
     <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-[10px] font-black ${cls}`}>
       {result ? RESULT_LABEL[result] : '?'}
@@ -43,13 +43,13 @@ function FormDot({ result }: { result: 'W' | 'D' | 'L' | null }) {
 }
 
 function ScoreBadge({ gf, ga }: { gf: number | null; ga: number | null }) {
-  if (gf === null || ga === null) return <span className="text-slate-500 text-sm">–</span>
+  if (gf === null || ga === null) return <span className="text-[#8a8f98] text-sm">–</span>
   const win = gf > ga, lose = gf < ga
   return (
     <span className="font-bold tabular-nums text-sm">
-      <span className={win ? 'text-green-400' : lose ? 'text-red-400' : 'text-slate-300'}>{gf}</span>
-      <span className="text-slate-600 mx-0.5">-</span>
-      <span className={lose ? 'text-green-400' : win ? 'text-red-400' : 'text-slate-300'}>{ga}</span>
+      <span className={win ? 'text-green-400' : lose ? 'text-red-400' : 'text-[#d0d6e0]'}>{gf}</span>
+      <span className="text-[#62666d] mx-0.5">-</span>
+      <span className={lose ? 'text-green-400' : win ? 'text-red-400' : 'text-[#d0d6e0]'}>{ga}</span>
     </span>
   )
 }
@@ -62,7 +62,7 @@ function hasGoalData(buckets: GoalBucket[]): boolean {
 function MiniGoalBars({ buckets }: { buckets: GoalBucket[] }) {
   if (!hasGoalData(buckets)) {
     return (
-      <div className="flex items-center justify-center text-xs text-slate-600 italic" style={{ height: '32px' }}>
+      <div className="flex items-center justify-center text-xs text-[#62666d] italic" style={{ height: '32px' }}>
         Sense dades de timing
       </div>
     )
@@ -87,9 +87,9 @@ function FullGoalTimingBar({ buckets }: { buckets: GoalBucket[] }) {
   if (!hasGoalData(buckets)) {
     return (
       <div className="flex flex-col items-center justify-center py-6 text-center">
-        <Clock size={20} className="text-slate-700 mb-2" />
-        <p className="text-xs text-slate-600 italic">Sense dades de timing de gols</p>
-        <p className="text-[10px] text-slate-700 mt-1">Les dades es generen a partir de les actes oficials de la FCF</p>
+        <Clock size={20} className="text-[#62666d] mb-2" />
+        <p className="text-xs text-[#62666d] italic">Sense dades de timing de gols</p>
+        <p className="text-[10px] text-[#62666d] mt-1">Les dades es generen a partir de les actes oficials de la FCF</p>
       </div>
     )
   }
@@ -115,7 +115,7 @@ function FullGoalTimingBar({ buckets }: { buckets: GoalBucket[] }) {
       <div className="flex gap-1.5 mt-1.5">
         {buckets.map(b => (
           <div key={b.label} className="flex-1 text-center">
-            <div className="text-[9px] text-slate-500">{b.label.replace("'", '')}</div>
+            <div className="text-[9px] text-[#8a8f98]">{b.label.replace("'", '')}</div>
           </div>
         ))}
       </div>
@@ -129,7 +129,7 @@ function FullGoalTimingBar({ buckets }: { buckets: GoalBucket[] }) {
       </div>
       <div className="flex gap-4 mt-2 text-xs">
         <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-green-500 inline-block" />Marcats</span>
-        <span className="flex items-center gap-1 text-slate-400"><span className="w-2 h-2 rounded-sm bg-red-500 inline-block" />Encaixats</span>
+        <span className="flex items-center gap-1 text-[#8a8f98]"><span className="w-2 h-2 rounded-sm bg-red-500 inline-block" />Encaixats</span>
       </div>
     </div>
   )
@@ -145,7 +145,7 @@ function SplitBlock({
   const winRate = record.played > 0 ? Math.round((record.wins / record.played) * 100) : 0
   return (
     <div className="bg-black/20 rounded-xl p-3.5 border border-white/5">
-      <div className="flex items-center gap-1.5 mb-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+      <div className="flex items-center gap-1.5 mb-3 text-[11px] font-bold text-[#8a8f98] uppercase tracking-wider">
         <span>{icon}</span>{label}
       </div>
       <div className="grid grid-cols-4 gap-1 mb-2">
@@ -157,16 +157,16 @@ function SplitBlock({
         ].map(s => (
           <div key={s.l} className="text-center">
             <div className={`text-sm font-black ${s.c}`}>{s.v}</div>
-            <div className="text-[9px] text-slate-600 uppercase">{s.l}</div>
+            <div className="text-[9px] text-[#62666d] uppercase">{s.l}</div>
           </div>
         ))}
       </div>
-      <div className="flex justify-between text-[10px] text-slate-500 mb-1">
+      <div className="flex justify-between text-[10px] text-[#8a8f98] mb-1">
         <span>{record.gf}–{record.ga}</span>
         <span className="text-white font-bold">{record.points} pts</span>
       </div>
       <div className="w-full h-1 bg-white/8 rounded-full">
-        <div className="h-full bg-gradient-to-r from-cyan-600 to-cyan-400 rounded-full" style={{ width: `${winRate}%` }} />
+        <div className="h-full bg-gradient-to-r from-[#22c55e] to-[#34d399] rounded-full" style={{ width: `${winRate}%` }} />
       </div>
     </div>
   )
@@ -178,7 +178,7 @@ function RivalSquadTable({ players, hasMinutes = true }: { players: PlayerStat[]
     <div className="overflow-x-auto rounded-xl border border-white/5">
       <table className="w-full text-xs">
         <thead>
-          <tr className="border-b border-white/8 text-slate-500 text-[10px] uppercase">
+          <tr className="border-b border-white/8 text-[#8a8f98] text-[10px] uppercase">
             <th className="text-left py-2 px-3 font-medium">Jugador</th>
             <th className="text-center py-2 px-2 font-medium w-8">PJ</th>
             <th className="text-center py-2 px-2 font-medium w-8">⚽</th>
@@ -192,25 +192,25 @@ function RivalSquadTable({ players, hasMinutes = true }: { players: PlayerStat[]
             <tr key={i} className={`transition-colors ${p.risk ? 'bg-amber-900/8' : 'hover:bg-white/3'}`}>
               <td className="py-2 px-3">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-slate-200 font-medium">{p.name}</span>
+                  <span className="text-[#d0d6e0] font-medium">{p.name}</span>
                   {p.risk && (
                     <span className="text-[9px] px-1.5 py-0.5 bg-amber-500/15 text-amber-400 border border-amber-500/20 rounded-full font-semibold">⚠️</span>
                   )}
                 </div>
               </td>
-              <td className="py-2 px-2 text-center text-slate-500">{p.appearances || '–'}</td>
+              <td className="py-2 px-2 text-center text-[#8a8f98]">{p.appearances || '–'}</td>
               <td className="py-2 px-2 text-center">
-                {p.goals > 0 ? <span className="text-green-400 font-bold">{p.goals}</span> : <span className="text-slate-700">–</span>}
+                {p.goals > 0 ? <span className="text-green-400 font-bold">{p.goals}</span> : <span className="text-[#62666d]">–</span>}
               </td>
               <td className="py-2 px-2 text-center">
                 {p.yellow_cards > 0
-                  ? <span className={p.risk ? 'text-amber-400 font-bold' : 'text-slate-500'}>{p.yellow_cards}</span>
-                  : <span className="text-slate-700">–</span>}
+                  ? <span className={p.risk ? 'text-amber-400 font-bold' : 'text-[#8a8f98]'}>{p.yellow_cards}</span>
+                  : <span className="text-[#62666d]">–</span>}
               </td>
               <td className="py-2 px-2 text-center">
-                {p.red_cards > 0 ? <span className="text-red-400 font-bold">{p.red_cards}</span> : <span className="text-slate-700">–</span>}
+                {p.red_cards > 0 ? <span className="text-red-400 font-bold">{p.red_cards}</span> : <span className="text-[#62666d]">–</span>}
               </td>
-              <td className="py-2 px-2 text-center text-slate-600 hidden sm:table-cell">
+              <td className="py-2 px-2 text-center text-[#62666d] hidden sm:table-cell">
                 {hasMinutes
                   ? (p.minutes_played > 0 ? `${p.minutes_played}'` : '–')
                   : ((p as any).starts > 0 ? (p as any).starts : '–')}
@@ -248,7 +248,7 @@ function FieldSizeCard({ rec }: { rec: FieldSizeRecord }) {
           <span className={`text-sm ${col.text}`}>{FIELD_ICON[rec.category]}</span>
           <span className={`text-xs font-black ${col.text}`}>{rec.label}</span>
         </div>
-        <span className="text-[9px] text-slate-600">{rec.areaRange}</span>
+        <span className="text-[9px] text-[#62666d]">{rec.areaRange}</span>
       </div>
 
       {/* W/D/L grid */}
@@ -261,13 +261,13 @@ function FieldSizeCard({ rec }: { rec: FieldSizeRecord }) {
         ].map(s => (
           <div key={s.l} className="text-center">
             <div className={`text-sm font-black ${s.c}`}>{s.v}</div>
-            <div className="text-[9px] text-slate-600 uppercase">{s.l}</div>
+            <div className="text-[9px] text-[#62666d] uppercase">{s.l}</div>
           </div>
         ))}
       </div>
 
       {/* Goals + win-rate bar */}
-      <div className="flex justify-between text-[10px] text-slate-500 mb-1.5">
+      <div className="flex justify-between text-[10px] text-[#8a8f98] mb-1.5">
         <span>{rec.gf}–{rec.ga} <span className={`font-bold ${gd >= 0 ? 'text-green-400' : 'text-red-400'}`}>({gd >= 0 ? '+' : ''}{gd})</span></span>
         <span className={`font-bold ${col.text}`}>{wr}%</span>
       </div>
@@ -277,7 +277,7 @@ function FieldSizeCard({ rec }: { rec: FieldSizeRecord }) {
 
       {/* Example field */}
       {rec.exampleVenue && (
-        <div className="text-[9px] text-slate-700 truncate">
+        <div className="text-[9px] text-[#62666d] truncate">
           Ex: {rec.exampleVenue}{rec.exampleDims ? ` (${rec.exampleDims})` : ''}
         </div>
       )}
@@ -291,8 +291,8 @@ function FieldSizeMini({ records }: { records: FieldSizeRecord[] }) {
   return (
     <div className="mt-3 bg-black/20 rounded-xl px-4 py-3 border border-white/5">
       <div className="flex items-center gap-1.5 mb-2">
-        <Maximize2 size={10} className="text-slate-500" />
-        <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Fora per mida de camp</span>
+        <Maximize2 size={10} className="text-[#8a8f98]" />
+        <span className="text-[10px] font-black text-[#8a8f98] uppercase tracking-wider">Fora per mida de camp</span>
       </div>
       <div className="flex gap-2">
         {records.map(r => {
@@ -303,13 +303,13 @@ function FieldSizeMini({ records }: { records: FieldSizeRecord[] }) {
               <div className={`text-[9px] font-bold ${col.text} mb-1`}>{r.label}</div>
               <div className="text-xs font-black text-white">
                 <span className="text-green-400">{r.wins}</span>
-                <span className="text-slate-600 mx-0.5">·</span>
+                <span className="text-[#62666d] mx-0.5">·</span>
                 <span className="text-amber-400">{r.draws}</span>
-                <span className="text-slate-600 mx-0.5">·</span>
+                <span className="text-[#62666d] mx-0.5">·</span>
                 <span className="text-red-400">{r.losses}</span>
               </div>
-              <div className="text-[9px] text-slate-600 mt-0.5">{r.plays} PJ · {wr}%</div>
-              {r.exampleDims && <div className="text-[8px] text-slate-700 mt-0.5">{r.exampleDims}</div>}
+              <div className="text-[9px] text-[#62666d] mt-0.5">{r.plays} PJ · {wr}%</div>
+              {r.exampleDims && <div className="text-[8px] text-[#62666d] mt-0.5">{r.exampleDims}</div>}
             </div>
           )
         })}
@@ -325,7 +325,7 @@ function RivalInsightsBlock({ insights }: { insights: RivalInsights | null }) {
   if (insights.matchesAnalyzed < 3) {
     return (
       <div className="mt-3 bg-black/20 rounded-xl px-4 py-3 border border-white/5">
-        <div className="text-[10px] text-slate-400 italic">Sense prou dades per calcular insights</div>
+        <div className="text-[10px] text-[#8a8f98] italic">Sense prou dades per calcular insights</div>
       </div>
     )
   }
@@ -337,7 +337,7 @@ function RivalInsightsBlock({ insights }: { insights: RivalInsights | null }) {
       icon: '🔄',
       label: 'Remontades',
       value: `${insights.comebackRate}%`,
-      color: insights.comebackRate >= 40 ? 'text-amber-300' : 'text-slate-400',
+      color: insights.comebackRate >= 40 ? 'text-amber-300' : 'text-[#8a8f98]',
     })
   }
 
@@ -346,7 +346,7 @@ function RivalInsightsBlock({ insights }: { insights: RivalInsights | null }) {
       icon: '🧹',
       label: 'Porteria a zero',
       value: `${insights.cleanSheetRate}%`,
-      color: insights.cleanSheetRate >= 35 ? 'text-green-400' : 'text-slate-400',
+      color: insights.cleanSheetRate >= 35 ? 'text-green-400' : 'text-[#8a8f98]',
     })
   }
 
@@ -355,7 +355,7 @@ function RivalInsightsBlock({ insights }: { insights: RivalInsights | null }) {
       icon: '⚡',
       label: "Gols finals (75')",
       value: `${insights.lateGoalRate}%`,
-      color: insights.lateGoalRate >= 30 ? 'text-red-400' : 'text-slate-400',
+      color: insights.lateGoalRate >= 30 ? 'text-red-400' : 'text-[#8a8f98]',
     })
   }
 
@@ -365,7 +365,7 @@ function RivalInsightsBlock({ insights }: { insights: RivalInsights | null }) {
       icon: '⚽',
       label: '1ª / 2ª part',
       value: `${insights.firstHalfGoals} — ${insights.secondHalfGoals}`,
-      color: 'text-cyan-400',
+      color: 'text-[#22c55e]',
     })
   }
 
@@ -374,15 +374,15 @@ function RivalInsightsBlock({ insights }: { insights: RivalInsights | null }) {
   return (
     <div className="mt-3 bg-black/20 rounded-xl px-4 py-3 border border-white/5">
       <div className="flex items-center gap-1.5 mb-2">
-        <span className="text-[10px] font-black text-slate-200 uppercase tracking-wider">Tendències del rival</span>
-        <span className="text-[9px] text-slate-500">· {insights.matchesAnalyzed} partits</span>
+        <span className="text-[10px] font-black text-[#d0d6e0] uppercase tracking-wider">Tendències del rival</span>
+        <span className="text-[9px] text-[#8a8f98]">· {insights.matchesAnalyzed} partits</span>
       </div>
       <div className="grid grid-cols-2 gap-1.5">
         {pills.map((p, i) => (
           <div key={i} className="flex items-center gap-1.5 bg-white/4 rounded-lg px-2.5 py-1.5 border border-white/5">
             <span className="text-sm shrink-0">{p.icon}</span>
             <div className="min-w-0">
-              <div className="text-[9px] text-slate-200 truncate">{p.label}</div>
+              <div className="text-[9px] text-[#d0d6e0] truncate">{p.label}</div>
               <div className={`text-xs font-black ${p.color}`}>{p.value}</div>
             </div>
           </div>
@@ -424,22 +424,22 @@ export function RivalScoutCard({
   const gd = rival.gf - rival.ga
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-cyan-500/15 bg-gradient-to-br from-[#0a1e36] via-[#0d1a2e] to-[#0f172a]">
+    <div className="relative overflow-hidden rounded-lg border border-[#22c55e]/15 bg-gradient-to-br from-[#0a1e36] via-[#0d1a2e] to-[#0f1011]">
       {/* Top glow line */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#22c55e]/50 to-transparent" />
 
       {/* ─── Header bar ─────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 gap-2 border-b border-white/5">
         <div className="flex items-center gap-2">
-          <Crosshair size={12} className="text-cyan-400 shrink-0" />
-          <span className="text-[10px] font-black tracking-[0.15em] text-cyan-400 uppercase">
+          <Crosshair size={12} className="text-[#22c55e] shrink-0" />
+          <span className="text-[10px] font-black tracking-[0.15em] text-[#22c55e] uppercase">
             Informe de Reconeixement
           </span>
-          <span className="text-[10px] text-slate-600">·</span>
-          <span className="text-[10px] text-slate-500 font-medium">J{nextMatch.jornada}</span>
+          <span className="text-[10px] text-[#62666d]">·</span>
+          <span className="text-[10px] text-[#8a8f98] font-medium">J{nextMatch.jornada}</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-slate-500">{formatDate(nextMatch.date)}{nextMatch.time ? ` · ${nextMatch.time}h` : ''}</span>
+          <span className="text-[10px] text-[#8a8f98]">{formatDate(nextMatch.date)}{nextMatch.time ? ` · ${nextMatch.time}h` : ''}</span>
           <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${
             nextMatch.isHome
               ? 'bg-green-500/15 text-green-400 border border-green-500/20'
@@ -457,7 +457,7 @@ export function RivalScoutCard({
         <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-5">
           {/* Crest */}
           <div className="relative shrink-0">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-600/20 border border-cyan-500/20 flex items-center justify-center text-2xl font-black text-cyan-300">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-gradient-to-br from-[#22c55e]/20 to-purple-600/20 border border-[#22c55e]/20 flex items-center justify-center text-2xl font-black text-[#22c55e]">
               {nextMatch.opponent.charAt(0)}
             </div>
             {rival.position && (
@@ -472,7 +472,7 @@ export function RivalScoutCard({
 
             {/* Stats pills */}
             <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-2 sm:mb-2.5">
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/6 text-slate-400">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/6 text-[#8a8f98]">
                 {rival.played} PJ
               </span>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-green-500/10 text-green-400">
@@ -485,12 +485,12 @@ export function RivalScoutCard({
                 {rival.losses}D
               </span>
               {rival.played > 0 && (
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/6 text-slate-300">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/6 text-[#d0d6e0]">
                   {rival.gf}–{rival.ga} ({gd >= 0 ? '+' : ''}{gd})
                 </span>
               )}
               {rival.points > 0 && (
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#22c55e]/10 text-[#22c55e] border border-[#22c55e]/20">
                   {rival.points} pts
                 </span>
               )}
@@ -501,11 +501,11 @@ export function RivalScoutCard({
               <div className="flex items-center gap-2">
                 <div className="flex-1 h-1.5 bg-white/8 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-cyan-600 to-cyan-400 rounded-full"
+                    className="h-full bg-gradient-to-r from-[#22c55e] to-[#34d399] rounded-full"
                     style={{ width: `${winRate}%` }}
                   />
                 </div>
-                <span className="text-[10px] text-slate-500 shrink-0">{winRate}%</span>
+                <span className="text-[10px] text-[#8a8f98] shrink-0">{winRate}%</span>
               </div>
             )}
           </div>
@@ -513,7 +513,7 @@ export function RivalScoutCard({
           {/* Form strip — hide on very small screens */}
           {rival.form.length > 0 && (
             <div className="hidden xs:flex shrink-0 flex-col items-end gap-1">
-              <span className="text-[9px] text-slate-600 uppercase tracking-wider">Forma</span>
+              <span className="text-[9px] text-[#62666d] uppercase tracking-wider">Forma</span>
               <div className="flex gap-1">
                 {rival.form.slice(0, 5).reverse().map((r, i) => <FormDot key={i} result={r.result} />)}
               </div>
@@ -524,7 +524,7 @@ export function RivalScoutCard({
         {/* Form strip — mobile only, below identity */}
         {rival.form.length > 0 && (
           <div className="flex xs:hidden items-center gap-1.5 mb-3 -mt-1">
-            <span className="text-[10px] text-slate-500">Forma:</span>
+            <span className="text-[10px] text-[#8a8f98]">Forma:</span>
             {rival.form.slice(0, 5).reverse().map((r, i) => <FormDot key={i} result={r.result} />)}
           </div>
         )}
@@ -543,13 +543,13 @@ export function RivalScoutCard({
                 ? rival.topScorers.slice(0, 4).map((p, i) => (
                     <div key={i} className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5 min-w-0">
-                        <span className="text-[9px] text-slate-600 w-3 shrink-0">{i + 1}</span>
-                        <span className="text-xs text-slate-200 truncate">{p.name.split(',')[0]}</span>
+                        <span className="text-[9px] text-[#62666d] w-3 shrink-0">{i + 1}</span>
+                        <span className="text-xs text-[#d0d6e0] truncate">{p.name.split(',')[0]}</span>
                       </div>
                       <span className="text-xs font-black text-green-400 shrink-0 ml-2">{p.goals} ⚽</span>
                     </div>
                   ))
-                : <p className="text-xs text-slate-600 italic">Sense dades</p>}
+                : <p className="text-xs text-[#62666d] italic">Sense dades</p>}
             </div>
           </div>
 
@@ -564,13 +564,13 @@ export function RivalScoutCard({
               <>
                 <div className="flex gap-0.5 mt-1 mb-2">
                   {rival.goalBuckets.map(b => (
-                    <div key={b.label} className="flex-1 text-center text-[8px] text-slate-700">{b.label.replace("'", '').replace('–', '-')}</div>
+                    <div key={b.label} className="flex-1 text-center text-[8px] text-[#62666d]">{b.label.replace("'", '').replace('–', '-')}</div>
                   ))}
                 </div>
                 {dangerBucket && dangerBucket.scored > 0 && (
-                  <div className="text-[10px] text-slate-400 mt-1">
+                  <div className="text-[10px] text-[#8a8f98] mt-1">
                     Perill màxim: <span className="text-purple-300 font-bold">{dangerBucket.label}</span>
-                    <span className="text-slate-600 ml-1">({dangerBucket.scored} gols)</span>
+                    <span className="text-[#62666d] ml-1">({dangerBucket.scored} gols)</span>
                   </div>
                 )}
               </>
@@ -587,11 +587,11 @@ export function RivalScoutCard({
               {rival.apercibits.length > 0
                 ? rival.apercibits.slice(0, 4).map((p, i) => (
                     <div key={i} className="flex items-center justify-between">
-                      <span className="text-xs text-slate-200 truncate pr-1">{p.name.split(',')[0]}</span>
+                      <span className="text-xs text-[#d0d6e0] truncate pr-1">{p.name.split(',')[0]}</span>
                       <span className="text-xs font-bold text-amber-400 shrink-0">🟨 {p.yellow_cards}</span>
                     </div>
                   ))
-                : <p className="text-xs text-slate-600 italic">Cap jugador en risc</p>}
+                : <p className="text-xs text-[#62666d] italic">Cap jugador en risc</p>}
             </div>
             {rival.apercibits.length > 0 && (
               <p className="text-[9px] text-amber-600/60 mt-2">Una groga els suspèn</p>
@@ -615,7 +615,7 @@ export function RivalScoutCard({
 
           {/* Goal timing full */}
           <div>
-            <div className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3">
+            <div className="text-[11px] font-black text-[#8a8f98] uppercase tracking-widest mb-3">
               Timing de gols — Anàlisi complet
             </div>
             <div className="bg-black/20 rounded-xl p-4 border border-white/5">
@@ -629,7 +629,7 @@ export function RivalScoutCard({
           {/* Home / Away splits */}
           {(rival.home.played > 0 || rival.away.played > 0) && (
             <div>
-              <div className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3">
+              <div className="text-[11px] font-black text-[#8a8f98] uppercase tracking-widest mb-3">
                 Rendiment local i visitant
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -642,14 +642,14 @@ export function RivalScoutCard({
           {/* Away performance by field size */}
           {rival.awayByFieldSize.length > 0 && (
             <div>
-              <div className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+              <div className="text-[11px] font-black text-[#8a8f98] uppercase tracking-widest mb-3 flex items-center gap-2">
                 <Maximize2 size={11} />
                 Rendiment visitant per mida de camp
               </div>
               <div className={`grid gap-3 ${rival.awayByFieldSize.length === 1 ? 'grid-cols-1 max-w-xs' : rival.awayByFieldSize.length === 2 ? 'grid-cols-2' : 'grid-cols-1 sm:grid-cols-3'}`}>
                 {rival.awayByFieldSize.map(rec => <FieldSizeCard key={rec.category} rec={rec} />)}
               </div>
-              <p className="text-[9px] text-slate-700 mt-2">
+              <p className="text-[9px] text-[#62666d] mt-2">
                 * Dades basades en camps amb dimensions confirmades. Cobertura parcial — {rival.awayByFieldSize.reduce((s, r) => s + r.plays, 0)} de {rival.away.played} partits fora identificats.
               </p>
             </div>
@@ -658,14 +658,14 @@ export function RivalScoutCard({
           {/* Most minutes / Most starts */}
           {rival.mostMinutes.length > 0 && (
             <div>
-              <div className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3">
+              <div className="text-[11px] font-black text-[#8a8f98] uppercase tracking-widest mb-3">
                 {hasMinutes ? 'Jugadors amb més minuts' : 'Jugadors amb més titularitats'}
               </div>
               <div className="bg-black/20 rounded-xl p-4 border border-white/5 grid grid-cols-2 gap-x-6 gap-y-1.5">
                 {rival.mostMinutes.slice(0, 8).map((p, i) => (
                   <div key={i} className="flex items-center justify-between">
-                    <span className="text-xs text-slate-300 truncate pr-2">{p.name.split(',')[0]}</span>
-                    <span className="text-xs font-bold text-cyan-400 shrink-0">
+                    <span className="text-xs text-[#d0d6e0] truncate pr-2">{p.name.split(',')[0]}</span>
+                    <span className="text-xs font-bold text-[#22c55e] shrink-0">
                       {hasMinutes ? `${p.minutes_played}'` : `${(p as any).starts || p.appearances}`}
                     </span>
                   </div>
@@ -677,7 +677,7 @@ export function RivalScoutCard({
           {/* Full squad */}
           {rival.players.length > 0 && (
             <div>
-              <div className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3">
+              <div className="text-[11px] font-black text-[#8a8f98] uppercase tracking-widest mb-3">
                 Plantilla completa — {rival.players.length} jugadors
               </div>
               <RivalSquadTable players={rival.players} hasMinutes={hasMinutes} />
@@ -693,7 +693,7 @@ export function RivalScoutCard({
           {/* Head to head */}
           {headToHead.length > 0 && (
             <div>
-              <div className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+              <div className="text-[11px] font-black text-[#8a8f98] uppercase tracking-widest mb-3 flex items-center gap-2">
                 <BarChart2 size={11} />
                 Historial directe — últims {headToHead.length} enfrontaments
               </div>
@@ -703,9 +703,9 @@ export function RivalScoutCard({
                     <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-[10px] font-black ${
                       m.result === 'W' ? 'bg-green-500 text-white' :
                       m.result === 'D' ? 'bg-amber-400 text-white' :
-                      m.result === 'L' ? 'bg-red-500 text-white' : 'bg-white/10 text-slate-500'
+                      m.result === 'L' ? 'bg-red-500 text-white' : 'bg-white/10 text-[#8a8f98]'
                     }`}>{m.result ?? '?'}</span>
-                    <span className="text-[10px] text-slate-500 w-14 text-right">{formatDate(m.date)}</span>
+                    <span className="text-[10px] text-[#8a8f98] w-14 text-right">{formatDate(m.date)}</span>
                     <div className="flex-1 text-center">
                       <ScoreBadge gf={m.goalsFor} ga={m.goalsAgainst} />
                     </div>
@@ -723,24 +723,24 @@ export function RivalScoutCard({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {nextMatch.venue && (
                 <div className="bg-black/20 rounded-xl p-3.5 border border-white/5">
-                  <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                  <div className="text-[10px] font-bold text-[#8a8f98] uppercase tracking-wider mb-1.5 flex items-center gap-1">
                     <span>📍</span> Camp
                   </div>
-                  <p className="text-sm text-slate-200 font-medium">{nextMatch.venue.split('  ')[0]}</p>
+                  <p className="text-sm text-[#d0d6e0] font-medium">{nextMatch.venue.split('  ')[0]}</p>
                 </div>
               )}
               {nextMatch.referee && (
                 <div className="bg-black/20 rounded-xl p-3.5 border border-white/5">
-                  <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                  <div className="text-[10px] font-bold text-[#8a8f98] uppercase tracking-wider mb-1.5 flex items-center gap-1">
                     <Shield size={10} />Àrbitre
                   </div>
-                  <p className="text-sm text-slate-200 font-medium">
-                    <a href={`/arbitre/${slugify(nextMatch.referee)}`} className="hover:text-cyan-300 transition-colors">
+                  <p className="text-sm text-[#d0d6e0] font-medium">
+                    <a href={`/arbitre/${slugify(nextMatch.referee)}`} className="hover:text-[#22c55e] transition-colors">
                       {nextMatch.referee.split(',')[0]}
                     </a>
                   </p>
                   {nextMatch.referees && nextMatch.referees.length > 1 && (
-                    <p className="text-[10px] text-slate-600 mt-0.5">+{nextMatch.referees.length - 1} assistents</p>
+                    <p className="text-[10px] text-[#62666d] mt-0.5">+{nextMatch.referees.length - 1} assistents</p>
                   )}
                 </div>
               )}
@@ -754,20 +754,20 @@ export function RivalScoutCard({
       <div className="px-4 sm:px-6 py-3 sm:py-4">
         <button
           onClick={() => setExpanded(v => !v)}
-          className="w-full py-4 rounded-xl border border-cyan-500/20 bg-cyan-500/5 hover:bg-cyan-500/10 hover:border-cyan-500/35 active:bg-cyan-500/15 transition-all duration-200 flex items-center justify-center gap-2.5 group"
+          className="w-full py-4 rounded-xl border border-[#22c55e]/20 bg-[#22c55e]/5 hover:bg-[#22c55e]/10 hover:border-[#22c55e]/35 active:bg-[#22c55e]/15 transition-all duration-200 flex items-center justify-center gap-2.5 group"
         >
-          <Crosshair size={13} className="text-cyan-500 group-hover:text-cyan-300 transition-colors" />
-          <span className="text-sm font-black text-cyan-400 group-hover:text-cyan-300 tracking-wide transition-colors">
+          <Crosshair size={13} className="text-[#22c55e] group-hover:text-[#22c55e] transition-colors" />
+          <span className="text-sm font-black text-[#22c55e] group-hover:text-[#22c55e] tracking-wide transition-colors">
             {expanded ? 'Plegar informe' : 'Veure informe complet del rival'}
           </span>
           {expanded
-            ? <ChevronUp size={15} className="text-cyan-500 group-hover:text-cyan-300 transition-colors" />
-            : <ChevronDown size={15} className="text-cyan-500 group-hover:text-cyan-300 transition-colors" />}
+            ? <ChevronUp size={15} className="text-[#22c55e] group-hover:text-[#22c55e] transition-colors" />
+            : <ChevronDown size={15} className="text-[#22c55e] group-hover:text-[#22c55e] transition-colors" />}
         </button>
       </div>
 
       {/* Bottom glow */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#22c55e]/20 to-transparent" />
     </div>
   )
 }

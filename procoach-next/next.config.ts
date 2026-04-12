@@ -9,6 +9,7 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ['jsonwebtoken', 'html2canvas', 'jspdf', 'html-to-image', 'source-map', 'source-map-support'],
   turbopack: {
     root: __dirname,
   },

@@ -9,14 +9,14 @@ function PhoneMockup({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative mx-auto shrink-0" style={{ width: 180, height: 380 }}>
       <div
-        className="absolute inset-0 rounded-[1.8rem] border-[2.5px] border-slate-600/80 bg-black"
-        style={{ boxShadow: '0 0 0 1.5px #1e293b, 0 20px 50px rgba(0,0,0,0.7)' }}
+        className="absolute inset-0 rounded-[1.8rem] border-[2.5px] border-white/[0.08]/80 bg-black"
+        style={{ boxShadow: '0 0 0 1.5px rgba(255,255,255,0.04), 0 20px 50px rgba(0,0,0,0.7)' }}
       >
         <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-14 h-3.5 bg-black rounded-full z-10" />
-        <div className="absolute inset-[2.5px] rounded-[1.55rem] overflow-hidden bg-[#0f172a]">
+        <div className="absolute inset-[2.5px] rounded-[1.55rem] overflow-hidden bg-[#0f1011]">
           {children}
         </div>
-        <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-16 h-0.5 bg-slate-600/60 rounded-full" />
+        <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-16 h-0.5 bg-white/[0.06] rounded-full" />
       </div>
     </div>
   )
@@ -58,8 +58,8 @@ export default function StoriesPage() {
       onClick={() => inputRef.current?.click()}
       className="w-full h-full flex flex-col items-center justify-center gap-3 hover:bg-white/5 transition-colors"
     >
-      <Upload size={28} className="text-slate-500" />
-      <span className="text-slate-500 text-[9px] text-center px-6 leading-tight">
+      <Upload size={28} className="text-[#8a8f98]" />
+      <span className="text-[#8a8f98] text-[9px] text-center px-6 leading-tight">
         Puja la captura del informe rival
       </span>
     </button>
@@ -74,12 +74,12 @@ export default function StoriesPage() {
         <span className="text-red-400">l&apos;entrenador del rival</span><br />
         del teu equip.
       </h2>
-      <p className="text-slate-400 text-[10px] mb-3">Patrons de joc, gols per minut, tend&egrave;ncies...</p>
+      <p className="text-[#8a8f98] text-[10px] mb-3">Patrons de joc, gols per minut, tend&egrave;ncies...</p>
       <PhoneMockup>{screenContent}</PhoneMockup>
       <div className="mt-auto pt-2">
         <p className="text-white text-xs font-bold mb-0.5">Tu tamb&eacute; la pots tenir.</p>
         <p className="text-green-400 text-base font-black">Gratis.</p>
-        <p className="text-slate-600 text-[9px] mt-1">neoscout.es</p>
+        <p className="text-[#62666d] text-[9px] mt-1">neoscout.es</p>
       </div>
     </div>,
 
@@ -89,15 +89,15 @@ export default function StoriesPage() {
         No et quedis enrere.<br />
         <span className="text-green-400">Prepara ja el pr&ograve;xim partit.</span>
       </h2>
-      <p className="text-slate-400 text-[10px] mb-2">5 minuts. Dades reals de la FCF. 100% gratis.</p>
+      <p className="text-[#8a8f98] text-[10px] mb-2">5 minuts. Dades reals de la FCF. 100% gratis.</p>
       <PhoneMockup>{screenContent}</PhoneMockup>
       <div className="mt-auto pt-2">
-        <div className="px-5 py-2 bg-gradient-to-r from-green-600 to-cyan-600 rounded-full text-white font-bold text-xs mb-1.5">
+        <div className="px-5 py-2 bg-gradient-to-r bg-[#22c55e] rounded-full text-white font-bold text-xs mb-1.5">
           Entra ara — Gratis per entrenadors &uarr;
         </div>
         <div className="bg-white/5 border border-green-500/30 rounded-xl px-3 py-1.5 inline-block">
           <p className="text-green-400 text-base font-black">neoscout.es</p>
-          <p className="text-slate-500 text-[8px]">Enlla&ccedil; a la bio</p>
+          <p className="text-[#8a8f98] text-[8px]">Enlla&ccedil; a la bio</p>
         </div>
       </div>
     </div>,
@@ -109,12 +109,12 @@ export default function StoriesPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white">
+    <div className="min-h-screen bg-[#0f1011] text-white">
       <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
 
       <div className="max-w-4xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-2">Instagram Stories</h1>
-        <p className="text-slate-400 text-sm mb-6">2 stories amb la captura real del informe. Puja la captura i descarrega els PNG.</p>
+        <p className="text-[#8a8f98] text-sm mb-6">2 stories amb la captura real del informe. Puja la captura i descarrega els PNG.</p>
 
         {/* Upload button if no screenshot */}
         {!screenshot && (
@@ -133,7 +133,7 @@ export default function StoriesPage() {
             <span className="text-green-400 text-sm">Captura carregada</span>
             <button
               onClick={() => inputRef.current?.click()}
-              className="ml-auto text-slate-400 text-xs hover:text-white transition-colors"
+              className="ml-auto text-[#8a8f98] text-xs hover:text-white transition-colors"
             >
               Canviar
             </button>
@@ -149,7 +149,7 @@ export default function StoriesPage() {
               className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
                 i === active
                   ? 'bg-green-600 text-white'
-                  : 'bg-white/5 text-slate-400 hover:bg-white/10'
+                  : 'bg-white/5 text-[#8a8f98] hover:bg-white/10'
               }`}
             >
               {label}
@@ -171,7 +171,7 @@ export default function StoriesPage() {
 
           <div
             id={`story-${active}`}
-            className="w-[360px] h-[640px] bg-gradient-to-b from-[#0a0a0a] to-[#0f172a] rounded-3xl overflow-hidden shadow-2xl shadow-black/50"
+            className="w-[360px] h-[640px] bg-gradient-to-b from-[#0a0a0a] to-[#0f1011] rounded-lg overflow-hidden shadow-2xl shadow-black/50"
             style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}
           >
             {stories[active]}
@@ -179,8 +179,8 @@ export default function StoriesPage() {
 
           {/* Caption */}
           <div className="mt-6 w-full max-w-md bg-white/4 border border-white/8 rounded-xl p-4">
-            <p className="text-xs text-slate-500 mb-2 font-bold">Copy pel caption:</p>
-            <p className="text-sm text-slate-300">{captions[active]}</p>
+            <p className="text-xs text-[#8a8f98] mb-2 font-bold">Copy pel caption:</p>
+            <p className="text-sm text-[#d0d6e0]">{captions[active]}</p>
           </div>
         </div>
       </div>

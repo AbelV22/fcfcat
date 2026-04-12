@@ -223,7 +223,7 @@ export default async function ArbitreProPage() {
                 { v: ref.yellows_per_match.toFixed(1), l: 'Grogues/partit', c: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' },
                 { v: ref.reds_per_match.toFixed(2), l: 'Vermelles/partit', c: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20' },
                 { v: `${ref.matches_with_red_pct}%`, l: 'Partits amb expulsio', c: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20' },
-                { v: ref.penalties_per_match.toFixed(2), l: 'Penals/partit', c: 'text-cyan-400', bg: 'bg-cyan-500/10 border-cyan-500/20' },
+                { v: ref.penalties_per_match.toFixed(2), l: 'Penals/partit', c: 'text-[#22c55e]', bg: 'bg-[#22c55e]/10 border-[#22c55e]/20' },
                 { v: ref.avg_goals_per_match.toFixed(1), l: 'Gols/partit', c: 'text-green-400', bg: 'bg-green-500/10 border-green-500/20' },
               ].map(s => (
                 <div key={s.l} className={`rounded-lg p-4 text-center border ${s.bg}`}>
@@ -239,17 +239,17 @@ export default async function ArbitreProPage() {
             {ref.penalties_total > 0 && (
               <div className="v2-card p-5 border-white/[0.06]">
                 <div className="flex items-center gap-2 mb-3">
-                  <Target size={16} className="text-cyan-400" />
+                  <Target size={16} className="text-[#22c55e]" />
                   <h3 className="text-sm font-medium text-white">Penals</h3>
                 </div>
                 <div className="flex items-center gap-6 text-sm">
                   <div>
                     <span className="text-[#8a8f98]">Total penals pitats: </span>
-                    <span className="font-medium text-cyan-400"><ProBlurValue value={ref.penalties_total} blurred={blurred} /></span>
+                    <span className="font-medium text-[#22c55e]"><ProBlurValue value={ref.penalties_total} blurred={blurred} /></span>
                   </div>
                   <div>
                     <span className="text-[#8a8f98]">Partits amb penal: </span>
-                    <span className="font-medium text-cyan-400"><ProBlurValue value={`${ref.matches_with_penalty_pct}%`} blurred={blurred} /></span>
+                    <span className="font-medium text-[#22c55e]"><ProBlurValue value={`${ref.matches_with_penalty_pct}%`} blurred={blurred} /></span>
                   </div>
                 </div>
               </div>
@@ -447,7 +447,7 @@ export default async function ArbitreProPage() {
                         </span>
                         <span className={`text-amber-400 text-xs shrink-0 ${blurred ? 'blur-sm select-none' : ''}`}>{m.yellows}🟡</span>
                         {m.reds > 0 && <span className={`text-red-400 text-xs shrink-0 ${blurred ? 'blur-sm select-none' : ''}`}>{m.reds}🔴</span>}
-                        {(m as any).penalties > 0 && <span className={`text-cyan-400 text-xs shrink-0 ${blurred ? 'blur-sm select-none' : ''}`}>{(m as any).penalties}P</span>}
+                        {(m as any).penalties > 0 && <span className={`text-[#22c55e] text-xs shrink-0 ${blurred ? 'blur-sm select-none' : ''}`}>{(m as any).penalties}P</span>}
                       </div>
                     )
                   })}

@@ -137,7 +137,7 @@ export default async function CalendariPage() {
                           <span style={{ color: res === 'L' ? '#22c55e' : res === 'W' ? '#f87171' : '#d0d6e0' }}>{m.goalsAgainst}</span>
                         </span>
                         <span style={{
-                          width: 20, height: 20, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          width: 20, height: 20, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
                           fontSize: 10, fontWeight: 510,
                           background: res === 'W' ? '#22c55e' : res === 'D' ? '#62666d' : res === 'L' ? '#f87171' : 'rgba(255,255,255,0.08)',
                           color: res ? '#fff' : '#62666d',

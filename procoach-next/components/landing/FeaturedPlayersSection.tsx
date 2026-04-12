@@ -3,7 +3,7 @@ import { Trophy, Zap } from 'lucide-react'
 import type { FeaturedPlayersData, FeaturedPlayer } from '@/lib/supabase-data'
 
 /** Medal colors for top 3 */
-const MEDAL = ['text-yellow-400', 'text-slate-300', 'text-amber-600']
+const MEDAL = ['text-yellow-400', 'text-[#d0d6e0]', 'text-amber-600']
 
 function PlayerRow({ player, rank, showRatio }: { player: FeaturedPlayer; rank: number; showRatio?: boolean }) {
   return (
@@ -11,24 +11,24 @@ function PlayerRow({ player, rank, showRatio }: { player: FeaturedPlayer; rank: 
       href={`/jugador/${player.slug}--${player.teamSlug}`}
       className="flex items-center gap-3 py-2 px-3 -mx-3 rounded-lg hover:bg-white/5 transition-colors group"
     >
-      <span className={`text-sm font-black w-5 text-center ${MEDAL[rank] || 'text-slate-600'}`}>
+      <span className={`text-sm font-black w-5 text-center ${MEDAL[rank] || 'text-[#62666d]'}`}>
         {rank + 1}
       </span>
       <div className="flex-1 min-w-0">
         <div className="text-sm font-semibold text-white truncate group-hover:text-green-400 transition-colors">
           {player.name}
         </div>
-        <div className="text-[11px] text-slate-500 truncate">{player.team}</div>
+        <div className="text-[11px] text-[#8a8f98] truncate">{player.team}</div>
       </div>
       {showRatio && player.goalsPerMinute != null ? (
         <div className="text-right shrink-0">
-          <div className="text-sm font-bold text-cyan-400">{Math.round(player.minutesPlayed / player.goals)}&apos;</div>
-          <div className="text-[10px] text-slate-500">{player.goals} gols / {player.minutesPlayed}&apos;</div>
+          <div className="text-sm font-bold text-[#22c55e]">{Math.round(player.minutesPlayed / player.goals)}&apos;</div>
+          <div className="text-[10px] text-[#8a8f98]">{player.goals} gols / {player.minutesPlayed}&apos;</div>
         </div>
       ) : (
         <div className="text-right shrink-0">
           <div className="text-sm font-bold text-green-400">{player.goals}</div>
-          <div className="text-[10px] text-slate-500">{player.appearances} partits</div>
+          <div className="text-[10px] text-[#8a8f98]">{player.appearances} partits</div>
         </div>
       )}
     </Link>
@@ -48,7 +48,7 @@ function CompetitionCard({
 }) {
   if (!players || players.length === 0) return null
   return (
-    <div className="card-elevated rounded-2xl p-5">
+    <div className="card-elevated rounded-lg p-5">
       <div className="flex items-center gap-2 mb-3">
         {icon}
         <h3 className="text-sm font-bold text-white">{title}</h3>
@@ -94,7 +94,7 @@ export default function FeaturedPlayersSection({ data }: { data: FeaturedPlayers
               <Trophy size={24} className="inline -mt-1 mr-2 text-yellow-400" />
               Jugadors <span className="gradient-text-hero">destacats</span>
             </h2>
-            <p className="text-slate-400 text-sm">
+            <p className="text-[#8a8f98] text-sm">
               Màxims golejadors per divisió — Temporada 2025/26
             </p>
           </div>
@@ -117,10 +117,10 @@ export default function FeaturedPlayersSection({ data }: { data: FeaturedPlayers
         <div>
           <div className="text-center mb-8 section-accent-center reveal">
             <h2 className="font-headline text-2xl sm:text-3xl font-black text-white mb-2">
-              <Zap size={24} className="inline -mt-1 mr-2 text-cyan-400" />
+              <Zap size={24} className="inline -mt-1 mr-2 text-[#22c55e]" />
               Millor ràtio <span className="gradient-text-hero">gols/minut</span>
             </h2>
-            <p className="text-slate-400 text-sm">
+            <p className="text-[#8a8f98] text-sm">
               Jugadors més eficients (mínim 200 minuts jugats)
             </p>
           </div>
@@ -131,7 +131,7 @@ export default function FeaturedPlayersSection({ data }: { data: FeaturedPlayers
                 key={comp}
                 title={topGoalsPerMinuteByCompetition[comp][0].competitionName}
                 players={topGoalsPerMinuteByCompetition[comp]}
-                icon={<Zap size={16} className="text-cyan-400" />}
+                icon={<Zap size={16} className="text-[#22c55e]" />}
                 showRatio
               />
             ))}

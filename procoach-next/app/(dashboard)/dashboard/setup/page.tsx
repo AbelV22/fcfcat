@@ -108,7 +108,7 @@ export default function SetupPage() {
             <select
               value={competition}
               onChange={e => setCompetition(e.target.value)}
-              className="w-full px-4 py-3 bg-[#1e293b] border border-white/[0.06] rounded-lg text-white focus:outline-none focus:border-green-500/50 transition-all text-sm"
+              className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.06] rounded-lg text-white focus:outline-none focus:border-green-500/50 transition-all text-sm"
             >
               <option value="">Selecciona la competicio...</option>
               {CATEGORY_GROUPS.map(group => (
@@ -133,7 +133,7 @@ export default function SetupPage() {
                 onChange={e => { setTeamSearch(e.target.value); setTeam(''); setTeamOpen(true) }}
                 onFocus={() => competition && setTeamOpen(true)}
                 placeholder={!competition ? 'Selecciona primer la competicio' : teamsLoading ? 'Carregant equips...' : `Cerca entre ${teams.length} equips...`}
-                className="w-full pl-11 pr-10 py-3 bg-white/5 border border-white/[0.06] rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full pl-11 pr-10 py-3 bg-white/5 border border-white/[0.06] rounded-lg text-white placeholder-[#62666d] focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all text-sm disabled:opacity-40 disabled:cursor-not-allowed"
               />
               {team ? (
                 <button type="button" onClick={() => { setTeam(''); setTeamSearch('') }}
@@ -144,7 +144,7 @@ export default function SetupPage() {
                 <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#62666d] pointer-events-none" />
               )}
               {teamOpen && competition && !teamsLoading && (
-                <div className="absolute z-50 left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-[#1e293b] border border-white/[0.06] rounded-lg shadow-xl">
+                <div className="absolute z-50 left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-white/[0.04] border border-white/[0.06] rounded-lg shadow-xl">
                   {filteredTeams.length === 0 ? (
                     <div className="px-4 py-3 text-sm text-[#62666d]">{teamSearch ? 'Cap equip trobat' : 'No hi ha equips'}</div>
                   ) : filteredTeams.map(t => (
@@ -158,7 +158,7 @@ export default function SetupPage() {
                 </div>
               )}
               {teamOpen && teamsLoading && (
-                <div className="absolute z-50 left-0 right-0 mt-1 bg-[#1e293b] border border-white/[0.06] rounded-lg shadow-xl px-4 py-3">
+                <div className="absolute z-50 left-0 right-0 mt-1 bg-white/[0.04] border border-white/[0.06] rounded-lg shadow-xl px-4 py-3">
                   <div className="flex items-center gap-2 text-sm text-[#8a8f98]">
                     <div className="w-3.5 h-3.5 border-2 border-white/20 border-t-green-400 rounded-full animate-spin" />
                     Carregant equips...

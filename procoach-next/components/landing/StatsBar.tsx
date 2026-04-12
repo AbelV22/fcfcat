@@ -23,7 +23,7 @@ export default function StatsBar({ refereeCount, matchCount, teamCount }: Props)
     },
     {
       icon: <Shield size={14} />,
-      iconColor: 'text-cyan-400',
+      iconColor: 'text-[#22c55e]',
       value: refereeCount.toLocaleString('ca'),
       label: 'Àrbitres perfilats',
     },
@@ -54,7 +54,7 @@ export default function StatsBar({ refereeCount, matchCount, teamCount }: Props)
               <div className="font-score text-4xl lg:text-5xl text-white leading-none mb-1.5 tabular-nums">
                 {stat.value}
               </div>
-              <div className="text-[10px] text-slate-500 uppercase tracking-widest font-medium">
+              <div className="text-[10px] text-[#8a8f98] uppercase tracking-widest font-medium">
                 {stat.label}
               </div>
             </div>
@@ -79,7 +79,7 @@ export default function StatsBar({ refereeCount, matchCount, teamCount }: Props)
             <div className="font-score text-3xl text-white leading-none mb-1 tabular-nums">
               {stat.value}
             </div>
-            <div className="text-[9px] text-slate-500 uppercase tracking-wider font-medium leading-tight">
+            <div className="text-[9px] text-[#8a8f98] uppercase tracking-wider font-medium leading-tight">
               {stat.label}
             </div>
           </div>

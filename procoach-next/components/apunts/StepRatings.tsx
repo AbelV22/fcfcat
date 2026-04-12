@@ -113,7 +113,7 @@ export default function StepRatings({
   return (
     <div>
       <h2 className="text-xl font-bold text-white mb-1">Valoracions</h2>
-      <p className="text-sm text-slate-400 mb-4">
+      <p className="text-sm text-[#8a8f98] mb-4">
         Valora el rendiment de l&apos;equip globalment o jugador a jugador.
       </p>
 
@@ -124,7 +124,7 @@ export default function StepRatings({
           className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all ${
             mode === 'player'
               ? 'bg-white/10 text-white'
-              : 'text-slate-500 hover:text-slate-300'
+              : 'text-[#8a8f98] hover:text-[#d0d6e0]'
           }`}
         >
           <Users size={12} />
@@ -135,7 +135,7 @@ export default function StepRatings({
           className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all ${
             mode === 'global'
               ? 'bg-white/10 text-white'
-              : 'text-slate-500 hover:text-slate-300'
+              : 'text-[#8a8f98] hover:text-[#d0d6e0]'
           }`}
         >
           <BarChart3 size={12} />
@@ -146,7 +146,7 @@ export default function StepRatings({
       {/* ─── Global mode ─── */}
       {mode === 'global' && (
         <div className="space-y-4">
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-[#8a8f98]">
             Valora els aspectes col·lectius de l&apos;equip (1-10). Pots saltar les valoracions individuals.
           </p>
 
@@ -176,7 +176,7 @@ export default function StepRatings({
 
           {/* Global notes */}
           <div>
-            <label className="text-[10px] text-slate-500 uppercase tracking-wider mb-1.5 block">
+            <label className="text-[10px] text-[#8a8f98] uppercase tracking-wider mb-1.5 block">
               Notes generals de l&apos;equip
             </label>
             <textarea
@@ -187,7 +187,7 @@ export default function StepRatings({
                 setTimeout(saveGlobalMode, 0)
               }}
               rows={3}
-              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs placeholder-slate-500 focus:outline-none focus:border-green-500/50 resize-none"
+              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs placeholder-[#62666d] focus:outline-none focus:border-green-500/50 resize-none"
             />
           </div>
 
@@ -243,12 +243,12 @@ export default function StepRatings({
                   {/* Quick stats pills */}
                   <div className="flex gap-1 mt-1 flex-wrap">
                     {stats.goals > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-green-500/15 text-green-400 font-semibold">⚽ {stats.goals}</span>}
-                    {stats.assists > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-400 font-semibold">🅰️ {stats.assists}</span>}
-                    {stats.shots > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-400">🎯 {stats.shots}</span>}
+                    {stats.assists > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#22c55e]/15 text-[#22c55e] font-semibold">🅰️ {stats.assists}</span>}
+                    {stats.shots > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/[0.06] text-[#8a8f98]">🎯 {stats.shots}</span>}
                     {stats.yellows > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-yellow-500/15 text-yellow-400">🟨 {stats.yellows}</span>}
                     {stats.reds > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/15 text-red-400">🟥 {stats.reds}</span>}
                     {playerEvents.length === 0 && (
-                      <span className="text-[9px] text-slate-600">Cap esdeveniment</span>
+                      <span className="text-[9px] text-[#62666d]">Cap esdeveniment</span>
                     )}
                   </div>
                 </div>
@@ -262,7 +262,7 @@ export default function StepRatings({
                 {/* Expand toggle */}
                 <button
                   onClick={() => setExpandedPlayer(isExpanded ? null : name)}
-                  className="text-slate-500 hover:text-white transition-colors p-1"
+                  className="text-[#8a8f98] hover:text-white transition-colors p-1"
                 >
                   <ChevronDown size={14} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                 </button>
@@ -271,7 +271,7 @@ export default function StepRatings({
               {/* Rating slider (always visible) */}
               <div className="px-3 pb-2">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] text-slate-500 w-16">Rendiment</span>
+                  <span className="text-[10px] text-[#8a8f98] w-16">Rendiment</span>
                   <div className="flex-1">
                     <RatingSlider
                       value={rating.rating}
@@ -280,7 +280,7 @@ export default function StepRatings({
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-slate-500 w-16 flex items-center gap-1">
+                  <span className="text-[10px] text-[#8a8f98] w-16 flex items-center gap-1">
                     <Flame size={9} /> Esforc
                   </span>
                   <div className="flex-1 flex gap-1">
@@ -312,7 +312,7 @@ export default function StepRatings({
                 <div className="px-3 pb-4 space-y-3 border-t border-white/5 pt-3">
                   {/* Tags */}
                   <div>
-                    <label className="text-[10px] text-slate-500 uppercase tracking-wider mb-1.5 block">Etiquetes</label>
+                    <label className="text-[10px] text-[#8a8f98] uppercase tracking-wider mb-1.5 block">Etiquetes</label>
                     <PlayerTagPicker
                       selected={rating.tags}
                       onChange={(tags) => updateRating(name, { tags })}
@@ -322,12 +322,12 @@ export default function StepRatings({
                   {/* Event summary */}
                   {playerEvents.length > 0 && (
                     <div>
-                      <label className="text-[10px] text-slate-500 uppercase tracking-wider mb-1.5 block">Esdeveniments</label>
+                      <label className="text-[10px] text-[#8a8f98] uppercase tracking-wider mb-1.5 block">Esdeveniments</label>
                       <div className="flex flex-wrap gap-1">
                         {playerEvents.map((e, i) => (
                           <span
                             key={i}
-                            className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-slate-400"
+                            className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-[#8a8f98]"
                           >
                             {e.minute > 0 ? `${e.minute}' ` : ''}{EVENT_LABELS[e.event_type]}
                           </span>
@@ -338,13 +338,13 @@ export default function StepRatings({
 
                   {/* Note */}
                   <div>
-                    <label className="text-[10px] text-slate-500 uppercase tracking-wider mb-1.5 block">Nota</label>
+                    <label className="text-[10px] text-[#8a8f98] uppercase tracking-wider mb-1.5 block">Nota</label>
                     <textarea
                       placeholder="Observacions sobre el rendiment del jugador..."
                       value={rating.note || ''}
                       onChange={(e) => updateRating(name, { note: e.target.value || null })}
                       rows={2}
-                      className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs placeholder-slate-500 focus:outline-none focus:border-green-500/50 resize-none"
+                      className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs placeholder-[#62666d] focus:outline-none focus:border-green-500/50 resize-none"
                     />
                   </div>
                 </div>
@@ -357,7 +357,7 @@ export default function StepRatings({
       {attendingPlayers.length === 0 && (
         <div className="text-center py-12">
           <AlertTriangle size={24} className="text-amber-400 mx-auto mb-3" />
-          <p className="text-sm text-slate-400 mb-3">
+          <p className="text-sm text-[#8a8f98] mb-3">
             Cap jugador disponible. Selecciona un partit amb acta o afegeix l&apos;alineacio al final.
           </p>
           <button

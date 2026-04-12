@@ -127,9 +127,9 @@ export default async function EquipGestioPage() {
             </div>
 
             {/* Coming soon features */}
-            <div className="v2-card p-6 border-dashed border-slate-700">
+            <div className="v2-card p-6 border-dashed border-white/[0.06]">
               <div className="text-center">
-                <span className="text-xs px-3 py-1 bg-cyan-500/15 text-[#8a8f98] border border-cyan-500/25 rounded-full font-medium">PROPERAMENT</span>
+                <span className="text-xs px-3 py-1 bg-[#22c55e]/15 text-[#8a8f98] border border-[#22c55e]/25 rounded-full font-medium">PROPERAMENT</span>
                 <h3 className="text-white font-medium mt-3 mb-1">Convocatories i disponibilitat</h3>
                 <p className="text-[#62666d] text-sm">Gestiona convocatories, marca lesions i controla la disponibilitat dels jugadors per cada partit.</p>
               </div>

@@ -28,22 +28,22 @@ export default function FullSquadSection({ players, hasMinutes }: { players: Pla
   if (players.length === 0) return null
 
   return (
-    <div className="card-spotlight rounded-2xl overflow-hidden">
+    <div className="v2-card overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between p-6 group cursor-pointer"
       >
         <div className="flex items-center gap-3">
-          <Users size={18} className="text-slate-500" />
+          <Users size={18} className="text-[#8a8f98]" />
           <span className="text-sm font-semibold text-white">{players.length} jugadors a la plantilla</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-500 group-hover:text-slate-400 transition-colors">
+          <span className="text-xs text-[#8a8f98] group-hover:text-[#d0d6e0] transition-colors">
             {expanded ? 'Amagar' : 'Mostra plantilla completa'}
           </span>
           <ChevronDown
             size={16}
-            className={`text-slate-500 transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
+            className={`text-[#8a8f98] transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
           />
         </div>
       </button>
@@ -54,7 +54,7 @@ export default function FullSquadSection({ players, hasMinutes }: { players: Pla
       >
         <div className="px-6 pb-6">
           {/* Header */}
-          <div className="grid grid-cols-[1fr_50px_50px_50px_60px] gap-2 text-[10px] text-slate-500 uppercase tracking-wider font-semibold pb-2 border-b border-white/5">
+          <div className="grid grid-cols-[1fr_50px_50px_50px_60px] gap-2 text-[10px] text-[#62666d] uppercase tracking-wider font-semibold pb-2 border-b border-white/[0.04]">
             <span>Nom</span>
             <span className="text-center">PJ</span>
             <span className="text-center">Gols</span>
@@ -67,13 +67,13 @@ export default function FullSquadSection({ players, hasMinutes }: { players: Pla
               key={i}
               className={`grid grid-cols-[1fr_50px_50px_50px_60px] gap-2 items-center py-2.5 ${i % 2 === 0 ? 'bg-white/[0.02]' : ''} ${p.risk ? 'border-l-2 border-amber-400/50 pl-2' : ''}`}
             >
-              <Link href={`/jugador/${slugify(p.name)}`} className="text-sm text-slate-200 hover:text-white truncate transition-colors">
+              <Link href={`/jugador/${slugify(p.name)}`} className="text-sm text-[#d0d6e0] hover:text-white truncate transition-colors">
                 {p.name}
               </Link>
               <span className="text-center text-sm font-bold text-white tabular-nums">{p.appearances}</span>
-              <span className={`text-center text-sm font-bold tabular-nums ${p.goals > 0 ? 'text-green-400' : 'text-slate-600'}`}>{p.goals}</span>
-              <span className={`text-center text-sm font-bold tabular-nums ${p.risk ? 'text-amber-400' : p.yellow_cards > 0 ? 'text-slate-300' : 'text-slate-600'}`}>{p.yellow_cards}</span>
-              <span className="text-right text-sm font-bold text-cyan-400/80 tabular-nums">
+              <span className={`text-center text-sm font-bold tabular-nums ${p.goals > 0 ? 'text-green-400' : 'text-[#62666d]'}`}>{p.goals}</span>
+              <span className={`text-center text-sm font-bold tabular-nums ${p.risk ? 'text-amber-400' : p.yellow_cards > 0 ? 'text-[#8a8f98]' : 'text-[#62666d]'}`}>{p.yellow_cards}</span>
+              <span className="text-right text-sm font-bold text-[#8a8f98] tabular-nums">
                 {hasMinutes ? (p.minutes_played > 0 ? `${p.minutes_played}'` : '–') : (p.starts ?? p.appearances)}
               </span>
             </div>

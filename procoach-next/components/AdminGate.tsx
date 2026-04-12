@@ -44,7 +44,7 @@ export function AdminBadge() {
 export function AdminBlurValue({ value }: { value: string }) {
   const isAdmin = useIsAdmin()
   return (
-    <span className={`text-xs font-bold text-slate-200 ${isAdmin ? '' : 'blur-sm select-none'}`}>
+    <span className={`text-xs font-bold text-[#d0d6e0] ${isAdmin ? '' : 'blur-sm select-none'}`}>
       {value}
     </span>
   )

@@ -98,7 +98,7 @@ export default function EntrenadorForm({ teams }: Props) {
       <div className="text-center py-8">
         <CheckCircle size={48} className="mx-auto mb-4 text-green-400" />
         <h3 className="text-2xl font-bold mb-2">Rebut!</h3>
-        <p className="text-slate-400">
+        <p className="text-[#8a8f98]">
           T&apos;avisarem en 24h quan el teu equip estigui activat.<br />
           Mentrestant, explora la plataforma.
         </p>
@@ -112,12 +112,12 @@ export default function EntrenadorForm({ teams }: Props) {
   return (
     <>
       <h2 className="text-2xl font-bold mb-2 text-center">Registra el teu equip</h2>
-      <p className="text-slate-400 text-center text-sm mb-8">Gratuït. Sense compromisos. L&apos;equip s&apos;activa en menys de 24h.</p>
+      <p className="text-[#8a8f98] text-center text-sm mb-8">Gratuït. Sense compromisos. L&apos;equip s&apos;activa en menys de 24h.</p>
       <form onSubmit={handleSubmit} className="space-y-4 max-w-lg mx-auto">
 
         {/* Team name with autocomplete */}
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1.5">Nom de l&apos;equip *</label>
+          <label className="block text-sm font-medium text-[#d0d6e0] mb-1.5">Nom de l&apos;equip *</label>
           <div ref={wrapperRef} className="relative">
             <input
               type="text"
@@ -130,7 +130,7 @@ export default function EntrenadorForm({ teams }: Props) {
               placeholder="Ex: CE Mollet A"
               required
               autoComplete="off"
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all"
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-[#62666d] focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all"
             />
 
             {/* Suggestions dropdown */}
@@ -148,24 +148,24 @@ export default function EntrenadorForm({ teams }: Props) {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm text-white truncate">{team.name}</div>
-                      <div className="text-xs text-slate-500 truncate">{team.competitionName || team.competition}</div>
+                      <div className="text-xs text-[#8a8f98] truncate">{team.competitionName || team.competition}</div>
                     </div>
                   </button>
                 ))}
               </div>
             )}
           </div>
-          <p className="text-xs text-slate-600 mt-1">Escriu almenys 2 caràcters per veure suggeriments</p>
+          <p className="text-xs text-[#62666d] mt-1">Escriu almenys 2 caràcters per veure suggeriments</p>
         </div>
 
         {/* Competition */}
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1.5">Competició *</label>
+          <label className="block text-sm font-medium text-[#d0d6e0] mb-1.5">Competició *</label>
           <select
             value={form.competition}
             onChange={e => setForm(f => ({ ...f, competition: e.target.value }))}
             required
-            className="w-full px-4 py-3 bg-[#1e293b] border border-white/10 rounded-xl text-white focus:outline-none focus:border-green-500/50 transition-all"
+            className="w-full px-4 py-3 bg-white/[0.04] border border-white/10 rounded-xl text-white focus:outline-none focus:border-green-500/50 transition-all"
           >
             <option value="">Selecciona la competició...</option>
             {ALL_COMPETITIONS.map(c => (
@@ -181,38 +181,38 @@ export default function EntrenadorForm({ teams }: Props) {
 
         {/* Name */}
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1.5">El teu nom *</label>
+          <label className="block text-sm font-medium text-[#d0d6e0] mb-1.5">El teu nom *</label>
           <input
             type="text"
             value={form.name}
             onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
             placeholder="Nom i cognoms"
             required
-            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all"
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-[#62666d] focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all"
           />
         </div>
 
         {/* Email */}
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1.5">Email *</label>
+          <label className="block text-sm font-medium text-[#d0d6e0] mb-1.5">Email *</label>
           <input
             type="email"
             value={form.email}
             onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
             placeholder="entrenador@exemple.com"
             required
-            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all"
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-[#62666d] focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-4 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 disabled:opacity-50 text-white font-bold rounded-xl transition-all shadow-lg shadow-green-900/30 text-lg mt-2"
+          className="w-full py-4 bg-gradient-to-r bg-[#22c55e] hover:from-green-500 hover:to-[#22c55e] disabled:opacity-50 text-white font-bold rounded-xl transition-all shadow-lg shadow-green-900/30 text-lg mt-2"
         >
           {loading ? 'Enviant...' : 'Afegeix el teu equip — Gratis'}
         </button>
-        <p className="text-xs text-slate-600 text-center">
+        <p className="text-xs text-[#62666d] text-center">
           Sense spam. Les teves dades no es compartiran amb tercers.
         </p>
       </form>

@@ -49,9 +49,9 @@ export default function ReferralCard() {
   const remaining = Math.max(data.target - data.referral_count, 0)
 
   return (
-    <div className="v2-card p-6 mb-8 border-cyan-500/20">
+    <div className="v2-card p-6 mb-8 border-[#22c55e]/20">
       <div className="flex items-start gap-4 mb-5">
-        <div className="w-12 h-12 rounded-lg bg-cyan-500/15 flex items-center justify-center shrink-0">
+        <div className="w-12 h-12 rounded-lg bg-[#22c55e]/15 flex items-center justify-center shrink-0">
           <Gift size={22} className="text-[#8a8f98]" />
         </div>
         <div className="flex-1 min-w-0">
@@ -95,8 +95,8 @@ export default function ReferralCard() {
           <div
             className={`h-full rounded-full transition-all duration-500 ${
               data.pro_unlocked
-                ? 'bg-gradient-to-r from-green-500 to-cyan-500'
-                : 'bg-gradient-to-r from-cyan-600 to-green-600'
+                ? 'bg-gradient-to-r from-green-500 to-[#22c55e]'
+                : 'bg-gradient-to-r from-[#22c55e] to-green-600'
             }`}
             style={{ width: `${progress * 100}%` }}
           />

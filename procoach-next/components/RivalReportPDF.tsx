@@ -16,31 +16,31 @@ type GoalBucketEntry = { label: string; scored: number; conceded: number }
 
 const NO_MIN = new Set(['quarta-catalana', 'juvenil-primera-divisio', 'preferent-juvenils'])
 
-// ─── Enhanced Color System ───────────────────────────────────────────────
-const BG = '#0f172a'
-const BG_DEEP = '#080f1e'
-const BG_CARD = '#162033'
-const BG_CARD_ELEVATED = '#1a2744'
-const BG_CARD_RECESSED = '#111c2e'
-const BG_ROW = '#1a2744'
-const BG_ROW_ALT = '#1e2d44'
+// ─── V2 Color System ────────────────────────────────────────────────────
+const BG = '#08090a'
+const BG_DEEP = '#08090a'
+const BG_CARD = '#0f1011'
+const BG_CARD_ELEVATED = '#191a1b'
+const BG_CARD_RECESSED = '#0f1011'
+const BG_ROW = '#191a1b'
+const BG_ROW_ALT = '#1e2022'
 
 const GREEN = '#22c55e'
 const GREEN_DK = '#166534'
 const GREEN_20 = '#22c55e33'
 const GREEN_10 = '#22c55e1a'
-const CYAN = '#06b6d4'
-const CYAN_20 = '#06b6d433'
+const CYAN = '#22c55e'
+const CYAN_20 = '#22c55e33'
 const AMBER = '#f59e0b'
 const AMBER_20 = '#f59e0b33'
 const RED = '#ef4444'
 const RED_20 = '#ef444433'
-const WHITE = '#f1f5f9'
-const S300 = '#cbd5e1'
-const S400 = '#94a3b8'
-const S500 = '#64748b'
-const S600 = '#475569'
-const S700 = '#334155'
+const WHITE = '#f7f8f8'
+const S300 = '#d0d6e0'
+const S400 = '#8a8f98'
+const S500 = '#62666d'
+const S600 = '#62666d'
+const S700 = 'rgba(255,255,255,0.06)'
 const EMERALD_DK = '#166534'
 
 const FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
@@ -81,13 +81,13 @@ function PageHeader({ isFirst, date, competition }: { isFirst: boolean; date: st
       {/* Full-bleed gradient accent line */}
       <div style={{ height: 5, background: `linear-gradient(90deg, ${GREEN}, ${CYAN} 40%, ${AMBER} 75%, ${GREEN})` }} />
       {/* Header bar */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px', margin: '10px 28px 0', background: BG_DEEP, borderRadius: 12, border: `1px solid ${S700}` }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px', margin: '10px 28px 0', background: BG_DEEP, borderRadius: 8, border: `1px solid ${S700}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <img src={LOGO_BASE64} alt="" style={{ width: 32, height: 32, borderRadius: 7 }} />
           <span style={{ fontSize: 18, fontWeight: 800, color: WHITE, fontFamily: FONT, letterSpacing: '-0.03em' }}>Neo<span style={{ color: GREEN }}>Scout</span></span>
         </div>
         {isFirst && (
-          <div style={{ background: `linear-gradient(135deg, ${EMERALD_DK}, #0d4a2a)`, padding: '6px 20px', borderRadius: 14, fontSize: 11, fontWeight: 700, color: WHITE, letterSpacing: '0.1em', textTransform: 'uppercase' as const, border: `1px solid ${GREEN}30` }}>
+          <div style={{ background: `linear-gradient(135deg, ${EMERALD_DK}, #0d4a2a)`, padding: '6px 20px', borderRadius: 8, fontSize: 11, fontWeight: 700, color: WHITE, letterSpacing: '0.1em', textTransform: 'uppercase' as const, border: `1px solid ${GREEN}30` }}>
             Informe Pre-Partit
           </div>
         )}
@@ -264,7 +264,7 @@ function SplitBox({ label, data }: { label: string; data: SplitStats }) {
   const isHome = label.includes('LOCAL')
   const accentColor = isHome ? GREEN : CYAN
   return (
-    <div style={{ flex: 1, background: BG_CARD, borderRadius: 12, padding: '14px 16px', boxSizing: 'border-box' as const, borderLeft: `3px solid ${accentColor}`, border: `1px solid ${accentColor}20` }}>
+    <div style={{ flex: 1, background: BG_CARD, borderRadius: 8, padding: '14px 16px', boxSizing: 'border-box' as const, borderLeft: `3px solid ${accentColor}`, border: `1px solid ${accentColor}20` }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <span style={{ fontSize: 10, fontWeight: 700, color: accentColor, fontFamily: FONT, letterSpacing: '0.08em', lineHeight: '16px' }}>{label}</span>
         <span style={{ fontSize: 22, fontWeight: 900, color: WHITE, fontFamily: FONT, lineHeight: '26px', letterSpacing: '-0.02em' }}>{wr}<span style={{ fontSize: 12, color: S400 }}>%</span></span>
@@ -319,7 +319,7 @@ function InsightMiniCard({ label, value, pctValue }: { label: string; value: str
     : WHITE
   const barW = pctValue !== null ? Math.max(pctValue, 4) : 0
   return (
-    <div style={{ background: BG_CARD, borderRadius: 10, padding: '12px 8px 10px', textAlign: 'center' as const,
+    <div style={{ background: BG_CARD, borderRadius: 8, padding: '12px 8px 10px', textAlign: 'center' as const,
       border: `1px solid ${pctValue !== null ? color + '25' : S700}`, boxSizing: 'border-box' as const, flex: 1 }}>
       {/* Large value — web-style bold */}
       <div style={{ fontSize: pctValue !== null ? 24 : 28, fontWeight: 900, color, marginBottom: 4, fontFamily: FONT, lineHeight: pctValue !== null ? '28px' : '32px', letterSpacing: '-0.03em' }}>{value}</div>
@@ -547,7 +547,7 @@ const RivalReportPDF = forwardRef<RivalReportPDFHandle, { data: PDFReportData; t
           <div style={{ padding: `8px ${PAD}px 0` }}>
 
             {/* ── Match Banner (dramatic broadcast style) ── */}
-            <div style={{ background: `linear-gradient(135deg, #0d1f2d 0%, ${BG_CARD_ELEVATED} 50%, #1a1428 100%)`, borderRadius: 16, padding: '18px 24px 14px', marginBottom: 10, position: 'relative', overflow: 'hidden', border: `1px solid ${S700}` }}>
+            <div style={{ background: `linear-gradient(135deg, #0d1f2d 0%, ${BG_CARD_ELEVATED} 50%, #1a1428 100%)`, borderRadius: 8, padding: '18px 24px 14px', marginBottom: 10, position: 'relative', overflow: 'hidden', border: `1px solid ${S700}` }}>
               {/* Top gradient accent */}
               <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: `linear-gradient(90deg, ${GREEN}, ${CYAN})` }} />
               {/* Subtle diagonal lines texture */}
@@ -573,7 +573,7 @@ const RivalReportPDF = forwardRef<RivalReportPDFHandle, { data: PDFReportData; t
 
                 {/* Center — VS Diamond */}
                 <div style={{ textAlign: 'center' as const, padding: '0 14px', flexShrink: 0 }}>
-                  <div style={{ background: nm.isHome ? GREEN_DK : '#164e63', padding: '5px 16px', borderRadius: 12, fontSize: 9, fontWeight: 700, color: WHITE, marginBottom: 10, display: 'inline-block', fontFamily: FONT, letterSpacing: '0.08em', lineHeight: '14px' }}>
+                  <div style={{ background: nm.isHome ? GREEN_DK : '#164e63', padding: '5px 16px', borderRadius: 8, fontSize: 9, fontWeight: 700, color: WHITE, marginBottom: 10, display: 'inline-block', fontFamily: FONT, letterSpacing: '0.08em', lineHeight: '14px' }}>
                     {nm.isHome ? 'LOCAL' : 'VISITANT'}
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
@@ -610,7 +610,7 @@ const RivalReportPDF = forwardRef<RivalReportPDFHandle, { data: PDFReportData; t
                   <span style={{ fontSize: 8, color: CYAN, fontWeight: 700, fontFamily: FONT }}>{rival.name.length > 18 ? rival.name.slice(0, 18) + '...' : rival.name}</span>
                 </div>
               } />
-              <div style={{ background: BG_CARD, borderRadius: 12, padding: '6px 14px', border: `1px solid ${S700}` }}>
+              <div style={{ background: BG_CARD, borderRadius: 8, padding: '6px 14px', border: `1px solid ${S700}` }}>
                 {stats.map(s => (
                   <StatBarRow key={s[0]} label={s[0]} val1={s[1]} val2={s[2]} raw1={s[3]} raw2={s[4]} inverse={s[5] as boolean | undefined} />
                 ))}
@@ -637,7 +637,7 @@ const RivalReportPDF = forwardRef<RivalReportPDFHandle, { data: PDFReportData; t
 
             {/* ── Goal Buckets (full-width SVG chart) ── */}
             {buckets && buckets.length > 0 && (
-              <div style={{ background: BG_CARD, borderRadius: 12, padding: '10px 14px 6px', border: `1px solid ${S700}` }}>
+              <div style={{ background: BG_CARD, borderRadius: 8, padding: '10px 14px 6px', border: `1px solid ${S700}` }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div style={{ width: 3, height: 14, borderRadius: 2, background: GREEN }} />
@@ -707,7 +707,7 @@ const RivalReportPDF = forwardRef<RivalReportPDFHandle, { data: PDFReportData; t
 
             {/* ── Offensive Danger Callout ── */}
             {scorers.length > 0 && (
-              <div style={{ background: `linear-gradient(135deg, #1a2006, #0d1a06)`, border: `1px solid ${GREEN}25`, borderRadius: 12, padding: '14px 18px', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 14 }}>
+              <div style={{ background: `linear-gradient(135deg, #1a2006, #0d1a06)`, border: `1px solid ${GREEN}25`, borderRadius: 8, padding: '14px 18px', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 14 }}>
                 <svg width={44} height={44} style={{ flexShrink: 0 }}>
                   <circle cx={22} cy={22} r={21} fill={GREEN_10} stroke={`${GREEN}40`} strokeWidth={1} />
                   <text x={22} y={16} textAnchor="middle" dominantBaseline="central"
@@ -727,7 +727,7 @@ const RivalReportPDF = forwardRef<RivalReportPDFHandle, { data: PDFReportData; t
 
             {/* ── Titulars Habituals (Featured Cards + compact rows) ── */}
             {starters.length > 0 && (
-              <div style={{ background: BG_CARD, borderRadius: 12, padding: '14px 16px', marginBottom: 14, border: `1px solid ${S700}` }}>
+              <div style={{ background: BG_CARD, borderRadius: 8, padding: '14px 16px', marginBottom: 14, border: `1px solid ${S700}` }}>
                 <SectionSecondary title="TITULARS HABITUALS" color={CYAN} rightContent={
                   <div style={{ display: 'flex', gap: 16, fontSize: 7, color: S500, fontFamily: FONT, letterSpacing: '0.04em' }}>
                     <span>gols</span><span>PJ</span><span>{hasMin ? 'min.' : 'tit.'}</span>
@@ -771,7 +771,7 @@ const RivalReportPDF = forwardRef<RivalReportPDFHandle, { data: PDFReportData; t
             {(scorers.length > 0 || danger.length > 0) && (
               <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
                 {scorers.length > 0 && (
-                  <div style={{ flex: 1, background: BG_CARD, borderRadius: 12, padding: '14px 16px', border: `1px solid ${S700}` }}>
+                  <div style={{ flex: 1, background: BG_CARD, borderRadius: 8, padding: '14px 16px', border: `1px solid ${S700}` }}>
                     <SectionSecondary title="GOLEJADORS" color={GREEN} />
                     {scorers.map((p, i) => {
                       const sName = p.name.length > (danger.length > 0 ? 22 : 36) ? p.name.slice(0, danger.length > 0 ? 20 : 34) + '...' : p.name
@@ -803,7 +803,7 @@ const RivalReportPDF = forwardRef<RivalReportPDFHandle, { data: PDFReportData; t
                   </div>
                 )}
                 {danger.length > 0 && (
-                  <div style={{ flex: 1, background: BG_CARD, borderRadius: 12, padding: '14px 16px', border: `1px solid ${S700}` }}>
+                  <div style={{ flex: 1, background: BG_CARD, borderRadius: 8, padding: '14px 16px', border: `1px solid ${S700}` }}>
                     <SectionSecondary title="APERCEBITS" color={AMBER} />
                     {danger.map((p, i) => {
                       const dName = p.name.length > (scorers.length > 0 ? 22 : 36) ? p.name.slice(0, scorers.length > 0 ? 20 : 34) + '...' : p.name
@@ -828,13 +828,13 @@ const RivalReportPDF = forwardRef<RivalReportPDFHandle, { data: PDFReportData; t
             {/* ── H2H + Recent Form side by side ── */}
             <div style={{ display: 'flex', gap: 8 }}>
               {h2hItems.length > 0 && (
-                <div style={{ flex: 1, background: BG_CARD, borderRadius: 12, padding: '14px 16px', border: `1px solid ${S700}` }}>
+                <div style={{ flex: 1, background: BG_CARD, borderRadius: 8, padding: '14px 16px', border: `1px solid ${S700}` }}>
                   <SectionSecondary title="ENFRONTAMENTS DIRECTES" color={WHITE} />
                   {h2hItems.map((m, i) => <MatchRow key={i} m={m} showOpp={false} />)}
                 </div>
               )}
               {formItems.length > 0 && (
-                <div style={{ flex: 1, background: BG_CARD, borderRadius: 12, padding: '14px 16px', border: `1px solid ${S700}` }}>
+                <div style={{ flex: 1, background: BG_CARD, borderRadius: 8, padding: '14px 16px', border: `1px solid ${S700}` }}>
                   <SectionSecondary title="ULTIMS PARTITS RIVAL" color={WHITE} />
                   {formItems.map((m, i) => <MatchRow key={i} m={m} showOpp />)}
                 </div>
@@ -843,7 +843,7 @@ const RivalReportPDF = forwardRef<RivalReportPDFHandle, { data: PDFReportData; t
 
             {/* Full squad on page 2 if no pitch data (no page 3) — show even with few players when no starters section */}
             {!hasPitchData && (rival.mostMinutes.length > 7 || (!hasStarters && rival.mostMinutes.length > 0)) && (
-              <div style={{ background: BG_CARD_RECESSED, borderRadius: 10, padding: '12px 14px', marginTop: 12 }}>
+              <div style={{ background: BG_CARD_RECESSED, borderRadius: 8, padding: '12px 14px', marginTop: 12 }}>
                 <SectionSecondary title={`PLANTILLA (${rival.mostMinutes.length} jugadors)`} color={CYAN} />
                 <div style={{ display: 'flex', padding: '3px 8px', fontSize: 7, color: S500, fontFamily: FONT, gap: 6, lineHeight: '14px' }}>
                   <span style={{ width: 18 }}>#</span><span style={{ flex: 1 }}>Nom</span><span style={{ width: 32, textAlign: 'center' as const }}>Gols</span><span style={{ width: 32, textAlign: 'center' as const }}>PJ</span><span style={{ width: 44, textAlign: 'right' as const }}>{hasMin ? 'Min.' : 'Tit.'}</span>
@@ -877,11 +877,11 @@ const RivalReportPDF = forwardRef<RivalReportPDFHandle, { data: PDFReportData; t
 
             <div style={{ padding: `12px ${PAD}px 0` }}>
               {/* Pitch comparison */}
-              <div style={{ background: BG_CARD, borderRadius: 10, padding: '16px 18px', marginBottom: 14 }}>
+              <div style={{ background: BG_CARD, borderRadius: 8, padding: '16px 18px', marginBottom: 14 }}>
                 <SectionPrimary title="Comparativa de Camps" color={GREEN} />
                 <div style={{ display: 'flex', gap: 12 }}>
                   {r.homePitch && (
-                    <div style={{ flex: 1, background: '#0d2818', border: `1px solid ${GREEN}40`, borderRadius: 10, padding: 18, textAlign: 'center' as const, position: 'relative' }}>
+                    <div style={{ flex: 1, background: '#0d2818', border: `1px solid ${GREEN}40`, borderRadius: 8, padding: 18, textAlign: 'center' as const, position: 'relative' }}>
                       <div style={{ fontSize: 9, color: GREEN, textTransform: 'uppercase' as const, letterSpacing: '0.1em', fontWeight: 700, marginBottom: 10, fontFamily: FONT }}>Camp Local</div>
                       {/* Proportional pitch rectangle */}
                       <svg width={100} height={70} style={{ display: 'block', margin: '0 auto 10px' }}>
@@ -895,7 +895,7 @@ const RivalReportPDF = forwardRef<RivalReportPDFHandle, { data: PDFReportData; t
                     </div>
                   )}
                   {r.rivalPitch && (
-                    <div style={{ flex: 1, background: '#2a1a06', border: `1px solid ${AMBER}40`, borderRadius: 10, padding: 18, textAlign: 'center' as const, position: 'relative' }}>
+                    <div style={{ flex: 1, background: '#2a1a06', border: `1px solid ${AMBER}40`, borderRadius: 8, padding: 18, textAlign: 'center' as const, position: 'relative' }}>
                       <div style={{ fontSize: 9, color: AMBER, textTransform: 'uppercase' as const, letterSpacing: '0.1em', fontWeight: 700, marginBottom: 10, fontFamily: FONT }}>Camp Rival</div>
                       {/* Proportional pitch rectangle */}
                       <svg width={100} height={70} style={{ display: 'block', margin: '0 auto 10px' }}>
@@ -936,7 +936,7 @@ const RivalReportPDF = forwardRef<RivalReportPDFHandle, { data: PDFReportData; t
 
               {/* Full squad */}
               {rival.mostMinutes.length > 0 && (
-                <div style={{ background: BG_CARD_RECESSED, borderRadius: 10, padding: '12px 14px' }}>
+                <div style={{ background: BG_CARD_RECESSED, borderRadius: 8, padding: '12px 14px' }}>
                   <SectionSecondary title={`PLANTILLA COMPLETA (${rival.mostMinutes.length} jugadors)`} color={CYAN} />
                   <div style={{ display: 'flex', padding: '3px 8px', fontSize: 7, color: S500, fontFamily: FONT, gap: 6, lineHeight: '14px' }}>
                     <span style={{ width: 18 }}>#</span><span style={{ flex: 1 }}>Nom</span><span style={{ width: 32, textAlign: 'center' as const }}>Gols</span><span style={{ width: 32, textAlign: 'center' as const }}>PJ</span><span style={{ width: 44, textAlign: 'right' as const }}>{hasMin ? 'Min.' : 'Tit.'}</span>

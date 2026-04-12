@@ -16,7 +16,7 @@ export default function PublicFooter() {
               <Image src="/logo_neoscout.png" alt="NeoScout logo" width={28} height={28} className="w-7 h-7 rounded-lg object-cover" />
               <span className="font-display font-bold text-white">Neo<span className="text-emerald-400">Scout</span></span>
             </Link>
-            <p className="text-xs text-slate-500 leading-relaxed max-w-[220px]">
+            <p className="text-xs text-[#8a8f98] leading-relaxed max-w-[220px]">
               La plataforma del futbol regional català. Dades de FCF.cat.
             </p>
           </div>
@@ -34,7 +34,7 @@ export default function PublicFooter() {
 
           {/* Competicions */}
           <div>
-            <h4 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Competicions</h4>
+            <h4 className="text-[10px] font-semibold text-[#8a8f98] uppercase tracking-wider mb-3">Competicions</h4>
             <ul className="space-y-2">
               {[
                 { label: 'Primera Catalana', href: '/competicio/primera-catalana' },
@@ -45,7 +45,7 @@ export default function PublicFooter() {
                 { label: 'Juvenil 1a Divisió', href: '/competicio/juvenil-primera-divisio' },
               ].map(c => (
                 <li key={c.href}>
-                  <Link href={c.href} className="text-xs sm:text-sm text-slate-500 hover:text-slate-300 transition-colors">
+                  <Link href={c.href} className="text-xs sm:text-sm text-[#8a8f98] hover:text-[#d0d6e0] transition-colors">
                     {c.label}
                   </Link>
                 </li>
@@ -55,7 +55,7 @@ export default function PublicFooter() {
 
           {/* Plataforma */}
           <div>
-            <h4 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Plataforma</h4>
+            <h4 className="text-[10px] font-semibold text-[#8a8f98] uppercase tracking-wider mb-3">Plataforma</h4>
             <ul className="space-y-2">
               {[
                 { label: 'Equips', href: '/cerca?type=equip' },
@@ -64,7 +64,7 @@ export default function PublicFooter() {
                 { label: 'Resultats', href: '/resultats' },
               ].map(item => (
                 <li key={item.href}>
-                  <Link href={item.href} className="text-xs sm:text-sm text-slate-500 hover:text-slate-300 transition-colors">
+                  <Link href={item.href} className="text-xs sm:text-sm text-[#8a8f98] hover:text-[#d0d6e0] transition-colors">
                     {item.label}
                   </Link>
                 </li>
@@ -74,7 +74,7 @@ export default function PublicFooter() {
 
           {/* Per a entrenadors */}
           <div>
-            <h4 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Entrenadors</h4>
+            <h4 className="text-[10px] font-semibold text-[#8a8f98] uppercase tracking-wider mb-3">Entrenadors</h4>
             <ul className="space-y-2">
               {[
                 { label: 'Registra equip', href: '/entrenador' },
@@ -82,7 +82,7 @@ export default function PublicFooter() {
                 { label: 'Dashboard', href: '/dashboard' },
               ].map(item => (
                 <li key={item.href}>
-                  <Link href={item.href} className="text-xs sm:text-sm text-slate-500 hover:text-slate-300 transition-colors">
+                  <Link href={item.href} className="text-xs sm:text-sm text-[#8a8f98] hover:text-[#d0d6e0] transition-colors">
                     {item.label}
                   </Link>
                 </li>
@@ -93,19 +93,19 @@ export default function PublicFooter() {
 
         {/* SEO text — visible, small, keyword-rich */}
         <div className="pt-6 border-t border-white/8 mb-6">
-          <p className="text-[11px] text-slate-600 leading-relaxed max-w-3xl">
+          <p className="text-[11px] text-[#62666d] leading-relaxed max-w-3xl">
             NeoScout és la plataforma d&apos;estadístiques i resultats del futbol català. Consulta la classificació, resultats, golejadors, àrbitres i disciplina de totes les competicions de la Federació Catalana de Futbol (FCF): Segona Catalana, Tercera Catalana, Primera Catalana, Preferent Juvenil, Juvenil Primera Divisió, Quarta Catalana, Lliga Elit i totes les categories de futbol base. Dades actualitzades setmanalment amb informació de les actes oficials de la temporada 2025/26.
           </p>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="text-xs text-slate-600">
+          <p className="text-xs text-[#62666d]">
             © 2025-2026 NeoScout · Dades no oficials extretes de fcf.cat
           </p>
-          <p className="text-xs text-slate-600 flex items-center gap-1">
+          <p className="text-xs text-[#62666d] flex items-center gap-1">
             Fet amb <Heart size={12} className="text-red-500" /> per al futbol catala
           </p>
-          <Link href="/admin/login" className="text-slate-600 hover:text-slate-400 transition-colors"><Settings size={14} /></Link>
+          <Link href="/admin/login" className="text-[#62666d] hover:text-[#8a8f98] transition-colors"><Settings size={14} /></Link>
         </div>
       </div>
     </footer>

@@ -114,32 +114,32 @@ export default function HeroSection() {
             </h1>
 
             {/* Subheadline */}
-            <p className="text-sm sm:text-base lg:text-lg text-slate-400 mb-3 leading-relaxed max-w-[90vw] sm:max-w-lg animate-fade-up delay-200">
+            <p className="text-sm sm:text-base lg:text-lg text-[#8a8f98] mb-3 leading-relaxed max-w-[90vw] sm:max-w-lg animate-fade-up delay-200">
               Classificació, resultats, estadístiques de jugadors i àrbitres de totes les categories FCF:
               Segona Catalana, Tercera Catalana, Preferent Juvenil i més.
             </p>
 
-            <p className="text-xs sm:text-sm text-slate-500 mb-8 sm:mb-10 animate-fade-up delay-200">
+            <p className="text-xs sm:text-sm text-[#8a8f98] mb-8 sm:mb-10 animate-fade-up delay-200">
               Dades oficials de la Federació Catalana de Futbol, actualitzades setmanalment.
             </p>
 
             {/* Search */}
             <form onSubmit={handleSearch} className="mb-8 animate-fade-up delay-300">
-              <div className="relative flex items-center bg-white/[0.04] border border-white/[0.08] rounded-2xl overflow-hidden
+              <div className="relative flex items-center bg-white/[0.04] border border-white/[0.08] rounded-lg overflow-hidden
                               focus-within:border-emerald-500/40 focus-within:bg-white/[0.06]
                               focus-within:shadow-[0_0_40px_rgba(52,211,153,0.08)] transition-all duration-500
                               shadow-xl shadow-black/30">
-                <Search size={16} className="absolute left-3.5 sm:left-5 text-slate-500 shrink-0" />
+                <Search size={16} className="absolute left-3.5 sm:left-5 text-[#8a8f98] shrink-0" />
                 <input
                   type="text"
                   value={query}
                   onChange={e => setQuery(e.target.value)}
                   placeholder="Busca el teu equip..."
-                  className="flex-1 min-w-0 pl-10 sm:pl-14 pr-2 py-4 sm:py-5 bg-transparent text-white placeholder-slate-500 text-sm sm:text-base focus:outline-none"
+                  className="flex-1 min-w-0 pl-10 sm:pl-14 pr-2 py-4 sm:py-5 bg-transparent text-white placeholder-[#62666d] text-sm sm:text-base focus:outline-none"
                 />
                 <button
                   type="submit"
-                  className="group shrink-0 m-1.5 sm:m-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-slate-900 font-semibold rounded-xl
+                  className="group shrink-0 m-1.5 sm:m-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-[#f7f8f8] font-semibold rounded-xl
                              transition-all flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base
                              hover:bg-emerald-50 hover:shadow-[0_0_20px_rgba(52,211,153,0.15)]"
                 >
@@ -156,7 +156,7 @@ export default function HeroSection() {
                 className="group relative inline-flex items-center justify-center gap-3 w-full sm:w-auto
                            px-10 py-5 sm:py-6
                            bg-gradient-to-r from-emerald-500 to-emerald-600 text-white
-                           font-bold text-lg sm:text-xl rounded-2xl
+                           font-bold text-lg sm:text-xl rounded-lg
                            transition-all duration-300
                            hover:from-emerald-400 hover:to-emerald-500
                            hover:shadow-[0_0_60px_rgba(52,211,153,0.3)]
@@ -166,28 +166,28 @@ export default function HeroSection() {
                 Crea el teu compte gratis
                 <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
               </Link>
-              <p className="text-xs text-slate-500 mt-3">
+              <p className="text-xs text-[#8a8f98] mt-3">
                 Rivals, plantilla, apercibits i molt mes. Tot en un clic.
               </p>
             </div>
 
             {/* Subtle feature tags */}
-            <div className="flex flex-wrap gap-3 sm:gap-5 text-[11px] sm:text-xs text-slate-500 animate-fade-up delay-400">
-              <span className="flex items-center gap-1.5"><Swords size={12} className="text-slate-500" /> Analisi de rivals</span>
-              <span className="flex items-center gap-1.5"><ClipboardList size={12} className="text-slate-500" /> Notes de partits</span>
-              <span className="flex items-center gap-1.5"><ShieldCheck size={12} className="text-slate-500" /> Control plantilla</span>
+            <div className="flex flex-wrap gap-3 sm:gap-5 text-[11px] sm:text-xs text-[#8a8f98] animate-fade-up delay-400">
+              <span className="flex items-center gap-1.5"><Swords size={12} className="text-[#8a8f98]" /> Analisi de rivals</span>
+              <span className="flex items-center gap-1.5"><ClipboardList size={12} className="text-[#8a8f98]" /> Notes de partits</span>
+              <span className="flex items-center gap-1.5"><ShieldCheck size={12} className="text-[#8a8f98]" /> Control plantilla</span>
             </div>
           </div>
 
           {/* ─── Right: Demo preview card ─── */}
           <div className="relative hidden lg:block animate-fade-up delay-300">
-            <div className="relative bg-[#0c1a2e]/80 border border-white/[0.07] rounded-2xl p-5 shadow-2xl shadow-black/30 backdrop-blur-sm overflow-hidden">
+            <div className="relative bg-[#0c1a2e]/80 border border-white/[0.07] rounded-lg p-5 shadow-2xl shadow-black/30 backdrop-blur-sm overflow-hidden">
               {/* Top accent */}
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent" />
 
               {/* Card header label */}
               <div className="flex items-center justify-between mb-4">
-                <span className="text-[9px] font-semibold uppercase tracking-widest text-slate-500">Informe de Preparació</span>
+                <span className="text-[9px] font-semibold uppercase tracking-widest text-[#8a8f98]">Informe de Preparació</span>
                 <span className="flex items-center gap-1 text-[9px] font-semibold text-emerald-400 tracking-wider">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   Live
@@ -220,14 +220,14 @@ export default function HeroSection() {
               <div className="grid grid-cols-2 gap-4 mb-4">
                 {/* Rival */}
                 <div>
-                  <div className="text-[10px] text-slate-500 uppercase tracking-wider font-medium mb-2">Proper Rival · J22</div>
+                  <div className="text-[10px] text-[#8a8f98] uppercase tracking-wider font-medium mb-2">Proper Rival · J22</div>
                   <div className="bg-white/[0.03] rounded-xl p-3 border border-white/[0.05]">
                     <div className="font-semibold text-white text-xs mb-2">Fund. Ac. L&apos;Hospitalet A</div>
                     <div className="grid grid-cols-3 gap-1.5 mb-2">
                       {DEMO_RIVAL_SCORERS.map((s, i) => (
                         <div key={i} className="text-center bg-black/20 rounded-lg py-1.5 px-1">
                           <div className="text-sm font-bold text-emerald-400">{s.goals}</div>
-                          <div className="text-[8px] text-slate-500 truncate">{s.name.split(',')[0]}</div>
+                          <div className="text-[8px] text-[#8a8f98] truncate">{s.name.split(',')[0]}</div>
                         </div>
                       ))}
                     </div>
@@ -240,7 +240,7 @@ export default function HeroSection() {
 
                 {/* Goal timing */}
                 <div>
-                  <div className="text-[10px] text-slate-500 uppercase tracking-wider font-medium mb-2">Timing de gols</div>
+                  <div className="text-[10px] text-[#8a8f98] uppercase tracking-wider font-medium mb-2">Timing de gols</div>
                   <div className="bg-white/[0.03] rounded-xl p-3 border border-white/[0.05]">
                     <div className="flex items-end gap-1.5 h-16 mb-1.5">
                       {DEMO_BUCKETS.map((v, i) => {
@@ -252,12 +252,12 @@ export default function HeroSection() {
                               className="w-full bg-gradient-to-t from-emerald-500/60 to-emerald-400/30 rounded-t-sm"
                               style={{ height: `${h}px` }}
                             />
-                            <span className="text-[7px] text-slate-600">{labels[i]}</span>
+                            <span className="text-[7px] text-[#62666d]">{labels[i]}</span>
                           </div>
                         )
                       })}
                     </div>
-                    <div className="text-[10px] text-slate-500">
+                    <div className="text-[10px] text-[#8a8f98]">
                       <span className="text-emerald-400">76-90</span> · Més gols
                     </div>
                   </div>
@@ -266,7 +266,7 @@ export default function HeroSection() {
 
               {/* Squad */}
               <div>
-                <div className="text-[10px] text-slate-500 uppercase tracking-wider font-medium mb-2">Plantilla — Apercibits</div>
+                <div className="text-[10px] text-[#8a8f98] uppercase tracking-wider font-medium mb-2">Plantilla — Apercibits</div>
                 <div className="space-y-1">
                   {DEMO_SQUAD.map((p, i) => (
                     <div
@@ -275,10 +275,10 @@ export default function HeroSection() {
                         p.risk ? 'bg-amber-900/15 border border-amber-500/10' : 'bg-white/[0.02]'
                       }`}
                     >
-                      <span className="text-slate-300 font-medium text-[11px]">{p.name}</span>
+                      <span className="text-[#d0d6e0] font-medium text-[11px]">{p.name}</span>
                       <div className="flex items-center gap-2">
                         {p.goals > 0 && <span className="text-emerald-400/80 text-[11px]">{p.goals} gols</span>}
-                        <span className={`flex items-center gap-1 text-[11px] ${p.risk ? 'text-amber-400' : 'text-slate-600'}`}>
+                        <span className={`flex items-center gap-1 text-[11px] ${p.risk ? 'text-amber-400' : 'text-[#62666d]'}`}>
                           <span className="inline-block w-2.5 h-3 rounded-[1px] bg-amber-400/80" /> {p.yellows}
                         </span>
                         {p.risk && <span className="text-[9px] text-amber-400/80 bg-amber-500/15 px-1.5 py-0.5 rounded">RISC</span>}
@@ -305,28 +305,28 @@ export default function HeroSection() {
             <Zap size={14} className="text-emerald-400" />
             <div>
               <div className="text-xs font-semibold text-white">Proper rival</div>
-              <div className="text-[10px] text-slate-500">Fund. Ac. L&apos;Hospitalet A</div>
+              <div className="text-[10px] text-[#8a8f98]">Fund. Ac. L&apos;Hospitalet A</div>
             </div>
           </div>
           <div className="shrink-0 flex items-center gap-2 px-4 py-3 bg-white/[0.04] border border-white/[0.06] rounded-xl">
             <Target size={14} className="text-emerald-400" />
             <div>
               <div className="text-xs font-semibold text-white">8 gols</div>
-              <div className="text-[10px] text-slate-500">Garcia, Marc</div>
+              <div className="text-[10px] text-[#8a8f98]">Garcia, Marc</div>
             </div>
           </div>
           <div className="shrink-0 flex items-center gap-2 px-4 py-3 bg-amber-500/[0.06] border border-amber-500/10 rounded-xl">
             <AlertTriangle size={14} className="text-amber-400" />
             <div>
               <div className="text-xs font-semibold text-amber-400">5 grogues</div>
-              <div className="text-[10px] text-slate-500">Pérez, Jan — RISC</div>
+              <div className="text-[10px] text-[#8a8f98]">Pérez, Jan — RISC</div>
             </div>
           </div>
           <div className="shrink-0 flex items-center gap-2 px-4 py-3 bg-white/[0.04] border border-white/[0.06] rounded-xl">
-            <TrendingUp size={14} className="text-cyan-300" />
+            <TrendingUp size={14} className="text-[#22c55e]" />
             <div>
               <div className="text-xs font-semibold text-white">76-90&apos;</div>
-              <div className="text-[10px] text-slate-500">Més gols marcats</div>
+              <div className="text-[10px] text-[#8a8f98]">Més gols marcats</div>
             </div>
           </div>
         </div>

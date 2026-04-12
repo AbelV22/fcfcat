@@ -62,9 +62,9 @@ function ResetPasswordForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1.5">Nova contrasenya</label>
+        <label className="block text-sm font-medium text-[#d0d6e0] mb-1.5">Nova contrasenya</label>
         <div className="relative">
-          <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+          <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8a8f98]" />
           <input
             type={showPass ? 'text' : 'password'}
             required
@@ -72,13 +72,13 @@ function ResetPasswordForm() {
             value={password}
             onChange={e => setPassword(e.target.value)}
             placeholder="Mínim 6 caràcters"
-            className="w-full pl-11 pr-11 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500
+            className="w-full pl-11 pr-11 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-[#62666d]
                        focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all text-sm"
           />
           <button
             type="button"
             onClick={() => setShowPass(!showPass)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8a8f98] hover:text-[#d0d6e0] transition-colors"
           >
             {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
@@ -86,9 +86,9 @@ function ResetPasswordForm() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1.5">Confirma la contrasenya</label>
+        <label className="block text-sm font-medium text-[#d0d6e0] mb-1.5">Confirma la contrasenya</label>
         <div className="relative">
-          <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+          <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8a8f98]" />
           <input
             type={showConfirm ? 'text' : 'password'}
             required
@@ -96,13 +96,13 @@ function ResetPasswordForm() {
             value={confirm}
             onChange={e => setConfirm(e.target.value)}
             placeholder="Repeteix la contrasenya"
-            className="w-full pl-11 pr-11 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500
+            className="w-full pl-11 pr-11 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-[#62666d]
                        focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all text-sm"
           />
           <button
             type="button"
             onClick={() => setShowConfirm(!showConfirm)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8a8f98] hover:text-[#d0d6e0] transition-colors"
           >
             {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
@@ -118,7 +118,7 @@ function ResetPasswordForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500
+        className="w-full py-3 bg-gradient-to-r bg-[#22c55e] hover:from-green-500 hover:to-[#22c55e]
                    disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl
                    transition-all flex items-center justify-center gap-2 shadow-lg shadow-green-900/30"
       >
@@ -137,9 +137,9 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="min-h-screen bg-[#0f172a] flex flex-col">
+    <div className="min-h-screen bg-[#0f1011] flex flex-col">
       <header className="p-4">
-        <Link href="/login" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm">
+        <Link href="/login" className="inline-flex items-center gap-2 text-[#8a8f98] hover:text-white transition-colors text-sm">
           <ArrowLeft size={14} />
           Tornar al login
         </Link>
@@ -148,12 +148,12 @@ export default function ResetPasswordPage() {
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <Image src="/logo_neoscout.png" alt="NeoScout" width={64} height={64} className="mx-auto mb-4 rounded-2xl" />
+            <Image src="/logo_neoscout.png" alt="NeoScout" width={64} height={64} className="mx-auto mb-4 rounded-lg" />
             <h1 className="text-2xl font-black text-white mb-1">Nova contrasenya</h1>
-            <p className="text-slate-400 text-sm">Introdueix la teva nova contrasenya</p>
+            <p className="text-[#8a8f98] text-sm">Introdueix la teva nova contrasenya</p>
           </div>
 
-          <div className="glass-card rounded-2xl p-8">
+          <div className="glass-card rounded-lg p-8">
             <Suspense fallback={
               <div className="flex items-center justify-center py-8">
                 <div className="w-5 h-5 border-2 border-white/20 border-t-green-400 rounded-full animate-spin" />

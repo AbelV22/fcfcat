@@ -39,7 +39,7 @@ export default function PlayerShareCard(props: PlayerShareCardProps) {
       width: 1080,
       height: 1920,
       scale: 1,
-      backgroundColor: '#0f172a',
+      backgroundColor: '#08090a',
       useCORS: true,
     })
     return new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
@@ -86,7 +86,7 @@ export default function PlayerShareCard(props: PlayerShareCardProps) {
           style={{
             width: 1080,
             height: 1920,
-            background: 'linear-gradient(180deg, #0a1628 0%, #0f172a 30%, #1e293b 100%)',
+            background: 'linear-gradient(180deg, #0f1011 0%, #0f1011 30%, #191a1b 100%)',
             fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif",
             color: 'white',
             display: 'flex',
@@ -108,7 +108,7 @@ export default function PlayerShareCard(props: PlayerShareCardProps) {
 
           {/* Player avatar placeholder */}
           <div style={{
-            width: 200, height: 200, borderRadius: 100,
+            width: 200, height: 200, borderRadius: 80,
             background: `linear-gradient(135deg, ${posColor}40, ${posColor}20)`,
             border: `4px solid ${posColor}60`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -142,14 +142,14 @@ export default function PlayerShareCard(props: PlayerShareCardProps) {
           {/* Stats */}
           <div style={{ display: 'flex', gap: 32, marginBottom: 60 }}>
             {[
-              { value: props.appearances, label: 'Partits', color: '#06b6d4' },
+              { value: props.appearances, label: 'Partits', color: '#22c55e' },
               { value: props.goals, label: 'Gols', color: '#22c55e' },
               { value: props.yellowCards, label: 'Grogues', color: '#eab308' },
               { value: props.redCards, label: 'Vermelles', color: '#ef4444' },
             ].map(s => (
               <div key={s.label} style={{
                 width: 200, background: 'rgba(255,255,255,0.04)',
-                borderRadius: 24, padding: '32px 0', textAlign: 'center',
+                borderRadius: 8, padding: '32px 0', textAlign: 'center',
               }}>
                 <div style={{ fontSize: 56, fontWeight: 900, color: s.color }}>{s.value}</div>
                 <div style={{ fontSize: 18, color: '#64748b', marginTop: 8 }}>{s.label}</div>
@@ -176,8 +176,8 @@ export default function PlayerShareCard(props: PlayerShareCardProps) {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{
-                width: 40, height: 40, borderRadius: 10,
-                background: 'linear-gradient(135deg, #22c55e, #06b6d4)',
+                width: 40, height: 40, borderRadius: 8,
+                background: 'linear-gradient(135deg, #22c55e, #22c55e)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 20, fontWeight: 900,
               }}>

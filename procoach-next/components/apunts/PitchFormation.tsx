@@ -81,7 +81,7 @@ export default function PitchFormation({ formation, lineups, roster, onAssign, o
       <svg
         ref={svgRef}
         viewBox={`0 0 ${W} ${H}`}
-        className="w-full max-w-md mx-auto rounded-2xl overflow-hidden"
+        className="w-full max-w-md mx-auto rounded-lg overflow-hidden"
         style={{ touchAction: 'none' }}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -188,21 +188,21 @@ export default function PitchFormation({ formation, lineups, roster, onAssign, o
         <defs>
           <linearGradient id="playerGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#22c55e" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#22c55e" stopOpacity="0.9" />
           </linearGradient>
         </defs>
       </svg>
 
       {/* Player assignment dropdown */}
       {activeSlot !== null && (
-        <div className="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-[calc(100%+8px)] w-72 max-h-60 bg-[#1e293b] border border-white/15 rounded-xl shadow-2xl overflow-hidden z-50">
+        <div className="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-[calc(100%+8px)] w-72 max-h-60 bg-white/[0.04] border border-white/15 rounded-xl shadow-2xl overflow-hidden z-50">
           <div className="p-2 border-b border-white/10">
             <input
               type="text"
               placeholder="Cercar jugador..."
               value={rosterFilter}
               onChange={(e) => setRosterFilter(e.target.value)}
-              className="w-full px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-xs placeholder-slate-500 focus:outline-none focus:border-green-500/50"
+              className="w-full px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-xs placeholder-[#62666d] focus:outline-none focus:border-green-500/50"
               autoFocus
             />
           </div>
@@ -234,7 +234,7 @@ export default function PitchFormation({ formation, lineups, roster, onAssign, o
               </button>
             ))}
             {availableRoster.length === 0 && !getPlayerAt(activeSlot) && (
-              <p className="px-3 py-3 text-xs text-slate-500">Cap jugador disponible</p>
+              <p className="px-3 py-3 text-xs text-[#8a8f98]">Cap jugador disponible</p>
             )}
           </div>
         </div>

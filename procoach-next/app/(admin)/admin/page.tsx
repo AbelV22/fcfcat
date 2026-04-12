@@ -21,20 +21,20 @@ export default async function AdminPage() {
   })
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white">
+    <div className="min-h-screen bg-[#0f1011] text-white">
       {/* Top nav */}
       <nav className="border-b border-white/8 bg-[#0a1120]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-4">
           <span className="font-black text-green-400 text-sm">NeoScout Admin</span>
           <span className="text-white/10">|</span>
-          <Link href="/" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+          <Link href="/" className="text-xs text-[#8a8f98] hover:text-[#d0d6e0] transition-colors">
             ← Tornar al lloc
           </Link>
           <div className="ml-auto">
             <form action={logoutAdmin}>
               <button
                 type="submit"
-                className="text-xs px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white transition-all"
+                className="text-xs px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-[#8a8f98] hover:text-white transition-all"
               >
                 Tancar sessió
               </button>
@@ -48,7 +48,7 @@ export default async function AdminPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-black text-white mb-1">Admin NeoScout</h1>
-          <p className="text-sm text-slate-500 capitalize">{dateStr}</p>
+          <p className="text-sm text-[#8a8f98] capitalize">{dateStr}</p>
         </div>
 
         {/* Cards grid */}
@@ -56,18 +56,18 @@ export default async function AdminPage() {
           {/* Dashboard Pro */}
           <Link
             href="/dashboard"
-            className="group bg-white/4 hover:bg-white/7 border border-white/8 hover:border-cyan-500/30 rounded-2xl p-6 transition-all"
+            className="group bg-white/4 hover:bg-white/7 border border-white/8 hover:border-[#22c55e]/30 rounded-lg p-6 transition-all"
           >
-            <div className="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-500/20 flex items-center justify-center mb-4 group-hover:bg-cyan-500/25 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="text-cyan-400" aria-hidden="true">
+            <div className="w-10 h-10 rounded-xl bg-[#22c55e]/15 border border-[#22c55e]/20 flex items-center justify-center mb-4 group-hover:bg-[#34d399]/25 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="text-[#22c55e]" aria-hidden="true">
                 <rect x="3" y="3" width="7" height="9" rx="1" /><rect x="14" y="3" width="7" height="5" rx="1" /><rect x="14" y="12" width="7" height="9" rx="1" /><rect x="3" y="16" width="7" height="5" rx="1" />
               </svg>
             </div>
             <h2 className="font-bold text-white text-sm mb-1">Dashboard Pro</h2>
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <p className="text-xs text-[#8a8f98] leading-relaxed">
               Accés complet al panell d&apos;usuari sense compte. Intel·ligència, rivals, àrbitres i calendari.
             </p>
-            <div className="mt-4 text-xs text-cyan-400 font-semibold group-hover:text-cyan-300 transition-colors">
+            <div className="mt-4 text-xs text-[#22c55e] font-semibold group-hover:text-[#22c55e] transition-colors">
               Accedir →
             </div>
           </Link>
@@ -75,7 +75,7 @@ export default async function AdminPage() {
           {/* Cerca */}
           <Link
             href="/cerca"
-            className="group bg-white/4 hover:bg-white/7 border border-white/8 hover:border-purple-500/30 rounded-2xl p-6 transition-all"
+            className="group bg-white/4 hover:bg-white/7 border border-white/8 hover:border-purple-500/30 rounded-lg p-6 transition-all"
           >
             <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/20 flex items-center justify-center mb-4 group-hover:bg-purple-500/25 transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="text-purple-400" aria-hidden="true">
@@ -83,7 +83,7 @@ export default async function AdminPage() {
               </svg>
             </div>
             <h2 className="font-bold text-white text-sm mb-1">Cerca global</h2>
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <p className="text-xs text-[#8a8f98] leading-relaxed">
               Cerca equips, àrbitres i jugadors. Accés a tots els informes complets.
             </p>
             <div className="mt-4 text-xs text-purple-400 font-semibold group-hover:text-purple-300 transition-colors">
@@ -94,7 +94,7 @@ export default async function AdminPage() {
           {/* Gestió de Referits */}
           <Link
             href="/admin/referrals"
-            className="group bg-white/4 hover:bg-white/7 border border-white/8 hover:border-amber-500/30 rounded-2xl p-6 transition-all"
+            className="group bg-white/4 hover:bg-white/7 border border-white/8 hover:border-amber-500/30 rounded-lg p-6 transition-all"
           >
             <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/20 flex items-center justify-center mb-4 group-hover:bg-amber-500/25 transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="text-amber-400" aria-hidden="true">
@@ -102,7 +102,7 @@ export default async function AdminPage() {
               </svg>
             </div>
             <h2 className="font-bold text-white text-sm mb-1">Gestió de Referits</h2>
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <p className="text-xs text-[#8a8f98] leading-relaxed">
               Veure referits, ajustar comptadors, donar PRO manual. Control total del sistema de referits.
             </p>
             <div className="mt-4 text-xs text-amber-400 font-semibold group-hover:text-amber-300 transition-colors">
@@ -113,7 +113,7 @@ export default async function AdminPage() {
           {/* Gestió de Camps */}
           <Link
             href="/admin/camps"
-            className="group bg-white/4 hover:bg-white/7 border border-white/8 hover:border-green-500/30 rounded-2xl p-6 transition-all"
+            className="group bg-white/4 hover:bg-white/7 border border-white/8 hover:border-green-500/30 rounded-lg p-6 transition-all"
           >
             <div className="w-10 h-10 rounded-xl bg-green-500/15 border border-green-500/20 flex items-center justify-center mb-4 group-hover:bg-green-500/25 transition-colors">
               {/* Map/field icon */}
@@ -136,7 +136,7 @@ export default async function AdminPage() {
               </svg>
             </div>
             <h2 className="font-bold text-white text-sm mb-1">Gestió de Camps</h2>
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <p className="text-xs text-[#8a8f98] leading-relaxed">
               Afegir i editar dimensions de camps de futbol. Dades per a la comparativa de camps de l'informe d'equip.
             </p>
             <div className="mt-4 text-xs text-green-400 font-semibold group-hover:text-green-300 transition-colors">

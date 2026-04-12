@@ -233,7 +233,7 @@ export default function StepEvents({
   return (
     <div>
       <h2 className="text-xl font-bold text-white mb-1">Esdeveniments del partit</h2>
-      <p className="text-sm text-slate-400 mb-3">
+      <p className="text-sm text-[#8a8f98] mb-3">
         Afegeix els esdeveniments clau i estadistiques del partit.
       </p>
 
@@ -244,7 +244,7 @@ export default function StepEvents({
           className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all ${
             viewMode === 'events'
               ? 'bg-white/10 text-white'
-              : 'text-slate-500 hover:text-slate-300'
+              : 'text-[#8a8f98] hover:text-[#d0d6e0]'
           }`}
         >
           <Flag size={12} />
@@ -255,7 +255,7 @@ export default function StepEvents({
           className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all ${
             viewMode === 'playerStats'
               ? 'bg-white/10 text-white'
-              : 'text-slate-500 hover:text-slate-300'
+              : 'text-[#8a8f98] hover:text-[#d0d6e0]'
           }`}
         >
           <User size={12} />
@@ -275,7 +275,7 @@ export default function StepEvents({
       {/* Player quick-pick chips */}
       {playerNames.length > 0 && (
         <div className="mb-4">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">
+          <p className="text-[10px] text-[#8a8f98] uppercase tracking-wider mb-2">
             Selecciona jugador i després l&apos;esdeveniment
           </p>
           {/* Starters */}
@@ -290,13 +290,13 @@ export default function StepEvents({
                   className={`relative inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
                     isSelected
                       ? 'bg-green-500/20 text-green-300 border border-green-500/40 ring-1 ring-green-500/20'
-                      : 'bg-white/5 text-slate-300 border border-white/8 hover:border-white/20 hover:bg-white/8'
+                      : 'bg-white/5 text-[#d0d6e0] border border-white/8 hover:border-white/20 hover:bg-white/8'
                   }`}
                 >
                   {name.split(' ')[0]}
                   {playerEventCount > 0 && (
                     <span className={`text-[9px] font-bold px-1 rounded-full ${
-                      isSelected ? 'bg-green-500/30 text-green-300' : 'bg-white/10 text-slate-500'
+                      isSelected ? 'bg-green-500/30 text-green-300' : 'bg-white/10 text-[#8a8f98]'
                     }`}>
                       {playerEventCount}
                     </span>
@@ -318,13 +318,13 @@ export default function StepEvents({
                     className={`relative inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
                       isSelected
                         ? 'bg-green-500/20 text-green-300 border border-green-500/40 ring-1 ring-green-500/20'
-                        : 'bg-white/3 text-slate-500 border border-dashed border-white/8 hover:border-white/15 hover:text-slate-300'
+                        : 'bg-white/3 text-[#8a8f98] border border-dashed border-white/8 hover:border-white/15 hover:text-[#d0d6e0]'
                     }`}
                   >
                     {name.split(' ')[0]}
                     {playerEventCount > 0 && (
                       <span className={`text-[9px] font-bold px-1 rounded-full ${
-                        isSelected ? 'bg-green-500/30 text-green-300' : 'bg-white/10 text-slate-500'
+                        isSelected ? 'bg-green-500/30 text-green-300' : 'bg-white/10 text-[#8a8f98]'
                       }`}>
                         {playerEventCount}
                       </span>
@@ -350,7 +350,7 @@ export default function StepEvents({
       {/* Score display */}
       <div className="flex items-center justify-center gap-4 mb-4 py-3">
         <span className="text-3xl font-black text-green-400">{goalsFor}</span>
-        <span className="text-sm text-slate-600">-</span>
+        <span className="text-sm text-[#62666d]">-</span>
         <span className="text-3xl font-black text-red-400">{goalsAgainst}</span>
       </div>
 
@@ -358,19 +358,19 @@ export default function StepEvents({
       <div className="grid grid-cols-2 xs:grid-cols-4 gap-2 mb-5">
         <div className="text-center p-2 bg-white/3 rounded-lg">
           <p className="text-xs font-bold text-white">{shotsOnTarget + shotsOffTarget}</p>
-          <p className="text-[11px] text-slate-500">Tirs</p>
+          <p className="text-[11px] text-[#8a8f98]">Tirs</p>
         </div>
         <div className="text-center p-2 bg-white/3 rounded-lg">
           <p className="text-xs font-bold text-white">{cornersFor}</p>
-          <p className="text-[11px] text-slate-500">Corners</p>
+          <p className="text-[11px] text-[#8a8f98]">Corners</p>
         </div>
         <div className="text-center p-2 bg-white/3 rounded-lg">
           <p className="text-xs font-bold text-white">{foulsCommitted}</p>
-          <p className="text-[11px] text-slate-500">Faltes</p>
+          <p className="text-[11px] text-[#8a8f98]">Faltes</p>
         </div>
         <div className="text-center p-2 bg-white/3 rounded-lg">
           <p className="text-xs font-bold text-white">{savesCount}</p>
-          <p className="text-[11px] text-slate-500">Parades</p>
+          <p className="text-[11px] text-[#8a8f98]">Parades</p>
         </div>
       </div>
 
@@ -382,18 +382,18 @@ export default function StepEvents({
       {viewMode === 'events' && (<>
       {/* Quick counter buttons (corners, offsides) */}
       <div className="mb-4">
-        <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Comptador rapid</p>
+        <p className="text-[10px] text-[#8a8f98] uppercase tracking-wider mb-2">Comptador rapid</p>
         <div className="grid grid-cols-2 gap-2">
           {/* Corners */}
           <div className="flex items-center gap-2 p-3 bg-white/3 rounded-xl border border-white/5">
             <Flag size={12} className="text-sky-400 shrink-0" />
             <span className="text-xs text-white flex-1">Corners</span>
             <div className="flex items-center gap-1">
-              <button onClick={() => quickRemove('corner', false)} className="w-9 h-9 rounded-lg bg-white/5 text-slate-500 text-sm font-bold hover:bg-red-500/15 hover:text-red-400 transition-colors">−</button>
+              <button onClick={() => quickRemove('corner', false)} className="w-9 h-9 rounded-lg bg-white/5 text-[#8a8f98] text-sm font-bold hover:bg-red-500/15 hover:text-red-400 transition-colors">−</button>
               <button onClick={() => quickAdd('corner', false)} className="w-9 h-9 rounded-lg bg-green-500/15 text-green-400 text-sm font-bold hover:bg-green-500/25 transition-colors">+</button>
               <span className="text-xs text-white font-bold w-8 text-center">{cornersFor}-{cornersAgainst}</span>
               <button onClick={() => quickAdd('corner', true)} className="w-9 h-9 rounded-lg bg-red-500/15 text-red-400 text-sm font-bold hover:bg-red-500/25 transition-colors">+</button>
-              <button onClick={() => quickRemove('corner', true)} className="w-9 h-9 rounded-lg bg-white/5 text-slate-500 text-sm font-bold hover:bg-red-500/15 hover:text-red-400 transition-colors">−</button>
+              <button onClick={() => quickRemove('corner', true)} className="w-9 h-9 rounded-lg bg-white/5 text-[#8a8f98] text-sm font-bold hover:bg-red-500/15 hover:text-red-400 transition-colors">−</button>
             </div>
           </div>
           {/* Offsides */}
@@ -401,7 +401,7 @@ export default function StepEvents({
             <Eye size={12} className="text-violet-400 shrink-0" />
             <span className="text-xs text-white flex-1">Fores de joc</span>
             <div className="flex items-center gap-1">
-              <button onClick={() => quickRemove('offside', false)} className="w-9 h-9 rounded-lg bg-white/5 text-slate-500 text-sm font-bold hover:bg-red-500/15 hover:text-red-400 transition-colors">−</button>
+              <button onClick={() => quickRemove('offside', false)} className="w-9 h-9 rounded-lg bg-white/5 text-[#8a8f98] text-sm font-bold hover:bg-red-500/15 hover:text-red-400 transition-colors">−</button>
               <button onClick={() => quickAdd('offside', false)} className="w-9 h-9 rounded-lg bg-green-500/15 text-green-400 text-sm font-bold hover:bg-green-500/25 transition-colors">+</button>
               <span className="text-xs text-white font-bold w-8 text-center">
                 {events.filter((e) => e.event_type === 'offside' && !e.is_opponent).length}
@@ -409,7 +409,7 @@ export default function StepEvents({
                 {events.filter((e) => e.event_type === 'offside' && e.is_opponent).length}
               </span>
               <button onClick={() => quickAdd('offside', true)} className="w-9 h-9 rounded-lg bg-red-500/15 text-red-400 text-sm font-bold hover:bg-red-500/25 transition-colors">+</button>
-              <button onClick={() => quickRemove('offside', true)} className="w-9 h-9 rounded-lg bg-white/5 text-slate-500 text-sm font-bold hover:bg-red-500/15 hover:text-red-400 transition-colors">−</button>
+              <button onClick={() => quickRemove('offside', true)} className="w-9 h-9 rounded-lg bg-white/5 text-[#8a8f98] text-sm font-bold hover:bg-red-500/15 hover:text-red-400 transition-colors">−</button>
             </div>
           </div>
         </div>
@@ -424,7 +424,7 @@ export default function StepEvents({
             className={`px-3 py-2 rounded-lg text-[11px] font-semibold transition-all shrink-0 ${
               activeCategory === key
                 ? 'bg-white/10 text-white'
-                : 'text-slate-500 hover:text-slate-300'
+                : 'text-[#8a8f98] hover:text-[#d0d6e0]'
             }`}
           >
             {label}
@@ -469,7 +469,7 @@ export default function StepEvents({
               }`}
             >
               <Icon size={14} style={{ color: `var(--color-${color}-400, #4ade80)` }} />
-              <span className="text-[11px] text-slate-400 font-medium text-center leading-tight">
+              <span className="text-[11px] text-[#8a8f98] font-medium text-center leading-tight">
                 {getEventLabel(type)}
               </span>
             </button>
@@ -492,7 +492,7 @@ export default function StepEvents({
                   : 'bg-white/3 border-white/5'
               }`}
             >
-              <span className="text-xs font-mono text-slate-500 w-7 text-right shrink-0">
+              <span className="text-xs font-mono text-[#8a8f98] w-7 text-right shrink-0">
                 {evt.minute > 0 ? `${evt.minute}'` : ''}
               </span>
               <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0`}
@@ -504,13 +504,13 @@ export default function StepEvents({
                 <p className="text-xs font-semibold text-white truncate">
                   {evt.player_name || getEventLabel(evt.event_type)}
                   {evt.secondary_player && (
-                    <span className="text-slate-500 font-normal"> → {evt.secondary_player}</span>
+                    <span className="text-[#8a8f98] font-normal"> → {evt.secondary_player}</span>
                   )}
                   {evt.is_opponent && (
                     <span className="text-red-400 font-normal text-[10px]"> (rival)</span>
                   )}
                 </p>
-                <p className="text-[10px] text-slate-500">
+                <p className="text-[10px] text-[#8a8f98]">
                   {getEventLabel(evt.event_type)}
                   {evt.goal_type && ` · ${GOAL_TYPE_LABELS[evt.goal_type]}`}
                   {evt.goal_origin && ` · ${GOAL_ORIGIN_LABELS[evt.goal_origin]}`}
@@ -518,10 +518,10 @@ export default function StepEvents({
                 </p>
               </div>
               <div className="flex gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                <button onClick={() => openEdit(realIndex)} className="text-slate-500 hover:text-white p-2">
+                <button onClick={() => openEdit(realIndex)} className="text-[#8a8f98] hover:text-white p-2">
                   <Circle size={12} />
                 </button>
-                <button onClick={() => deleteEvent(realIndex)} className="text-slate-500 hover:text-red-400 p-2">
+                <button onClick={() => deleteEvent(realIndex)} className="text-[#8a8f98] hover:text-red-400 p-2">
                   <Trash2 size={12} />
                 </button>
               </div>
@@ -533,7 +533,7 @@ export default function StepEvents({
       {/* Add button */}
       <button
         onClick={() => openNew()}
-        className="w-full py-3 border border-dashed border-white/15 rounded-xl text-sm text-slate-400 hover:text-white hover:border-green-500/30 transition-all flex items-center justify-center gap-2"
+        className="w-full py-3 border border-dashed border-white/15 rounded-xl text-sm text-[#8a8f98] hover:text-white hover:border-green-500/30 transition-all flex items-center justify-center gap-2"
       >
         <Plus size={14} />
         Afegir esdeveniment
@@ -545,8 +545,8 @@ export default function StepEvents({
         <div>
           {playerNames.length === 0 ? (
             <div className="text-center py-12">
-              <User size={24} className="text-slate-600 mx-auto mb-3" />
-              <p className="text-sm text-slate-400">
+              <User size={24} className="text-[#62666d] mx-auto mb-3" />
+              <p className="text-sm text-[#8a8f98]">
                 Cap jugador disponible. Selecciona un partit amb acta.
               </p>
             </div>
@@ -565,14 +565,14 @@ export default function StepEvents({
                       onClick={() => setStatsPlayer(isActive ? null : name)}
                       className={`inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-[11px] font-medium transition-all ${
                         isActive
-                          ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 ring-1 ring-cyan-500/20'
-                          : 'bg-white/5 text-slate-300 border border-white/8 hover:border-white/20 hover:bg-white/8'
+                          ? 'bg-[#22c55e]/20 text-[#22c55e] border border-[#22c55e]/40 ring-1 ring-[#22c55e]/20'
+                          : 'bg-white/5 text-[#d0d6e0] border border-white/8 hover:border-white/20 hover:bg-white/8'
                       }`}
                     >
                       {name.split(' ')[0]}
                       {playerIndividualCount > 0 && (
                         <span className={`text-[9px] font-bold px-1 rounded-full ${
-                          isActive ? 'bg-cyan-500/30 text-cyan-300' : 'bg-white/10 text-slate-500'
+                          isActive ? 'bg-[#22c55e]/30 text-[#22c55e]' : 'bg-white/10 text-[#8a8f98]'
                         }`}>
                           {playerIndividualCount}
                         </span>
@@ -586,12 +586,12 @@ export default function StepEvents({
               {statsPlayer ? (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-8 h-8 rounded-full bg-cyan-500/15 flex items-center justify-center">
-                      <User size={14} className="text-cyan-400" />
+                    <div className="w-8 h-8 rounded-full bg-[#22c55e]/15 flex items-center justify-center">
+                      <User size={14} className="text-[#22c55e]" />
                     </div>
                     <div>
                       <p className="text-sm font-bold text-white">{statsPlayer}</p>
-                      <p className="text-[10px] text-slate-500">Toca + per sumar, − per restar</p>
+                      <p className="text-[10px] text-[#8a8f98]">Toca + per sumar, − per restar</p>
                     </div>
                   </div>
 
@@ -609,14 +609,14 @@ export default function StepEvents({
                           className="flex flex-col items-center gap-1 py-2 px-2 rounded-xl bg-white/3 border border-white/5"
                         >
                           <Icon size={14} style={{ color: `var(--color-${color}-400, #4ade80)` }} />
-                          <span className="text-[11px] text-slate-400 font-medium text-center leading-tight">
+                          <span className="text-[11px] text-[#8a8f98] font-medium text-center leading-tight">
                             {getEventLabel(type)}
                           </span>
                           <div className="flex items-center gap-1.5 mt-0.5">
                             <button
                               onClick={() => removePlayerStat(statsPlayer, type)}
                               disabled={count === 0}
-                              className="w-9 h-9 rounded-lg bg-white/5 text-slate-500 text-sm font-bold hover:bg-red-500/15 hover:text-red-400 disabled:opacity-20 disabled:hover:bg-white/5 disabled:hover:text-slate-500 transition-colors"
+                              className="w-9 h-9 rounded-lg bg-white/5 text-[#8a8f98] text-sm font-bold hover:bg-red-500/15 hover:text-red-400 disabled:opacity-20 disabled:hover:bg-white/5 disabled:hover:text-[#8a8f98] transition-colors"
                             >
                               −
                             </button>
@@ -669,7 +669,7 @@ export default function StepEvents({
                             <button
                               onClick={() => removePlayerStat(statsPlayer, customType)}
                               disabled={count === 0}
-                              className="w-9 h-9 rounded-lg bg-white/5 text-slate-500 text-sm font-bold hover:bg-red-500/15 hover:text-red-400 disabled:opacity-20 transition-colors"
+                              className="w-9 h-9 rounded-lg bg-white/5 text-[#8a8f98] text-sm font-bold hover:bg-red-500/15 hover:text-red-400 disabled:opacity-20 transition-colors"
                             >
                               −
                             </button>
@@ -708,8 +708,8 @@ export default function StepEvents({
                       onClick={() => setShowNewStatModal(true)}
                       className="flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-xl border border-dashed border-white/10 hover:border-purple-500/30 hover:bg-purple-500/5 transition-all"
                     >
-                      <Plus size={16} className="text-slate-500" />
-                      <span className="text-[9px] text-slate-500 font-medium text-center leading-tight">
+                      <Plus size={16} className="text-[#8a8f98]" />
+                      <span className="text-[9px] text-[#8a8f98] font-medium text-center leading-tight">
                         Nova stat
                       </span>
                     </button>
@@ -723,12 +723,12 @@ export default function StepEvents({
                     if (keyEvents.length === 0) return null
                     return (
                       <div>
-                        <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Esdeveniments clau</p>
+                        <p className="text-[10px] text-[#8a8f98] uppercase tracking-wider mb-2">Esdeveniments clau</p>
                         <div className="flex flex-wrap gap-1.5">
                           {keyEvents.map((e, i) => (
                             <span
                               key={i}
-                              className="text-[10px] px-2 py-1 rounded-lg bg-white/5 text-slate-300 border border-white/5"
+                              className="text-[10px] px-2 py-1 rounded-lg bg-white/5 text-[#d0d6e0] border border-white/5"
                             >
                               {e.minute > 0 ? `${e.minute}' ` : ''}{getEventLabel(e.event_type)}
                             </span>
@@ -740,7 +740,7 @@ export default function StepEvents({
 
                   {/* Quick add key events for this player */}
                   <div>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Afegir esdeveniment</p>
+                    <p className="text-[10px] text-[#8a8f98] uppercase tracking-wider mb-2">Afegir esdeveniment</p>
                     <div className="grid grid-cols-4 gap-1.5">
                       {(['shot_on_target', 'shot_off_target', 'foul_committed', 'foul_suffered', 'chance_created', 'save', 'assist', 'pre_assist'] as EventType[]).map((type) => {
                         const Icon = EVENT_ICONS[type]
@@ -769,7 +769,7 @@ export default function StepEvents({
                             className="flex flex-col items-center gap-1 py-2 px-1 rounded-xl bg-white/3 border border-white/5 hover:border-white/15 hover:bg-white/5 transition-all"
                           >
                             <Icon size={12} style={{ color: `var(--color-${color}-400, #4ade80)` }} />
-                            <span className="text-[8px] text-slate-500 font-medium text-center leading-tight">
+                            <span className="text-[8px] text-[#8a8f98] font-medium text-center leading-tight">
                               {getEventLabel(type).split(' ')[0]}
                             </span>
                           </button>
@@ -780,7 +780,7 @@ export default function StepEvents({
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <p className="text-sm text-slate-500">Selecciona un jugador per veure i anotar les seves estadistiques</p>
+                  <p className="text-sm text-[#8a8f98]">Selecciona un jugador per veure i anotar les seves estadistiques</p>
                 </div>
               )}
             </>
@@ -791,13 +791,13 @@ export default function StepEvents({
       {/* Add/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
-          <div className="bg-[#1e293b] border border-white/10 rounded-2xl w-full max-w-md max-h-[85vh] overflow-y-auto">
+          <div className="bg-white/[0.04] border border-white/10 rounded-lg w-full max-w-md max-h-[85vh] overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-white/8">
               <h3 className="font-bold text-white text-sm">
                 {editIndex !== null ? 'Editar' : 'Nou'} esdeveniment
               </h3>
-              <button onClick={() => setShowModal(false)} className="text-slate-500 hover:text-white">
+              <button onClick={() => setShowModal(false)} className="text-[#8a8f98] hover:text-white">
                 <X size={18} />
               </button>
             </div>
@@ -805,7 +805,7 @@ export default function StepEvents({
             <div className="p-4 space-y-4">
               {/* Event type grid - all types */}
               <div>
-                <label className="text-xs text-slate-400 mb-2 block">Tipus</label>
+                <label className="text-xs text-[#8a8f98] mb-2 block">Tipus</label>
                 <div className="grid grid-cols-4 gap-1.5">
                   {Object.values(EVENT_CATEGORIES).flat().filter(t => !QUICK_COUNTER.includes(t)).map((type) => {
                     const Icon = EVENT_ICONS[type]
@@ -832,7 +832,7 @@ export default function StepEvents({
                         } : undefined}
                       >
                         <Icon size={14} style={{ color: active ? `var(--color-${color}-400, #4ade80)` : '#64748b' }} />
-                        <span className={active ? 'text-white' : 'text-slate-500'}>
+                        <span className={active ? 'text-white' : 'text-[#8a8f98]'}>
                           {getEventLabel(type).split(' ')[0]}
                         </span>
                       </button>
@@ -843,7 +843,7 @@ export default function StepEvents({
 
               {/* Minute */}
               <div>
-                <label className="text-xs text-slate-400 mb-1 block">Minut</label>
+                <label className="text-xs text-[#8a8f98] mb-1 block">Minut</label>
                 <div className="flex items-center gap-3">
                   <input
                     type="range"
@@ -867,7 +867,7 @@ export default function StepEvents({
               {/* Player */}
               {NEEDS_PLAYER.includes(form.event_type) && (
                 <div>
-                  <label className="text-xs text-slate-400 mb-1 block">Jugador</label>
+                  <label className="text-xs text-[#8a8f98] mb-1 block">Jugador</label>
                   <select
                     value={form.player_name}
                     onChange={(e) => setForm({ ...form, player_name: e.target.value })}
@@ -885,7 +885,7 @@ export default function StepEvents({
               {form.event_type === 'goal' && (
                 <>
                   <div>
-                    <label className="text-xs text-slate-400 mb-2 block">Tipus de gol</label>
+                    <label className="text-xs text-[#8a8f98] mb-2 block">Tipus de gol</label>
                     <div className="grid grid-cols-3 gap-1.5">
                       {GOAL_TYPES.map((gt) => (
                         <button
@@ -894,7 +894,7 @@ export default function StepEvents({
                           className={`py-2 rounded-lg text-[10px] font-medium transition-all ${
                             form.goal_type === gt
                               ? 'bg-green-500/15 text-green-400 border border-green-500/30'
-                              : 'bg-white/3 text-slate-500 border border-transparent hover:bg-white/5'
+                              : 'bg-white/3 text-[#8a8f98] border border-transparent hover:bg-white/5'
                           }`}
                         >
                           {GOAL_TYPE_LABELS[gt]}
@@ -903,7 +903,7 @@ export default function StepEvents({
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs text-slate-400 mb-2 block">Origen del gol</label>
+                    <label className="text-xs text-[#8a8f98] mb-2 block">Origen del gol</label>
                     <div className="grid grid-cols-3 gap-1.5">
                       {GOAL_ORIGINS.map((go) => (
                         <button
@@ -911,8 +911,8 @@ export default function StepEvents({
                           onClick={() => setForm({ ...form, goal_origin: go })}
                           className={`py-2 rounded-lg text-[10px] font-medium transition-all ${
                             form.goal_origin === go
-                              ? 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/30'
-                              : 'bg-white/3 text-slate-500 border border-transparent hover:bg-white/5'
+                              ? 'bg-[#22c55e]/15 text-[#22c55e] border border-[#22c55e]/30'
+                              : 'bg-white/3 text-[#8a8f98] border border-transparent hover:bg-white/5'
                           }`}
                         >
                           {GOAL_ORIGIN_LABELS[go]}
@@ -926,7 +926,7 @@ export default function StepEvents({
               {/* Shot zone (for shot events) */}
               {['shot_on_target', 'shot_off_target', 'shot_woodwork'].includes(form.event_type) && (
                 <div>
-                  <label className="text-xs text-slate-400 mb-2 block">Zona del tir</label>
+                  <label className="text-xs text-[#8a8f98] mb-2 block">Zona del tir</label>
                   <div className="grid grid-cols-2 gap-1.5">
                     {SHOT_ZONES.map((sz) => (
                       <button
@@ -935,7 +935,7 @@ export default function StepEvents({
                         className={`py-2 rounded-lg text-[10px] font-medium transition-all ${
                           form.shot_zone === sz
                             ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                            : 'bg-white/3 text-slate-500 border border-transparent hover:bg-white/5'
+                            : 'bg-white/3 text-[#8a8f98] border border-transparent hover:bg-white/5'
                         }`}
                       >
                         {SHOT_ZONE_LABELS[sz]}
@@ -948,7 +948,7 @@ export default function StepEvents({
               {/* Secondary player (for subs, assists) */}
               {(form.event_type === 'substitution' || form.event_type === 'assist' || form.event_type === 'pre_assist') && (
                 <div>
-                  <label className="text-xs text-slate-400 mb-1 block">
+                  <label className="text-xs text-[#8a8f98] mb-1 block">
                     {form.event_type === 'substitution' ? 'Jugador substituit' : 'Golejador'}
                   </label>
                   <select
@@ -966,7 +966,7 @@ export default function StepEvents({
 
               {/* Opponent toggle */}
               <div className="flex items-center gap-3">
-                <label className="text-xs text-slate-400">Esdeveniment del rival?</label>
+                <label className="text-xs text-[#8a8f98]">Esdeveniment del rival?</label>
                 <button
                   onClick={() => setForm({ ...form, is_opponent: !form.is_opponent })}
                   className={`w-10 h-5 rounded-full transition-all ${
@@ -981,13 +981,13 @@ export default function StepEvents({
 
               {/* Note */}
               <div>
-                <label className="text-xs text-slate-400 mb-1 block">Nota (opcional)</label>
+                <label className="text-xs text-[#8a8f98] mb-1 block">Nota (opcional)</label>
                 <input
                   type="text"
                   placeholder="Detalls de l'accio..."
                   value={form.note || ''}
                   onChange={(e) => setForm({ ...form, note: e.target.value || null })}
-                  className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:border-green-500/50"
+                  className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-[#62666d] focus:outline-none focus:border-green-500/50"
                 />
               </div>
             </div>
@@ -996,14 +996,14 @@ export default function StepEvents({
             <div className="p-4 border-t border-white/8 flex gap-2">
               <button
                 onClick={() => setShowModal(false)}
-                className="flex-1 py-2.5 bg-white/5 border border-white/10 text-slate-400 text-sm rounded-xl hover:bg-white/10 transition-all"
+                className="flex-1 py-2.5 bg-white/5 border border-white/10 text-[#8a8f98] text-sm rounded-xl hover:bg-white/10 transition-all"
               >
                 Cancel·lar
               </button>
               <button
                 onClick={saveEvent}
                 disabled={NEEDS_PLAYER.includes(form.event_type) && !form.player_name}
-                className="flex-1 py-2.5 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 disabled:opacity-30 text-white text-sm font-semibold rounded-xl transition-all"
+                className="flex-1 py-2.5 bg-gradient-to-r bg-[#22c55e] hover:from-green-500 hover:to-[#22c55e] disabled:opacity-30 text-white text-sm font-semibold rounded-xl transition-all"
               >
                 {editIndex !== null ? 'Actualitzar' : 'Afegir'}
               </button>
@@ -1015,15 +1015,15 @@ export default function StepEvents({
       {/* New Custom Stat Modal */}
       {showNewStatModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#1e293b] border border-white/10 rounded-2xl w-full max-w-sm">
+          <div className="bg-white/[0.04] border border-white/10 rounded-lg w-full max-w-sm">
             <div className="flex items-center justify-between p-4 border-b border-white/8">
               <h3 className="font-bold text-white text-sm">Nova estadistica personalitzada</h3>
-              <button onClick={() => { setShowNewStatModal(false); setNewStatName('') }} className="text-slate-500 hover:text-white">
+              <button onClick={() => { setShowNewStatModal(false); setNewStatName('') }} className="text-[#8a8f98] hover:text-white">
                 <X size={18} />
               </button>
             </div>
             <div className="p-4 space-y-3">
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[#8a8f98]">
                 Crea una nova stat per anotar durant el partit (ex: &quot;Sprint&quot;, &quot;Cobertura&quot;, &quot;Desbordament&quot;).
               </p>
               <input
@@ -1041,14 +1041,14 @@ export default function StepEvents({
                     setShowNewStatModal(false)
                   }
                 }}
-                className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:border-purple-500/50"
+                className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-[#62666d] focus:outline-none focus:border-purple-500/50"
                 autoFocus
               />
 
               {/* Existing custom stats */}
               {customStats.length > 0 && (
                 <div>
-                  <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1.5">Stats creades</p>
+                  <p className="text-[10px] text-[#8a8f98] uppercase tracking-wider mb-1.5">Stats creades</p>
                   <div className="flex flex-wrap gap-1.5">
                     {customStats.map((cs) => (
                       <span
@@ -1071,7 +1071,7 @@ export default function StepEvents({
             <div className="p-4 border-t border-white/8 flex gap-2">
               <button
                 onClick={() => { setShowNewStatModal(false); setNewStatName('') }}
-                className="flex-1 py-2.5 bg-white/5 border border-white/10 text-slate-400 text-sm rounded-xl hover:bg-white/10 transition-all"
+                className="flex-1 py-2.5 bg-white/5 border border-white/10 text-[#8a8f98] text-sm rounded-xl hover:bg-white/10 transition-all"
               >
                 Cancel·lar
               </button>

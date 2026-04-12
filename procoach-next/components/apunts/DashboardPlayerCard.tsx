@@ -11,7 +11,7 @@ import DonutChart from './DonutChart'
 
 const GOAL_TYPE_COLORS: Record<string, string> = {
   right_foot: '#22c55e',
-  left_foot: '#06b6d4',
+  left_foot: '#22c55e',
   header: '#f59e0b',
   penalty: '#ef4444',
   free_kick: '#8b5cf6',
@@ -46,8 +46,8 @@ export default function DashboardPlayerCard({ notes }: { notes: MatchNote[] }) {
   if (players.length === 0) {
     return (
       <div className="text-center py-16">
-        <User size={32} className="text-slate-700 mx-auto mb-3" />
-        <p className="text-sm text-slate-500">Crea apunts de partits per veure estadístiques de jugadors.</p>
+        <User size={32} className="text-[#62666d] mx-auto mb-3" />
+        <p className="text-sm text-[#8a8f98]">Crea apunts de partits per veure estadístiques de jugadors.</p>
       </div>
     )
   }
@@ -108,15 +108,15 @@ export default function DashboardPlayerCard({ notes }: { notes: MatchNote[] }) {
           <div key={label} className="glass-card rounded-xl p-3 text-center">
             <Icon size={13} className={`mx-auto mb-1`} style={{ color: `var(--color-${color}-400, #4ade80)` }} />
             <p className="text-lg font-black text-white">{value}</p>
-            <p className="text-[9px] text-slate-500">{label}</p>
+            <p className="text-[9px] text-[#8a8f98]">{label}</p>
           </div>
         ))}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Radar */}
-        <div className="glass-card rounded-2xl p-5">
-          <h4 className="text-xs font-semibold text-slate-500 mb-3">Perfil del jugador</h4>
+        <div className="glass-card rounded-lg p-5">
+          <h4 className="text-xs font-semibold text-[#8a8f98] mb-3">Perfil del jugador</h4>
           <RadarChart
             axes={radarAxes}
             layers={[{ values: radarAxes.map((a) => a.value), color: '#22c55e' }]}
@@ -125,30 +125,30 @@ export default function DashboardPlayerCard({ notes }: { notes: MatchNote[] }) {
 
         {/* Rating trend */}
         {ratingData.length >= 2 && (
-          <div className="glass-card rounded-2xl p-5">
-            <h4 className="text-xs font-semibold text-slate-500 mb-3">Tendència de valoració</h4>
+          <div className="glass-card rounded-lg p-5">
+            <h4 className="text-xs font-semibold text-[#8a8f98] mb-3">Tendència de valoració</h4>
             <MiniLineChart data={ratingData} maxValue={10} color="#22c55e" />
           </div>
         )}
 
         {/* Goal types donut */}
         {goalTypeSegments.length > 0 && (
-          <div className="glass-card rounded-2xl p-5">
-            <h4 className="text-xs font-semibold text-slate-500 mb-3">Tipus de gol</h4>
+          <div className="glass-card rounded-lg p-5">
+            <h4 className="text-xs font-semibold text-[#8a8f98] mb-3">Tipus de gol</h4>
             <DonutChart segments={goalTypeSegments} centerLabel={`${player.goals}`} />
           </div>
         )}
 
         {/* Tags frequency */}
         {Object.keys(player.tags).length > 0 && (
-          <div className="glass-card rounded-2xl p-5">
-            <h4 className="text-xs font-semibold text-slate-500 mb-3">Etiquetes freqüents</h4>
+          <div className="glass-card rounded-lg p-5">
+            <h4 className="text-xs font-semibold text-[#8a8f98] mb-3">Etiquetes freqüents</h4>
             <div className="space-y-1.5">
               {Object.entries(player.tags)
                 .sort(([, a], [, b]) => b - a)
                 .map(([tag, count]) => (
                   <div key={tag} className="flex items-center justify-between">
-                    <span className="text-xs text-slate-400">{tagMap[tag] || tag}</span>
+                    <span className="text-xs text-[#8a8f98]">{tagMap[tag] || tag}</span>
                     <div className="flex items-center gap-2">
                       <div className="w-20 h-1.5 bg-white/5 rounded-full overflow-hidden">
                         <div
@@ -156,7 +156,7 @@ export default function DashboardPlayerCard({ notes }: { notes: MatchNote[] }) {
                           style={{ width: `${(count / player.matchesRated) * 100}%` }}
                         />
                       </div>
-                      <span className="text-[10px] text-slate-600 w-4 text-right">{count}</span>
+                      <span className="text-[10px] text-[#62666d] w-4 text-right">{count}</span>
                     </div>
                   </div>
                 ))}

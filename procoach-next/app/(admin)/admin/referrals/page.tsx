@@ -83,12 +83,12 @@ export default function AdminReferralsPage() {
   const getName = (id: string) => emailMap[id]?.name || ''
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white">
+    <div className="min-h-screen bg-[#0f1011] text-white">
       <nav className="border-b border-white/8 bg-[#0a1120]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-4">
           <span className="font-black text-green-400 text-sm">NeoScout Admin</span>
           <span className="text-white/10">|</span>
-          <Link href="/admin" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+          <Link href="/admin" className="text-xs text-[#8a8f98] hover:text-[#d0d6e0] transition-colors">
             <ArrowLeft size={12} className="inline mr-1" />
             Admin
           </Link>
@@ -99,15 +99,15 @@ export default function AdminReferralsPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-black text-white mb-1 flex items-center gap-3">
-              <Gift size={24} className="text-cyan-400" />
+              <Gift size={24} className="text-[#22c55e]" />
               Gestió de Referits
             </h1>
-            <p className="text-sm text-slate-500">{users.length} usuaris · {referrals.length} referits totals</p>
+            <p className="text-sm text-[#8a8f98]">{users.length} usuaris · {referrals.length} referits totals</p>
           </div>
           <button
             onClick={fetchData}
             disabled={loading}
-            className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm text-slate-400 hover:text-white transition-all"
+            className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm text-[#8a8f98] hover:text-white transition-all"
           >
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
             Actualitzar
@@ -122,17 +122,17 @@ export default function AdminReferralsPage() {
         )}
 
         {/* Users table */}
-        <div className="bg-white/4 border border-white/8 rounded-2xl overflow-hidden mb-8">
+        <div className="bg-white/4 border border-white/8 rounded-lg overflow-hidden mb-8">
           <div className="px-6 py-4 border-b border-white/8">
             <h2 className="font-bold text-white flex items-center gap-2">
-              <Users size={16} className="text-slate-400" />
+              <Users size={16} className="text-[#8a8f98]" />
               Usuaris amb codi de referit
             </h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-xs text-slate-500 border-b border-white/8">
+                <tr className="text-xs text-[#8a8f98] border-b border-white/8">
                   <th className="text-left py-3 px-4">Usuari</th>
                   <th className="text-center py-3 px-4">Codi</th>
                   <th className="text-center py-3 px-4">Referits</th>
@@ -142,17 +142,17 @@ export default function AdminReferralsPage() {
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={5} className="text-center py-8 text-slate-500">Carregant...</td></tr>
+                  <tr><td colSpan={5} className="text-center py-8 text-[#8a8f98]">Carregant...</td></tr>
                 ) : users.length === 0 ? (
-                  <tr><td colSpan={5} className="text-center py-8 text-slate-500">Cap usuari trobat</td></tr>
+                  <tr><td colSpan={5} className="text-center py-8 text-[#8a8f98]">Cap usuari trobat</td></tr>
                 ) : users.map(u => (
                   <tr key={u.user_id} className="border-b border-white/5 hover:bg-white/3">
                     <td className="py-3 px-4">
                       <div className="text-white font-medium text-sm">{u.name || '—'}</div>
-                      <div className="text-xs text-slate-500">{u.email}</div>
+                      <div className="text-xs text-[#8a8f98]">{u.email}</div>
                     </td>
                     <td className="py-3 px-4 text-center">
-                      <span className="font-mono text-xs bg-white/5 px-2 py-1 rounded-lg text-cyan-400">{u.referral_code}</span>
+                      <span className="font-mono text-xs bg-white/5 px-2 py-1 rounded-lg text-[#22c55e]">{u.referral_code}</span>
                     </td>
                     <td className="py-3 px-4 text-center">
                       <div className="flex items-center justify-center gap-2">
@@ -180,7 +180,7 @@ export default function AdminReferralsPage() {
                         className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-all ${
                           u.pro_unlocked
                             ? 'bg-green-500/15 text-green-400 border border-green-500/20 hover:bg-red-500/15 hover:text-red-400 hover:border-red-500/20'
-                            : 'bg-white/5 text-slate-500 border border-white/10 hover:bg-green-500/15 hover:text-green-400 hover:border-green-500/20'
+                            : 'bg-white/5 text-[#8a8f98] border border-white/10 hover:bg-green-500/15 hover:text-green-400 hover:border-green-500/20'
                         }`}
                       >
                         <Crown size={10} />
@@ -195,7 +195,7 @@ export default function AdminReferralsPage() {
                             doAction({ action: 'set_count', user_id: u.user_id, count: Number(count) })
                           }
                         }}
-                        className="text-xs text-slate-500 hover:text-cyan-400 transition-colors"
+                        className="text-xs text-[#8a8f98] hover:text-[#22c55e] transition-colors"
                       >
                         Editar
                       </button>
@@ -208,17 +208,17 @@ export default function AdminReferralsPage() {
         </div>
 
         {/* Referrals history */}
-        <div className="bg-white/4 border border-white/8 rounded-2xl overflow-hidden">
+        <div className="bg-white/4 border border-white/8 rounded-lg overflow-hidden">
           <div className="px-6 py-4 border-b border-white/8">
             <h2 className="font-bold text-white flex items-center gap-2">
-              <Gift size={16} className="text-slate-400" />
+              <Gift size={16} className="text-[#8a8f98]" />
               Historial de referits
             </h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-xs text-slate-500 border-b border-white/8">
+                <tr className="text-xs text-[#8a8f98] border-b border-white/8">
                   <th className="text-left py-3 px-4">Referidor</th>
                   <th className="text-left py-3 px-4">Referit</th>
                   <th className="text-center py-3 px-4">Codi</th>
@@ -227,21 +227,21 @@ export default function AdminReferralsPage() {
               </thead>
               <tbody>
                 {referrals.length === 0 ? (
-                  <tr><td colSpan={4} className="text-center py-8 text-slate-500">Cap referit encara</td></tr>
+                  <tr><td colSpan={4} className="text-center py-8 text-[#8a8f98]">Cap referit encara</td></tr>
                 ) : referrals.map((r, i) => (
                   <tr key={i} className="border-b border-white/5 hover:bg-white/3">
                     <td className="py-3 px-4">
                       <div className="text-white text-sm">{getName(r.referrer_id) || getEmail(r.referrer_id)}</div>
-                      <div className="text-xs text-slate-500">{getEmail(r.referrer_id)}</div>
+                      <div className="text-xs text-[#8a8f98]">{getEmail(r.referrer_id)}</div>
                     </td>
                     <td className="py-3 px-4">
                       <div className="text-white text-sm">{getName(r.referred_id) || getEmail(r.referred_id)}</div>
-                      <div className="text-xs text-slate-500">{getEmail(r.referred_id)}</div>
+                      <div className="text-xs text-[#8a8f98]">{getEmail(r.referred_id)}</div>
                     </td>
                     <td className="py-3 px-4 text-center">
-                      <span className="font-mono text-xs text-slate-400">{r.referral_code}</span>
+                      <span className="font-mono text-xs text-[#8a8f98]">{r.referral_code}</span>
                     </td>
-                    <td className="py-3 px-4 text-right text-xs text-slate-500">
+                    <td className="py-3 px-4 text-right text-xs text-[#8a8f98]">
                       {new Date(r.created_at).toLocaleDateString('ca-ES', { day: '2-digit', month: 'short', year: 'numeric' })}
                     </td>
                   </tr>

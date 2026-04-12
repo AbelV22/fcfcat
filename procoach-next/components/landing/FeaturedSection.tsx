@@ -27,18 +27,18 @@ const COMPETITIONS = [
 
 const TIER_COLORS = [
   'from-yellow-500 to-amber-400',
-  'from-slate-300 to-slate-400',
+  'from-[#d0d6e0] to-[#8a8f98]',
   'from-amber-600 to-amber-700',
   'from-green-500 to-green-600',
   'from-teal-500 to-teal-600',
-  'from-cyan-500 to-cyan-600',
+  'from-[#22c55e] to-[#22c55e]',
   'from-blue-500 to-blue-600',
   'from-indigo-500 to-indigo-600',
 ]
 
 const FEATURES = [
   {
-    icon: <Crosshair size={22} className="text-cyan-400" />,
+    icon: <Crosshair size={22} className="text-[#22c55e]" />,
     title: 'Anàlisi del proper rival',
     desc: 'Goleadors, jugadors amb més minuts, apercibits i timing de gols del rival de la setmana que ve.',
     href: '/cerca',
@@ -82,7 +82,7 @@ const FEATURES = [
 ]
 
 const ACCENT_BORDERS: Record<string, string> = {
-  cyan: 'hover:border-cyan-500/30',
+  cyan: 'hover:border-[#22c55e]/30',
   green: 'hover:border-green-500/30',
   amber: 'hover:border-amber-500/30',
   purple: 'hover:border-purple-500/30',
@@ -100,7 +100,7 @@ export default function FeaturedSection() {
           <h2 className="font-headline text-3xl sm:text-4xl font-black text-white mb-3">
             Estadístiques del <span className="gradient-text-hero">futbol català</span>
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto text-sm sm:text-base">
+          <p className="text-[#8a8f98] max-w-xl mx-auto text-sm sm:text-base">
             Classificació, resultats, golejadors, àrbitres i disciplina de totes les categories de la Federació Catalana de Futbol.
           </p>
         </div>
@@ -110,13 +110,13 @@ export default function FeaturedSection() {
             <Link
               key={item.title}
               href={item.href}
-              className={`group card-elevated rounded-2xl p-6 ${ACCENT_BORDERS[item.accent] || 'hover:border-green-500/30'} transition-all duration-300 reveal`}
+              className={`group card-elevated rounded-lg p-6 ${ACCENT_BORDERS[item.accent] || 'hover:border-green-500/30'} transition-all duration-300 reveal`}
             >
               <div className="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center mb-4">
                 {item.icon}
               </div>
               <h3 className="text-base font-bold text-white group-hover:text-green-400 transition-colors mb-2">{item.title}</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+              <p className="text-sm text-[#8a8f98] leading-relaxed">{item.desc}</p>
             </Link>
           ))}
         </div>
@@ -135,8 +135,8 @@ export default function FeaturedSection() {
               href={`/competicio/${c.slug}`}
               className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] hover:border-emerald-500/25 transition-all group"
             >
-              <div className={`w-2 h-2 rounded-full bg-gradient-to-br ${TIER_COLORS[i] || 'from-slate-500 to-slate-600'} shrink-0`} />
-              <span className="text-xs sm:text-sm font-medium text-slate-400 group-hover:text-white transition-colors truncate">{c.name}</span>
+              <div className={`w-2 h-2 rounded-full bg-gradient-to-br ${TIER_COLORS[i] || 'from-[#8a8f98] to-[#62666d]'} shrink-0`} />
+              <span className="text-xs sm:text-sm font-medium text-[#8a8f98] group-hover:text-white transition-colors truncate">{c.name}</span>
             </Link>
           ))}
         </div>

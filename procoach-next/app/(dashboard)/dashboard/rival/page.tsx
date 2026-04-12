@@ -37,8 +37,9 @@ const RESULT_LABEL: Record<string, string> = { W: 'V', D: 'E', L: 'D' }
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
-    <div className="section-accent mt-4">
-      <h2 className="font-headline text-lg font-extrabold tracking-tight text-white/90 uppercase">
+    <div style={{ marginTop: 8, marginBottom: 8 }}>
+      <div style={{ width: 24, height: 2, background: '#22c55e', borderRadius: 1, marginBottom: 10 }} />
+      <h2 style={{ fontFamily: 'var(--font-headline)', fontSize: 16, fontWeight: 800, color: 'rgba(247,248,248,0.9)', textTransform: 'uppercase', letterSpacing: '-0.3px' }}>
         {children}
       </h2>
     </div>
@@ -292,7 +293,7 @@ function PitchCompareOverlay({ homePitch, rivalPitch, homeLabel, rivalLabel }: {
       </div>
       {bothMissing ? (
         <div className="text-center py-8">
-          <Ruler size={28} className="text-slate-700 mx-auto mb-3" />
+          <Ruler size={28} className="text-[#62666d] mx-auto mb-3" />
           <p className="text-sm text-[#8a8f98]">Dimensions no disponibles</p>
         </div>
       ) : (
@@ -309,19 +310,19 @@ function PitchCompareOverlay({ homePitch, rivalPitch, homeLabel, rivalLabel }: {
           </div>
           <div className="w-full mb-5">
             <svg viewBox={`0 0 ${canvasW} ${canvasH}`} className="w-full h-auto">
-              <rect width={canvasW} height={canvasH} fill="#0a1628" rx={8} />
+              <rect width={canvasW} height={canvasH} fill="#0f1011" rx={6} />
               {Array.from({ length: stripeCount }).map((_, i) => (
-                <rect key={i} x={i * stripeW * 2} y={0} width={stripeW} height={canvasH} fill="#0d2010" />
+                <rect key={i} x={i * stripeW * 2} y={0} width={stripeW} height={canvasH} fill="rgba(34,197,94,0.03)" />
               ))}
               {homeIsBigger ? (
                 <>
-                  {homePitch && pitchSVG(homePitch.length_m, homePitch.width_m, '#4ade80', '#15803d', 0.7, 2)}
-                  {rivalPitch && pitchSVG(rivalPitch.length_m, rivalPitch.width_m, '#fb923c', '#431407', 0.55, 2.5)}
+                  {homePitch && pitchSVG(homePitch.length_m, homePitch.width_m, '#22c55e', '#22c55e', 0.08, 2)}
+                  {rivalPitch && pitchSVG(rivalPitch.length_m, rivalPitch.width_m, '#f97316', '#f97316', 0.06, 2.5)}
                 </>
               ) : (
                 <>
-                  {rivalPitch && pitchSVG(rivalPitch.length_m, rivalPitch.width_m, '#fb923c', '#431407', 0.7, 2)}
-                  {homePitch && pitchSVG(homePitch.length_m, homePitch.width_m, '#4ade80', '#14532d', 0.6, 2.5)}
+                  {rivalPitch && pitchSVG(rivalPitch.length_m, rivalPitch.width_m, '#f97316', '#f97316', 0.08, 2)}
+                  {homePitch && pitchSVG(homePitch.length_m, homePitch.width_m, '#22c55e', '#22c55e', 0.06, 2.5)}
                 </>
               )}
             </svg>
@@ -412,12 +413,12 @@ export default async function RivalPage() {
   } : null
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '16px 16px 32px' }}>
       {!nextMatch || !rival ? (
-        <div className="card-spotlight rounded-3xl p-16 text-center">
-          <Crosshair size={36} className="text-[#62666d] mx-auto mb-5" />
-          <h2 className="font-headline text-2xl font-extrabold text-white mb-3">No hi ha proper rival programat</h2>
-          <p className="text-[#8a8f98] text-sm max-w-sm mx-auto leading-relaxed">Quan es publiqui el proper partit, apareixera aqui l&apos;analisi completa del rival.</p>
+        <div className="v2-card" style={{ padding: 64, textAlign: 'center' }}>
+          <Crosshair size={32} style={{ color: '#62666d', margin: '0 auto 16px' }} />
+          <h2 style={{ fontFamily: 'var(--font-headline)', fontSize: 20, fontWeight: 800, color: '#f7f8f8', marginBottom: 8 }}>No hi ha proper rival programat</h2>
+          <p style={{ color: '#8a8f98', fontSize: 13, maxWidth: 360, margin: '0 auto', lineHeight: 1.5 }}>Quan es publiqui el proper partit, apareixera aqui l&apos;analisi completa del rival.</p>
         </div>
       ) : (
         <div className="space-y-8">
@@ -425,10 +426,10 @@ export default async function RivalPage() {
           {/* ═══════════════════════════════════════════════════════════
               BLOQUE A — EL PARTIDO (Hero Banner)
           ═══════════════════════════════════════════════════════════ */}
-          <div className="stat-card rounded-3xl overflow-hidden relative">
+          <div className="stat-card overflow-hidden relative">
             {/* Subtle gradient background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0a1628] via-[#0f172a] to-[#0d1f2d]" />
-            <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle at 30% 20%, rgba(34,197,94,0.3) 0%, transparent 50%), radial-gradient(circle at 70% 80%, rgba(6,182,212,0.2) 0%, transparent 50%)' }} />
+            <div className="absolute inset-0" style={{ background: '#0f1011' }} />
+            <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle at 30% 20%, rgba(34,197,94,0.3) 0%, transparent 50%)' }} />
 
             <div className="relative p-6 sm:p-8">
               {/* Top row: badge + export buttons */}
@@ -436,7 +437,7 @@ export default async function RivalPage() {
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                   <Crosshair size={14} className="text-[#8a8f98] shrink-0" />
                   <span className="text-[10px] font-medium text-[#8a8f98] uppercase tracking-[0.2em] hidden xs:inline">Informe Pre-Partit</span>
-                  <span className="text-[10px] font-medium text-[#8a8f98]/80 bg-cyan-500/10 px-2 py-0.5 rounded-full shrink-0">J{nextMatch.jornada}</span>
+                  <span className="text-[10px] font-medium text-[#8a8f98]/80 bg-[#22c55e]/10 px-2 py-0.5 rounded-full shrink-0">J{nextMatch.jornada}</span>
                 </div>
                 {pdfReportData && (
                   <TeamReportActions
@@ -452,7 +453,7 @@ export default async function RivalPage() {
               <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-8">
                 {/* Local */}
                 <div className="text-center">
-                  <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-20 sm:h-20 rounded-lg bg-gradient-to-br from-green-500/15 to-emerald-500/5 border border-green-500/20 flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                  <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-20 sm:h-20 rounded-lg bg-[rgba(34,197,94,0.06)] border border-[rgba(34,197,94,0.12)] flex items-center justify-center mx-auto mb-2 sm:mb-3">
                     <span className="font-headline text-xl xs:text-2xl sm:text-3xl font-extrabold text-green-400">{localInitial}</span>
                   </div>
                   <p className="text-xs xs:text-sm sm:text-base font-medium text-white mb-1 leading-tight">{localName}</p>
@@ -493,7 +494,7 @@ export default async function RivalPage() {
 
                 {/* Visitant */}
                 <div className="text-center">
-                  <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-20 sm:h-20 rounded-lg bg-gradient-to-br from-red-500/15 to-orange-500/5 border border-red-500/20 flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                  <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-20 sm:h-20 rounded-lg bg-[rgba(239,68,68,0.06)] border border-[rgba(239,68,68,0.12)] flex items-center justify-center mx-auto mb-2 sm:mb-3">
                     <span className="font-headline text-xl xs:text-2xl sm:text-3xl font-extrabold text-red-400">{visitantInitial}</span>
                   </div>
                   <p className="text-xs xs:text-sm sm:text-base font-medium text-white mb-1 leading-tight">{visitantName}</p>
@@ -522,17 +523,17 @@ export default async function RivalPage() {
           ═══════════════════════════════════════════════════════════ */}
           <SectionHeading>Radiografia del Rival</SectionHeading>
 
-          {/* Radiografia group — tighter spacing within */}
-          <div className="space-y-4">
+          {/* Radiografia group */}
+          <div className="space-y-6">
             {/* Stats band */}
-            <div className="overflow-x-auto scrollbar-hide py-1 -my-1">
+            <div className="overflow-x-auto scrollbar-hide">
               <div className="stats-band flex min-w-[480px]">
                 {[
                   { v: rival.played, l: 'PJ', c: 'text-white' },
                   { v: rival.wins, l: 'V', c: 'text-green-400' },
                   { v: rival.draws, l: 'E', c: 'text-amber-400' },
                   { v: rival.losses, l: 'D', c: 'text-red-400' },
-                  { v: `${rival.gf}-${rival.ga}`, l: 'GF-GC', c: 'text-slate-200' },
+                  { v: `${rival.gf}-${rival.ga}`, l: 'GF-GC', c: 'text-[#d0d6e0]' },
                   { v: rival.points, l: 'Pts', c: 'text-[#8a8f98]' },
                 ].flatMap((s, i, arr) => [
                   <div key={s.l} className="stats-band-item">
@@ -549,12 +550,12 @@ export default async function RivalPage() {
             </div>
 
             {/* Home / Away split */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {[
                 { label: 'Local', data: rival.home, icon: <Home size={14} className="text-green-400" />, accentColor: 'text-green-400', bgAccent: 'from-green-500/8 to-transparent' },
                 { label: 'Visitant', data: rival.away, icon: <Plane size={14} className="text-sky-400" />, accentColor: 'text-sky-400', bgAccent: 'from-sky-500/8 to-transparent' },
               ].map(({ label, data, icon, accentColor, bgAccent }) => (
-                <div key={label} className={`card-elevated rounded-lg p-5 bg-gradient-to-br ${bgAccent}`}>
+                <div key={label} className={`v2-card p-6`}>
                   <div className="flex items-center gap-2 mb-4">
                     {icon}
                     <span className="font-medium text-white text-sm">{label}</span>
@@ -594,7 +595,7 @@ export default async function RivalPage() {
 
             {/* Recent form */}
             {rival.form.length > 0 && (
-              <div className="card-elevated rounded-lg p-5">
+              <div className="v2-card p-6">
                 <h3 className="text-sm font-medium text-white mb-3">Forma recent</h3>
                 <div className="flex gap-1.5 flex-wrap mb-3">
                   {rival.form.slice(-8).map((m, i) => <FormDot key={i} result={m.result} />)}
@@ -622,7 +623,7 @@ export default async function RivalPage() {
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {[
-                  { v: rival.insights.cleanSheetRate, l: 'Porteria a 0', s: '%', color: 'text-[#8a8f98]', barBg: 'bg-cyan-500' },
+                  { v: rival.insights.cleanSheetRate, l: 'Porteria a 0', s: '%', color: 'text-[#8a8f98]', barBg: 'bg-[#22c55e]' },
                   { v: rival.insights.lateGoalRate, l: 'Gols tardans (75+)', s: '%', color: 'text-amber-400', barBg: 'bg-amber-500' },
                   { v: rival.insights.scoreFirstWinRate, l: 'Guanya si marca 1r', s: '%', color: 'text-green-400', barBg: 'bg-green-500' },
                   { v: rival.insights.concededFirstWinRate, l: 'Remunta si encaixa 1r', s: '%', color: 'text-red-400', barBg: 'bg-red-500' },
@@ -726,7 +727,7 @@ export default async function RivalPage() {
                     className={`grid grid-cols-[20px_1fr_40px_40px_44px] sm:grid-cols-[24px_1fr_48px_48px_48px_56px] gap-2 items-center py-2.5 ${i % 2 === 0 ? 'bg-white/[0.02]' : ''}`}
                   >
                     <span className="text-[10px] text-[#62666d] font-medium text-center">{i + 1}</span>
-                    <Link href={`/jugador/${slugify(p.name)}`} className="text-sm text-slate-200 hover:text-white truncate transition-colors font-medium">
+                    <Link href={`/jugador/${slugify(p.name)}`} className="text-sm text-[#d0d6e0] hover:text-white truncate transition-colors font-medium">
                       {p.name}
                     </Link>
                     <span className="text-center font-score text-lg text-white">{p.appearances}</span>
@@ -743,7 +744,7 @@ export default async function RivalPage() {
 
           {/* Top scorers */}
           {rival.topScorers.length > 0 && (
-            <div className="card-elevated rounded-lg p-6">
+            <div className="v2-card p-6">
               <div className="flex items-center gap-2.5 mb-5">
                 <Target size={16} className="text-green-400" />
                 <h3 className="text-sm font-medium text-white">Golejadors del rival</h3>
@@ -773,7 +774,7 @@ export default async function RivalPage() {
 
           {/* Apercibits */}
           {rival.apercibits.length > 0 && (
-            <div className="card-elevated rounded-lg p-6 border-amber-500/15">
+            <div className="v2-card p-6 border-amber-500/15">
               <div className="flex items-center gap-2.5 mb-5">
                 <AlertTriangle size={16} className="text-amber-400" />
                 <h3 className="text-sm font-medium text-white">Jugadors apercibits</h3>
@@ -871,7 +872,7 @@ export default async function RivalPage() {
           {h2h.length > 0 && (
             <>
               <SectionHeading>Historial Directe</SectionHeading>
-              <div className="card-elevated rounded-lg p-6">
+              <div className="v2-card p-6">
                 <div className="space-y-0">
                   {h2h.map((m, i) => {
                     const localTeam = m.isHome ? team.name : m.opponent

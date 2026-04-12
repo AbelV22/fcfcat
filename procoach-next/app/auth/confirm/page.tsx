@@ -96,11 +96,11 @@ function ConfirmInner() {
   if (status === 'verifying') {
     return (
       <div className="text-center py-8">
-        <div className="w-16 h-16 rounded-2xl bg-green-500/15 flex items-center justify-center mx-auto mb-5">
+        <div className="w-16 h-16 rounded-lg bg-green-500/15 flex items-center justify-center mx-auto mb-5">
           <Loader2 size={28} className="text-green-400 animate-spin" />
         </div>
         <h2 className="text-xl font-black text-white mb-2">Verificant el teu compte...</h2>
-        <p className="text-slate-400 text-sm">Un moment, si us plau.</p>
+        <p className="text-[#8a8f98] text-sm">Un moment, si us plau.</p>
       </div>
     )
   }
@@ -108,15 +108,15 @@ function ConfirmInner() {
   if (status === 'error') {
     return (
       <div className="text-center py-8">
-        <div className="w-16 h-16 rounded-2xl bg-red-500/15 flex items-center justify-center mx-auto mb-5">
+        <div className="w-16 h-16 rounded-lg bg-red-500/15 flex items-center justify-center mx-auto mb-5">
           <AlertTriangle size={28} className="text-red-400" />
         </div>
         <h2 className="text-xl font-black text-white mb-2">Error de verificació</h2>
-        <p className="text-slate-400 text-sm mb-6">{errorMsg}</p>
+        <p className="text-[#8a8f98] text-sm mb-6">{errorMsg}</p>
         <div className="flex flex-col gap-3">
           <Link
             href="/registre"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-cyan-600 text-white font-semibold rounded-xl transition-all text-sm"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r bg-[#22c55e] text-white font-semibold rounded-xl transition-all text-sm"
           >
             Torna a registrar-te
           </Link>
@@ -130,11 +130,11 @@ function ConfirmInner() {
 
   return (
     <div className="text-center py-8">
-      <div className="w-16 h-16 rounded-2xl bg-green-500/15 flex items-center justify-center mx-auto mb-5">
+      <div className="w-16 h-16 rounded-lg bg-green-500/15 flex items-center justify-center mx-auto mb-5">
         <CheckCircle size={28} className="text-green-400" />
       </div>
       <h2 className="text-xl font-black text-white mb-2">Compte confirmat!</h2>
-      <p className="text-slate-400 text-sm mb-4">Redirigint al panell d&apos;entrenador...</p>
+      <p className="text-[#8a8f98] text-sm mb-4">Redirigint al panell d&apos;entrenador...</p>
       <div className="w-4 h-4 border-2 border-white/30 border-t-green-400 rounded-full animate-spin mx-auto" />
     </div>
   )
@@ -142,13 +142,13 @@ function ConfirmInner() {
 
 export default function ConfirmPage() {
   return (
-    <div className="min-h-screen bg-[#0f172a] flex flex-col">
+    <div className="min-h-screen bg-[#0f1011] flex flex-col">
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <Image src="/logo_neoscout.png" alt="NeoScout" width={64} height={64} className="mx-auto mb-4 rounded-2xl" />
+            <Image src="/logo_neoscout.png" alt="NeoScout" width={64} height={64} className="mx-auto mb-4 rounded-lg" />
           </div>
-          <div className="glass-card rounded-2xl p-8">
+          <div className="glass-card rounded-lg p-8">
             <Suspense fallback={
               <div className="text-center py-8">
                 <div className="w-4 h-4 border-2 border-white/30 border-t-green-400 rounded-full animate-spin mx-auto" />

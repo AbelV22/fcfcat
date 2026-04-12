@@ -32,9 +32,9 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f172a] flex flex-col">
+    <div className="min-h-screen bg-[#0f1011] flex flex-col">
       <header className="p-4">
-        <Link href="/login" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm">
+        <Link href="/login" className="inline-flex items-center gap-2 text-[#8a8f98] hover:text-white transition-colors text-sm">
           <ArrowLeft size={14} />
           Tornar al login
         </Link>
@@ -43,24 +43,24 @@ export default function ForgotPasswordPage() {
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <Image src="/logo_neoscout.png" alt="NeoScout" width={64} height={64} className="mx-auto mb-4 rounded-2xl" />
+            <Image src="/logo_neoscout.png" alt="NeoScout" width={64} height={64} className="mx-auto mb-4 rounded-lg" />
             <h1 className="text-2xl font-black text-white mb-1">Recupera la contrasenya</h1>
-            <p className="text-slate-400 text-sm">T&apos;enviarem un enllaç per restablir-la</p>
+            <p className="text-[#8a8f98] text-sm">T&apos;enviarem un enllaç per restablir-la</p>
           </div>
 
-          <div className="glass-card rounded-2xl p-8">
+          <div className="glass-card rounded-lg p-8">
             {sent ? (
               <div className="text-center py-4">
-                <div className="w-16 h-16 rounded-2xl bg-green-500/15 flex items-center justify-center mx-auto mb-5">
+                <div className="w-16 h-16 rounded-lg bg-green-500/15 flex items-center justify-center mx-auto mb-5">
                   <Mail size={28} className="text-green-400" />
                 </div>
                 <h2 className="text-xl font-black text-white mb-2">Comprova el teu correu</h2>
-                <p className="text-slate-400 text-sm mb-6">
+                <p className="text-[#8a8f98] text-sm mb-6">
                   T&apos;hem enviat un enllaç de recuperació a{' '}
                   <span className="text-white font-medium">{email}</span>.
                   Fes clic a l&apos;enllaç per restablir la contrasenya.
                 </p>
-                <div className="flex items-center gap-2 justify-center text-xs text-slate-500">
+                <div className="flex items-center gap-2 justify-center text-xs text-[#8a8f98]">
                   <CheckCircle size={13} className="text-green-500" />
                   Revisa també la carpeta de spam
                 </div>
@@ -68,18 +68,18 @@ export default function ForgotPasswordPage() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1.5">
+                  <label className="block text-sm font-medium text-[#d0d6e0] mb-1.5">
                     Correu electrònic
                   </label>
                   <div className="relative">
-                    <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                    <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8a8f98]" />
                     <input
                       type="email"
                       required
                       value={email}
                       onChange={e => setEmail(e.target.value)}
                       placeholder="tu@email.com"
-                      className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500
+                      className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-[#62666d]
                                  focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all text-sm"
                     />
                   </div>
@@ -94,7 +94,7 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500
+                  className="w-full py-3 bg-gradient-to-r bg-[#22c55e] hover:from-green-500 hover:to-[#22c55e]
                              disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl
                              transition-all flex items-center justify-center gap-2 shadow-lg shadow-green-900/30"
                 >

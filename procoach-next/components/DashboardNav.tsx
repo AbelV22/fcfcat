@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 import {
   BarChart3, Users, Shield, Calendar, ListOrdered,
   ClipboardList, Settings, Home, MoreHorizontal,
-  X, ChevronLeft, ChevronRight, RefreshCw,
+  X, ChevronLeft, ChevronRight, RefreshCw, Dumbbell,
 } from 'lucide-react'
 
 type NavItem = {
@@ -25,12 +25,13 @@ const NAV_ITEMS: NavItem[] = [
   { icon: Calendar, label: 'Calendari', shortLabel: 'Calen.', href: '/dashboard/calendari' },
   { icon: ListOrdered, label: 'Classificacio', shortLabel: 'Class.', href: '/dashboard/classificacio' },
   { icon: ClipboardList, label: 'Apunts', shortLabel: 'Apunts', href: '/dashboard/apunts' },
+  { icon: Dumbbell, label: 'Entrenaments', shortLabel: 'Entr.', href: '/dashboard/entrenaments' },
   { icon: Settings, label: 'Plantilla', shortLabel: 'Plant.', href: '/dashboard/equip-gestio' },
 ]
 
 // Bottom nav shows first 5 items + "Mes" for the rest
 const BOTTOM_MAIN = [0, 1, 2, 4, 6] // Inici, Intel, Rival, Calendari, Apunts
-const BOTTOM_MORE = [3, 5, 7] // Arbitre, Classificacio, Plantilla
+const BOTTOM_MORE = [3, 5, 7, 8] // Arbitre, Classificacio, Entrenaments, Plantilla
 
 export function DashboardSidebar({
   teamName,

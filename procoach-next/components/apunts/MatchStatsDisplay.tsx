@@ -21,26 +21,26 @@ function StatBar({
   return (
     <div className="flex items-center gap-2 py-1">
       <span
-        className={`text-xs font-bold w-6 text-right ${forWins ? 'text-green-400' : 'text-slate-400'}`}
+        className={`text-xs font-bold w-6 text-right ${forWins ? 'text-green-400' : 'text-[#8a8f98]'}`}
       >
         {forVal}
       </span>
       <div className="flex-1 flex gap-0.5">
         <div className="flex-1 flex justify-end">
           <div
-            className={`h-4 rounded-l transition-all ${forWins ? 'bg-green-500/40' : 'bg-slate-500/20'}`}
+            className={`h-4 rounded-l transition-all ${forWins ? 'bg-green-500/40' : 'bg-white/[0.06]'}`}
             style={{ width: `${forPct}%`, minWidth: forVal > 0 ? '4px' : '0' }}
           />
         </div>
         <div className="flex-1 flex justify-start">
           <div
-            className={`h-4 rounded-r transition-all ${rivalWins ? 'bg-red-500/30' : 'bg-slate-500/20'}`}
+            className={`h-4 rounded-r transition-all ${rivalWins ? 'bg-red-500/30' : 'bg-white/[0.06]'}`}
             style={{ width: `${againstPct}%`, minWidth: againstVal > 0 ? '4px' : '0' }}
           />
         </div>
       </div>
       <span
-        className={`text-xs font-bold w-6 text-left ${rivalWins ? 'text-red-400' : 'text-slate-400'}`}
+        className={`text-xs font-bold w-6 text-left ${rivalWins ? 'text-red-400' : 'text-[#8a8f98]'}`}
       >
         {againstVal}
       </span>
@@ -49,13 +49,13 @@ function StatBar({
 }
 
 function StatLabel({ text }: { text: string }) {
-  return <p className="text-[10px] text-slate-500 text-center mb-0.5 mt-1">{text}</p>
+  return <p className="text-[10px] text-[#8a8f98] text-center mb-0.5 mt-1">{text}</p>
 }
 
 function SingleStat({ label, value, color = 'white' }: { label: string; value: number; color?: string }) {
   return (
     <div className="flex items-center justify-between py-1">
-      <span className="text-xs text-slate-400">{label}</span>
+      <span className="text-xs text-[#8a8f98]">{label}</span>
       <span className={`text-sm font-bold text-${color}`}>{value}</span>
     </div>
   )
@@ -97,24 +97,24 @@ export default function MatchStatsDisplay({
       <div className="flex items-center justify-center gap-6 mb-4 pb-3 border-b border-white/5">
         <div className="text-center">
           <p className="text-3xl font-black text-green-400">{auto.goals_total_for}</p>
-          <p className="text-[9px] text-slate-500">Nosaltres</p>
+          <p className="text-[9px] text-[#8a8f98]">Nosaltres</p>
         </div>
         <div className="text-center">
-          <p className="text-sm text-slate-600">vs</p>
+          <p className="text-sm text-[#62666d]">vs</p>
           <div className="flex gap-3 mt-1">
             <div className="text-center">
-              <p className="text-xs font-bold text-slate-400">{auto.goals_1h_for}-{auto.goals_1h_against}</p>
-              <p className="text-[8px] text-slate-600">1a part</p>
+              <p className="text-xs font-bold text-[#8a8f98]">{auto.goals_1h_for}-{auto.goals_1h_against}</p>
+              <p className="text-[8px] text-[#62666d]">1a part</p>
             </div>
             <div className="text-center">
-              <p className="text-xs font-bold text-slate-400">{auto.goals_2h_for}-{auto.goals_2h_against}</p>
-              <p className="text-[8px] text-slate-600">2a part</p>
+              <p className="text-xs font-bold text-[#8a8f98]">{auto.goals_2h_for}-{auto.goals_2h_against}</p>
+              <p className="text-[8px] text-[#62666d]">2a part</p>
             </div>
           </div>
         </div>
         <div className="text-center">
           <p className="text-3xl font-black text-red-400">{auto.goals_total_against}</p>
-          <p className="text-[9px] text-slate-500">Rival</p>
+          <p className="text-[9px] text-[#8a8f98]">Rival</p>
         </div>
       </div>
 
@@ -138,13 +138,13 @@ export default function MatchStatsDisplay({
       )}
       {(note.dribbles_completed || note.dribbles_attempted) && (
         <div className="flex items-center justify-between py-1 mt-1">
-          <span className="text-[10px] text-slate-500">Regates</span>
+          <span className="text-[10px] text-[#8a8f98]">Regates</span>
           <span className="text-xs font-bold text-white">{note.dribbles_completed ?? 0}/{note.dribbles_attempted ?? 0}</span>
         </div>
       )}
 
       {/* ─── Distribucio ─── */}
-      <SectionHeader title="Distribucio" icon={Waypoints} color="#06b6d4" />
+      <SectionHeader title="Distribucio" icon={Waypoints} color="#22c55e" />
       {(note.total_passes_for || note.total_passes_against) && (
         <>
           <StatLabel text="Passades totals" />
@@ -153,12 +153,12 @@ export default function MatchStatsDisplay({
       )}
       {note.pass_accuracy != null && (
         <div className="flex items-center justify-between py-1">
-          <span className="text-[10px] text-slate-500">Precisio passada</span>
+          <span className="text-[10px] text-[#8a8f98]">Precisio passada</span>
           <div className="flex items-center gap-2">
             <div className="w-20 h-2 bg-white/5 rounded-full overflow-hidden">
-              <div className="h-full bg-cyan-500 rounded-full" style={{ width: `${note.pass_accuracy}%` }} />
+              <div className="h-full bg-[#22c55e] rounded-full" style={{ width: `${note.pass_accuracy}%` }} />
             </div>
-            <span className="text-xs font-bold text-cyan-400">{note.pass_accuracy}%</span>
+            <span className="text-xs font-bold text-[#22c55e]">{note.pass_accuracy}%</span>
           </div>
         </div>
       )}
@@ -185,7 +185,7 @@ export default function MatchStatsDisplay({
       {note.clearances != null && note.clearances > 0 && <SingleStat label="Despejos" value={note.clearances} />}
       {(note.aerial_duels_won || note.aerial_duels_lost) && (
         <div className="flex items-center justify-between py-1">
-          <span className="text-[10px] text-slate-500">Duels aeris</span>
+          <span className="text-[10px] text-[#8a8f98]">Duels aeris</span>
           <span className="text-xs font-bold text-white">{note.aerial_duels_won ?? 0}W / {note.aerial_duels_lost ?? 0}L</span>
         </div>
       )}

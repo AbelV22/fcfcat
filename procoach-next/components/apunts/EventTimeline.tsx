@@ -6,7 +6,7 @@ type EventEntry = Omit<MatchNoteEvent, 'id' | 'match_note_id'>
 
 const EVENT_COLORS: Record<EventType, string> = {
   goal: '#22c55e',
-  assist: '#06b6d4',
+  assist: '#22c55e',
   pre_assist: '#8b5cf6',
   yellow_card: '#eab308',
   red_card: '#ef4444',
@@ -25,7 +25,7 @@ const EVENT_COLORS: Record<EventType, string> = {
   turnover: '#ef4444',
   duel_won: '#22c55e',
   duel_lost: '#f43f5e',
-  accurate_pass: '#06b6d4',
+  accurate_pass: '#22c55e',
   cross: '#0ea5e9',
 }
 

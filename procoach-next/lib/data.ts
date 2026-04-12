@@ -22,12 +22,28 @@ export function loadGlobalReferees(): Record<string, any> {
 }
 
 /** Load goal_buckets.json — pre-computed goal timing + insights per team/competition/group.
- *  Uses require() so webpack/esbuild bundles the JSON at build time — works on Cloudflare Workers
- *  where fs.readFileSync is not available at runtime. */
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const _goalBucketsData: Record<string, any> = (() => { try { return require('../data/goal_buckets.json') } catch { return {} } })()
+ *  Reads from filesystem at runtime (lazy, cached). Falls back to empty object on Cloudflare Workers. */
+let _goalBucketsCache: Record<string, any> | null = null
 export function loadGoalBuckets(): Record<string, any> {
-  return _goalBucketsData
+  if (_goalBucketsCache) return _goalBucketsCache
+  try {
+    // Try multiple paths — cwd varies between dev, build, and CF Workers
+    const candidates = [
+      path.join(process.cwd(), 'data', 'goal_buckets.json'),
+      path.join(process.cwd(), '..', 'data', 'goal_buckets.json'),
+    ]
+    for (const p of candidates) {
+      try {
+        const raw = fs.readFileSync(p, 'utf-8')
+        _goalBucketsCache = JSON.parse(raw)
+        return _goalBucketsCache!
+      } catch { /* try next */ }
+    }
+    _goalBucketsCache = {}
+  } catch {
+    _goalBucketsCache = {}
+  }
+  return _goalBucketsCache!
 }
 
 /** Get pre-computed goal buckets + insights for a specific team.

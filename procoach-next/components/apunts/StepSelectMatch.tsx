@@ -179,7 +179,7 @@ export default function StepSelectMatch({
             ) : (
               <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-400 font-semibold">VISITANT</span>
             )}
-            {m.jornada && <span className="text-[10px] text-slate-600">J{m.jornada}</span>}
+            {m.jornada && <span className="text-[10px] text-[#62666d]">J{m.jornada}</span>}
             {actaAvailable && (
               <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 font-semibold flex items-center gap-0.5">
                 <Zap size={8} />
@@ -196,7 +196,7 @@ export default function StepSelectMatch({
           )}
         </div>
         <p className="font-semibold text-white text-sm mb-1">{opponent}</p>
-        <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+        <div className="flex items-center gap-1.5 text-[11px] text-[#8a8f98]">
           <Calendar size={10} />
           {formatDate(m.match_date)}
         </div>
@@ -207,7 +207,7 @@ export default function StepSelectMatch({
   return (
     <div>
       <h2 className="text-xl font-bold text-white mb-1">Selecciona el partit</h2>
-      <p className="text-sm text-slate-400 mb-2">
+      <p className="text-sm text-[#8a8f98] mb-2">
         Tria un partit del calendari o afegeix-ne un manualment.
       </p>
       <p className="text-xs text-amber-400/80 mb-6 flex items-center gap-1.5">
@@ -218,13 +218,13 @@ export default function StepSelectMatch({
       {/* Search */}
       {!manualMode && matches.length > 0 && (
         <div className="relative mb-5">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8a8f98]" />
           <input
             type="text"
             placeholder="Cercar rival..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:border-green-500/50 transition-all"
+            className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-[#62666d] focus:outline-none focus:border-green-500/50 transition-all"
           />
         </div>
       )}
@@ -235,24 +235,24 @@ export default function StepSelectMatch({
         </div>
       ) : manualMode ? (
         /* Manual entry form */
-        <div className="glass-card rounded-2xl p-6">
+        <div className="glass-card rounded-lg p-6">
           <h3 className="font-semibold text-white text-sm mb-4 flex items-center gap-2">
             <Plus size={14} className="text-green-400" />
             Afegir partit manualment
           </h3>
           <div className="space-y-4">
             <div>
-              <label className="text-xs text-slate-400 mb-1 block">Rival</label>
+              <label className="text-xs text-[#8a8f98] mb-1 block">Rival</label>
               <input
                 type="text"
                 placeholder="Nom de l'equip rival"
                 value={manualForm.opponent}
                 onChange={(e) => setManualForm({ ...manualForm, opponent: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:border-green-500/50 transition-all"
+                className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-[#62666d] focus:outline-none focus:border-green-500/50 transition-all"
               />
             </div>
             <div>
-              <label className="text-xs text-slate-400 mb-1 block">Data del partit</label>
+              <label className="text-xs text-[#8a8f98] mb-1 block">Data del partit</label>
               <input
                 type="date"
                 value={manualForm.date}
@@ -261,14 +261,14 @@ export default function StepSelectMatch({
               />
             </div>
             <div>
-              <label className="text-xs text-slate-400 mb-2 block">Condicio</label>
+              <label className="text-xs text-[#8a8f98] mb-2 block">Condicio</label>
               <div className="flex gap-2">
                 <button
                   onClick={() => setManualForm({ ...manualForm, isHome: true })}
                   className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     manualForm.isHome
                       ? 'bg-green-500/15 text-green-400 border border-green-500/30'
-                      : 'bg-white/5 text-slate-500 border border-white/10'
+                      : 'bg-white/5 text-[#8a8f98] border border-white/10'
                   }`}
                 >
                   <Home size={14} />
@@ -279,7 +279,7 @@ export default function StepSelectMatch({
                   className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     !manualForm.isHome
                       ? 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
-                      : 'bg-white/5 text-slate-500 border border-white/10'
+                      : 'bg-white/5 text-[#8a8f98] border border-white/10'
                   }`}
                 >
                   <Plane size={14} />
@@ -290,7 +290,7 @@ export default function StepSelectMatch({
             <button
               onClick={selectManual}
               disabled={!manualForm.opponent || !manualForm.date}
-              className="w-full py-2.5 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 disabled:opacity-30 text-white text-sm font-semibold rounded-xl transition-all"
+              className="w-full py-2.5 bg-gradient-to-r bg-[#22c55e] hover:from-green-500 hover:to-[#22c55e] disabled:opacity-30 text-white text-sm font-semibold rounded-xl transition-all"
             >
               Seleccionar
             </button>
@@ -298,7 +298,7 @@ export default function StepSelectMatch({
           {matches.length > 0 && (
             <button
               onClick={() => setManualMode(false)}
-              className="mt-4 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+              className="mt-4 text-xs text-[#8a8f98] hover:text-[#d0d6e0] transition-colors"
             >
               ← Tornar al calendari
             </button>
@@ -309,7 +309,7 @@ export default function StepSelectMatch({
           {/* Upcoming matches */}
           {filteredUpcoming.length > 0 && (
             <div>
-              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <h3 className="text-xs font-semibold text-[#8a8f98] uppercase tracking-wider mb-3 flex items-center gap-2">
                 <MapPin size={12} /> Proxims
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -323,7 +323,7 @@ export default function StepSelectMatch({
           {/* Recent matches */}
           {filteredRecent.length > 0 && (
             <div>
-              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <h3 className="text-xs font-semibold text-[#8a8f98] uppercase tracking-wider mb-3 flex items-center gap-2">
                 <Calendar size={12} /> Recents
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -337,7 +337,7 @@ export default function StepSelectMatch({
           {/* Manual add button */}
           <button
             onClick={() => setManualMode(true)}
-            className="w-full py-3 border border-dashed border-white/15 rounded-xl text-sm text-slate-400 hover:text-white hover:border-white/30 transition-all flex items-center justify-center gap-2"
+            className="w-full py-3 border border-dashed border-white/15 rounded-xl text-sm text-[#8a8f98] hover:text-white hover:border-white/30 transition-all flex items-center justify-center gap-2"
           >
             <Plus size={14} />
             Afegir manualment
@@ -352,7 +352,7 @@ export default function StepSelectMatch({
           <p className="text-white font-bold">
             {value.is_home ? clubName : value.opponent} vs {value.is_home ? value.opponent : clubName}
           </p>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#8a8f98] mt-1">
             {formatDate(value.match_date)} · {value.is_home ? 'Local' : 'Visitant'}
             {value.goals_for !== null && ` · ${value.goals_for} - ${value.goals_against}`}
           </p>

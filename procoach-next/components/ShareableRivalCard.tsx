@@ -29,7 +29,7 @@ export default function ShareableRivalCard(props: ShareableRivalCardProps) {
       width: 800,
       height: 800,
       scale: 2,
-      backgroundColor: '#0f172a',
+      backgroundColor: '#08090a',
       useCORS: true,
     })
     return new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
@@ -79,7 +79,7 @@ export default function ShareableRivalCard(props: ShareableRivalCardProps) {
           style={{
             width: 800,
             height: 800,
-            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+            background: 'linear-gradient(135deg, #0f1011 0%, #191a1b 100%)',
             fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif",
             color: 'white',
             display: 'flex',
@@ -99,7 +99,7 @@ export default function ShareableRivalCard(props: ShareableRivalCardProps) {
             </div>
             {props.position && (
               <div style={{
-                width: 64, height: 64, borderRadius: 16,
+                width: 64, height: 64, borderRadius: 8,
                 background: 'rgba(34, 197, 94, 0.15)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 28, fontWeight: 900, color: '#22c55e',
@@ -116,12 +116,12 @@ export default function ShareableRivalCard(props: ShareableRivalCardProps) {
               { label: 'V', value: props.wins, color: '#22c55e' },
               { label: 'E', value: props.draws, color: '#eab308' },
               { label: 'D', value: props.losses, color: '#ef4444' },
-              { label: 'GF', value: props.gf, color: '#06b6d4' },
+              { label: 'GF', value: props.gf, color: '#22c55e' },
               { label: 'GC', value: props.ga, color: '#f97316' },
             ].map(s => (
               <div key={s.label} style={{
                 flex: 1, background: 'rgba(255,255,255,0.04)',
-                borderRadius: 12, padding: '16px 0', textAlign: 'center',
+                borderRadius: 8, padding: '16px 0', textAlign: 'center',
               }}>
                 <div style={{ fontSize: 28, fontWeight: 900, color: s.color }}>{s.value}</div>
                 <div style={{ fontSize: 12, color: '#64748b', marginTop: 4 }}>{s.label}</div>
@@ -151,7 +151,7 @@ export default function ShareableRivalCard(props: ShareableRivalCardProps) {
             <div style={{
               background: 'rgba(234, 179, 8, 0.08)',
               border: '1px solid rgba(234, 179, 8, 0.2)',
-              borderRadius: 16, padding: 20, marginBottom: 24,
+              borderRadius: 8, padding: 20, marginBottom: 24,
             }}>
               {props.topScorer && (
                 <div style={{ fontSize: 16, marginBottom: props.goalHighlight ? 8 : 0 }}>
@@ -175,7 +175,7 @@ export default function ShareableRivalCard(props: ShareableRivalCardProps) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{
                 width: 32, height: 32, borderRadius: 8,
-                background: 'linear-gradient(135deg, #22c55e, #06b6d4)',
+                background: 'linear-gradient(135deg, #22c55e, #22c55e)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 16, fontWeight: 900,
               }}>
@@ -192,7 +192,7 @@ export default function ShareableRivalCard(props: ShareableRivalCardProps) {
       <div className="flex items-center gap-2">
         <button
           onClick={handleShare}
-          className="group inline-flex items-center gap-2 px-4 py-2.5 bg-cyan-600/90 hover:bg-cyan-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-cyan-500/20"
+          className="group inline-flex items-center gap-2 px-4 py-2.5 bg-[#22c55e]/90 hover:bg-[#34d399] text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-[#22c55e]/20"
         >
           <Share2 size={16} className="group-hover:scale-110 transition-transform" />
           <span className="hidden sm:inline">Compartir card</span>

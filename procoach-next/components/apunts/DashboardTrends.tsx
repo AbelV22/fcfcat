@@ -26,8 +26,8 @@ export default function DashboardTrends({ notes }: { notes: MatchNote[] }) {
   if (trends.length < 2) {
     return (
       <div className="text-center py-16">
-        <TrendingUp size={32} className="text-slate-700 mx-auto mb-3" />
-        <p className="text-sm text-slate-500">Necessites almenys 2 apunts completats per veure tendències.</p>
+        <TrendingUp size={32} className="text-[#62666d] mx-auto mb-3" />
+        <p className="text-sm text-[#8a8f98]">Necessites almenys 2 apunts completats per veure tendències.</p>
       </div>
     )
   }
@@ -83,8 +83,8 @@ export default function DashboardTrends({ notes }: { notes: MatchNote[] }) {
   return (
     <div className="space-y-4">
       {/* Performance trend */}
-      <div className="glass-card rounded-2xl p-5">
-        <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Rendiment al llarg del temps</h4>
+      <div className="glass-card rounded-lg p-5">
+        <h4 className="text-xs font-semibold text-[#8a8f98] uppercase tracking-wider mb-3">Rendiment al llarg del temps</h4>
         <div className="flex items-center gap-3 mb-2">
           <span className="text-[9px] text-green-400">V=3</span>
           <span className="text-[9px] text-amber-400">E=1</span>
@@ -96,22 +96,22 @@ export default function DashboardTrends({ notes }: { notes: MatchNote[] }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Rating trend */}
         {ratingData.length >= 2 && (
-          <div className="glass-card rounded-2xl p-5">
-            <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Valoració global</h4>
-            <MiniLineChart data={ratingData} maxValue={10} color="#06b6d4" height={80} />
+          <div className="glass-card rounded-lg p-5">
+            <h4 className="text-xs font-semibold text-[#8a8f98] uppercase tracking-wider mb-3">Valoració global</h4>
+            <MiniLineChart data={ratingData} maxValue={10} color="#22c55e" height={80} />
           </div>
         )}
 
         {/* Goals trend */}
-        <div className="glass-card rounded-2xl p-5">
-          <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Gols per partit</h4>
+        <div className="glass-card rounded-lg p-5">
+          <h4 className="text-xs font-semibold text-[#8a8f98] uppercase tracking-wider mb-3">Gols per partit</h4>
           <MiniLineChart data={goalsData} color="#f59e0b" height={80} />
         </div>
       </div>
 
       {/* Form strip */}
-      <div className="glass-card rounded-2xl p-5">
-        <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Ratxa de resultats</h4>
+      <div className="glass-card rounded-lg p-5">
+        <h4 className="text-xs font-semibold text-[#8a8f98] uppercase tracking-wider mb-3">Ratxa de resultats</h4>
         <div className="flex gap-1.5 flex-wrap">
           {trends.map((t, i) => (
             <div
@@ -130,7 +130,7 @@ export default function DashboardTrends({ notes }: { notes: MatchNote[] }) {
               >
                 {t.result}
               </div>
-              <span className="text-[8px] text-slate-600 truncate w-8 text-center">
+              <span className="text-[8px] text-[#62666d] truncate w-8 text-center">
                 {t.goalsFor}-{t.goalsAgainst}
               </span>
             </div>
@@ -140,8 +140,8 @@ export default function DashboardTrends({ notes }: { notes: MatchNote[] }) {
 
       {/* Results by formation */}
       {formationResults.size > 0 && (
-        <div className="glass-card rounded-2xl p-5">
-          <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Resultats per formació</h4>
+        <div className="glass-card rounded-lg p-5">
+          <h4 className="text-xs font-semibold text-[#8a8f98] uppercase tracking-wider mb-3">Resultats per formació</h4>
           <div className="space-y-2">
             {Array.from(formationResults.entries()).map(([formation, r]) => {
               const total = r.w + r.d + r.l
@@ -174,7 +174,7 @@ export default function DashboardTrends({ notes }: { notes: MatchNote[] }) {
                       </div>
                     )}
                   </div>
-                  <span className="text-[10px] text-slate-600 w-6">{total}</span>
+                  <span className="text-[10px] text-[#62666d] w-6">{total}</span>
                 </div>
               )
             })}
@@ -184,8 +184,8 @@ export default function DashboardTrends({ notes }: { notes: MatchNote[] }) {
 
       {/* Player comparison */}
       {players.length >= 2 && (
-        <div className="glass-card rounded-2xl p-5">
-          <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+        <div className="glass-card rounded-lg p-5">
+          <h4 className="text-xs font-semibold text-[#8a8f98] uppercase tracking-wider mb-3 flex items-center gap-2">
             <Users size={12} /> Comparador de jugadors
           </h4>
           <div className="grid grid-cols-2 gap-3 mb-4">
@@ -201,7 +201,7 @@ export default function DashboardTrends({ notes }: { notes: MatchNote[] }) {
             <select
               value={compareB || ''}
               onChange={(e) => setCompareB(e.target.value)}
-              className="px-3 py-2 bg-white/5 border border-cyan-500/20 rounded-lg text-white text-xs focus:outline-none"
+              className="px-3 py-2 bg-white/5 border border-[#22c55e]/20 rounded-lg text-white text-xs focus:outline-none"
             >
               {players.map((p) => (
                 <option key={p.name} value={p.name}>{p.name}</option>
@@ -221,7 +221,7 @@ export default function DashboardTrends({ notes }: { notes: MatchNote[] }) {
                 ]}
                 layers={[
                   { values: getRadarValues(playerA), color: '#22c55e', label: playerA.name },
-                  { values: getRadarValues(playerB), color: '#06b6d4', label: playerB.name },
+                  { values: getRadarValues(playerB), color: '#22c55e', label: playerB.name },
                 ]}
                 size={220}
               />
@@ -229,8 +229,8 @@ export default function DashboardTrends({ notes }: { notes: MatchNote[] }) {
                 <span className="text-[10px] text-green-400 flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-green-400" /> {playerA.name}
                 </span>
-                <span className="text-[10px] text-cyan-400 flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-cyan-400" /> {playerB.name}
+                <span className="text-[10px] text-[#22c55e] flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-[#22c55e]" /> {playerB.name}
                 </span>
               </div>
             </div>

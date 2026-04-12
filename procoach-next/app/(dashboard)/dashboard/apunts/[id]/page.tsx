@@ -70,7 +70,7 @@ export default function ViewNotePage() {
   return (
     <div className="min-h-screen bg-[#08090a]">
       {/* Header */}
-      <header className="border-b border-white/[0.06] bg-[#0a1628]/80 backdrop-blur sticky top-0 z-40">
+      <header className="border-b border-white/[0.06] bg-[#0f1011]/80 backdrop-blur sticky top-0 z-40">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link href="/dashboard/apunts" className="flex items-center gap-2 text-[#8a8f98] hover:text-white transition-colors text-sm">
             <ArrowLeft size={16} /> Apunts

@@ -40,17 +40,17 @@ export default async function CampsPage() {
   const teams = [...teamsFromDB, ...venueOnlyTeams].sort((a, b) => a.name.localeCompare(b.name))
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white">
+    <div className="min-h-screen bg-[#0f1011] text-white">
       {/* Top nav */}
       <nav className="border-b border-white/8 bg-[#0a1120]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-4">
-          <Link href="/admin" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+          <Link href="/admin" className="text-xs text-[#8a8f98] hover:text-[#d0d6e0] transition-colors">
             ← Admin
           </Link>
           <span className="text-white/10">|</span>
           <span className="font-bold text-white text-sm">Gestió de Camps</span>
           <div className="ml-auto">
-            <Link href="/" className="text-xs text-slate-600 hover:text-slate-400 transition-colors">
+            <Link href="/" className="text-xs text-[#62666d] hover:text-[#8a8f98] transition-colors">
               ← Lloc
             </Link>
           </div>
@@ -61,7 +61,7 @@ export default async function CampsPage() {
         {/* Header */}
         <div>
           <h1 className="text-xl font-black text-white mb-1">Gestió de Camps</h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-[#8a8f98]">
             Afegeix i edita les dimensions dels camps. Busca un equip per assignar-li automàticament el seu estadi.
             Els canvis es desen a Supabase i s&apos;apliquen immediatament.
           </p>

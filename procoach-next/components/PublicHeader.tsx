@@ -39,7 +39,7 @@ export default function PublicHeader() {
   const closeMenu = () => setMenuOpen(false)
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0a1628]/95 backdrop-blur-xl border-b border-white/8 shadow-lg shadow-black/20">
+    <header className="sticky top-0 z-50 bg-[#0f1011]/95 backdrop-blur-xl border-b border-white/8 shadow-lg shadow-black/20">
       {/* Premium top accent line */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -62,7 +62,7 @@ export default function PublicHeader() {
             <div className="relative">
               <button
                 onClick={() => setCompOpen(!compOpen)}
-                className="flex items-center gap-1 px-3 py-2 text-sm text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+                className="flex items-center gap-1 px-3 py-2 text-sm text-[#d0d6e0] hover:text-white rounded-lg hover:bg-white/5 transition-colors"
               >
                 Competicions
                 <ChevronDown size={14} className={`transition-transform duration-200 ${compOpen ? 'rotate-180' : ''}`} />
@@ -76,7 +76,7 @@ export default function PublicHeader() {
                       <Link
                         key={c.slug}
                         href={`/competicio/${c.slug}`}
-                        className="block px-4 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
+                        className="block px-4 py-2.5 text-sm text-[#d0d6e0] hover:text-white hover:bg-white/5 transition-colors"
                         onClick={() => setCompOpen(false)}
                       >
                         {c.name}
@@ -86,13 +86,13 @@ export default function PublicHeader() {
                 </>
               )}
             </div>
-            <Link href="/resultats" className="px-3 py-2 text-sm text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-colors">
+            <Link href="/resultats" className="px-3 py-2 text-sm text-[#d0d6e0] hover:text-white rounded-lg hover:bg-white/5 transition-colors">
               Resultats
             </Link>
-            <Link href="/cerca?type=jugador" className="px-3 py-2 text-sm text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-colors">
+            <Link href="/cerca?type=jugador" className="px-3 py-2 text-sm text-[#d0d6e0] hover:text-white rounded-lg hover:bg-white/5 transition-colors">
               Jugadors
             </Link>
-            <Link href="/cerca?type=arbitre" className="px-3 py-2 text-sm text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-colors">
+            <Link href="/cerca?type=arbitre" className="px-3 py-2 text-sm text-[#d0d6e0] hover:text-white rounded-lg hover:bg-white/5 transition-colors">
               Àrbitres
             </Link>
           </nav>
@@ -100,25 +100,25 @@ export default function PublicHeader() {
           {/* Search + CTA */}
           <div className="hidden md:flex items-center gap-3">
             <form onSubmit={handleSearch} className="relative">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8a8f98]" />
               <input
                 type="text"
                 placeholder="Busca equip, jugador..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="pl-9 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-white/8 w-52 transition-all"
+                className="pl-9 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-[#d0d6e0] placeholder-[#62666d] focus:outline-none focus:border-green-500/50 focus:bg-white/8 w-52 transition-all"
               />
             </form>
             <Link
               href="/login"
-              className="flex items-center gap-2 px-3 py-2 text-sm text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-sm text-[#d0d6e0] hover:text-white rounded-lg hover:bg-white/5 transition-colors"
             >
               <User size={14} />
               Iniciar sessió
             </Link>
             <Link
               href="/entrenador"
-              className="flex items-center gap-2 px-4 py-2 bg-white text-slate-900 text-sm font-semibold rounded-xl transition-all hover:bg-emerald-50 hover:shadow-[0_0_20px_rgba(52,211,153,0.1)]"
+              className="flex items-center gap-2 px-4 py-2 bg-white text-[#f7f8f8] text-sm font-semibold rounded-xl transition-all hover:bg-emerald-50 hover:shadow-[0_0_20px_rgba(52,211,153,0.1)]"
             >
               <LogIn size={14} />
               Per a entrenadors
@@ -129,13 +129,13 @@ export default function PublicHeader() {
           <div className="md:hidden flex items-center gap-1">
             <Link
               href="/cerca"
-              className="p-2.5 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+              className="p-2.5 text-[#8a8f98] hover:text-white transition-colors rounded-lg hover:bg-white/5"
               aria-label="Cerca"
             >
               <Search size={19} />
             </Link>
             <button
-              className="p-2.5 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+              className="p-2.5 text-[#8a8f98] hover:text-white transition-colors rounded-lg hover:bg-white/5"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label={menuOpen ? 'Tancar menú' : 'Obrir menú'}
             >
@@ -151,18 +151,18 @@ export default function PublicHeader() {
           menuOpen ? 'max-h-[90vh] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="border-t border-white/8 bg-[#0a1628] overflow-y-auto max-h-[85vh]">
+        <div className="border-t border-white/8 bg-[#0f1011] overflow-y-auto max-h-[85vh]">
 
           {/* Search */}
           <div className="px-4 pt-4 pb-3">
             <form onSubmit={handleSearch} className="relative">
-              <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8a8f98]" />
               <input
                 type="text"
                 placeholder="Busca equip, jugador..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-3 bg-white/6 border border-white/10 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-green-500/50 w-full"
+                className="pl-10 pr-4 py-3 bg-white/6 border border-white/10 rounded-xl text-sm text-[#d0d6e0] placeholder-[#62666d] focus:outline-none focus:border-green-500/50 w-full"
               />
             </form>
           </div>
@@ -171,21 +171,21 @@ export default function PublicHeader() {
           <div className="px-2 pb-2 space-y-0.5">
             <Link
               href="/resultats"
-              className="flex items-center px-4 py-3.5 text-sm font-medium text-slate-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+              className="flex items-center px-4 py-3.5 text-sm font-medium text-[#d0d6e0] hover:text-white hover:bg-white/5 rounded-xl transition-colors"
               onClick={closeMenu}
             >
               Resultats
             </Link>
             <Link
               href="/cerca?type=jugador"
-              className="flex items-center px-4 py-3.5 text-sm font-medium text-slate-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+              className="flex items-center px-4 py-3.5 text-sm font-medium text-[#d0d6e0] hover:text-white hover:bg-white/5 rounded-xl transition-colors"
               onClick={closeMenu}
             >
               Jugadors
             </Link>
             <Link
               href="/cerca?type=arbitre"
-              className="flex items-center px-4 py-3.5 text-sm font-medium text-slate-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+              className="flex items-center px-4 py-3.5 text-sm font-medium text-[#d0d6e0] hover:text-white hover:bg-white/5 rounded-xl transition-colors"
               onClick={closeMenu}
             >
               Àrbitres
@@ -193,13 +193,13 @@ export default function PublicHeader() {
 
             {/* Competitions accordion */}
             <button
-              className="w-full flex items-center justify-between px-4 py-3.5 text-sm font-medium text-slate-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+              className="w-full flex items-center justify-between px-4 py-3.5 text-sm font-medium text-[#d0d6e0] hover:text-white hover:bg-white/5 rounded-xl transition-colors"
               onClick={() => setMobileCompOpen(v => !v)}
             >
               <span>Competicions</span>
               <ChevronDown
                 size={16}
-                className={`text-slate-400 transition-transform duration-200 ${mobileCompOpen ? 'rotate-180' : ''}`}
+                className={`text-[#8a8f98] transition-transform duration-200 ${mobileCompOpen ? 'rotate-180' : ''}`}
               />
             </button>
 
@@ -210,7 +210,7 @@ export default function PublicHeader() {
                   <Link
                     key={c.slug}
                     href={`/competicio/${c.slug}`}
-                    className="block px-3 py-2.5 text-sm text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+                    className="block px-3 py-2.5 text-sm text-[#8a8f98] hover:text-white transition-colors rounded-lg hover:bg-white/5"
                     onClick={closeMenu}
                   >
                     {c.name}
@@ -224,7 +224,7 @@ export default function PublicHeader() {
           <div className="px-4 pb-5 pt-2 space-y-2">
             <Link
               href="/login"
-              className="flex items-center justify-center gap-2 w-full py-3.5 bg-white/5 border border-white/10 text-slate-200 text-sm font-semibold rounded-xl hover:bg-white/10 transition-colors"
+              className="flex items-center justify-center gap-2 w-full py-3.5 bg-white/5 border border-white/10 text-[#d0d6e0] text-sm font-semibold rounded-xl hover:bg-white/10 transition-colors"
               onClick={closeMenu}
             >
               <User size={15} />
@@ -232,7 +232,7 @@ export default function PublicHeader() {
             </Link>
             <Link
               href="/entrenador"
-              className="flex items-center justify-center gap-2 w-full py-4 bg-white text-slate-900 text-sm font-bold rounded-xl"
+              className="flex items-center justify-center gap-2 w-full py-4 bg-white text-[#f7f8f8] text-sm font-bold rounded-xl"
               onClick={closeMenu}
             >
               <LogIn size={15} />

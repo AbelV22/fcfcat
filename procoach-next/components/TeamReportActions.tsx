@@ -98,7 +98,7 @@ export default function TeamReportActions({ teamName, teamSlug, competition, rep
           onClick={handleExportPDF}
           disabled={exporting || !reportData.rival}
           title={!reportData.rival ? 'Cal tenir un rival assignat per generar el PDF' : undefined}
-          className="group inline-flex items-center gap-2 px-4 py-2.5 bg-[#22c55e] hover:bg-[#34d399] disabled:from-slate-700 disabled:to-slate-700 text-white text-sm font-medium rounded-lg transition-all shadow-lg shadow-green-500/20 hover:shadow-green-500/30 disabled:shadow-none disabled:cursor-not-allowed"
+          className="group inline-flex items-center gap-2 px-4 py-2.5 bg-[#22c55e] hover:bg-[#34d399] disabled:bg-[#62666d] text-white text-sm font-medium rounded-lg transition-all shadow-lg shadow-green-500/20 hover:shadow-green-500/30 disabled:shadow-none disabled:cursor-not-allowed"
         >
           {exporting ? (
             <>

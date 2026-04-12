@@ -8,11 +8,10 @@
     "start": "next start",
     "test": "vitest run",
     "test:watch": "vitest",
-    "cf:build": "npx @opennextjs/cloudflare build && node scripts/cf-postbuild.mjs"
+    "cf:build": "npx @opennextjs/cloudflare build && node scripts/cf-postbuild.mjs",
+    "cf:deploy": "npm run cf:build && npx wrangler deploy --minify"
   },
   "dependencies": {
-    "@remotion/bundler": "^4.0.446",
-    "@remotion/cli": "^4.0.446",
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.98.0",
     "html-to-image": "^1.11.13",
@@ -21,11 +20,12 @@
     "lucide-react": "^0.577.0",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "remotion": "^4.0.446"
+    "react-dom": "19.2.3"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "^1.17.1",
+    "@opennextjs/cloudflare": "^1.19.1",
+    "@remotion/bundler": "^4.0.448",
+    "@remotion/cli": "^4.0.448",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -36,6 +36,7 @@
     "esbuild": "^0.27.0",
     "jsdom": "^29.0.1",
     "pdf-to-img": "^5.0.0",
+    "remotion": "^4.0.448",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.2"

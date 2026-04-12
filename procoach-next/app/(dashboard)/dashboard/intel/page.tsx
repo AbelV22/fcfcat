@@ -12,7 +12,7 @@ function FormDot({ result }: { result: 'W' | 'D' | 'L' | null }) {
   return (
     <span style={{
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      width: 28, height: 28, borderRadius: 14, fontSize: 11, fontWeight: 510,
+      width: 28, height: 28, borderRadius: 8, fontSize: 11, fontWeight: 510,
       background: bg, color,
     }}>
       {result ?? '?'}

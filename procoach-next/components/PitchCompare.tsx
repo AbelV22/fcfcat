@@ -94,18 +94,18 @@ export function PitchCompare({
 
   let diffPct = 0
   let diffMsg = ''
-  let diffColor = 'text-slate-400'
+  let diffColor = 'text-[#8a8f98]'
   if (homeArea && rivalArea) {
     diffPct = Math.round(Math.abs(rivalArea - homeArea) / homeArea * 100)
     if (diffPct === 0) {
       diffMsg = 'Els dos camps tenen la mateixa mida'
-      diffColor = 'text-slate-400'
+      diffColor = 'text-[#8a8f98]'
     } else if (rivalArea < homeArea) {
       diffMsg = `El camp del rival és ${diffPct}% més petit que el vostre`
       diffColor = 'text-amber-400'
     } else {
       diffMsg = `El camp del rival és ${diffPct}% més gran que el vostre`
-      diffColor = 'text-cyan-400'
+      diffColor = 'text-[#22c55e]'
     }
   }
 
@@ -119,18 +119,18 @@ export function PitchCompare({
   const stripeCount = Math.ceil(canvasH / 12)
 
   return (
-    <div className="bg-white/4 border border-white/8 rounded-2xl p-5">
+    <div className="bg-white/4 border border-white/8 rounded-lg p-5">
       {/* Header */}
       <div className="flex items-center gap-2 mb-5">
         <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor"
           strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
-          className="text-cyan-400" aria-hidden="true">
+          className="text-[#22c55e]" aria-hidden="true">
           <rect x="3" y="3" width="18" height="18" rx="2" />
           <line x1="12" y1="3" x2="12" y2="21" />
           <circle cx="12" cy="12" r="3" />
         </svg>
         <h3 className="font-bold text-white text-sm">Comparativa de Camps</h3>
-        <span className="ml-auto text-[10px] text-slate-500">a la mateixa escala</span>
+        <span className="ml-auto text-[10px] text-[#8a8f98]">a la mateixa escala</span>
       </div>
 
       {/* Overlay SVG */}
@@ -143,7 +143,7 @@ export function PitchCompare({
           aria-label="Comparativa visual de camps"
         >
           {/* Dark background */}
-          <rect width={canvasW} height={canvasH} fill="#0f172a" rx={4} />
+          <rect width={canvasW} height={canvasH} fill="#0f1011" rx={4} />
 
           {/* Grass background stripes (only if we have at least one pitch) */}
           {(homePitch || rivalPitch) && Array.from({ length: stripeCount }).map((_, i) => (
@@ -196,13 +196,13 @@ export function PitchCompare({
       <div className="flex justify-center gap-6 mb-4">
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-sm bg-green-500" />
-          <span className="text-xs text-slate-300 font-medium truncate max-w-[120px]" title={homeTeamName}>
+          <span className="text-xs text-[#d0d6e0] font-medium truncate max-w-[120px]" title={homeTeamName}>
             {homeTeamName.split(' ').slice(0, 3).join(' ')}
           </span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-sm bg-orange-400" />
-          <span className="text-xs text-slate-300 font-medium truncate max-w-[120px]" title={rivalTeamName}>
+          <span className="text-xs text-[#d0d6e0] font-medium truncate max-w-[120px]" title={rivalTeamName}>
             {rivalTeamName.split(' ').slice(0, 3).join(' ')}
           </span>
         </div>
@@ -217,7 +217,7 @@ export function PitchCompare({
               <p className="text-xs font-black text-white tabular-nums">
                 {homePitch.length_m} × {homePitch.width_m} m
               </p>
-              <p className="text-[11px] text-slate-400 tabular-nums">
+              <p className="text-[11px] text-[#8a8f98] tabular-nums">
                 {(homePitch.length_m * homePitch.width_m).toLocaleString('ca-ES')} m²
               </p>
               {homeCat && (
@@ -226,13 +226,13 @@ export function PitchCompare({
                 </span>
               )}
               {homePitch.field_name && (
-                <p className="text-[9px] text-slate-600 mt-1 truncate" title={homePitch.field_name}>
+                <p className="text-[9px] text-[#62666d] mt-1 truncate" title={homePitch.field_name}>
                   {homePitch.field_name}
                 </p>
               )}
             </>
           ) : (
-            <p className="text-[11px] text-slate-600">Sense dades</p>
+            <p className="text-[11px] text-[#62666d]">Sense dades</p>
           )}
         </div>
 
@@ -243,7 +243,7 @@ export function PitchCompare({
               <p className="text-xs font-black text-white tabular-nums">
                 {rivalPitch.length_m} × {rivalPitch.width_m} m
               </p>
-              <p className="text-[11px] text-slate-400 tabular-nums">
+              <p className="text-[11px] text-[#8a8f98] tabular-nums">
                 {(rivalPitch.length_m * rivalPitch.width_m).toLocaleString('ca-ES')} m²
               </p>
               {rivalCat && (
@@ -252,13 +252,13 @@ export function PitchCompare({
                 </span>
               )}
               {rivalPitch.field_name && (
-                <p className="text-[9px] text-slate-600 mt-1 truncate" title={rivalPitch.field_name}>
+                <p className="text-[9px] text-[#62666d] mt-1 truncate" title={rivalPitch.field_name}>
                   {rivalPitch.field_name}
                 </p>
               )}
             </>
           ) : (
-            <p className="text-[11px] text-slate-600">Sense dades</p>
+            <p className="text-[11px] text-[#62666d]">Sense dades</p>
           )}
         </div>
       </div>
@@ -274,9 +274,9 @@ export function PitchCompare({
 
       {(!homePitch || !rivalPitch) && (
         <div className="mt-3 pt-3 border-t border-white/5 text-center">
-          <p className="text-[11px] text-slate-600">
+          <p className="text-[11px] text-[#62666d]">
             Mides del camp de {!homePitch ? homeTeamName : rivalTeamName} no disponibles — afegeix-les a{' '}
-            <span className="text-slate-500">/admin/camps</span>
+            <span className="text-[#8a8f98]">/admin/camps</span>
           </p>
         </div>
       )}

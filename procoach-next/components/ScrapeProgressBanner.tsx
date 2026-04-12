@@ -117,9 +117,9 @@ export default function ScrapeProgressBanner({ slug, competition, group, teamNam
 
   if (!job) {
     return (
-      <div className="bg-slate-800/60 border border-slate-700/50 rounded-2xl p-6 flex items-center gap-3">
+      <div className="bg-white/[0.03]/60 border border-white/[0.06]/50 rounded-lg p-6 flex items-center gap-3">
         <Loader2 size={18} className="text-green-400 animate-spin shrink-0" />
-        <span className="text-sm text-slate-300">Iniciant processament de dades...</span>
+        <span className="text-sm text-[#d0d6e0]">Iniciant processament de dades...</span>
       </div>
     )
   }
@@ -127,7 +127,7 @@ export default function ScrapeProgressBanner({ slug, competition, group, teamNam
   // Done with actual data from a fresh scrape → show success / reloading
   if (reloading || (job.status === 'done' && (job.actas_scraped ?? 0) > 0 && !job.cached)) {
     return (
-      <div className="bg-green-900/20 border border-green-500/30 rounded-2xl p-6 flex items-center gap-3">
+      <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-6 flex items-center gap-3">
         {reloading ? (
           <Loader2 size={18} className="text-green-400 animate-spin shrink-0" />
         ) : (
@@ -150,11 +150,11 @@ export default function ScrapeProgressBanner({ slug, competition, group, teamNam
   // Done but no usable player data (either 0 actas or cached result with no players on page)
   if (job.status === 'done' && ((job.actas_scraped ?? 0) === 0 || job.cached)) {
     return (
-      <div className="bg-slate-800/40 border border-slate-700/40 rounded-2xl p-6 flex items-center gap-3">
-        <AlertTriangle size={18} className="text-slate-400 shrink-0" />
+      <div className="bg-white/[0.03]/40 border border-white/[0.06]/40 rounded-lg p-6 flex items-center gap-3">
+        <AlertTriangle size={18} className="text-[#8a8f98] shrink-0" />
         <div>
-          <p className="text-sm font-semibold text-slate-300">Plantilla no disponible</p>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-sm font-semibold text-[#d0d6e0]">Plantilla no disponible</p>
+          <p className="text-xs text-[#8a8f98] mt-0.5">
             Encara no hi ha actes oficials publicades per aquest equip a la FCF.
           </p>
         </div>
@@ -164,7 +164,7 @@ export default function ScrapeProgressBanner({ slug, competition, group, teamNam
 
   if (job.status === 'error') {
     return (
-      <div className="bg-red-900/20 border border-red-500/30 rounded-2xl p-6 flex items-center gap-3">
+      <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-6 flex items-center gap-3">
         <AlertTriangle size={18} className="text-red-400 shrink-0" />
         <div>
           <p className="text-sm font-semibold text-red-300">Error en processar. Torna-ho a intentar.</p>
@@ -182,7 +182,7 @@ export default function ScrapeProgressBanner({ slug, competition, group, teamNam
   const progress = found > 0 ? Math.round((scraped / found) * 100) : null
 
   return (
-    <div className="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-6">
+    <div className="bg-white/[0.03]/80 border border-white/[0.06]/60 rounded-lg p-6">
       <div className="flex items-center gap-3 mb-4">
         <Loader2 size={18} className="text-green-400 animate-spin shrink-0" />
         <div className="flex-1 min-w-0">
@@ -190,11 +190,11 @@ export default function ScrapeProgressBanner({ slug, competition, group, teamNam
             Processant les dades de l&apos;equip...
           </p>
           {found > 0 ? (
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-[#8a8f98] mt-0.5">
               {scraped} / {found} actes processades
             </p>
           ) : (
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-[#8a8f98] mt-0.5">
               Cercant actes oficials a la FCF...
             </p>
           )}
@@ -207,14 +207,14 @@ export default function ScrapeProgressBanner({ slug, competition, group, teamNam
       </div>
 
       {/* Progress bar */}
-      <div className="w-full h-1.5 bg-slate-700/60 rounded-full overflow-hidden">
+      <div className="w-full h-1.5 bg-white/[0.04]/60 rounded-full overflow-hidden">
         <div
-          className="h-full bg-gradient-to-r from-green-500 to-cyan-500 rounded-full transition-all duration-700"
+          className="h-full bg-gradient-to-r from-green-500 to-[#22c55e] rounded-full transition-all duration-700"
           style={{ width: found > 0 ? `${progress}%` : '8%' }}
         />
       </div>
 
-      <p className="text-[11px] text-slate-500 mt-3">
+      <p className="text-[11px] text-[#8a8f98] mt-3">
         Les dades detallades de plantilla provenen de les actes oficials de la FCF.
         Aquest procés pot trigar entre 30 i 90 segons.
       </p>

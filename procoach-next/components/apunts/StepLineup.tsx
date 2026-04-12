@@ -161,13 +161,13 @@ export default function StepLineup({
   return (
     <div>
       <h2 className="text-xl font-bold text-white mb-1">Alineació i formació</h2>
-      <p className="text-sm text-slate-400 mb-6">
+      <p className="text-sm text-[#8a8f98] mb-6">
         Toca una posició al camp per assignar un jugador. Arrossega per moure&apos;ls.
       </p>
 
       {/* Formation selector */}
       <div className="mb-5">
-        <label className="text-xs text-slate-400 mb-2 block">Formació</label>
+        <label className="text-xs text-[#8a8f98] mb-2 block">Formació</label>
         <div className="flex flex-wrap gap-1.5">
           {Object.keys(FORMATIONS).map((f) => (
             <button
@@ -175,8 +175,8 @@ export default function StepLineup({
               onClick={() => handleFormationChange(f)}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 f === formation
-                  ? 'bg-gradient-to-r from-green-500 to-cyan-500 text-white'
-                  : 'bg-white/5 text-slate-400 border border-white/10 hover:border-white/25'
+                  ? 'bg-gradient-to-r from-green-500 to-[#22c55e] text-white'
+                  : 'bg-white/5 text-[#8a8f98] border border-white/10 hover:border-white/25'
               }`}
             >
               {f}
@@ -198,7 +198,7 @@ export default function StepLineup({
       <div className="mt-6">
         <button
           onClick={() => setShowBench(!showBench)}
-          className="flex items-center gap-2 text-sm font-semibold text-slate-300 hover:text-white transition-colors mb-3"
+          className="flex items-center gap-2 text-sm font-semibold text-[#d0d6e0] hover:text-white transition-colors mb-3"
         >
           <ChevronDown size={14} className={`transition-transform ${showBench ? 'rotate-180' : ''}`} />
           Banqueta ({benchPlayers.length})
@@ -229,13 +229,13 @@ export default function StepLineup({
             {/* Unassigned roster */}
             {unassignedRoster.length > 0 && (
               <div>
-                <p className="text-[10px] text-slate-600 uppercase tracking-wider mb-2">Afegir al banquet</p>
+                <p className="text-[10px] text-[#62666d] uppercase tracking-wider mb-2">Afegir al banquet</p>
                 <div className="flex flex-wrap gap-1.5">
                   {unassignedRoster.map((name) => (
                     <button
                       key={name}
                       onClick={() => addToBench(name)}
-                      className="px-2.5 py-1 bg-white/3 border border-dashed border-white/10 rounded-lg text-[11px] text-slate-500 hover:text-white hover:border-white/20 transition-all"
+                      className="px-2.5 py-1 bg-white/3 border border-dashed border-white/10 rounded-lg text-[11px] text-[#8a8f98] hover:text-white hover:border-white/20 transition-all"
                     >
                       + {name}
                     </button>
@@ -252,12 +252,12 @@ export default function StepLineup({
                 value={newPlayer}
                 onChange={(e) => setNewPlayer(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && addCustomPlayer()}
-                className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50"
+                className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder-[#62666d] focus:outline-none focus:border-green-500/50"
               />
               <button
                 onClick={addCustomPlayer}
                 disabled={!newPlayer.trim()}
-                className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-xs text-slate-400 hover:text-white disabled:opacity-30 transition-all"
+                className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-xs text-[#8a8f98] hover:text-white disabled:opacity-30 transition-all"
               >
                 <UserPlus size={14} />
               </button>
@@ -269,7 +269,7 @@ export default function StepLineup({
       {/* Attendance management */}
       {assignedNames.size > 0 && (
         <div className="mt-6">
-          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Assistència</h3>
+          <h3 className="text-xs font-semibold text-[#8a8f98] uppercase tracking-wider mb-3">Assistència</h3>
           <div className="space-y-1.5">
             {lineups
               .filter((l) => l.player_name)
@@ -294,7 +294,7 @@ export default function StepLineup({
                           className={`w-6 h-6 rounded flex items-center justify-center transition-all ${
                             isActive
                               ? `bg-${opt.color}-500/20 text-${opt.color}-400`
-                              : 'bg-transparent text-slate-600 hover:text-slate-400'
+                              : 'bg-transparent text-[#62666d] hover:text-[#8a8f98]'
                           }`}
                           style={
                             isActive

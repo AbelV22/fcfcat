@@ -290,11 +290,11 @@ export default function WizardShell({
   }
 
   return (
-    <div className="min-h-screen bg-[#0f172a]">
+    <div className="min-h-screen bg-[#0f1011]">
       {/* Header */}
-      <header className="border-b border-white/8 bg-[#0a1628]/80 backdrop-blur sticky top-0 z-40">
+      <header className="border-b border-white/8 bg-[#0f1011]/80 backdrop-blur sticky top-0 z-40">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
-          <button onClick={() => router.push('/dashboard/apunts')} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm">
+          <button onClick={() => router.push('/dashboard/apunts')} className="flex items-center gap-2 text-[#8a8f98] hover:text-white transition-colors text-sm">
             <ArrowLeft size={16} />
             Apunts
           </button>
@@ -311,7 +311,7 @@ export default function WizardShell({
           <button
             onClick={() => handleSave('draft')}
             disabled={saving || !state.matchData}
-            className="text-xs text-slate-500 hover:text-slate-300 disabled:opacity-30 transition-colors flex items-center gap-1"
+            className="text-xs text-[#8a8f98] hover:text-[#d0d6e0] disabled:opacity-30 transition-colors flex items-center gap-1"
           >
             <Save size={12} />
             Esborrany
@@ -331,23 +331,23 @@ export default function WizardShell({
                     ? 'text-white'
                     : i < state.step
                     ? 'text-green-400 cursor-pointer'
-                    : 'text-slate-600 cursor-default'
+                    : 'text-[#62666d] cursor-default'
                 }`}
               >
                 <div
                   className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 transition-all ${
                     i === state.step
-                      ? 'bg-gradient-to-r from-green-500 to-cyan-500 text-white'
+                      ? 'bg-gradient-to-r from-green-500 to-[#22c55e] text-white'
                       : i < state.step
                       ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                      : 'bg-white/5 text-slate-600 border border-white/10'
+                      : 'bg-white/5 text-[#62666d] border border-white/10'
                   }`}
                 >
                   {i < state.step ? <Check size={12} /> : i + 1}
                 </div>
                 <span className="hidden sm:inline">{s.label}</span>
                 {'optional' in s && s.optional && (
-                  <span className="hidden sm:inline text-[8px] text-slate-600 font-normal">(opcional)</span>
+                  <span className="hidden sm:inline text-[8px] text-[#62666d] font-normal">(opcional)</span>
                 )}
               </button>
               {i < STEPS.length - 1 && (
@@ -366,7 +366,7 @@ export default function WizardShell({
               <Check size={32} className="text-green-400" />
             </div>
             <h2 className="text-xl font-bold text-white mb-2">Apunts desats!</h2>
-            <p className="text-slate-400 text-sm">Redirigint al panell d&apos;apunts...</p>
+            <p className="text-[#8a8f98] text-sm">Redirigint al panell d&apos;apunts...</p>
           </div>
         ) : (
           <>
@@ -419,7 +419,7 @@ export default function WizardShell({
               <button
                 onClick={goBack}
                 disabled={state.step === 0}
-                className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 transition-colors rounded-xl hover:bg-white/5"
+                className="flex items-center gap-2 px-4 py-2.5 text-sm text-[#8a8f98] hover:text-white disabled:opacity-30 disabled:hover:text-[#8a8f98] transition-colors rounded-xl hover:bg-white/5"
               >
                 <ArrowLeft size={16} />
                 Anterior
@@ -432,7 +432,7 @@ export default function WizardShell({
                     <button
                       onClick={() => handleSave('completed')}
                       disabled={saving || !state.matchData}
-                      className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 disabled:opacity-30 rounded-xl transition-all"
+                      className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r bg-[#22c55e] hover:from-green-500 hover:to-[#22c55e] disabled:opacity-30 rounded-xl transition-all"
                     >
                       {saving ? (
                         <>
@@ -448,7 +448,7 @@ export default function WizardShell({
                     </button>
                     <button
                       onClick={goNext}
-                      className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-400 hover:text-white transition-colors rounded-xl hover:bg-white/5 border border-white/10"
+                      className="flex items-center gap-2 px-4 py-2.5 text-sm text-[#8a8f98] hover:text-white transition-colors rounded-xl hover:bg-white/5 border border-white/10"
                     >
                       Alineacio
                       <ArrowRight size={14} />
@@ -459,7 +459,7 @@ export default function WizardShell({
                   <button
                     onClick={() => handleSave('completed')}
                     disabled={saving || !state.matchData}
-                    className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 disabled:opacity-30 rounded-xl transition-all"
+                    className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r bg-[#22c55e] hover:from-green-500 hover:to-[#22c55e] disabled:opacity-30 rounded-xl transition-all"
                   >
                     {saving ? (
                       <>
@@ -478,7 +478,7 @@ export default function WizardShell({
                   <button
                     onClick={goNext}
                     disabled={!canAdvance()}
-                    className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 disabled:opacity-30 rounded-xl transition-all"
+                    className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r bg-[#22c55e] hover:from-green-500 hover:to-[#22c55e] disabled:opacity-30 rounded-xl transition-all"
                   >
                     Seguent
                     <ArrowRight size={16} />

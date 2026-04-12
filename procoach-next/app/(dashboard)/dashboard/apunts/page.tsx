@@ -239,7 +239,7 @@ export default function ApuntsPage() {
   return (
     <div className="min-h-screen bg-[#08090a]">
       {/* Header */}
-      <header className="border-b border-white/[0.06] bg-[#0a1628]/80 backdrop-blur sticky top-0 z-40">
+      <header className="border-b border-white/[0.06] bg-[#0f1011]/80 backdrop-blur sticky top-0 z-40">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-2 text-[#8a8f98] hover:text-white transition-colors text-sm">
             <ArrowLeft size={16} />
@@ -297,7 +297,7 @@ export default function ApuntsPage() {
                 <div className="h-2 bg-white/5 rounded-full overflow-hidden flex">
                   {completed > 0 && (
                     <div
-                      className="h-full bg-gradient-to-r from-green-500 to-cyan-500"
+                      className="h-full bg-gradient-to-r from-green-500 to-[#22c55e]"
                       style={{ width: `${(completed / totalPast) * 100}%` }}
                     />
                   )}
@@ -324,7 +324,7 @@ export default function ApuntsPage() {
 
             {merged.length === 0 ? (
               <div className="text-center py-16">
-                <Calendar size={40} className="text-slate-700 mx-auto mb-4" />
+                <Calendar size={40} className="text-[#62666d] mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-white mb-2">No hi ha partits al calendari</h3>
                 <p className="text-sm text-[#62666d] mb-6">
                   Configura el teu equip al dashboard per carregar el calendari automàticament, o crea apunts manualment.
@@ -403,7 +403,7 @@ function MatchRow({
     ? { icon: FileEdit, label: 'Esborrany', color: 'amber', bg: 'bg-amber-500/8 border-amber-500/20' }
     : m.isPast
     ? { icon: CircleDot, label: 'Per omplir', color: 'slate', bg: 'bg-white/3 border-white/[0.06] hover:border-green-500/30' }
-    : { icon: Calendar, label: 'Pròxim', color: 'cyan', bg: 'bg-cyan-500/5 border-cyan-500/15' }
+    : { icon: Calendar, label: 'Pròxim', color: 'cyan', bg: 'bg-[#22c55e]/5 border-[#22c55e]/15' }
 
   const StatusIcon = statusConfig.icon
 
@@ -419,7 +419,7 @@ function MatchRow({
         {m.jornada ? (
           <span className="text-[10px] text-[#62666d] font-mono">J{m.jornada}</span>
         ) : (
-          <span className="text-[10px] text-slate-700">—</span>
+          <span className="text-[10px] text-[#62666d]">—</span>
         )}
       </div>
 
@@ -452,7 +452,7 @@ function MatchRow({
             {m.goalsFor} - {m.goalsAgainst}
           </span>
         ) : (
-          <span className="text-xs text-slate-700">— : —</span>
+          <span className="text-xs text-[#62666d]">— : —</span>
         )}
       </div>
 
@@ -472,12 +472,12 @@ function MatchRow({
         {onDelete && (
           <span
             onClick={(e) => { e.stopPropagation(); onDelete() }}
-            className="text-slate-700 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 p-1 cursor-pointer"
+            className="text-[#62666d] hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 p-1 cursor-pointer"
           >
             <Trash2 size={12} />
           </span>
         )}
-        <ChevronRight size={14} className="text-slate-700 group-hover:text-[#8a8f98] transition-colors" />
+        <ChevronRight size={14} className="text-[#62666d] group-hover:text-[#8a8f98] transition-colors" />
       </div>
     </button>
   )
