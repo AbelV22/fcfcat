@@ -1,35 +1,32 @@
 export const dynamic = 'force-dynamic'
 
-import PublicHeader from '@/components/PublicHeader'
-import HeroSection from '@/components/landing/HeroSection'
-import StatsBar from '@/components/landing/StatsBar'
-import FeaturedSection from '@/components/landing/FeaturedSection'
-import FeaturedPlayersSection from '@/components/landing/FeaturedPlayersSection'
-import CoachCTA from '@/components/landing/CoachCTA'
-import PublicFooter from '@/components/PublicFooter'
-import { getHomePageStatsDB, getFeaturedPlayersDB } from '@/lib/supabase-data'
+import HeaderV2 from '@/components/landing-v2/HeaderV2'
+import HeroV2 from '@/components/landing-v2/HeroV2'
+import StatsBarV2 from '@/components/landing-v2/StatsBarV2'
+import HowItWorksV2 from '@/components/landing-v2/HowItWorksV2'
+import FeaturedSectionV2 from '@/components/landing-v2/FeaturedSectionV2'
+import CoachCTAV2 from '@/components/landing-v2/CoachCTAV2'
+import FooterV2 from '@/components/landing-v2/FooterV2'
+import { getHomePageStatsDB } from '@/lib/supabase-data'
 
 export default async function HomePage() {
-  const [{ refereeCount, matchCount, teamCount }, featuredPlayers] = await Promise.all([
-    getHomePageStatsDB(),
-    getFeaturedPlayersDB(),
-  ])
+  const { refereeCount, matchCount, teamCount } = await getHomePageStatsDB()
 
   return (
-    <div className="min-h-screen bg-[#0f172a] noise-bg">
-      <PublicHeader />
+    <div style={{ minHeight: '100vh', background: '#08090a' }}>
+      <HeaderV2 />
       <main>
-        <HeroSection />
-        <StatsBar
+        <HeroV2 />
+        <StatsBarV2
           refereeCount={refereeCount}
           matchCount={matchCount}
           teamCount={teamCount}
         />
-        <FeaturedPlayersSection data={featuredPlayers} />
-        <FeaturedSection />
-        <CoachCTA />
+        <HowItWorksV2 />
+        <FeaturedSectionV2 />
+        <CoachCTAV2 matchCount={matchCount} />
       </main>
-      <PublicFooter />
+      <FooterV2 />
     </div>
   )
 }

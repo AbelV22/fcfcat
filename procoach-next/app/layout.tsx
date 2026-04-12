@@ -1,33 +1,12 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Syne, Bebas_Neue, Bricolage_Grotesque, Inter } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import "./globals.css";
 
 const inter = Inter({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
   variable: '--font-inter',
-  display: 'swap',
-})
-
-const syne = Syne({
-  subsets: ['latin'],
-  weight: ['600', '700', '800'],
-  variable: '--font-syne',
-  display: 'swap',
-})
-
-const bebasNeue = Bebas_Neue({
-  subsets: ['latin'],
-  weight: ['400'],
-  variable: '--font-bebas',
-  display: 'swap',
-})
-
-const bricolage = Bricolage_Grotesque({
-  subsets: ['latin'],
-  weight: ['600', '700', '800'],
-  variable: '--font-headline',
   display: 'swap',
 })
 
@@ -101,8 +80,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ca" className={`${syne.variable} ${bebasNeue.variable} ${bricolage.variable} ${inter.variable}`}>
-      <body className="min-h-screen bg-[#08090a] text-slate-100 antialiased overflow-x-hidden">
+    <html lang="ca" className={inter.variable}>
+      <body className="min-h-screen bg-[#08090a] text-[#f7f8f8] antialiased overflow-x-hidden">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
