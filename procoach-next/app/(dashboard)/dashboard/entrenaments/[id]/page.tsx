@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   ArrowLeft, Clock, CheckCircle2, Trash2, Copy,
-  Users, Zap, Calendar, ChevronDown, ChevronUp,
+  Users, Zap, Calendar, ChevronDown, ChevronUp, Tag, Wrench,
 } from 'lucide-react'
 import { fetchTrainingSession, deleteSession, updateSessionStatus } from '@/lib/training-data'
 import type { TrainingSessionFull, Intensity } from '@/lib/training-types'
@@ -21,6 +21,7 @@ export default function SessionDetailPage({ params }: { params: Promise<{ id: st
   const router = useRouter()
   const [session, setSession] = useState<TrainingSessionFull | null>(null)
   const [loading, setLoading] = useState(true)
+  const [expandedEx, setExpandedEx] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
@@ -167,45 +168,146 @@ export default function SessionDetailPage({ params }: { params: Promise<{ id: st
                   {phaseExs.map(ex => {
                     const exercise = ex.exercise
                     const exIntensity = exercise?.intensity || 'medium'
+                    const isExpanded = expandedEx === ex.id
+                    const hasDetails = exercise && (exercise.diagram_data?.elements?.length > 0 || exercise.description || exercise.tactical_objective || exercise.equipment?.length > 0)
+
                     return (
                       <div
                         key={ex.id}
                         style={{
-                          padding: '10px 12px', borderRadius: 6,
+                          borderRadius: 6,
                           background: 'rgba(255,255,255,0.03)',
                           borderLeft: `3px solid ${INTENSITY_COLORS[exIntensity] || '#8a8f98'}`,
+                          overflow: 'hidden',
                         }}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <div style={{ fontSize: 13, fontWeight: 510, color: '#d0d6e0', fontFamily: 'var(--font-inter)' }}>
-                            {exercise?.name || ex.inline_name || 'Exercici'}
+                        {/* Clickable header */}
+                        <button
+                          onClick={() => setExpandedEx(isExpanded ? null : ex.id)}
+                          style={{
+                            width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                            padding: '10px 12px', background: 'none', border: 'none', cursor: 'pointer',
+                            textAlign: 'left',
+                          }}
+                        >
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 13, fontWeight: 510, color: '#d0d6e0', fontFamily: 'var(--font-inter)' }}>
+                              {exercise?.name || ex.inline_name || 'Exercici'}
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
+                              {exercise?.category && (
+                                <span style={{ fontSize: 10, color: '#8a8f98' }}>
+                                  {CATEGORY_LABELS[exercise.category]}
+                                </span>
+                              )}
+                              <span style={{ fontSize: 10, color: '#62666d' }}>
+                                {ex.duration_min} min
+                              </span>
+                              <span style={{ width: 5, height: 5, borderRadius: 3, background: INTENSITY_COLORS[exIntensity], opacity: 0.7 }} />
+                            </div>
                           </div>
-                          <span style={{ fontSize: 11, color: '#62666d' }}>
-                            {ex.duration_min} min
-                          </span>
-                        </div>
-                        {exercise?.category && (
-                          <span style={{
-                            fontSize: 10, color: '#8a8f98', marginTop: 2, display: 'inline-block',
-                          }}>
-                            {CATEGORY_LABELS[exercise.category]}
-                          </span>
-                        )}
-                        {ex.coach_notes && (
-                          <p style={{ fontSize: 11, color: '#62666d', marginTop: 4 }}>{ex.coach_notes}</p>
+                          {hasDetails && (
+                            <ChevronDown size={14} style={{
+                              color: '#62666d', flexShrink: 0, transition: 'transform 0.2s',
+                              transform: isExpanded ? 'rotate(180deg)' : 'none',
+                            }} />
+                          )}
+                        </button>
+
+                        {/* Expanded details */}
+                        {isExpanded && exercise && (
+                          <div style={{ padding: '0 12px 12px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+
+                            {/* Full diagram */}
+                            {exercise.diagram_data?.elements?.length > 0 && (
+                              <div style={{ marginTop: 10, marginBottom: 10 }}>
+                                <DrillPitchSVG mode="full" style={{ borderRadius: 6, maxWidth: 340 }}>
+                                  {exercise.diagram_data.elements.map((el, i) => {
+                                    switch (el.type) {
+                                      case 'player':
+                                        return (
+                                          <g key={i}>
+                                            <circle cx={el.x} cy={el.y} r={14} fill="url(#playerGrad)" stroke={el.color || '#22c55e'} strokeWidth={1.5} />
+                                            <text x={el.x} y={el.y + 4} textAnchor="middle" fill="#fff" fontSize={8} fontWeight={600}>{el.label || ''}</text>
+                                          </g>
+                                        )
+                                      case 'opponent':
+                                        return (
+                                          <g key={i}>
+                                            <circle cx={el.x} cy={el.y} r={14} fill="url(#opponentGrad)" stroke={el.color || '#ef4444'} strokeWidth={1.5} />
+                                            <text x={el.x} y={el.y + 4} textAnchor="middle" fill="#fff" fontSize={8} fontWeight={600}>{el.label || ''}</text>
+                                          </g>
+                                        )
+                                      case 'ball':
+                                        return <circle key={i} cx={el.x} cy={el.y} r={7} fill="#f59e0b" stroke="#fbbf24" strokeWidth={1} />
+                                      case 'arrow':
+                                        return <line key={i} x1={el.x} y1={el.y} x2={el.x2 || el.x} y2={el.y2 || el.y} stroke={el.color || '#fff'} strokeWidth={2} />
+                                      case 'curved_arrow':
+                                        return <path key={i} d={`M ${el.x} ${el.y} Q ${el.cx ?? el.x} ${el.cy ?? el.y} ${el.x2 ?? el.x} ${el.y2 ?? el.y}`} fill="none" stroke={el.color || '#fff'} strokeWidth={2} />
+                                      case 'cone':
+                                        return <polygon key={i} points={`${el.x},${el.y - 8} ${el.x - 6},${el.y + 5} ${el.x + 6},${el.y + 5}`} fill={el.color || '#f97316'} opacity={0.9} />
+                                      case 'zone':
+                                        return <rect key={i} x={el.x} y={el.y} width={el.width || 60} height={el.height || 40} fill={el.color || '#3b82f6'} opacity={el.opacity || 0.1} rx={3} />
+                                      case 'text':
+                                        return <text key={i} x={el.x} y={el.y} fill={el.color || '#fff'} fontSize={12} fontWeight={600} textAnchor="middle">{el.label || ''}</text>
+                                      case 'goal':
+                                        return <rect key={i} x={el.x - 22} y={el.y - 7} width={44} height={14} fill="none" stroke={el.color || '#fff'} strokeWidth={2} rx={2} />
+                                      default: return null
+                                    }
+                                  })}
+                                </DrillPitchSVG>
+                              </div>
+                            )}
+
+                            {/* Description */}
+                            {exercise.description && (
+                              <p style={{ fontSize: 12, color: '#d0d6e0', lineHeight: 1.5, marginBottom: 8 }}>
+                                {exercise.description}
+                              </p>
+                            )}
+
+                            {/* Tactical objective */}
+                            {exercise.tactical_objective && (
+                              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6, marginBottom: 8 }}>
+                                <Tag size={12} style={{ color: '#22c55e', marginTop: 2, flexShrink: 0 }} />
+                                <span style={{ fontSize: 11, color: '#8a8f98' }}>{exercise.tactical_objective}</span>
+                              </div>
+                            )}
+
+                            {/* Equipment + Players */}
+                            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', fontSize: 11, color: '#62666d' }}>
+                              {exercise.equipment?.length > 0 && (
+                                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                  <Wrench size={10} />
+                                  {exercise.equipment.join(', ')}
+                                </span>
+                              )}
+                              {exercise.min_players > 0 && (
+                                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                  <Users size={10} />
+                                  {exercise.min_players}+ jugadors
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Edit link */}
+                            <Link
+                              href={`/dashboard/entrenaments/biblioteca/nou?edit=${exercise.id}`}
+                              style={{
+                                display: 'inline-flex', alignItems: 'center', gap: 4,
+                                padding: '5px 10px', borderRadius: 4, fontSize: 11, fontWeight: 510,
+                                background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)',
+                                color: '#8a8f98', textDecoration: 'none', marginTop: 8,
+                              }}
+                            >
+                              Editar exercici
+                            </Link>
+                          </div>
                         )}
 
-                        {/* Mini diagram preview */}
-                        {exercise?.diagram_data?.elements && exercise.diagram_data.elements.length > 0 && (
-                          <div style={{ marginTop: 8, maxWidth: 200 }}>
-                            <DrillPitchSVG mode="half" style={{ borderRadius: 4, opacity: 0.7 }}>
-                              {exercise!.diagram_data.elements.slice(0, 15).map((el, i) => {
-                                if (el.type === 'player') return <circle key={i} cx={el.x} cy={el.y} r={6} fill="#22c55e" opacity={0.8} />
-                                if (el.type === 'opponent') return <circle key={i} cx={el.x} cy={el.y} r={6} fill="#ef4444" opacity={0.8} />
-                                if (el.type === 'ball') return <circle key={i} cx={el.x} cy={el.y} r={4} fill="#f59e0b" />
-                                return null
-                              })}
-                            </DrillPitchSVG>
+                        {ex.coach_notes && !isExpanded && (
+                          <div style={{ padding: '0 12px 8px' }}>
+                            <p style={{ fontSize: 11, color: '#62666d' }}>{ex.coach_notes}</p>
                           </div>
                         )}
                       </div>

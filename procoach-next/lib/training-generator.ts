@@ -1,7 +1,7 @@
 /**
- * Training Session Generator
+ * Training Session Generator v2
  * Generates a complete session plan from 3 inputs: duration, match-day delta, focus areas.
- * Uses exercises from the user's library (or seed exercises as fallback).
+ * Improved: better category coverage, guaranteed variety, smarter scoring.
  */
 
 import type {
@@ -12,11 +12,11 @@ import type {
 // ─── Input / Output Types ───────────────────────────────
 
 export interface GeneratorInput {
-  durationMin: number              // Total session duration (60-120)
-  matchDayDelta: number | null     // -4,-3,-2,-1,+1, null = no match
-  focusAreas: FocusArea[]          // technical, tactical, physical, mental
-  subFocus: string[]               // possession, finishing, defensive, pressing, transitions, set_pieces, build_up
-  exercises: TrainingExercise[]    // Available exercise pool
+  durationMin: number
+  matchDayDelta: number | null
+  focusAreas: FocusArea[]
+  subFocus: string[]
+  exercises: TrainingExercise[]
 }
 
 export interface GeneratedExercise {
@@ -44,8 +44,8 @@ interface MDProfile {
   intensity: Intensity
   sessionType: SessionType
   title: string
-  preferredCategories: ExerciseCategory[]
-  avoidCategories: ExerciseCategory[]
+  mainCategories: ExerciseCategory[]  // Primary categories for main phase
+  warmupStyle: 'active' | 'light'     // Active = with ball, Light = mobility/stretch
 }
 
 const MD_PROFILES: Record<number, MDProfile> = {
@@ -53,36 +53,36 @@ const MD_PROFILES: Record<number, MDProfile> = {
     intensity: 'high',
     sessionType: 'physical',
     title: 'Sessio de carrega (MD-4)',
-    preferredCategories: ['conditioning', 'possession', 'tactical', 'ssg'],
-    avoidCategories: ['cooldown'],
+    mainCategories: ['conditioning', 'ssg', 'possession', 'tactical'],
+    warmupStyle: 'active',
   },
   [-3]: {
     intensity: 'very_high',
     sessionType: 'tactical',
     title: 'Sessio d\'alta intensitat (MD-3)',
-    preferredCategories: ['ssg', 'finishing', 'conditioning', 'possession'],
-    avoidCategories: ['cooldown'],
+    mainCategories: ['ssg', 'finishing', 'possession', 'conditioning', 'defensive_shape'],
+    warmupStyle: 'active',
   },
   [-2]: {
     intensity: 'medium',
     sessionType: 'tactical',
     title: 'Sessio tactica (MD-2)',
-    preferredCategories: ['tactical', 'set_pieces', 'possession', 'rondo', 'technical'],
-    avoidCategories: ['conditioning'],
+    mainCategories: ['tactical', 'possession', 'set_pieces', 'rondo', 'technical'],
+    warmupStyle: 'active',
   },
   [-1]: {
     intensity: 'low',
     sessionType: 'pre_match',
     title: 'Activacio pre-partit (MD-1)',
-    preferredCategories: ['rondo', 'technical', 'finishing', 'set_pieces'],
-    avoidCategories: ['conditioning', 'ssg', 'defensive_shape'],
+    mainCategories: ['rondo', 'technical', 'finishing', 'set_pieces'],
+    warmupStyle: 'light',
   },
   [1]: {
     intensity: 'low',
     sessionType: 'recovery',
     title: 'Recuperacio (MD+1)',
-    preferredCategories: ['cooldown', 'rondo', 'technical'],
-    avoidCategories: ['conditioning', 'ssg', 'finishing', 'defensive_shape'],
+    mainCategories: ['rondo', 'technical', 'possession'],
+    warmupStyle: 'light',
   },
 }
 
@@ -90,146 +90,179 @@ const DEFAULT_PROFILE: MDProfile = {
   intensity: 'medium',
   sessionType: 'mixed',
   title: 'Sessio d\'entrenament',
-  preferredCategories: ['rondo', 'possession', 'ssg', 'technical', 'tactical', 'finishing'],
-  avoidCategories: [],
+  mainCategories: ['possession', 'rondo', 'ssg', 'technical', 'tactical', 'finishing'],
+  warmupStyle: 'active',
 }
 
-// ─── Focus → Category mapping ───────────────────────────
+// ─── Focus → Category mapping (expanded) ────────────────
 
-const FOCUS_CATEGORIES: Record<string, ExerciseCategory[]> = {
-  // Main focus areas
-  technical: ['technical', 'rondo'],
-  tactical: ['tactical', 'possession', 'defensive_shape'],
-  physical: ['conditioning', 'ssg'],
+const FOCUS_TO_CATEGORIES: Record<string, ExerciseCategory[]> = {
+  technical: ['technical', 'rondo', 'possession'],
+  tactical: ['tactical', 'possession', 'defensive_shape', 'ssg'],
+  physical: ['conditioning', 'ssg', 'finishing'],
   mental: ['rondo', 'ssg', 'possession'],
-  // Sub-focus options
-  possession: ['possession', 'rondo'],
-  finishing: ['finishing'],
-  defensive: ['defensive_shape'],
-  pressing: ['defensive_shape', 'ssg'],
+  // Sub-focus (more specific)
+  possession: ['possession', 'rondo', 'tactical'],
+  finishing: ['finishing', 'ssg'],
+  defensive: ['defensive_shape', 'tactical'],
+  pressing: ['defensive_shape', 'ssg', 'conditioning'],
   transitions: ['ssg', 'finishing', 'defensive_shape'],
   set_pieces: ['set_pieces'],
-  build_up: ['tactical', 'possession'],
+  build_up: ['tactical', 'possession', 'rondo'],
 }
 
 // ─── Phase time distribution ────────────────────────────
 
 function getPhaseMinutes(totalMin: number): { warmup: number; main: number; cooldown: number } {
   const warmup = Math.max(10, Math.round(totalMin * 0.15))
-  const cooldown = Math.max(5, Math.round(totalMin * 0.12))
+  const cooldown = Math.max(5, Math.round(totalMin * 0.10))
   const main = totalMin - warmup - cooldown
   return { warmup, main, cooldown }
 }
+
+const INTENSITY_ORDER: Record<Intensity, number> = { low: 1, medium: 2, high: 3, very_high: 4 }
+
+function uid() { return Math.random().toString(36).substring(2, 9) }
 
 // ─── Core Generator ─────────────────────────────────────
 
 export function generateSession(input: GeneratorInput): GeneratedSession {
   const { durationMin, matchDayDelta, focusAreas, subFocus, exercises } = input
-
-  // 1. Get MD profile
   const profile = matchDayDelta !== null ? (MD_PROFILES[matchDayDelta] || DEFAULT_PROFILE) : DEFAULT_PROFILE
 
-  // 2. Build category priority list from focus + MD profile
-  const focusCats = new Set<ExerciseCategory>()
+  // Build priority categories from focus selections
+  const focusCats: ExerciseCategory[] = []
   for (const f of [...focusAreas, ...subFocus]) {
-    const cats = FOCUS_CATEGORIES[f]
-    if (cats) cats.forEach(c => focusCats.add(c))
+    const cats = FOCUS_TO_CATEGORIES[f]
+    if (cats) for (const c of cats) if (!focusCats.includes(c)) focusCats.push(c)
   }
-  // Merge with MD preferred categories
-  for (const c of profile.preferredCategories) {
-    focusCats.add(c)
+  // Merge MD profile categories (lower priority)
+  for (const c of profile.mainCategories) {
+    if (!focusCats.includes(c)) focusCats.push(c)
   }
 
-  // 3. Calculate phase durations
   const phases = getPhaseMinutes(durationMin)
-
-  // 4. Select exercises per phase
-  const pool = [...exercises]
   const used = new Set<string>()
 
-  const warmupExercises = selectForPhase(
-    pool, 'warmup', phases.warmup,
-    ['warmup', 'rondo'], profile.avoidCategories, used, profile.intensity
-  )
-  const mainExercises = selectForPhase(
-    pool, 'main', phases.main,
-    Array.from(focusCats), profile.avoidCategories, used, profile.intensity
-  )
-  const cooldownExercises = selectForPhase(
-    pool, 'cooldown', phases.cooldown,
-    ['cooldown', 'technical'], profile.avoidCategories, used, profile.intensity
-  )
+  // ── WARMUP ─────────────────────
+  const warmupExs = pickExercises(exercises, phases.warmup, ['warmup'], used, 'low')
 
-  const allExercises = [...warmupExercises, ...mainExercises, ...cooldownExercises]
+  // If warmup is "active" and we have a rondo, add one
+  if (profile.warmupStyle === 'active' && phases.warmup >= 18) {
+    const rondo = pickExercises(exercises, 10, ['rondo'], used, 'medium')
+    warmupExs.push(...rondo)
+  }
 
-  // 5. Build title
+  // ── MAIN PART ──────────────────
+  // Guarantee variety: pick from different categories
+  const mainExs: GeneratedExercise[] = []
+  let mainRemaining = phases.main
+
+  // First pass: pick 1 exercise from each top focus category
+  const topCats = focusCats.slice(0, 4) // Top 4 priority categories
+  for (const cat of topCats) {
+    if (mainRemaining <= 5) break
+    const picked = pickExercises(exercises, Math.min(15, mainRemaining), [cat], used, profile.intensity)
+    if (picked.length > 0) {
+      mainExs.push(...picked)
+      mainRemaining -= picked.reduce((s, e) => s + e.durationMin, 0)
+    }
+  }
+
+  // Second pass: fill remaining time from all focus categories
+  if (mainRemaining > 5) {
+    const filler = pickExercises(exercises, mainRemaining, focusCats, used, profile.intensity)
+    mainExs.push(...filler)
+    mainRemaining -= filler.reduce((s, e) => s + e.durationMin, 0)
+  }
+
+  // Third pass: if still time left, use any non-avoided category
+  if (mainRemaining > 5) {
+    const allCats: ExerciseCategory[] = ['possession', 'rondo', 'ssg', 'technical', 'tactical', 'finishing', 'defensive_shape']
+    const filler = pickExercises(exercises, mainRemaining, allCats, used, profile.intensity)
+    mainExs.push(...filler)
+  }
+
+  // ── COOLDOWN ───────────────────
+  const cooldownExs = pickExercises(exercises, phases.cooldown, ['cooldown'], used, 'low')
+  if (cooldownExs.length === 0) {
+    cooldownExs.push({
+      tempId: uid(), exerciseId: null, name: 'Estiraments i tornada a la calma',
+      phase: 'cooldown', durationMin: phases.cooldown, coachNotes: '', intensity: 'low',
+    })
+  }
+
+  // Tag phases
+  warmupExs.forEach(e => e.phase = 'warmup')
+  mainExs.forEach(e => e.phase = 'main')
+  cooldownExs.forEach(e => e.phase = 'cooldown')
+
+  const allExercises = [...warmupExs, ...mainExs, ...cooldownExs]
+
+  // Build title
   const focusLabel = focusAreas.length > 0
-    ? focusAreas.map(f => {
-        const labels: Record<string, string> = { technical: 'Tecnic', tactical: 'Tactic', physical: 'Fisic', mental: 'Mental' }
-        return labels[f] || f
-      }).join(' + ')
+    ? focusAreas.map(f => ({ technical: 'Tecnic', tactical: 'Tactic', physical: 'Fisic', mental: 'Mental' }[f] || f)).join(' + ')
     : null
 
   const title = matchDayDelta !== null
     ? profile.title
-    : focusLabel
-      ? `Sessio ${focusLabel.toLowerCase()}`
-      : 'Sessio d\'entrenament'
+    : focusLabel ? `Sessio ${focusLabel.toLowerCase()}` : 'Sessio d\'entrenament'
 
-  return {
-    exercises: allExercises,
-    plannedIntensity: profile.intensity,
-    sessionType: profile.sessionType,
-    title,
-    focusAreas,
-  }
+  return { exercises: allExercises, plannedIntensity: profile.intensity, sessionType: profile.sessionType, title, focusAreas }
 }
 
-// ─── Phase exercise selector ────────────────────────────
+// ─── Exercise picker ────────────────────────────────────
 
-function selectForPhase(
+function pickExercises(
   pool: TrainingExercise[],
-  phase: SessionPhase,
   targetMinutes: number,
   preferredCategories: ExerciseCategory[],
-  avoidCategories: ExerciseCategory[],
   used: Set<string>,
   targetIntensity: Intensity,
 ): GeneratedExercise[] {
   const result: GeneratedExercise[] = []
   let remaining = targetMinutes
 
-  // Score exercises by relevance
-  const scored = pool
-    .filter(ex => !used.has(ex.id) && !avoidCategories.includes(ex.category))
+  // Score and sort candidates
+  const candidates = pool
+    .filter(ex => !used.has(ex.id))
     .map(ex => {
       let score = 0
-      // Category match
-      const catIdx = preferredCategories.indexOf(ex.category)
-      if (catIdx >= 0) score += (preferredCategories.length - catIdx) * 10
-      // Intensity match
-      const iOrder: Record<Intensity, number> = { low: 1, medium: 2, high: 3, very_high: 4 }
-      score -= Math.abs(iOrder[ex.intensity] - iOrder[targetIntensity]) * 3
-      // Phase-specific bonuses
-      if (phase === 'warmup' && ex.category === 'warmup') score += 20
-      if (phase === 'cooldown' && ex.category === 'cooldown') score += 20
-      // Slight randomization for variety
-      score += Math.random() * 5
+
+      // Strong bonus for matching category
+      if (preferredCategories.includes(ex.category)) {
+        const idx = preferredCategories.indexOf(ex.category)
+        score += 30 - idx * 5  // First category = 30pts, second = 25, etc.
+      } else {
+        score -= 10 // Penalty for non-matching
+      }
+
+      // Intensity proximity bonus
+      const diff = Math.abs(INTENSITY_ORDER[ex.intensity] - INTENSITY_ORDER[targetIntensity])
+      score -= diff * 5
+
+      // Duration fit bonus — prefer exercises that fit well in remaining time
+      if (ex.duration_min <= remaining && ex.duration_min >= 8) score += 5
+
+      // Randomization for variety
+      score += Math.random() * 12
+
       return { ex, score }
     })
+    .filter(c => c.score > -5) // Don't use very poorly matched exercises
     .sort((a, b) => b.score - a.score)
 
-  // Greedily pick exercises until we fill the time
-  for (const { ex } of scored) {
-    if (remaining <= 0) break
+  // Pick exercises greedily
+  for (const { ex } of candidates) {
+    if (remaining <= 3) break
     const dur = Math.min(ex.duration_min, remaining)
-    if (dur < 5) continue // Skip if too little time left
+    if (dur < 5) continue
 
     result.push({
-      tempId: Math.random().toString(36).substring(2, 9),
+      tempId: uid(),
       exerciseId: ex.id,
       name: ex.name,
-      phase,
+      phase: 'main', // Will be overridden by caller
       durationMin: dur,
       coachNotes: '',
       intensity: ex.intensity,
@@ -239,24 +272,6 @@ function selectForPhase(
     remaining -= dur
   }
 
-  // If we still have time and no exercises, add a generic block
-  if (result.length === 0 && targetMinutes > 0) {
-    const defaultNames: Record<SessionPhase, string> = {
-      warmup: 'Escalfament general',
-      main: 'Part principal',
-      cooldown: 'Estiraments',
-    }
-    result.push({
-      tempId: Math.random().toString(36).substring(2, 9),
-      exerciseId: null,
-      name: defaultNames[phase],
-      phase,
-      durationMin: targetMinutes,
-      coachNotes: '',
-      intensity: targetIntensity,
-    })
-  }
-
   return result
 }
 
@@ -264,10 +279,10 @@ function selectForPhase(
 
 export const SUB_FOCUS_OPTIONS: { key: string; label: string; parentFocus: FocusArea[] }[] = [
   { key: 'possession', label: 'Possessio', parentFocus: ['tactical', 'technical'] },
-  { key: 'finishing', label: 'Finalitzacio', parentFocus: ['tactical', 'technical'] },
+  { key: 'finishing', label: 'Finalitzacio', parentFocus: ['tactical', 'technical', 'physical'] },
   { key: 'defensive', label: 'Defensa', parentFocus: ['tactical'] },
   { key: 'pressing', label: 'Pressio alta', parentFocus: ['tactical', 'physical'] },
   { key: 'transitions', label: 'Transicions', parentFocus: ['tactical'] },
   { key: 'set_pieces', label: 'Pilota aturada', parentFocus: ['tactical'] },
-  { key: 'build_up', label: 'Sortida de pilota', parentFocus: ['tactical'] },
+  { key: 'build_up', label: 'Sortida de pilota', parentFocus: ['tactical', 'technical'] },
 ]
