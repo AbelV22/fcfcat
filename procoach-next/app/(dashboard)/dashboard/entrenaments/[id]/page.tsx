@@ -4,7 +4,7 @@ import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
-  ArrowLeft, Clock, CheckCircle2, Trash2, Edit3,
+  ArrowLeft, Clock, CheckCircle2, Trash2, Copy,
   Users, Zap, Calendar, ChevronDown, ChevronUp,
 } from 'lucide-react'
 import { fetchTrainingSession, deleteSession, updateSessionStatus } from '@/lib/training-data'
@@ -48,6 +48,30 @@ export default function SessionDetailPage({ params }: { params: Promise<{ id: st
     setSession({ ...session, status: 'completed' })
   }
 
+  const handleDuplicate = () => {
+    if (!session) return
+    // Save session data to localStorage for nova-sessio to read
+    const dupData = {
+      exercises: session.exercises.map(e => ({
+        tempId: Math.random().toString(36).substring(2, 9),
+        exerciseId: e.exercise_id,
+        name: e.exercise?.name || e.inline_name || 'Exercici',
+        phase: e.phase,
+        durationMin: e.duration_min,
+        coachNotes: e.coach_notes || '',
+        intensity: e.exercise?.intensity || 'medium',
+        exercise: e.exercise,
+      })),
+      plannedIntensity: session.planned_intensity,
+      sessionType: session.session_type,
+      title: session.title ? `${session.title} (copia)` : 'Sessio duplicada',
+      focusAreas: session.focus_areas || [],
+      date: '',
+    }
+    localStorage.setItem('neoscout_generated_session', JSON.stringify(dupData))
+    router.push('/dashboard/entrenaments/nova-sessio?generated=true')
+  }
+
   if (loading) return <div style={{ padding: 32, textAlign: 'center', color: '#62666d' }}>Carregant...</div>
   if (!session) return <div style={{ padding: 32, textAlign: 'center', color: '#62666d' }}>Sessio no trobada</div>
 
@@ -88,7 +112,20 @@ export default function SessionDetailPage({ params }: { params: Promise<{ id: st
             </button>
           )}
           <button
+            onClick={handleDuplicate}
+            title="Duplicar sessio"
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: 32, height: 32, borderRadius: 6,
+              background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)',
+              color: '#8a8f98', cursor: 'pointer',
+            }}
+          >
+            <Copy size={14} />
+          </button>
+          <button
             onClick={handleDelete}
+            title="Eliminar sessio"
             style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               width: 32, height: 32, borderRadius: 6,

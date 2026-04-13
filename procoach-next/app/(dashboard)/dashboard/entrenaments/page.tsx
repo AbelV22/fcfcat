@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   Plus, Calendar, BookOpen, BarChart3, Layers,
-  ChevronLeft, ChevronRight, CalendarDays, CalendarRange,
+  ChevronLeft, ChevronRight, CalendarDays, CalendarRange, Sparkles,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase-client'
 import { fetchUserSessions, fetchUserExercises, deleteSession } from '@/lib/training-data'
@@ -21,6 +21,7 @@ import ExerciseLibrary from '@/components/entrenaments/ExerciseLibrary'
 import TrainingAnalyticsDash from '@/components/entrenaments/TrainingAnalyticsDash'
 import MicrocycleStrip from '@/components/entrenaments/MicrocycleStrip'
 import MonthlyCalendar from '@/components/entrenaments/MonthlyCalendar'
+import SessionGenerator from '@/components/entrenaments/SessionGenerator'
 
 type Tab = 'calendari' | 'biblioteca' | 'perioditzacio' | 'analitiques'
 
@@ -53,6 +54,7 @@ export default function EntrenamentsPage() {
   const [viewMode, setViewMode] = useState<'week' | 'month'>('week')
   const [currentWeekStart, setCurrentWeekStart] = useState(() => getWeekStart(new Date()))
   const [currentMonth, setCurrentMonth] = useState(() => new Date())
+  const [showGenerator, setShowGenerator] = useState(false)
 
   // Load data
   useEffect(() => {
@@ -139,21 +141,38 @@ export default function EntrenamentsPage() {
         <h1 style={{ fontFamily: 'var(--font-headline)', fontSize: 24, fontWeight: 800, color: '#f7f8f8', letterSpacing: '-0.5px' }}>
           Entrenaments
         </h1>
-        <Link
-          href="/dashboard/entrenaments/nova-sessio"
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            padding: '8px 16px', background: '#22c55e', color: '#08090a',
-            borderRadius: 6, fontWeight: 510, fontSize: 13,
-            textDecoration: 'none', transition: 'background 0.15s',
-            fontFamily: 'var(--font-inter)',
-          }}
-          onMouseEnter={e => (e.currentTarget.style.background = '#34d399')}
-          onMouseLeave={e => (e.currentTarget.style.background = '#22c55e')}
-        >
-          <Plus size={16} />
-          Nova sessio
-        </Link>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            onClick={() => setShowGenerator(true)}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              padding: '8px 16px', background: '#22c55e', color: '#08090a',
+              borderRadius: 6, fontWeight: 510, fontSize: 13, border: 'none',
+              cursor: 'pointer', transition: 'background 0.15s',
+              fontFamily: 'var(--font-inter)',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = '#34d399')}
+            onMouseLeave={e => (e.currentTarget.style.background = '#22c55e')}
+          >
+            <Sparkles size={16} />
+            Genera sessio
+          </button>
+          <Link
+            href="/dashboard/entrenaments/nova-sessio"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              padding: '8px 16px',
+              background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)',
+              color: '#d0d6e0',
+              borderRadius: 6, fontWeight: 510, fontSize: 13,
+              textDecoration: 'none', transition: 'all 0.15s',
+              fontFamily: 'var(--font-inter)',
+            }}
+          >
+            <Plus size={16} />
+            Manual
+          </Link>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -308,6 +327,14 @@ export default function EntrenamentsPage() {
             <TrainingAnalyticsDash sessions={sessions} exercises={exercises} />
           )}
         </>
+      )}
+
+      {/* Session Generator Modal */}
+      {showGenerator && (
+        <SessionGenerator
+          exercises={exercises}
+          onClose={() => setShowGenerator(false)}
+        />
       )}
     </div>
   )

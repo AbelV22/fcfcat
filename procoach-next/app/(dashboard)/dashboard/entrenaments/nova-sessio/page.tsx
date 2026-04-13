@@ -39,6 +39,7 @@ export default function NovaSessioPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const prefillDate = searchParams.get('date')
+  const isGenerated = searchParams.get('generated') === 'true'
 
   const [title, setTitle] = useState('')
   const [sessionDate, setSessionDate] = useState(prefillDate || formatDate(new Date()))
@@ -47,6 +48,7 @@ export default function NovaSessioPage() {
   const [focusAreas, setFocusAreas] = useState<FocusArea[]>([])
   const [coachNotes, setCoachNotes] = useState('')
   const [exercises, setExercises] = useState<ExerciseBlock[]>([])
+  const [generatedLoaded, setGeneratedLoaded] = useState(false)
   const [userExercises, setUserExercises] = useState<TrainingExercise[]>([])
   const [attendance, setAttendance] = useState<{ name: string; slug: string | null; status: string }[]>([])
   const [playerNames, setPlayerNames] = useState<string[]>([])
@@ -78,6 +80,28 @@ export default function NovaSessioPage() {
     }
     load()
   }, [])
+
+  // Load generated session from localStorage
+  useEffect(() => {
+    if (isGenerated && !generatedLoaded) {
+      try {
+        const raw = localStorage.getItem('neoscout_generated_session')
+        if (raw) {
+          const gen = JSON.parse(raw)
+          if (gen.exercises) setExercises(gen.exercises)
+          if (gen.plannedIntensity) setPlannedIntensity(gen.plannedIntensity)
+          if (gen.sessionType) setSessionType(gen.sessionType)
+          if (gen.title) setTitle(gen.title)
+          if (gen.focusAreas) setFocusAreas(gen.focusAreas)
+          if (gen.date) setSessionDate(gen.date)
+          localStorage.removeItem('neoscout_generated_session')
+        }
+      } catch (err) {
+        console.error('Error loading generated session:', err)
+      }
+      setGeneratedLoaded(true)
+    }
+  }, [isGenerated, generatedLoaded])
 
   // Auto-save draft
   useEffect(() => {

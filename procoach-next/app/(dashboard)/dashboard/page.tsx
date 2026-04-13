@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase-server'
 import Link from 'next/link'
-import { BarChart3, Shield, Users, ListOrdered, ArrowRight, Settings, ClipboardList, RefreshCw } from 'lucide-react'
+import { BarChart3, Shield, Users, ListOrdered, ArrowRight, Settings, ClipboardList, RefreshCw, Dumbbell } from 'lucide-react'
 import { getDashboardTeam, isAdminUser } from '@/lib/dashboard-auth'
 import ReferralCard from '@/components/ReferralCard'
 
@@ -93,7 +93,8 @@ export default async function DashboardPage() {
             { icon: Shield, title: 'Informe arbitral complet', desc: "Percentils, patrons per període i historial del pròxim àrbitre.", href: '/dashboard/arbitre-pro', badge: 'PRO' },
             { icon: Shield, title: 'Equips', desc: 'Cerca i explora tots els equips de les competicions FCF.', href: '/entrenador', badge: null },
             { icon: ListOrdered, title: 'Classificació', desc: 'La taula de classificació del teu grup en temps real.', href: '/dashboard/classificacio', badge: null },
-            { icon: ClipboardList, title: 'Apunts de Partit', desc: 'Registra lineups, esdeveniments, valoracions i notes tàctiques de cada partit.', href: '/dashboard/apunts', badge: 'NOU' },
+            { icon: ClipboardList, title: 'Apunts de Partit', desc: 'Registra lineups, esdeveniments, valoracions i notes tàctiques de cada partit.', href: '/dashboard/apunts', badge: null },
+            { icon: Dumbbell, title: 'Entrenaments', desc: 'Genera sessions automatiques, biblioteca de 74+ exercicis amb diagrames i calendari setmanal.', href: '/dashboard/entrenaments', badge: 'NOU' },
             { icon: Settings, title: 'Gestió de la plantilla', desc: "Disponibilitat, sancions i convocatòries del teu equip.", href: '/dashboard/equip-gestio', badge: null },
           ].map(card => {
             const Icon = card.icon
