@@ -61,9 +61,10 @@ export default function MicrocycleStrip({ weekStart, sessions, calendarMatches, 
     <div style={{
       display: 'grid',
       gridTemplateColumns: 'repeat(7, 1fr)',
-      gap: 4,
+      gap: 2,
       marginBottom: 12,
-      padding: '8px 0',
+      padding: '4px 0',
+      overflow: 'hidden', width: '100%',
     }}
     className="microcycle-strip"
     >

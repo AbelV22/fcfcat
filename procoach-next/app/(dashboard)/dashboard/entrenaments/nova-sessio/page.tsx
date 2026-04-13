@@ -235,7 +235,7 @@ export default function NovaSessioPage() {
             background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: 8, padding: 14,
           }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 10 }}>
+            <div className="grid grid-cols-1 sm:grid-cols-3" style={{ gap: 8, marginBottom: 10 }}>
               <div>
                 <label style={labelStyle}>Data</label>
                 <input type="text" value={sessionDate} onChange={e => setSessionDate(e.target.value)} style={inputStyle} placeholder="dd-mm-yyyy" />

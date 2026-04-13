@@ -140,7 +140,7 @@ export default function ExerciseLibrary({ exercises, onExercisesChange, onSelect
       </div>
 
       {/* Category filter pills */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 16, overflowX: 'auto', paddingBottom: 4 }}>
+      <div style={{ display: 'flex', gap: 4, marginBottom: 16, flexWrap: 'wrap' }}>
         {CATEGORIES.map(cat => {
           const isActive = activeCategory === cat
           const label = cat === 'all' ? 'Tots' : cat === 'favorites' ? '★ Preferits' : CATEGORY_LABELS[cat]

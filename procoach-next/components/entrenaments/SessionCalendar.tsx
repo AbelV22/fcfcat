@@ -43,12 +43,9 @@ export default function SessionCalendar({ weekStart, sessions, calendarMatches, 
   today.setHours(0, 0, 0, 0)
 
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(7, 1fr)',
-      gap: 4,
-    }}
-    className="calendar-week-grid"
+    <div
+      className="calendar-week-grid"
+      style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2, overflow: 'hidden', width: '100%' }}
     >
       {days.map((day, idx) => {
         const dateStr = formatDate(day)
@@ -84,9 +81,9 @@ export default function SessionCalendar({ weekStart, sessions, calendarMatches, 
                 : hasMatch
                   ? '1px solid rgba(34,197,94,0.12)'
                   : '1px solid rgba(255,255,255,0.04)',
-              borderRadius: 8,
-              padding: 8,
-              minHeight: 120,
+              borderRadius: 6,
+              padding: 6,
+              minHeight: 100,
               display: 'flex',
               flexDirection: 'column',
             }}
@@ -183,11 +180,14 @@ export default function SessionCalendar({ weekStart, sessions, calendarMatches, 
         )
       })}
 
-      {/* Responsive: on mobile stack vertically */}
       <style>{`
-        @media (max-width: 768px) {
+        @media (max-width: 640px) {
           .calendar-week-grid {
-            grid-template-columns: 1fr !important;
+            gap: 1px !important;
+          }
+          .calendar-week-grid > * {
+            padding: 4px !important;
+            min-height: 80px !important;
           }
         }
       `}</style>

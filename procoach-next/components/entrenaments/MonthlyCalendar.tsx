@@ -93,7 +93,7 @@ export default function MonthlyCalendar({ currentMonth, sessions, calendarMatche
       {/* Day headers */}
       <div style={{
         display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)',
-        gap: 1, marginBottom: 4,
+        gap: 1, marginBottom: 2, overflow: 'hidden', width: '100%',
       }}>
         {DAY_LABELS_SHORT.map(d => (
           <div key={d} style={{
@@ -109,7 +109,7 @@ export default function MonthlyCalendar({ currentMonth, sessions, calendarMatche
       {/* Calendar grid */}
       <div style={{
         display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)',
-        gap: 2,
+        gap: 1, overflow: 'hidden', width: '100%',
       }}>
         {grid.map((day, idx) => {
           const dateStr = formatDate(day)
@@ -141,7 +141,7 @@ export default function MonthlyCalendar({ currentMonth, sessions, calendarMatche
               style={{
                 display: 'flex', flexDirection: 'column',
                 alignItems: 'center', justifyContent: 'flex-start',
-                padding: '6px 2px', minHeight: 64, borderRadius: 6,
+                padding: '4px 1px', minHeight: 56, borderRadius: 4,
                 background: isToday
                   ? 'rgba(34,197,94,0.06)'
                   : bgColor,

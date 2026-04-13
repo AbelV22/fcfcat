@@ -137,34 +137,34 @@ export default function EntrenamentsPage() {
   return (
     <div style={{ padding: '16px 16px 32px', maxWidth: 1200, margin: '0 auto' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-        <h1 style={{ fontFamily: 'var(--font-headline)', fontSize: 24, fontWeight: 800, color: '#f7f8f8', letterSpacing: '-0.5px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
+        <h1 style={{ fontFamily: 'var(--font-headline)', fontSize: 22, fontWeight: 800, color: '#f7f8f8', letterSpacing: '-0.5px' }}>
           Entrenaments
         </h1>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           <button
             onClick={() => setShowGenerator(true)}
             style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              padding: '8px 16px', background: '#22c55e', color: '#08090a',
-              borderRadius: 6, fontWeight: 510, fontSize: 13, border: 'none',
+              display: 'inline-flex', alignItems: 'center', gap: 5,
+              padding: '7px 12px', background: '#22c55e', color: '#08090a',
+              borderRadius: 6, fontWeight: 510, fontSize: 12, border: 'none',
               cursor: 'pointer', transition: 'background 0.15s',
               fontFamily: 'var(--font-inter)',
             }}
             onMouseEnter={e => (e.currentTarget.style.background = '#34d399')}
             onMouseLeave={e => (e.currentTarget.style.background = '#22c55e')}
           >
-            <Sparkles size={16} />
-            Genera sessio
+            <Sparkles size={14} />
+            Genera
           </button>
           <Link
             href="/dashboard/entrenaments/nova-sessio"
             style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              padding: '8px 16px',
+              display: 'inline-flex', alignItems: 'center', gap: 5,
+              padding: '7px 12px',
               background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)',
               color: '#d0d6e0',
-              borderRadius: 6, fontWeight: 510, fontSize: 13,
+              borderRadius: 6, fontWeight: 510, fontSize: 12,
               textDecoration: 'none', transition: 'all 0.15s',
               fontFamily: 'var(--font-inter)',
             }}
@@ -176,7 +176,7 @@ export default function EntrenamentsPage() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 20, overflowX: 'auto', paddingBottom: 2 }}>
+      <div style={{ display: 'flex', gap: 4, marginBottom: 16, flexWrap: 'wrap' }}>
         {TABS.map(tab => {
           const isActive = activeTab === tab.key
           const Icon = tab.icon
@@ -211,16 +211,16 @@ export default function EntrenamentsPage() {
           {activeTab === 'calendari' && (
             <>
               {/* Navigation bar with view toggle */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
                 {/* Left: prev/label/next */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1, minWidth: 0 }}>
                   <button
                     onClick={viewMode === 'week' ? handlePrevWeek : handlePrevMonth}
-                    style={{ background: 'none', border: 'none', color: '#8a8f98', cursor: 'pointer', padding: 4, borderRadius: 4 }}
+                    style={{ background: 'none', border: 'none', color: '#8a8f98', cursor: 'pointer', padding: 4, borderRadius: 4, flexShrink: 0 }}
                   >
-                    <ChevronLeft size={18} />
+                    <ChevronLeft size={16} />
                   </button>
-                  <span style={{ fontSize: 14, fontWeight: 510, color: '#d0d6e0', fontFamily: 'var(--font-inter)', minWidth: 220, textAlign: 'center' }}>
+                  <span style={{ fontSize: 13, fontWeight: 510, color: '#d0d6e0', fontFamily: 'var(--font-inter)', textAlign: 'center', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {viewMode === 'week'
                       ? weekLabel
                       : `${MONTH_LABELS[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`
@@ -228,9 +228,9 @@ export default function EntrenamentsPage() {
                   </span>
                   <button
                     onClick={viewMode === 'week' ? handleNextWeek : handleNextMonth}
-                    style={{ background: 'none', border: 'none', color: '#8a8f98', cursor: 'pointer', padding: 4, borderRadius: 4 }}
+                    style={{ background: 'none', border: 'none', color: '#8a8f98', cursor: 'pointer', padding: 4, borderRadius: 4, flexShrink: 0 }}
                   >
-                    <ChevronRight size={18} />
+                    <ChevronRight size={16} />
                   </button>
                 </div>
 

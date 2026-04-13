@@ -552,7 +552,7 @@ export default function ExerciseDiagramEditor({ value, onChange, mode = 'full' }
       </div>
 
       {/* Mobile tool palette */}
-      <div className="flex lg:hidden" style={{ gap: 2, overflowX: 'auto', paddingBottom: 4 }}>
+      <div className="lg:hidden" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 2, paddingBottom: 4 }}>
         {TOOLS.map(t => {
           const Icon = t.icon
           const isActive = activeTool === t.key
@@ -563,9 +563,9 @@ export default function ExerciseDiagramEditor({ value, onChange, mode = 'full' }
                 setActiveTool(t.key)
                 if (t.key !== 'select') setActiveColor(DEFAULT_COLORS[t.key] || activeColor)
               }}
-              style={{ ...toolBtnStyle(isActive), minWidth: 40, minHeight: 40 }}
+              style={{ ...toolBtnStyle(isActive), width: '100%', minHeight: 36 }}
             >
-              <Icon size={16} />
+              <Icon size={14} />
             </button>
           )
         })}

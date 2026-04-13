@@ -526,8 +526,8 @@ export default async function RivalPage() {
           {/* Radiografia group */}
           <div className="space-y-6">
             {/* Stats band */}
-            <div className="overflow-x-auto scrollbar-hide">
-              <div className="stats-band flex min-w-[480px]">
+            <div className="overflow-hidden">
+              <div className="stats-band flex flex-wrap sm:flex-nowrap">
                 {[
                   { v: rival.played, l: 'PJ', c: 'text-white' },
                   { v: rival.wins, l: 'V', c: 'text-green-400' },
