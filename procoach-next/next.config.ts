@@ -9,7 +9,6 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['jsonwebtoken'],
   turbopack: {
     root: __dirname,
   },
