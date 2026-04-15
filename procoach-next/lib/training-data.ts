@@ -11,6 +11,8 @@ import type {
   SessionStatus,
   SessionPhase,
   FocusArea,
+  CoachProfile,
+  PublicExercise,
 } from './training-types'
 
 // ─── EXERCISES CRUD ─────────────────────────────────────
@@ -340,6 +342,132 @@ export async function deleteMicrocycle(id: string): Promise<void> {
   const supabase = createClient()
   const { error } = await supabase.from('training_microcycles').delete().eq('id', id)
   if (error) throw error
+}
+
+// ─── EXERCISE SHARING ───────────────────────────────────
+
+function generateShareSlug(): string {
+  return crypto.randomUUID().replace(/-/g, '').substring(0, 8)
+}
+
+/** Publish an exercise: generates a unique slug and sets is_public = true */
+export async function publishExercise(id: string): Promise<string> {
+  const supabase = createClient()
+  // Reuse existing slug if already set, otherwise generate new
+  const { data: existing } = await supabase
+    .from('training_exercises')
+    .select('share_slug')
+    .eq('id', id)
+    .single()
+
+  const slug = existing?.share_slug || generateShareSlug()
+
+  const { error } = await supabase
+    .from('training_exercises')
+    .update({ is_public: true, share_slug: slug, shared_at: new Date().toISOString() })
+    .eq('id', id)
+  if (error) throw error
+  return slug
+}
+
+/** Unpublish: sets is_public = false (slug is preserved so the link can be re-enabled) */
+export async function unpublishExercise(id: string): Promise<void> {
+  const supabase = createClient()
+  const { error } = await supabase
+    .from('training_exercises')
+    .update({ is_public: false })
+    .eq('id', id)
+  if (error) throw error
+}
+
+/** Fetch a public exercise by slug — works without authentication (anon RLS) */
+export async function fetchPublicExercise(slug: string): Promise<PublicExercise | null> {
+  // Lazy import server client to avoid bundling server-only code in client components
+  const { createClient: createServerClient } = await import('@/lib/supabase-server')
+  const supabase = await createServerClient()
+
+  const { data: exercise, error } = await supabase
+    .from('training_exercises')
+    .select('*')
+    .eq('share_slug', slug)
+    .eq('is_public', true)
+    .single()
+
+  if (error || !exercise) return null
+
+  const { data: coach } = await supabase
+    .from('coach_profiles')
+    .select('*')
+    .eq('user_id', exercise.user_id)
+    .single()
+
+  return { ...(exercise as TrainingExercise), coach: (coach as CoachProfile) ?? null }
+}
+
+/** Clone a public exercise into the current user's library */
+export async function clonePublicExercise(exerciseId: string): Promise<string> {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+
+  const { data: source, error: fetchErr } = await supabase
+    .from('training_exercises')
+    .select('*')
+    .eq('id', exerciseId)
+    .eq('is_public', true)
+    .single()
+
+  if (fetchErr || !source) throw new Error('Exercise not found or not public')
+
+  const { data: cloned, error } = await supabase
+    .from('training_exercises')
+    .insert({
+      user_id: user.id,
+      name: source.name,
+      category: source.category,
+      description: source.description,
+      duration_min: source.duration_min,
+      intensity: source.intensity,
+      min_players: source.min_players,
+      equipment: source.equipment,
+      tactical_objective: source.tactical_objective,
+      diagram_data: source.diagram_data,
+      tags: source.tags,
+      is_public: false,
+    })
+    .select('id')
+    .single()
+
+  if (error || !cloned) throw error ?? new Error('Clone failed')
+
+  // Fire-and-forget: increment clone counter on the original
+  supabase.rpc('increment_exercise_clone_count', { exercise_id: exerciseId }).then(() => {})
+
+  return cloned.id
+}
+
+/** Upsert the authenticated user's coach profile */
+export async function upsertCoachProfile(profile: Partial<CoachProfile>): Promise<void> {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+  const { error } = await supabase
+    .from('coach_profiles')
+    .upsert({ ...profile, user_id: user.id, updated_at: new Date().toISOString() })
+  if (error) throw error
+}
+
+/** Fetch the coach profile for the current user (returns null if not set up yet) */
+export async function fetchMyCoachProfile(): Promise<CoachProfile | null> {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return null
+  const { data } = await supabase
+    .from('coach_profiles')
+    .select('*')
+    .eq('user_id', user.id)
+    .single()
+  return (data as CoachProfile) ?? null
 }
 
 // ─── FULL SESSION SAVE ──────────────────────────────────

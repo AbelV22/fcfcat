@@ -9,6 +9,7 @@ import { upsertExercise, fetchUserExercises } from '@/lib/training-data'
 import type { TrainingExercise, ExerciseCategory, Intensity, DiagramData } from '@/lib/training-types'
 import { CATEGORY_LABELS, INTENSITY_LABELS, EQUIPMENT_OPTIONS } from '@/lib/training-types'
 import ExerciseDiagramEditor from '@/components/entrenaments/ExerciseDiagramEditor'
+import ExerciseShareButton from '@/components/entrenaments/ExerciseShareButton'
 import { SEED_EXERCISES } from '@/lib/training-seed-exercises'
 
 export default function NouExerciciPage() {
@@ -30,6 +31,7 @@ export default function NouExerciciPage() {
   const [loading, setLoading] = useState(!!editId)
   const [showSeed, setShowSeed] = useState(false)
   const [hasExercises, setHasExercises] = useState(true)
+  const [exerciseShare, setExerciseShare] = useState<Pick<TrainingExercise, 'id' | 'is_public' | 'share_slug' | 'share_count' | 'clone_count' | 'shared_at'> | null>(null)
 
   // Load exercise for editing
   useEffect(() => {
@@ -49,6 +51,14 @@ export default function NouExerciciPage() {
             setTacticalObjective(ex.tactical_objective || '')
             setDiagramData(ex.diagram_data || { elements: [] })
             setTags(ex.tags.join(', '))
+            setExerciseShare({
+              id: ex.id,
+              is_public: ex.is_public ?? false,
+              share_slug: ex.share_slug ?? null,
+              share_count: ex.share_count ?? 0,
+              clone_count: ex.clone_count ?? 0,
+              shared_at: ex.shared_at ?? null,
+            })
           }
           setHasExercises(exercises.length > 0)
         } catch (err) {
@@ -130,10 +140,16 @@ export default function NouExerciciPage() {
         </Link>
         <h1 style={{
           fontFamily: 'var(--font-headline)', fontSize: 20, fontWeight: 800,
-          color: '#f7f8f8', letterSpacing: '-0.5px',
+          color: '#f7f8f8', letterSpacing: '-0.5px', flex: 1,
         }}>
           {editId ? 'Editar exercici' : 'Nou exercici'}
         </h1>
+        {editId && exerciseShare && (
+          <ExerciseShareButton
+            exercise={exerciseShare as TrainingExercise}
+            onUpdate={updated => setExerciseShare(prev => prev ? { ...prev, ...updated } : prev)}
+          />
+        )}
       </div>
 
       {/* Seed import banner */}

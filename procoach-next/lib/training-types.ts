@@ -63,6 +63,8 @@ export interface DiagramElement {
   label?: string
   rotation?: number
   opacity?: number  // for zones
+  team?: 'a' | 'b'  // for player: distinguishes Team A vs Team B
+  size?: 'large' | 'small'  // for goal: large (football 11) or small (futsal/mini)
 }
 
 export interface DiagramData {
@@ -88,6 +90,25 @@ export interface TrainingExercise {
   tags: string[]
   created_at: string
   updated_at: string
+  // Sharing fields (added in migration 008)
+  is_public: boolean
+  share_slug: string | null
+  shared_at: string | null
+  share_count: number
+  clone_count: number
+}
+
+export interface CoachProfile {
+  user_id: string
+  display_name: string
+  club_name: string
+  avatar_url: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface PublicExercise extends TrainingExercise {
+  coach: CoachProfile | null
 }
 
 export interface TrainingSession {

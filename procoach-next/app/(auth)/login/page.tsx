@@ -97,6 +97,7 @@ function LoginForm() {
   const confirmed = searchParams.get('confirmed') === '1'
   const passwordUpdated = searchParams.get('password_updated') === '1'
   const callbackError = searchParams.get('error')
+  const cloneId = searchParams.get('clone')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPass, setShowPass] = useState(false)
@@ -113,7 +114,16 @@ function LoginForm() {
       const { error: err } = await supabase.auth.signInWithPassword({ email, password })
       if (err) { setError(err.message); return }
       await fetch('/api/sync-team', { method: 'POST' }).catch(() => {})
-      router.push('/dashboard')
+      // If arriving from a shared exercise, clone it automatically after login
+      if (cloneId) {
+        try {
+          const { clonePublicExercise } = await import('@/lib/training-data')
+          await clonePublicExercise(cloneId)
+        } catch { /* non-critical */ }
+        router.push('/dashboard/entrenaments?tab=biblioteca')
+      } else {
+        router.push('/dashboard')
+      }
       router.refresh()
     } catch {
       setError('Error inesperat. Torna-ho a intentar.')
