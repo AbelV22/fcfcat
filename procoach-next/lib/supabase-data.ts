@@ -445,6 +445,30 @@ export async function getFieldsDB() {
   }[]
 }
 
+/** Every (competition, group, team) row from standings — non-deduplicated.
+ *  Used by the /competicions index to list each team in each group. */
+export async function getAllCompetitionGroupsDB() {
+  const supabase = getSupabase()
+  if (!supabase) return []
+
+  const data = await fetchAllRows((from, to) =>
+    supabase
+      .from('fcf_standings')
+      .select('team_name, team_slug, competition, group_name, season')
+      .range(from, to)
+  )
+
+  if (!data || data.length === 0) return []
+
+  return data.map(t => ({
+    slug: t.team_slug || slugify(t.team_name || ''),
+    name: t.team_name || '',
+    competition: t.competition || '',
+    group: t.group_name || '',
+    season: t.season || '2526',
+  }))
+}
+
 /** All unique teams from standings (for cerca page) */
 export async function getAllTeamsDB() {
   const supabase = getSupabase()

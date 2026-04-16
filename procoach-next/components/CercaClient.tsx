@@ -4,14 +4,24 @@ import { useState, useMemo, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Search, Shield, Users, Layers } from 'lucide-react'
+import { COMPETITION_CATEGORY, COMPETITION_NAMES } from '@/lib/competitions'
 
 type TabType = 'all' | 'arbitre' | 'jugador' | 'equip'
+type CatFilter = 'all' | 'adult' | 'juvenil' | 'cadet' | 'infantil'
 
 interface CercaClientProps {
   referees: any[]
   players: any[]
   teams: any[]
 }
+
+const CAT_OPTIONS: { key: CatFilter; label: string }[] = [
+  { key: 'all', label: 'Totes' },
+  { key: 'adult', label: 'Amateur' },
+  { key: 'juvenil', label: 'Juvenil' },
+  { key: 'cadet', label: 'Cadet' },
+  { key: 'infantil', label: 'Infantil' },
+]
 
 /** Strips accents and lowercases for accent-insensitive search. */
 function norm(text: string) {
@@ -38,8 +48,34 @@ function CercaInner({ referees, players, teams }: CercaClientProps) {
     return t === 'arbitre' || t === 'jugador' || t === 'equip' ? t : 'all'
   })
 
+  const [catFilter, setCatFilter] = useState<CatFilter>('all')
+  const [compFilter, setCompFilter] = useState<string>('all')
+
   const q = norm(query.trim())
   const browsing = !q
+  const showTeamFilters = type === 'all' || type === 'equip'
+
+  // Competitions available in the selected category, derived from actual team data
+  const competitionsInCategory = useMemo(() => {
+    const slugs = new Set<string>()
+    for (const t of teams) {
+      const cat = COMPETITION_CATEGORY[t.competition] || 'adult'
+      if (catFilter === 'all' || cat === catFilter) {
+        if (t.competition) slugs.add(t.competition)
+      }
+    }
+    return Array.from(slugs)
+      .map(s => ({ slug: s, name: COMPETITION_NAMES[s] || s }))
+      .sort((a, b) => a.name.localeCompare(b.name))
+  }, [teams, catFilter])
+
+  const matchesTeamFilters = (t: any) => {
+    if (!showTeamFilters) return true
+    const cat = COMPETITION_CATEGORY[t.competition] || 'adult'
+    if (catFilter !== 'all' && cat !== catFilter) return false
+    if (compFilter !== 'all' && t.competition !== compFilter) return false
+    return true
+  }
 
   const filteredRefs = useMemo(() => {
     if (type === 'jugador' || type === 'equip') return []
@@ -57,9 +93,14 @@ function CercaInner({ referees, players, teams }: CercaClientProps) {
 
   const filteredTeams = useMemo(() => {
     if (type === 'arbitre' || type === 'jugador') return []
-    if (!q) return teams.slice(0, type === 'all' ? 8 : 40)
-    return teams.filter(t => norm(t.name).includes(q)).slice(0, 20)
-  }, [q, type, teams])
+    const base = teams.filter(matchesTeamFilters)
+    if (!q) {
+      const cap = type === 'all' ? (catFilter === 'all' && compFilter === 'all' ? 8 : 40) : 80
+      return base.slice(0, cap)
+    }
+    return base.filter(t => norm(t.name).includes(q)).slice(0, 60)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [q, type, teams, catFilter, compFilter])
 
   const total = filteredRefs.length + filteredPlayers.length + filteredTeams.length
 
@@ -150,6 +191,55 @@ function CercaInner({ referees, players, teams }: CercaClientProps) {
             )
           })}
         </div>
+
+        {/* Team filters — shown when viewing Equips or Tot */}
+        {showTeamFilters && (
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 2, marginBottom: 8 }}>
+              {CAT_OPTIONS.map(opt => {
+                const active = catFilter === opt.key
+                return (
+                  <button
+                    key={opt.key}
+                    onClick={() => { setCatFilter(opt.key); setCompFilter('all') }}
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: 9999,
+                      border: active ? '1px solid rgba(34,197,94,0.2)' : '1px solid rgba(255,255,255,0.08)',
+                      background: active ? 'rgba(34,197,94,0.1)' : 'rgba(255,255,255,0.03)',
+                      color: active ? '#22c55e' : '#8a8f98',
+                      fontSize: 11, fontWeight: 510,
+                      cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+                      fontFamily: 'var(--font-inter)', transition: 'all 0.15s',
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                )
+              })}
+            </div>
+            {catFilter !== 'all' && competitionsInCategory.length > 1 && (
+              <select
+                value={compFilter}
+                onChange={e => setCompFilter(e.target.value)}
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  boxShadow: '0 0 0 1px rgba(255,255,255,0.06)',
+                  border: 'none', borderRadius: 6,
+                  color: '#f7f8f8', fontSize: 12,
+                  padding: '6px 10px', outline: 'none',
+                  fontFamily: 'var(--font-inter)',
+                  appearance: 'none', minWidth: 220,
+                }}
+              >
+                <option value="all">Totes les competicions</option>
+                {competitionsInCategory.map(c => (
+                  <option key={c.slug} value={c.slug}>{c.name}</option>
+                ))}
+              </select>
+            )}
+          </div>
+        )}
 
         {/* Browse label */}
         {browsing && (

@@ -71,7 +71,15 @@ export default function PublicHeader() {
                 <>
                   {/* Backdrop */}
                   <div className="fixed inset-0 z-40" onClick={() => setCompOpen(false)} />
-                  <div className="absolute top-full left-0 mt-1 w-52 bg-[#1a2744] border border-white/10 rounded-xl shadow-2xl py-1.5 z-50">
+                  <div className="absolute top-full left-0 mt-1 w-56 bg-[#1a2744] border border-white/10 rounded-xl shadow-2xl py-1.5 z-50">
+                    <Link
+                      href="/competicions"
+                      className="flex items-center justify-between px-4 py-2.5 text-sm font-semibold text-emerald-400 hover:text-white hover:bg-white/5 transition-colors border-b border-white/8 mb-1"
+                      onClick={() => setCompOpen(false)}
+                    >
+                      <span>Totes les competicions</span>
+                      <ChevronDown size={14} className="-rotate-90" />
+                    </Link>
                     {competitions.map(c => (
                       <Link
                         key={c.slug}
@@ -206,6 +214,13 @@ export default function PublicHeader() {
             {/* Competitions list — collapsible */}
             <div className={`overflow-hidden transition-all duration-300 ${mobileCompOpen ? 'max-h-96' : 'max-h-0'}`}>
               <div className="ml-4 pl-3 border-l border-white/8 space-y-0.5 pb-1">
+                <Link
+                  href="/competicions"
+                  className="block px-3 py-2.5 text-sm font-semibold text-emerald-400 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+                  onClick={closeMenu}
+                >
+                  Totes les competicions →
+                </Link>
                 {competitions.map(c => (
                   <Link
                     key={c.slug}
