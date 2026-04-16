@@ -31,7 +31,7 @@ export default function NouExerciciPage() {
   const [loading, setLoading] = useState(!!editId)
   const [showSeed, setShowSeed] = useState(false)
   const [hasExercises, setHasExercises] = useState(true)
-  const [exerciseShare, setExerciseShare] = useState<Pick<TrainingExercise, 'id' | 'is_public' | 'share_slug' | 'share_count' | 'clone_count' | 'shared_at'> | null>(null)
+  const [exerciseShare, setExerciseShare] = useState<Pick<TrainingExercise, 'id' | 'name' | 'is_public' | 'share_slug' | 'share_count' | 'clone_count' | 'shared_at'> | null>(null)
 
   // Load exercise for editing
   useEffect(() => {
@@ -53,6 +53,7 @@ export default function NouExerciciPage() {
             setTags(ex.tags.join(', '))
             setExerciseShare({
               id: ex.id,
+              name: ex.name,
               is_public: ex.is_public ?? false,
               share_slug: ex.share_slug ?? null,
               share_count: ex.share_count ?? 0,
