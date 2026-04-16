@@ -314,9 +314,11 @@ export function slugify(text: string): string {
     .replace(/-+/g, '-')
 }
 
-// Re-export constants from the client-safe competitions module
-// so existing imports `from '@/lib/data'` keep working.
-export { COMPETITION_NAMES, COMPETITION_CATEGORY } from './competitions'
+// Constants live in a client-safe module (no fs imports).
+// Import here for internal use AND re-export so existing
+// `import { COMPETITION_NAMES } from '@/lib/data'` keeps working.
+import { COMPETITION_NAMES, COMPETITION_CATEGORY } from './competitions'
+export { COMPETITION_NAMES, COMPETITION_CATEGORY }
 
 /** Get player discipline stats for a competition */
 export function getCompetitionDiscipline(slug: string) {
