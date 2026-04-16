@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og'
-import { fetchPublicExercise } from '@/lib/training-data'
+import { fetchPublicExercise } from '@/lib/training-data-server'
 import { CATEGORY_LABELS, INTENSITY_LABELS } from '@/lib/training-types'
 
 export const runtime = 'nodejs'

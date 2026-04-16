@@ -12,7 +12,6 @@ import type {
   SessionPhase,
   FocusArea,
   CoachProfile,
-  PublicExercise,
 } from './training-types'
 
 // ─── EXERCISES CRUD ─────────────────────────────────────
@@ -378,30 +377,6 @@ export async function unpublishExercise(id: string): Promise<void> {
     .update({ is_public: false })
     .eq('id', id)
   if (error) throw error
-}
-
-/** Fetch a public exercise by slug — works without authentication (anon RLS) */
-export async function fetchPublicExercise(slug: string): Promise<PublicExercise | null> {
-  // Lazy import server client to avoid bundling server-only code in client components
-  const { createClient: createServerClient } = await import('@/lib/supabase-server')
-  const supabase = await createServerClient()
-
-  const { data: exercise, error } = await supabase
-    .from('training_exercises')
-    .select('*')
-    .eq('share_slug', slug)
-    .eq('is_public', true)
-    .single()
-
-  if (error || !exercise) return null
-
-  const { data: coach } = await supabase
-    .from('coach_profiles')
-    .select('*')
-    .eq('user_id', exercise.user_id)
-    .single()
-
-  return { ...(exercise as TrainingExercise), coach: (coach as CoachProfile) ?? null }
 }
 
 /** Clone a public exercise into the current user's library */

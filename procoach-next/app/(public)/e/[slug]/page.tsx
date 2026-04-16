@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { fetchPublicExercise } from '@/lib/training-data'
+import { fetchPublicExercise } from '@/lib/training-data-server'
 import { createClient } from '@/lib/supabase-server'
 import { SITE_URL } from '@/lib/supabase-config'
 import { CATEGORY_LABELS, INTENSITY_LABELS } from '@/lib/training-types'
