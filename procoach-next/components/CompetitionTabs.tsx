@@ -14,14 +14,14 @@ type StandingsFilter = 'total' | 'local' | 'visitant'
 
 /** Compute standings from match results, filtered by home/away */
 function computeStandings(matches: any[], filter: StandingsFilter) {
-  const stats: Record<string, { name: string; played: number; won: number; drawn: number; lost: number; goals_for: number; goals_against: number; points: number }> = {}
+  const stats: Record<string, { name: string; slug: string; played: number; won: number; drawn: number; lost: number; goals_for: number; goals_against: number; points: number }> = {}
 
   for (const m of matches) {
     if (m.home_score === null || m.home_score === undefined) continue
 
     if (filter === 'total' || filter === 'local') {
       const k = m.home_team
-      if (!stats[k]) stats[k] = { name: k, played: 0, won: 0, drawn: 0, lost: 0, goals_for: 0, goals_against: 0, points: 0 }
+      if (!stats[k]) stats[k] = { name: k, slug: m.home_slug || slugify(k), played: 0, won: 0, drawn: 0, lost: 0, goals_for: 0, goals_against: 0, points: 0 }
       stats[k].played++
       stats[k].goals_for += m.home_score
       stats[k].goals_against += m.away_score
@@ -32,7 +32,7 @@ function computeStandings(matches: any[], filter: StandingsFilter) {
 
     if (filter === 'total' || filter === 'visitant') {
       const k = m.away_team
-      if (!stats[k]) stats[k] = { name: k, played: 0, won: 0, drawn: 0, lost: 0, goals_for: 0, goals_against: 0, points: 0 }
+      if (!stats[k]) stats[k] = { name: k, slug: m.away_slug || slugify(k), played: 0, won: 0, drawn: 0, lost: 0, goals_for: 0, goals_against: 0, points: 0 }
       stats[k].played++
       stats[k].goals_for += m.away_score
       stats[k].goals_against += m.home_score
@@ -44,7 +44,7 @@ function computeStandings(matches: any[], filter: StandingsFilter) {
 
   return Object.values(stats)
     .sort((a, b) => b.points - a.points || (b.goals_for - b.goals_against) - (a.goals_for - a.goals_against) || b.goals_for - a.goals_for)
-    .map((t, i) => ({ ...t, slug: slugify(t.name), position: i + 1 }))
+    .map((t, i) => ({ ...t, position: i + 1 }))
 }
 
 function formatDate(d: string) {
@@ -282,11 +282,11 @@ export default function CompetitionTabs({
               <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 {nextJornadaFixtures.map((m: any, i: number) => (
                   <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: 8, padding: '6px 0', borderTop: i > 0 ? '1px solid rgba(34,197,94,0.06)' : undefined }}>
-                    <TeamLink teamSlug={slugify(m.home_team)} teamName={m.home_team} style={{ fontSize: 12, textAlign: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} />
+                    <TeamLink teamSlug={m.home_slug || slugify(m.home_team)} teamName={m.home_team} style={{ fontSize: 12, textAlign: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} />
                     <span style={{ fontSize: 11, fontWeight: 510, color: '#22c55e', background: 'rgba(34,197,94,0.08)', padding: '2px 8px', borderRadius: 9999, whiteSpace: 'nowrap' }}>
                       {m.date ? formatDate(m.date) : `J${m.jornada}`}{m.time ? ` ${m.time}` : ''}
                     </span>
-                    <TeamLink teamSlug={slugify(m.away_team)} teamName={m.away_team} style={{ fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} />
+                    <TeamLink teamSlug={m.away_slug || slugify(m.away_team)} teamName={m.away_team} style={{ fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} />
                   </div>
                 ))}
               </div>
@@ -345,9 +345,9 @@ export default function CompetitionTabs({
                         }}
                       >
                         <div style={{ flex: 1, minWidth: 0, display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: 8 }}>
-                          <TeamLink teamSlug={slugify(m.home_team)} teamName={m.home_team} style={{ fontSize: 13, fontWeight: 510, textAlign: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} />
+                          <TeamLink teamSlug={m.home_slug || slugify(m.home_team)} teamName={m.home_team} style={{ fontSize: 13, fontWeight: 510, textAlign: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} />
                           <ScoreBadge home={m.home_score} away={m.away_score} />
-                          <TeamLink teamSlug={slugify(m.away_team)} teamName={m.away_team} style={{ fontSize: 13, fontWeight: 510, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} />
+                          <TeamLink teamSlug={m.away_slug || slugify(m.away_team)} teamName={m.away_team} style={{ fontSize: 13, fontWeight: 510, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} />
                         </div>
                         <div className="hidden sm:block" style={{ textAlign: 'right', flexShrink: 0 }}>
                           {m.main_referee && (
@@ -616,7 +616,7 @@ export default function CompetitionTabs({
                           )}
                         </td>
                         <td className="hidden sm:table-cell" style={{ padding: '10px 0', color: '#8a8f98' }}>
-                          <TeamLink teamSlug={slugify(s.team)} teamName={s.team} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block', maxWidth: 180 }} />
+                          <TeamLink teamSlug={s.teamSlug || slugify(s.team)} teamName={s.team} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block', maxWidth: 180 }} />
                         </td>
                         <td className="hidden md:table-cell" style={{ padding: '10px 0', textAlign: 'center', color: '#62666d' }}>{s.matches}</td>
                         <td style={{ padding: '10px 0', textAlign: 'center' }}>

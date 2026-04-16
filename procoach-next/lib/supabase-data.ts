@@ -13,7 +13,7 @@
 
 import { createClient } from '@supabase/supabase-js'
 import { slugify } from '@/lib/utils'
-import { parseTeamSlug } from '@/lib/team-slug'
+import { parseTeamSlug, composeTeamSlug } from '@/lib/team-slug'
 // getGoalData no longer needed — goal timing is computed live from Supabase
 
 // Competition display names — mirrors lib/data.ts COMPETITION_NAMES
@@ -85,7 +85,7 @@ export async function getCompetitionCalendarDB(slug: string) {
   const data = await fetchAllRows((from, to) =>
     supabase
       .from('fcf_matches')
-      .select('jornada, match_date, match_time, home_team, away_team, home_score, away_score, status, acta_url, group_name')
+      .select('jornada, match_date, match_time, home_team, away_team, home_slug, away_slug, home_score, away_score, status, acta_url, group_name, competition')
       .eq('competition', slug)
       .order('jornada', { ascending: true })
       .order('match_date', { ascending: true })
@@ -100,6 +100,8 @@ export async function getCompetitionCalendarDB(slug: string) {
     time: m.match_time || '',
     home_team: m.home_team || '',
     away_team: m.away_team || '',
+    home_slug: m.home_slug || composeTeamSlug(m.home_team || '', m.competition || '', m.group_name || ''),
+    away_slug: m.away_slug || composeTeamSlug(m.away_team || '', m.competition || '', m.group_name || ''),
     home_score: m.home_score ?? null,
     away_score: m.away_score ?? null,
     status: m.status || '',
@@ -140,6 +142,8 @@ export async function getCompetitionMatchesDB(slug: string) {
     group: m.group_name || '',
     home_team: m.home_team || '',
     away_team: m.away_team || '',
+    home_slug: composeTeamSlug(m.home_team || '', slug, m.group_name || ''),
+    away_slug: composeTeamSlug(m.away_team || '', slug, m.group_name || ''),
     home_score: m.home_score,
     away_score: m.away_score,
     main_referee: m.main_referee || null,
@@ -214,7 +218,7 @@ export async function getCompetitionScorersDB(slug: string) {
   const data = await fetchAllRows((from, to) =>
     supabase
       .from('fcf_scorers')
-      .select('player_name, team_name, goals, penalties, matches, goals_per_match, group_name')
+      .select('player_name, player_slug, team_name, team_slug, goals, penalties, matches, goals_per_match, group_name')
       .eq('competition', slug)
       .order('goals', { ascending: false })
       .range(from, to)
@@ -224,7 +228,9 @@ export async function getCompetitionScorersDB(slug: string) {
 
   return data.map(s => ({
     name: s.player_name || '',
+    slug: s.player_slug || slugify(s.player_name || ''),
     team: s.team_name || '',
+    teamSlug: s.team_slug || composeTeamSlug(s.team_name || '', slug, s.group_name || ''),
     goals: s.goals || 0,
     matches: s.matches || 0,
     goals_per_match: s.goals_per_match || 0,
@@ -243,7 +249,7 @@ export async function getCompetitionDisciplineDB(slug: string) {
   const data = await fetchAllRows((from, to) =>
     supabase
       .from('fcf_referee_matches')
-      .select('home_team, away_team, home_score, away_score, yellow_cards, red_cards')
+      .select('home_team, away_team, home_score, away_score, yellow_cards, red_cards, group_name')
       .eq('competition', slug)
       .range(from, to)
   )
@@ -254,8 +260,8 @@ export async function getCompetitionDisciplineDB(slug: string) {
   const teamStats: Record<string, { name: string; slug: string; yellows: number; reds: number; matches: number }> = {}
 
   for (const m of data) {
-    const homeSlug = slugify(m.home_team || '')
-    const awaySlug = slugify(m.away_team || '')
+    const homeSlug = composeTeamSlug(m.home_team || '', slug, m.group_name || '')
+    const awaySlug = composeTeamSlug(m.away_team || '', slug, m.group_name || '')
 
     if (m.home_team && !teamStats[homeSlug])
       teamStats[homeSlug] = { name: m.home_team, slug: homeSlug, yellows: 0, reds: 0, matches: 0 }
@@ -312,7 +318,7 @@ export async function getCompetitionPenaltyRankingDB(slug: string) {
   const data = await fetchAllRows((from, to) =>
     supabase
       .from('fcf_referee_matches')
-      .select('home_team, away_team, goals')
+      .select('home_team, away_team, goals, group_name')
       .eq('competition', slug)
       .range(from, to)
   )
@@ -325,8 +331,8 @@ export async function getCompetitionPenaltyRankingDB(slug: string) {
     const goals = Array.isArray(m.goals) ? m.goals : []
     const homeName = m.home_team || ''
     const awayName = m.away_team || ''
-    const homeSlug = slugify(homeName)
-    const awaySlug = slugify(awayName)
+    const homeSlug = composeTeamSlug(homeName, slug, m.group_name || '')
+    const awaySlug = composeTeamSlug(awayName, slug, m.group_name || '')
 
     if (homeName && !teamPens[homeSlug])
       teamPens[homeSlug] = { name: homeName, slug: homeSlug, pens_for: 0, pens_against: 0 }
