@@ -15,6 +15,7 @@ import {
   ATTENDANCE_LABELS, ATTENDANCE_COLORS, FOCUS_AREA_LABELS,
 } from '@/lib/training-types'
 import DrillPitchSVG from '@/components/entrenaments/DrillPitchSVG'
+import DiagramElementView from '@/components/entrenaments/DiagramElementView'
 
 export default function SessionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -222,39 +223,7 @@ export default function SessionDetailPage({ params }: { params: Promise<{ id: st
                             {exercise.diagram_data?.elements?.length > 0 && (
                               <div style={{ marginTop: 10, marginBottom: 10 }}>
                                 <DrillPitchSVG mode="full" style={{ borderRadius: 6, maxWidth: 340 }}>
-                                  {exercise.diagram_data.elements.map((el, i) => {
-                                    switch (el.type) {
-                                      case 'player':
-                                        return (
-                                          <g key={i}>
-                                            <circle cx={el.x} cy={el.y} r={14} fill="url(#playerGrad)" stroke={el.color || '#22c55e'} strokeWidth={1.5} />
-                                            <text x={el.x} y={el.y + 4} textAnchor="middle" fill="#fff" fontSize={8} fontWeight={600}>{el.label || ''}</text>
-                                          </g>
-                                        )
-                                      case 'opponent':
-                                        return (
-                                          <g key={i}>
-                                            <circle cx={el.x} cy={el.y} r={14} fill="url(#opponentGrad)" stroke={el.color || '#ef4444'} strokeWidth={1.5} />
-                                            <text x={el.x} y={el.y + 4} textAnchor="middle" fill="#fff" fontSize={8} fontWeight={600}>{el.label || ''}</text>
-                                          </g>
-                                        )
-                                      case 'ball':
-                                        return <circle key={i} cx={el.x} cy={el.y} r={7} fill="#f59e0b" stroke="#fbbf24" strokeWidth={1} />
-                                      case 'arrow':
-                                        return <line key={i} x1={el.x} y1={el.y} x2={el.x2 || el.x} y2={el.y2 || el.y} stroke={el.color || '#fff'} strokeWidth={2} />
-                                      case 'curved_arrow':
-                                        return <path key={i} d={`M ${el.x} ${el.y} Q ${el.cx ?? el.x} ${el.cy ?? el.y} ${el.x2 ?? el.x} ${el.y2 ?? el.y}`} fill="none" stroke={el.color || '#fff'} strokeWidth={2} />
-                                      case 'cone':
-                                        return <polygon key={i} points={`${el.x},${el.y - 8} ${el.x - 6},${el.y + 5} ${el.x + 6},${el.y + 5}`} fill={el.color || '#f97316'} opacity={0.9} />
-                                      case 'zone':
-                                        return <rect key={i} x={el.x} y={el.y} width={el.width || 60} height={el.height || 40} fill={el.color || '#3b82f6'} opacity={el.opacity || 0.1} rx={3} />
-                                      case 'text':
-                                        return <text key={i} x={el.x} y={el.y} fill={el.color || '#fff'} fontSize={12} fontWeight={600} textAnchor="middle">{el.label || ''}</text>
-                                      case 'goal':
-                                        return <rect key={i} x={el.x - 22} y={el.y - 7} width={44} height={14} fill="none" stroke={el.color || '#fff'} strokeWidth={2} rx={2} />
-                                      default: return null
-                                    }
-                                  })}
+                                  <DiagramElementView elements={exercise.diagram_data.elements} />
                                 </DrillPitchSVG>
                               </div>
                             )}
