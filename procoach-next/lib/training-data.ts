@@ -16,7 +16,11 @@ import type {
 
 // ─── EXERCISES CRUD ─────────────────────────────────────
 
-/** Fetch all exercises for the current user */
+/**
+ * Fetch all exercises visible to the current user: their own + the global
+ * NeoScout template library (user_id = NULL, is_template = TRUE).
+ * The RLS policies already scope this server-side.
+ */
 export async function fetchUserExercises(): Promise<TrainingExercise[]> {
   const supabase = createClient()
   const { data, error } = await supabase
@@ -26,6 +30,62 @@ export async function fetchUserExercises(): Promise<TrainingExercise[]> {
 
   if (error) throw error
   return data ?? []
+}
+
+/** Fetch only the global template library (user_id IS NULL, is_template = TRUE) */
+export async function fetchGlobalTemplates(): Promise<TrainingExercise[]> {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('training_exercises')
+    .select('*')
+    .is('user_id', null)
+    .eq('is_template', true)
+    .order('name')
+
+  if (error) throw error
+  return data ?? []
+}
+
+/**
+ * Clone a global template (or any readable exercise) into the current
+ * user's library. Does NOT increment counters since templates are not
+ * user-shared content.
+ */
+export async function cloneTemplate(templateId: string): Promise<string> {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+
+  const { data: source, error: fetchErr } = await supabase
+    .from('training_exercises')
+    .select('*')
+    .eq('id', templateId)
+    .single()
+
+  if (fetchErr || !source) throw new Error('Template not found')
+
+  const { data: cloned, error } = await supabase
+    .from('training_exercises')
+    .insert({
+      user_id: user.id,
+      name: source.name,
+      category: source.category,
+      description: source.description,
+      duration_min: source.duration_min,
+      intensity: source.intensity,
+      min_players: source.min_players,
+      equipment: source.equipment,
+      tactical_objective: source.tactical_objective,
+      diagram_data: source.diagram_data,
+      tags: source.tags,
+      is_template: false,
+      is_public: false,
+    })
+    .select('id')
+    .single()
+
+  if (error || !cloned) throw error ?? new Error('Clone failed')
+  return cloned.id
 }
 
 /** Fetch exercises filtered by category */

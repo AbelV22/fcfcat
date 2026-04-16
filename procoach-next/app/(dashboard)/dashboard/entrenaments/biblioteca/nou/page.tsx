@@ -5,12 +5,11 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, Save } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase-client'
-import { upsertExercise, fetchUserExercises, bulkInsertExercises } from '@/lib/training-data'
+import { upsertExercise, fetchUserExercises } from '@/lib/training-data'
 import type { TrainingExercise, ExerciseCategory, Intensity, DiagramData } from '@/lib/training-types'
 import { CATEGORY_LABELS, INTENSITY_LABELS, EQUIPMENT_OPTIONS } from '@/lib/training-types'
 import ExerciseDiagramEditor from '@/components/entrenaments/ExerciseDiagramEditor'
 import ExerciseShareButton from '@/components/entrenaments/ExerciseShareButton'
-import { SEED_EXERCISES } from '@/lib/training-seed-exercises'
 
 export default function NouExerciciPage() {
   const router = useRouter()
@@ -29,8 +28,6 @@ export default function NouExerciciPage() {
   const [tags, setTags] = useState('')
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(!!editId)
-  const [showSeed, setShowSeed] = useState(false)
-  const [hasExercises, setHasExercises] = useState(true)
   const [exerciseShare, setExerciseShare] = useState<Pick<TrainingExercise, 'id' | 'name' | 'is_public' | 'share_slug' | 'share_count' | 'clone_count' | 'shared_at'> | null>(null)
   const [isAdminSession, setIsAdminSession] = useState(false)
 
@@ -72,19 +69,11 @@ export default function NouExerciciPage() {
               shared_at: ex.shared_at ?? null,
             })
           }
-          setHasExercises(exercises.length > 0)
         } catch (err) {
           console.error(err)
         } finally {
           setLoading(false)
         }
-      } else {
-        // Check if user has exercises (for seed prompt)
-        try {
-          const exercises = await fetchUserExercises()
-          setHasExercises(exercises.length > 0)
-          if (exercises.length === 0) setShowSeed(true)
-        } catch { /* ignore */ }
       }
     }
     load()
@@ -111,21 +100,6 @@ export default function NouExerciciPage() {
     } catch (err) {
       console.error('Error saving exercise:', err)
       alert('Error al guardar')
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  const handleSeedImport = async () => {
-    try {
-      setSaving(true)
-      const seedsWithTemplate = SEED_EXERCISES.map(seed => ({ ...seed, is_template: true }))
-      await bulkInsertExercises(seedsWithTemplate)
-      router.push('/dashboard/entrenaments?tab=biblioteca')
-    } catch (err) {
-      console.error('Error seeding:', err)
-      const msg = err instanceof Error ? err.message : String(err)
-      alert(`Error al importar: ${msg}`)
     } finally {
       setSaving(false)
     }
@@ -174,44 +148,6 @@ export default function NouExerciciPage() {
             Els ejercicis es guarden a la biblioteca d&apos;un entrenador.
             Tanca la sessió d&apos;admin i entra amb el teu compte d&apos;entrenador per crear o importar exercicis.
           </p>
-        </div>
-      )}
-
-      {/* Seed import banner */}
-      {showSeed && !hasExercises && !isAdminSession && (
-        <div style={{
-          padding: 16, borderRadius: 8, marginBottom: 20,
-          background: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.15)',
-        }}>
-          <div style={{ fontSize: 14, fontWeight: 510, color: '#22c55e', marginBottom: 6 }}>
-            Importar exercicis predefinits?
-          </div>
-          <p style={{ fontSize: 13, color: '#d0d6e0', marginBottom: 12 }}>
-            Tenim {SEED_EXERCISES.length} exercicis amb diagrames llestos per usar. Els pots modificar o eliminar.
-          </p>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button
-              onClick={handleSeedImport}
-              disabled={saving}
-              style={{
-                padding: '8px 16px', background: '#22c55e', color: '#08090a',
-                borderRadius: 6, fontWeight: 510, fontSize: 13, border: 'none',
-                cursor: 'pointer', fontFamily: 'var(--font-inter)',
-              }}
-            >
-              {saving ? 'Important...' : 'Importar'}
-            </button>
-            <button
-              onClick={() => setShowSeed(false)}
-              style={{
-                padding: '8px 16px', background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.06)',
-                borderRadius: 6, color: '#8a8f98', fontSize: 13, cursor: 'pointer',
-              }}
-            >
-              No, crear el meu
-            </button>
-          </div>
         </div>
       )}
 

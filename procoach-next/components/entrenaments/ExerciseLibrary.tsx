@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import Link from 'next/link'
-import { Plus, Search, Star, X, Download } from 'lucide-react'
+import { Plus, Search, X, Sparkles, Copy, Check } from 'lucide-react'
 import type { TrainingExercise, ExerciseCategory } from '@/lib/training-types'
 import { CATEGORY_LABELS } from '@/lib/training-types'
-import { toggleExerciseFavorite, deleteExercise, bulkInsertExercises, fetchUserExercises } from '@/lib/training-data'
-import { SEED_EXERCISES } from '@/lib/training-seed-exercises'
+import { toggleExerciseFavorite, deleteExercise, cloneTemplate, fetchUserExercises } from '@/lib/training-data'
+import { createClient } from '@/lib/supabase-client'
 import ExerciseCard from './ExerciseCard'
 import ExerciseDetailModal from './ExerciseDetailModal'
 
@@ -15,6 +15,8 @@ const CATEGORIES: (ExerciseCategory | 'all' | 'favorites')[] = [
   'defensive_shape', 'ssg', 'set_pieces', 'conditioning', 'cooldown',
   'tactical', 'technical', 'mixed',
 ]
+
+type Source = 'mine' | 'templates'
 
 interface Props {
   exercises: TrainingExercise[]
@@ -27,27 +29,37 @@ export default function ExerciseLibrary({ exercises, onExercisesChange, onSelect
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState<ExerciseCategory | 'all' | 'favorites'>('all')
   const [selectedExercise, setSelectedExercise] = useState<TrainingExercise | null>(null)
-  const [importing, setImporting] = useState(false)
+  const [source, setSource] = useState<Source>('mine')
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  const [cloningId, setCloningId] = useState<string | null>(null)
+  const [justCloned, setJustCloned] = useState<string | null>(null)
 
-  const handleImportSeed = useCallback(async () => {
-    try {
-      setImporting(true)
-      const seedsWithTemplate = SEED_EXERCISES.map(seed => ({ ...seed, is_template: true }))
-      await bulkInsertExercises(seedsWithTemplate)
-      // Reload from DB to get the generated ids + server-side timestamps
-      const fresh = await fetchUserExercises()
-      onExercisesChange(fresh)
-    } catch (err) {
-      console.error('Error importing seed exercises:', err)
-      const msg = err instanceof Error ? err.message : String(err)
-      alert(`Error al importar exercicis: ${msg}`)
-    } finally {
-      setImporting(false)
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setCurrentUserId(user?.id ?? null)
+    })
+  }, [])
+
+  // Split into own vs templates
+  const { own, templates } = useMemo(() => {
+    const own: TrainingExercise[] = []
+    const templates: TrainingExercise[] = []
+    for (const ex of exercises) {
+      // Templates live server-side with user_id = NULL and is_template = true
+      if (ex.user_id === null || (ex.is_template && ex.user_id !== currentUserId)) {
+        templates.push(ex)
+      } else {
+        own.push(ex)
+      }
     }
-  }, [onExercisesChange])
+    return { own, templates }
+  }, [exercises, currentUserId])
+
+  const visible = source === 'mine' ? own : templates
 
   const filtered = useMemo(() => {
-    let result = exercises
+    let result = visible
     if (activeCategory === 'favorites') {
       result = result.filter(e => e.is_favorite)
     } else if (activeCategory !== 'all') {
@@ -62,7 +74,7 @@ export default function ExerciseLibrary({ exercises, onExercisesChange, onSelect
       )
     }
     return result
-  }, [exercises, activeCategory, search])
+  }, [visible, activeCategory, search])
 
   const handleToggleFavorite = useCallback(async (id: string, fav: boolean) => {
     try {
@@ -91,8 +103,76 @@ export default function ExerciseLibrary({ exercises, onExercisesChange, onSelect
     }
   }, [selectionMode, onSelectExercise])
 
+  const handleCloneTemplate = useCallback(async (templateId: string) => {
+    try {
+      setCloningId(templateId)
+      await cloneTemplate(templateId)
+      setJustCloned(templateId)
+      setTimeout(() => setJustCloned(null), 2000)
+      // Reload the list so the new own copy appears in "Els meus"
+      const fresh = await fetchUserExercises()
+      onExercisesChange(fresh)
+    } catch (err) {
+      console.error('Error cloning template:', err)
+      const msg = err instanceof Error ? err.message : String(err)
+      alert(`Error: ${msg}`)
+    } finally {
+      setCloningId(null)
+    }
+  }, [onExercisesChange])
+
+  const counts = { mine: own.length, templates: templates.length }
+
   return (
     <div>
+      {/* Source tabs — Els meus | Plantilles NeoScout */}
+      <div style={{
+        display: 'flex', gap: 4, marginBottom: 12,
+        padding: 4,
+        background: 'rgba(255,255,255,0.03)',
+        borderRadius: 8,
+        border: '1px solid rgba(255,255,255,0.05)',
+      }}>
+        {([
+          { key: 'mine' as const, label: 'Els meus', count: counts.mine, icon: null },
+          { key: 'templates' as const, label: 'Plantilles NeoScout', count: counts.templates, icon: Sparkles },
+        ]).map(tab => {
+          const active = source === tab.key
+          const Icon = tab.icon
+          return (
+            <button
+              key={tab.key}
+              onClick={() => { setSource(tab.key); setActiveCategory('all') }}
+              style={{
+                flex: 1,
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                padding: '7px 12px',
+                borderRadius: 6,
+                background: active ? 'rgba(34,197,94,0.12)' : 'transparent',
+                border: 'none',
+                color: active ? '#22c55e' : '#8a8f98',
+                fontSize: 13, fontWeight: 600,
+                cursor: 'pointer',
+                fontFamily: 'var(--font-inter)',
+                transition: 'all 0.15s',
+              }}
+            >
+              {Icon && <Icon size={14} />}
+              {tab.label}
+              <span style={{
+                fontSize: 11,
+                padding: '1px 6px',
+                borderRadius: 8,
+                background: active ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.05)',
+                color: active ? '#22c55e' : '#62666d',
+              }}>
+                {tab.count}
+              </span>
+            </button>
+          )
+        })}
+      </div>
+
       {/* Header with search and add button */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <div style={{
@@ -103,7 +183,7 @@ export default function ExerciseLibrary({ exercises, onExercisesChange, onSelect
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Cercar exercicis..."
+            placeholder={source === 'mine' ? 'Cercar els meus exercicis...' : 'Cercar plantilles NeoScout...'}
             style={{
               width: '100%', padding: '8px 10px 8px 32px',
               background: 'rgba(255,255,255,0.04)',
@@ -122,7 +202,7 @@ export default function ExerciseLibrary({ exercises, onExercisesChange, onSelect
             </button>
           )}
         </div>
-        {!selectionMode && (
+        {!selectionMode && source === 'mine' && (
           <Link
             href="/dashboard/entrenaments/biblioteca/nou"
             style={{
@@ -144,6 +224,8 @@ export default function ExerciseLibrary({ exercises, onExercisesChange, onSelect
         {CATEGORIES.map(cat => {
           const isActive = activeCategory === cat
           const label = cat === 'all' ? 'Tots' : cat === 'favorites' ? '★ Preferits' : CATEGORY_LABELS[cat]
+          // Hide "Preferits" in templates tab (they're not favoritable)
+          if (cat === 'favorites' && source === 'templates') return null
           return (
             <button
               key={cat}
@@ -167,36 +249,34 @@ export default function ExerciseLibrary({ exercises, onExercisesChange, onSelect
       {/* Grid */}
       {filtered.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 40, color: '#62666d', fontSize: 13 }}>
-          {exercises.length === 0 ? (
+          {source === 'mine' && own.length === 0 ? (
             <div>
               <div style={{
                 padding: 24, borderRadius: 8, marginBottom: 16,
                 background: 'rgba(34,197,94,0.04)', border: '1px solid rgba(34,197,94,0.12)',
               }}>
-                <Download size={28} style={{ color: '#22c55e', margin: '0 auto 12px', display: 'block' }} />
+                <Sparkles size={28} style={{ color: '#22c55e', margin: '0 auto 12px', display: 'block' }} />
                 <p style={{ fontSize: 15, fontWeight: 510, color: '#f7f8f8', marginBottom: 6 }}>
-                  Biblioteca d&apos;exercicis
+                  Comença amb les plantilles NeoScout
                 </p>
                 <p style={{ color: '#8a8f98', marginBottom: 16, fontSize: 13, maxWidth: 360, margin: '0 auto 16px' }}>
-                  Importa {SEED_EXERCISES.length} exercicis predefinits amb diagrames: escalfaments, rondos, possessio, finalitzacio, defensa, jocs reduits i mes.
+                  Tenim {counts.templates} exercicis llestos per usar. Copia&apos;ls a la teva biblioteca o crea els teus propis.
                 </p>
                 <button
-                  onClick={handleImportSeed}
-                  disabled={importing}
+                  onClick={() => setSource('templates')}
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 6,
                     padding: '10px 20px', background: '#22c55e', color: '#08090a',
                     borderRadius: 6, fontWeight: 510, fontSize: 14, border: 'none',
-                    cursor: importing ? 'not-allowed' : 'pointer',
-                    opacity: importing ? 0.6 : 1,
+                    cursor: 'pointer',
                     fontFamily: 'var(--font-inter)',
                   }}
                 >
-                  <Download size={16} />
-                  {importing ? `Important... (${SEED_EXERCISES.length} exercicis)` : `Importar ${SEED_EXERCISES.length} exercicis`}
+                  <Sparkles size={16} />
+                  Veure plantilles
                 </button>
               </div>
-              <p style={{ color: '#62666d', fontSize: 12, marginBottom: 8 }}>O crea els teus propis:</p>
+              <p style={{ color: '#62666d', fontSize: 12, marginBottom: 8 }}>O crea el teu primer exercici:</p>
               <Link
                 href="/dashboard/entrenaments/biblioteca/nou"
                 style={{
@@ -221,15 +301,42 @@ export default function ExerciseLibrary({ exercises, onExercisesChange, onSelect
           gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
           gap: 12,
         }}>
-          {filtered.map(ex => (
-            <ExerciseCard
-              key={ex.id}
-              exercise={ex}
-              onToggleFavorite={handleToggleFavorite}
-              onDelete={handleDelete}
-              onClick={handleClick}
-            />
-          ))}
+          {filtered.map(ex => {
+            const isTemplate = source === 'templates'
+            return (
+              <div key={ex.id} style={{ position: 'relative' }}>
+                <ExerciseCard
+                  exercise={ex}
+                  onToggleFavorite={isTemplate ? undefined : handleToggleFavorite}
+                  onDelete={isTemplate ? undefined : handleDelete}
+                  onClick={handleClick}
+                />
+                {isTemplate && (
+                  <button
+                    onClick={e => { e.stopPropagation(); handleCloneTemplate(ex.id) }}
+                    disabled={cloningId === ex.id || justCloned === ex.id}
+                    title="Copiar a la meva biblioteca"
+                    style={{
+                      position: 'absolute', top: 6, right: 6,
+                      display: 'inline-flex', alignItems: 'center', gap: 4,
+                      padding: '5px 9px',
+                      background: justCloned === ex.id ? 'rgba(34,197,94,0.9)' : 'rgba(34,197,94,0.12)',
+                      border: '1px solid rgba(34,197,94,0.4)',
+                      color: justCloned === ex.id ? '#08090a' : '#22c55e',
+                      fontSize: 11, fontWeight: 600,
+                      borderRadius: 6,
+                      cursor: cloningId === ex.id ? 'wait' : 'pointer',
+                      backdropFilter: 'blur(4px)',
+                      fontFamily: 'var(--font-inter)',
+                    }}
+                  >
+                    {justCloned === ex.id ? <Check size={12} /> : <Copy size={12} />}
+                    {justCloned === ex.id ? 'Copiat' : cloningId === ex.id ? '...' : 'Copiar'}
+                  </button>
+                )}
+              </div>
+            )
+          })}
         </div>
       )}
 
@@ -239,7 +346,6 @@ export default function ExerciseLibrary({ exercises, onExercisesChange, onSelect
           exercise={selectedExercise}
           onClose={() => setSelectedExercise(null)}
           onUpdate={updated => {
-            // Propagate sharing state changes back to the list and the open modal
             setSelectedExercise(prev => prev ? { ...prev, ...updated } : prev)
             onExercisesChange(exercises.map(e => e.id === selectedExercise.id ? { ...e, ...updated } : e))
           }}
