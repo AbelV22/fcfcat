@@ -5,21 +5,26 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Search, Menu, X, ChevronDown, LogIn, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { COMPETITION_NAMES, COMPETITION_CATEGORY } from '@/lib/competitions'
 
-const competitions = [
-  { name: 'Lliga Elit', slug: 'lliga-elit' },
-  { name: 'Primera Catalana', slug: 'primera-catalana' },
-  { name: 'Segona Catalana', slug: 'segona-catalana' },
-  { name: 'Tercera Catalana', slug: 'tercera-catalana' },
-  { name: 'Quarta Catalana', slug: 'quarta-catalana' },
-  { name: 'Tercera Federació', slug: 'tercera-federacio' },
-  { name: 'Div. Honor Juvenil', slug: 'divisio-honor-juvenil' },
-  { name: 'Preferent Juvenil', slug: 'preferent-juvenils' },
-  { name: 'Div. Honor Cadet S16', slug: 'divisio-honor-cadet-s16' },
-  { name: 'Preferent Cadet S16', slug: 'preferent-cadet-s16' },
-  { name: 'Div. Honor Infantil S14', slug: 'divisio-honor-infantil-s14' },
-  { name: 'Preferent Infantil S14', slug: 'preferent-infantil-s14' },
-]
+// Pull every competition from the central table and group by category
+// so new ones (e.g. Preferent Cadet S15) show up without manual edits.
+const CATEGORY_ORDER = ['adult', 'juvenil', 'cadet', 'infantil'] as const
+const CATEGORY_HEADING: Record<string, string> = {
+  adult: 'Amateur', juvenil: 'Juvenil', cadet: 'Cadet', infantil: 'Infantil',
+}
+type CompetitionGroup = { key: string; heading: string; items: { slug: string; name: string }[] }
+const competitionGroups: CompetitionGroup[] = (() => {
+  const buckets: Record<string, { slug: string; name: string }[]> = {}
+  for (const [slug, name] of Object.entries(COMPETITION_NAMES)) {
+    const cat = COMPETITION_CATEGORY[slug] || 'adult'
+    ;(buckets[cat] ??= []).push({ slug, name })
+  }
+  for (const cat of Object.keys(buckets)) buckets[cat].sort((a, b) => a.name.localeCompare(b.name))
+  return CATEGORY_ORDER
+    .filter(cat => buckets[cat]?.length)
+    .map(cat => ({ key: cat, heading: CATEGORY_HEADING[cat] || cat, items: buckets[cat] }))
+})()
 
 export default function HeaderV2() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -111,7 +116,7 @@ export default function HeaderV2() {
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setCompOpen(false)} />
                   <div
-                    className="absolute top-full left-0 mt-1 w-52 py-1.5 z-50"
+                    className="absolute top-full left-0 mt-1 w-64 max-h-[70vh] overflow-y-auto py-1.5 z-50"
                     style={{
                       background: '#0f1011',
                       border: '1px solid rgba(255,255,255,0.06)',
@@ -119,29 +124,61 @@ export default function HeaderV2() {
                       boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
                     }}
                   >
-                    {competitions.map(c => (
-                      <Link
-                        key={c.slug}
-                        href={`/competicio/${c.slug}`}
-                        className="block px-4 py-2 transition-colors"
-                        style={{
-                          fontFamily: 'var(--font-inter)',
-                          fontSize: 13,
-                          fontWeight: 400,
-                          color: '#8a8f98',
-                        }}
-                        onMouseEnter={e => {
-                          e.currentTarget.style.color = '#f7f8f8'
-                          e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
-                        }}
-                        onMouseLeave={e => {
-                          e.currentTarget.style.color = '#8a8f98'
-                          e.currentTarget.style.background = 'transparent'
-                        }}
-                        onClick={() => setCompOpen(false)}
-                      >
-                        {c.name}
-                      </Link>
+                    <Link
+                      href="/competicions"
+                      className="block px-4 py-2.5 transition-colors"
+                      style={{
+                        fontFamily: 'var(--font-inter)',
+                        fontSize: 13,
+                        fontWeight: 600,
+                        color: '#22c55e',
+                        borderBottom: '1px solid rgba(255,255,255,0.06)',
+                        marginBottom: 4,
+                      }}
+                      onClick={() => setCompOpen(false)}
+                    >
+                      Busca el teu equip →
+                    </Link>
+                    {competitionGroups.map(group => (
+                      <div key={group.key} className="pt-1">
+                        <div
+                          className="px-4 pt-1 pb-1"
+                          style={{
+                            fontFamily: 'var(--font-inter)',
+                            fontSize: 10,
+                            fontWeight: 600,
+                            letterSpacing: '0.08em',
+                            textTransform: 'uppercase',
+                            color: '#62666d',
+                          }}
+                        >
+                          {group.heading}
+                        </div>
+                        {group.items.map(c => (
+                          <Link
+                            key={c.slug}
+                            href={`/competicio/${c.slug}`}
+                            className="block px-4 py-1.5 transition-colors"
+                            style={{
+                              fontFamily: 'var(--font-inter)',
+                              fontSize: 13,
+                              fontWeight: 400,
+                              color: '#8a8f98',
+                            }}
+                            onMouseEnter={e => {
+                              e.currentTarget.style.color = '#f7f8f8'
+                              e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
+                            }}
+                            onMouseLeave={e => {
+                              e.currentTarget.style.color = '#8a8f98'
+                              e.currentTarget.style.background = 'transparent'
+                            }}
+                            onClick={() => setCompOpen(false)}
+                          >
+                            {c.name}
+                          </Link>
+                        ))}
+                      </div>
                     ))}
                   </div>
                 </>
@@ -312,26 +349,56 @@ export default function HeaderV2() {
 
             <div
               className="overflow-hidden transition-all duration-300"
-              style={{ maxHeight: mobileCompOpen ? '400px' : 0 }}
+              style={{ maxHeight: mobileCompOpen ? '560px' : 0, overflowY: mobileCompOpen ? 'auto' : 'hidden' }}
             >
               <div
                 className="ml-4 pl-3 pb-1 space-y-0.5"
                 style={{ borderLeft: '1px solid rgba(255,255,255,0.05)' }}
               >
-                {competitions.map(c => (
-                  <Link
-                    key={c.slug}
-                    href={`/competicio/${c.slug}`}
-                    className="block px-2 py-2 rounded"
-                    style={{
-                      fontFamily: 'var(--font-inter)',
-                      fontSize: 13,
-                      color: '#8a8f98',
-                    }}
-                    onClick={close}
-                  >
-                    {c.name}
-                  </Link>
+                <Link
+                  href="/competicions"
+                  className="block px-2 py-2 rounded"
+                  style={{
+                    fontFamily: 'var(--font-inter)',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: '#22c55e',
+                  }}
+                  onClick={close}
+                >
+                  Busca el teu equip →
+                </Link>
+                {competitionGroups.map(group => (
+                  <div key={group.key}>
+                    <div
+                      className="px-2 pt-2 pb-0.5"
+                      style={{
+                        fontFamily: 'var(--font-inter)',
+                        fontSize: 10,
+                        fontWeight: 600,
+                        letterSpacing: '0.08em',
+                        textTransform: 'uppercase',
+                        color: '#62666d',
+                      }}
+                    >
+                      {group.heading}
+                    </div>
+                    {group.items.map(c => (
+                      <Link
+                        key={c.slug}
+                        href={`/competicio/${c.slug}`}
+                        className="block px-2 py-1.5 rounded"
+                        style={{
+                          fontFamily: 'var(--font-inter)',
+                          fontSize: 13,
+                          color: '#8a8f98',
+                        }}
+                        onClick={close}
+                      >
+                        {c.name}
+                      </Link>
+                    ))}
+                  </div>
                 ))}
               </div>
             </div>

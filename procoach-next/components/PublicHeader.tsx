@@ -5,21 +5,33 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Search, Menu, X, LogIn, ChevronDown, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { COMPETITION_NAMES, COMPETITION_CATEGORY } from '@/lib/competitions'
 
-const competitions = [
-  { name: 'Lliga Elit', slug: 'lliga-elit' },
-  { name: 'Primera Catalana', slug: 'primera-catalana' },
-  { name: 'Segona Catalana', slug: 'segona-catalana' },
-  { name: 'Tercera Catalana', slug: 'tercera-catalana' },
-  { name: 'Quarta Catalana', slug: 'quarta-catalana' },
-  { name: 'Tercera Federació', slug: 'tercera-federacio' },
-  { name: "Div. Honor Juvenil", slug: 'divisio-honor-juvenil' },
-  { name: 'Preferent Juvenil', slug: 'preferent-juvenils' },
-  { name: "Div. Honor Cadet S16", slug: 'divisio-honor-cadet-s16' },
-  { name: 'Preferent Cadet S16', slug: 'preferent-cadet-s16' },
-  { name: "Div. Honor Infantil S14", slug: 'divisio-honor-infantil-s14' },
-  { name: 'Preferent Infantil S14', slug: 'preferent-infantil-s14' },
-]
+// Build the nav dropdown straight from the central competitions table
+// so new categories (e.g. Preferent Cadet S15) appear without manual edits.
+const CATEGORY_ORDER = ['adult', 'juvenil', 'cadet', 'infantil'] as const
+const CATEGORY_HEADING: Record<string, string> = {
+  adult: 'Amateur',
+  juvenil: 'Juvenil',
+  cadet: 'Cadet',
+  infantil: 'Infantil',
+}
+
+type CompetitionGroup = { key: string; heading: string; items: { slug: string; name: string }[] }
+
+const competitionGroups: CompetitionGroup[] = (() => {
+  const buckets: Record<string, { slug: string; name: string }[]> = {}
+  for (const [slug, name] of Object.entries(COMPETITION_NAMES)) {
+    const cat = COMPETITION_CATEGORY[slug] || 'adult'
+    ;(buckets[cat] ??= []).push({ slug, name })
+  }
+  for (const cat of Object.keys(buckets)) {
+    buckets[cat].sort((a, b) => a.name.localeCompare(b.name))
+  }
+  return CATEGORY_ORDER
+    .filter(cat => buckets[cat]?.length)
+    .map(cat => ({ key: cat, heading: CATEGORY_HEADING[cat] || cat, items: buckets[cat] }))
+})()
 
 export default function PublicHeader() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -71,24 +83,30 @@ export default function PublicHeader() {
                 <>
                   {/* Backdrop */}
                   <div className="fixed inset-0 z-40" onClick={() => setCompOpen(false)} />
-                  <div className="absolute top-full left-0 mt-1 w-56 bg-[#1a2744] border border-white/10 rounded-xl shadow-2xl py-1.5 z-50">
+                  <div className="absolute top-full left-0 mt-1 w-64 max-h-[70vh] overflow-y-auto bg-[#1a2744] border border-white/10 rounded-xl shadow-2xl py-1.5 z-50">
                     <Link
                       href="/competicions"
                       className="flex items-center justify-between px-4 py-2.5 text-sm font-semibold text-emerald-400 hover:text-white hover:bg-white/5 transition-colors border-b border-white/8 mb-1"
                       onClick={() => setCompOpen(false)}
                     >
-                      <span>Totes les competicions</span>
-                      <ChevronDown size={14} className="-rotate-90" />
+                      <span>Busca el teu equip →</span>
                     </Link>
-                    {competitions.map(c => (
-                      <Link
-                        key={c.slug}
-                        href={`/competicio/${c.slug}`}
-                        className="block px-4 py-2.5 text-sm text-[#d0d6e0] hover:text-white hover:bg-white/5 transition-colors"
-                        onClick={() => setCompOpen(false)}
-                      >
-                        {c.name}
-                      </Link>
+                    {competitionGroups.map(group => (
+                      <div key={group.key} className="pt-1">
+                        <div className="px-4 pt-1 pb-1 text-[10px] font-semibold uppercase tracking-wider text-[#8a8f98]">
+                          {group.heading}
+                        </div>
+                        {group.items.map(c => (
+                          <Link
+                            key={c.slug}
+                            href={`/competicio/${c.slug}`}
+                            className="block px-4 py-2 text-sm text-[#d0d6e0] hover:text-white hover:bg-white/5 transition-colors"
+                            onClick={() => setCompOpen(false)}
+                          >
+                            {c.name}
+                          </Link>
+                        ))}
+                      </div>
                     ))}
                   </div>
                 </>
@@ -212,24 +230,31 @@ export default function PublicHeader() {
             </button>
 
             {/* Competitions list — collapsible */}
-            <div className={`overflow-hidden transition-all duration-300 ${mobileCompOpen ? 'max-h-96' : 'max-h-0'}`}>
+            <div className={`overflow-hidden transition-all duration-300 ${mobileCompOpen ? 'max-h-[560px] overflow-y-auto' : 'max-h-0'}`}>
               <div className="ml-4 pl-3 border-l border-white/8 space-y-0.5 pb-1">
                 <Link
                   href="/competicions"
                   className="block px-3 py-2.5 text-sm font-semibold text-emerald-400 hover:text-white transition-colors rounded-lg hover:bg-white/5"
                   onClick={closeMenu}
                 >
-                  Totes les competicions →
+                  Busca el teu equip →
                 </Link>
-                {competitions.map(c => (
-                  <Link
-                    key={c.slug}
-                    href={`/competicio/${c.slug}`}
-                    className="block px-3 py-2.5 text-sm text-[#8a8f98] hover:text-white transition-colors rounded-lg hover:bg-white/5"
-                    onClick={closeMenu}
-                  >
-                    {c.name}
-                  </Link>
+                {competitionGroups.map(group => (
+                  <div key={group.key} className="pt-1">
+                    <div className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-[#62666d]">
+                      {group.heading}
+                    </div>
+                    {group.items.map(c => (
+                      <Link
+                        key={c.slug}
+                        href={`/competicio/${c.slug}`}
+                        className="block px-3 py-2 text-sm text-[#8a8f98] hover:text-white transition-colors rounded-lg hover:bg-white/5"
+                        onClick={closeMenu}
+                      >
+                        {c.name}
+                      </Link>
+                    ))}
+                  </div>
                 ))}
               </div>
             </div>
