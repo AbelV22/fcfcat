@@ -83,6 +83,45 @@ export async function upsertExercise(
   return data.id
 }
 
+/** Bulk insert a list of exercises in a single request. Used for seed import. */
+export async function bulkInsertExercises(
+  exercises: Array<Partial<TrainingExercise> & { name: string; category: ExerciseCategory }>
+): Promise<number> {
+  if (exercises.length === 0) return 0
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+
+  const rows = exercises.map(exercise => ({
+    user_id: user.id,
+    name: exercise.name,
+    category: exercise.category,
+    description: exercise.description ?? null,
+    duration_min: exercise.duration_min ?? 15,
+    intensity: exercise.intensity ?? 'medium',
+    min_players: exercise.min_players ?? 2,
+    equipment: exercise.equipment ?? [],
+    tactical_objective: exercise.tactical_objective ?? null,
+    diagram_data: exercise.diagram_data ?? { elements: [] },
+    is_favorite: exercise.is_favorite ?? false,
+    is_template: exercise.is_template ?? false,
+    tags: exercise.tags ?? [],
+  }))
+
+  const { error, count } = await supabase
+    .from('training_exercises')
+    .insert(rows, { count: 'exact' })
+
+  if (error) {
+    // Re-throw with a richer message so callers can surface it
+    const msg = error.message || 'Unknown insert error'
+    const details = error.details ? ` (${error.details})` : ''
+    const hint = error.hint ? ` [hint: ${error.hint}]` : ''
+    throw new Error(`${msg}${details}${hint}`)
+  }
+  return count ?? rows.length
+}
+
 /** Toggle exercise favorite */
 export async function toggleExerciseFavorite(id: string, isFavorite: boolean): Promise<void> {
   const supabase = createClient()

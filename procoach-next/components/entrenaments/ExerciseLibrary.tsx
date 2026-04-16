@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Plus, Search, Star, X, Download } from 'lucide-react'
 import type { TrainingExercise, ExerciseCategory } from '@/lib/training-types'
 import { CATEGORY_LABELS } from '@/lib/training-types'
-import { toggleExerciseFavorite, deleteExercise, upsertExercise } from '@/lib/training-data'
+import { toggleExerciseFavorite, deleteExercise, bulkInsertExercises, fetchUserExercises } from '@/lib/training-data'
 import { SEED_EXERCISES } from '@/lib/training-seed-exercises'
 import ExerciseCard from './ExerciseCard'
 import ExerciseDetailModal from './ExerciseDetailModal'
@@ -32,19 +32,19 @@ export default function ExerciseLibrary({ exercises, onExercisesChange, onSelect
   const handleImportSeed = useCallback(async () => {
     try {
       setImporting(true)
-      const imported: TrainingExercise[] = []
-      for (const seed of SEED_EXERCISES) {
-        const id = await upsertExercise({ ...seed, is_template: true })
-        imported.push({ ...seed, id, user_id: '', is_favorite: false, is_template: true, created_at: '', updated_at: '' } as TrainingExercise)
-      }
-      onExercisesChange([...exercises, ...imported])
+      const seedsWithTemplate = SEED_EXERCISES.map(seed => ({ ...seed, is_template: true }))
+      await bulkInsertExercises(seedsWithTemplate)
+      // Reload from DB to get the generated ids + server-side timestamps
+      const fresh = await fetchUserExercises()
+      onExercisesChange(fresh)
     } catch (err) {
       console.error('Error importing seed exercises:', err)
-      alert('Error al importar exercicis')
+      const msg = err instanceof Error ? err.message : String(err)
+      alert(`Error al importar exercicis: ${msg}`)
     } finally {
       setImporting(false)
     }
-  }, [exercises, onExercisesChange])
+  }, [onExercisesChange])
 
   const filtered = useMemo(() => {
     let result = exercises

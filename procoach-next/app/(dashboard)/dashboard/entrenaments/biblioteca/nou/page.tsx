@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, Save } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase-client'
-import { upsertExercise, fetchUserExercises } from '@/lib/training-data'
+import { upsertExercise, fetchUserExercises, bulkInsertExercises } from '@/lib/training-data'
 import type { TrainingExercise, ExerciseCategory, Intensity, DiagramData } from '@/lib/training-types'
 import { CATEGORY_LABELS, INTENSITY_LABELS, EQUIPMENT_OPTIONS } from '@/lib/training-types'
 import ExerciseDiagramEditor from '@/components/entrenaments/ExerciseDiagramEditor'
@@ -108,16 +108,13 @@ export default function NouExerciciPage() {
   const handleSeedImport = async () => {
     try {
       setSaving(true)
-      for (const seed of SEED_EXERCISES) {
-        await upsertExercise({
-          ...seed,
-          is_template: true,
-        })
-      }
+      const seedsWithTemplate = SEED_EXERCISES.map(seed => ({ ...seed, is_template: true }))
+      await bulkInsertExercises(seedsWithTemplate)
       router.push('/dashboard/entrenaments?tab=biblioteca')
     } catch (err) {
       console.error('Error seeding:', err)
-      alert('Error al importar')
+      const msg = err instanceof Error ? err.message : String(err)
+      alert(`Error al importar: ${msg}`)
     } finally {
       setSaving(false)
     }
