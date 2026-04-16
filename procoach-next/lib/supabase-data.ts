@@ -13,6 +13,7 @@
 
 import { createClient } from '@supabase/supabase-js'
 import { slugify } from '@/lib/utils'
+import { parseTeamSlug } from '@/lib/team-slug'
 // getGoalData no longer needed — goal timing is computed live from Supabase
 
 // Competition display names — mirrors lib/data.ts COMPETITION_NAMES
@@ -469,6 +470,35 @@ export async function getAllCompetitionGroupsDB() {
   }))
 }
 
+/**
+ * Resolve a legacy (pre-disambiguation) team slug to its current canonical slug.
+ * Returns `null` when no matching team exists.
+ *
+ * The legacy slug has no `-{compCode}-g{n}` suffix, so we search for rows
+ * whose current `team_slug` starts with `${legacy}-` and pick the one with
+ * the highest competition priority (adult > juvenil > cadet > infantil).
+ */
+export async function resolveLegacyTeamSlug(legacySlug: string): Promise<string | null> {
+  const supabase = getSupabase()
+  if (!supabase) return null
+
+  const { data, error } = await supabase
+    .from('fcf_standings')
+    .select('team_slug, competition')
+    .like('team_slug', `${legacySlug}-%`)
+    .limit(50)
+
+  if (error || !data || data.length === 0) return null
+
+  const winner = data.slice().sort((a: any, b: any) => {
+    const ai = COMPETITION_PRIORITY.indexOf(a.competition ?? '')
+    const bi = COMPETITION_PRIORITY.indexOf(b.competition ?? '')
+    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi)
+  })[0]
+
+  return winner?.team_slug ?? null
+}
+
 /** All unique teams from standings (for cerca page) */
 export async function getAllTeamsDB() {
   const supabase = getSupabase()
@@ -487,19 +517,9 @@ export async function getAllTeamsDB() {
   }
   console.log(`[getAllTeamsDB] Fetched ${data.length} rows from fcf_standings`)
 
-  // Sort by competition priority so deduplication keeps the most relevant one.
-  // Same team_slug can appear in multiple competitions (different age groups or cups).
-  data.sort((a, b) => competitionRank(a.competition || '') - competitionRank(b.competition || ''))
-
-  // Deduplicate by slug — first occurrence wins (highest priority competition)
-  const seen = new Set<string>()
+  // Team slugs are disambiguated per (competition, group) by the scraper
+  // (see lib/team-slug.ts), so every row is a distinct team — no dedup needed.
   return data
-    .filter(t => {
-      const s = t.team_slug || slugify(t.team_name || '')
-      if (seen.has(s)) return false
-      seen.add(s)
-      return true
-    })
     .map(t => ({
       slug: t.team_slug || slugify(t.team_name || ''),
       name: t.team_name || '',
@@ -1566,18 +1586,19 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
   ]
 
   // ── Round 1: Find team standing ──────────────────────────────────────────
-  // IMPORTANT: filter to priority competitions only — many clubs share
-  // the same slug across youth categories (e.g. parets-cf-a in 6 competitions).
-  // Without this filter, LIMIT 1 returns a random youth category row.
+  // Slugs are disambiguated per (competition, group) so the slug itself
+  // carries the hint. Fall back to the legacy priority resolver only if the
+  // slug has no recognised suffix.
+  const parsed = parseTeamSlug(slug)
+  const effectiveHint = competitionHint || parsed.competition
+
   let standingQuery = supabase
     .from('fcf_standings')
     .select('*')
     .eq('team_slug', slug)
 
-  if (competitionHint) {
-    standingQuery = standingQuery.eq('competition', competitionHint)
-  } else {
-    standingQuery = standingQuery.in('competition', COMPETITION_PRIORITY)
+  if (effectiveHint) {
+    standingQuery = standingQuery.eq('competition', effectiveHint)
   }
 
   const { data: standingRows, error: standingErr } = await standingQuery
@@ -1586,26 +1607,19 @@ export async function getFullTeamReportDB(slug: string, competitionHint?: string
     console.error('[getFullTeamReportDB] standings error for', slug, standingErr)
   }
 
-  // If a hint was provided, take the first row. Otherwise pick by priority order.
-  let standing: any = null
-  if (competitionHint) {
-    standing = standingRows?.[0]
-  } else if (standingRows && standingRows.length > 0) {
-    if (standingRows.length === 1) {
-      standing = standingRows[0]
-    } else {
-      // Multiple rows — pick the one with the highest priority competition
-      standing = standingRows.slice().sort((a: any, b: any) => {
-        const ai = COMPETITION_PRIORITY.indexOf(a.competition ?? '')
-        const bi = COMPETITION_PRIORITY.indexOf(b.competition ?? '')
-        const aRank = ai === -1 ? 999 : ai
-        const bRank = bi === -1 ? 999 : bi
-        return aRank - bRank
-      })[0]
-    }
+  let standing: any = standingRows?.[0] ?? null
+
+  // Legacy URL without a recognised suffix — pick by competition priority.
+  if (!standing && !effectiveHint && standingRows && standingRows.length > 1) {
+    standing = standingRows.slice().sort((a: any, b: any) => {
+      const ai = COMPETITION_PRIORITY.indexOf(a.competition ?? '')
+      const bi = COMPETITION_PRIORITY.indexOf(b.competition ?? '')
+      return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi)
+    })[0]
   }
+
   if (!standing) {
-    console.warn('[getFullTeamReportDB] no standing row found for slug:', slug, '| rows:', standingRows)
+    console.warn('[getFullTeamReportDB] no standing row found for slug:', slug)
     return null
   }
 

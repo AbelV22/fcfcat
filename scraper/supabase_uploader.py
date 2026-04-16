@@ -82,6 +82,15 @@ def slugify(text: str) -> str:
     return re.sub(r"[\s-]+", "-", text)
 
 
+# Disambiguated team slug = {base}-{comp_code}-g{group_number}
+# See scraper/team_slug.py for details.
+try:
+    from .team_slug import compose_team_slug  # type: ignore
+except ImportError:
+    # Allow running the uploader as a script
+    from team_slug import compose_team_slug  # type: ignore
+
+
 def _batch_upsert(table: str, rows: list[dict], chunk: int = 500) -> int:
     """Upsert rows in chunks with retry on transient errors. Returns total upserted."""
     if not rows:
@@ -118,7 +127,7 @@ def push_standings(
     rows = []
     for s in standings:
         d = asdict(s) if hasattr(s, "__dataclass_fields__") else dict(s)
-        team_slug = slugify(d.get("name", ""))
+        team_slug = compose_team_slug(d.get("name", ""), competition, group)
         row_id = f"{season}-{competition}-{group}-{team_slug}"
         rows.append({
             "id":            row_id,
@@ -162,8 +171,8 @@ def push_matches(
     rows = []
     for m in matches:
         d = asdict(m) if hasattr(m, "__dataclass_fields__") else dict(m)
-        home_slug = slugify(d.get("home_team", ""))
-        away_slug = slugify(d.get("away_team", ""))
+        home_slug = compose_team_slug(d.get("home_team", ""), competition, group)
+        away_slug = compose_team_slug(d.get("away_team", ""), competition, group)
         jornada   = d.get("jornada", 0)
         row_id    = f"{season}-{competition}-{group}-J{jornada}-{home_slug}-v-{away_slug}"
         rows.append({
@@ -278,7 +287,7 @@ def push_scorers(
             "player_name":     d.get("name", ""),
             "player_slug":     player_slug,
             "team_name":       d.get("team", ""),
-            "team_slug":       slugify(d.get("team", "")),
+            "team_slug":       compose_team_slug(d.get("team", ""), competition, group),
             "goals":           d.get("goals", 0),
             "penalties":       d.get("penalties", 0),
             "matches":         d.get("matches", 0),
@@ -302,7 +311,7 @@ def push_player_stats(
     """
     players = team_intelligence.get("players", {})
     team_name = team_intelligence.get("team_name", "")
-    team_slug = slugify(team_name)
+    team_slug = compose_team_slug(team_name, competition, group)
     rows = []
     for player_name, stats in players.items():
         d = asdict(stats) if hasattr(stats, "__dataclass_fields__") else dict(stats)

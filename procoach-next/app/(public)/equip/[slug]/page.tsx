@@ -1,7 +1,8 @@
-import { notFound } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import Link from 'next/link'
 import { COMPETITION_NAMES, slugify, loadTeamData } from '@/lib/data'
-import { getFullTeamReportDB, hasMinutesData, type FullTeamReportDB, type RivalDataDB, type RefereeStatsDB, type FieldDimsDB } from '@/lib/supabase-data'
+import { getFullTeamReportDB, resolveLegacyTeamSlug, hasMinutesData, type FullTeamReportDB, type RivalDataDB, type RefereeStatsDB, type FieldDimsDB } from '@/lib/supabase-data'
+import { parseTeamSlug } from '@/lib/team-slug'
 import { PitchCompare } from '@/components/PitchCompare'
 import { RivalScoutCard } from '@/components/RivalScoutCard'
 import { AdminGate, AdminBadge, AdminBlurValue, AdminUpgradeLink } from '@/components/AdminGate'
@@ -59,6 +60,8 @@ function RegisterBlur({ children, label = "Registra't gratis per veure aquesta s
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
+  // The slug itself carries the competition (baseSlug-{compCode}-g{n}); only
+  // fall back to a JSON-based hint for legacy /data/teams/*.json lookups.
   const jsonData = loadTeamData(slug)
   const competitionHint: string | undefined = jsonData?.meta?.competition || undefined
   const report = await getFullTeamReportDB(slug, competitionHint)
@@ -847,6 +850,18 @@ function RefereeDeepReport({ referee }: { referee: RefereeStatsDB }) {
 
 export default async function EquipPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
+
+  // Legacy URL without a disambiguation suffix (pre-migration bookmarks, old
+  // Google results): look up the canonical slug and 301-redirect so links
+  // resolve to a single, correct team page.
+  const parsed = parseTeamSlug(slug)
+  if (!parsed.competition) {
+    const canonical = await resolveLegacyTeamSlug(slug)
+    if (canonical && canonical !== slug) {
+      permanentRedirect(`/equip/${canonical}`)
+    }
+  }
+
   const jsonData = loadTeamData(slug)
   const competitionHint: string | undefined = jsonData?.meta?.competition || undefined
   const report = await getFullTeamReportDB(slug, competitionHint)
