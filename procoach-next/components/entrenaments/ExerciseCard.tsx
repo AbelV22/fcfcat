@@ -1,6 +1,6 @@
 'use client'
 
-import { Star, Clock, Users, Trash2 } from 'lucide-react'
+import { Star, Clock, Users, Trash2, Share2 } from 'lucide-react'
 import type { TrainingExercise } from '@/lib/training-types'
 import { CATEGORY_LABELS, INTENSITY_COLORS, INTENSITY_LABELS } from '@/lib/training-types'
 import DrillPitchSVG from './DrillPitchSVG'
@@ -61,7 +61,12 @@ export default function ExerciseCard({ exercise, onToggleFavorite, onDelete, onC
           }}>
             {exercise.name}
           </h3>
-          <div style={{ display: 'flex', gap: 2, flexShrink: 0 }}>
+          <div style={{ display: 'flex', gap: 2, flexShrink: 0, alignItems: 'center' }}>
+            {exercise.is_public && (
+              <span title="Compartit" style={{ color: '#22c55e', display: 'flex', alignItems: 'center' }}>
+                <Share2 size={12} />
+              </span>
+            )}
             {onToggleFavorite && (
               <button
                 onClick={e => { e.stopPropagation(); onToggleFavorite(exercise.id, !exercise.is_favorite) }}

@@ -1,17 +1,19 @@
 'use client'
 
-import { X, Clock, Users, Star, Tag } from 'lucide-react'
+import { X, Clock, Users, Tag } from 'lucide-react'
 import type { TrainingExercise } from '@/lib/training-types'
 import { CATEGORY_LABELS, INTENSITY_LABELS, INTENSITY_COLORS } from '@/lib/training-types'
 import DrillPitchSVG from './DrillPitchSVG'
 import Link from 'next/link'
+import ExerciseShareButton from './ExerciseShareButton'
 
 interface Props {
   exercise: TrainingExercise
   onClose: () => void
+  onUpdate?: (updated: Partial<TrainingExercise>) => void
 }
 
-export default function ExerciseDetailModal({ exercise, onClose }: Props) {
+export default function ExerciseDetailModal({ exercise, onClose, onUpdate }: Props) {
   const intensityColor = INTENSITY_COLORS[exercise.intensity]
 
   return (
@@ -41,11 +43,13 @@ export default function ExerciseDetailModal({ exercise, onClose }: Props) {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '14px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)',
           position: 'sticky', top: 0, background: '#0f1011', zIndex: 1,
+          gap: 8,
         }}>
-          <h2 style={{ fontSize: 16, fontWeight: 510, color: '#f7f8f8', fontFamily: 'var(--font-inter)' }}>
+          <h2 style={{ fontSize: 16, fontWeight: 510, color: '#f7f8f8', fontFamily: 'var(--font-inter)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {exercise.name}
           </h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#8a8f98', cursor: 'pointer' }}>
+          <ExerciseShareButton exercise={exercise} onUpdate={onUpdate} />
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#8a8f98', cursor: 'pointer', flexShrink: 0 }}>
             <X size={18} />
           </button>
         </div>

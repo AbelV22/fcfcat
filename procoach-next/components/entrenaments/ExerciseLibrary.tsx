@@ -238,6 +238,11 @@ export default function ExerciseLibrary({ exercises, onExercisesChange, onSelect
         <ExerciseDetailModal
           exercise={selectedExercise}
           onClose={() => setSelectedExercise(null)}
+          onUpdate={updated => {
+            // Propagate sharing state changes back to the list and the open modal
+            setSelectedExercise(prev => prev ? { ...prev, ...updated } : prev)
+            onExercisesChange(exercises.map(e => e.id === selectedExercise.id ? { ...e, ...updated } : e))
+          }}
         />
       )}
     </div>
