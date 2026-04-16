@@ -549,7 +549,7 @@ function FieldAnalysisSection({
           {teamApercibits.length === 0 && rivalApercibits.length === 0 ? (
             <div style={{ fontSize: 11, color: '#62666d', fontStyle: 'italic' }}>Cap jugador en risc</div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 12 }}>
               <div>
                 <div style={{ fontSize: 10, color: '#22c55e', marginBottom: 6, fontWeight: 510 }}>{report.name}</div>
                 {teamApercibits.length === 0 ? (
@@ -595,7 +595,7 @@ function FieldAnalysisSection({
         {/* Cards summary */}
         <div>
           <div style={sectionLabel}>TARGETES</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 12 }}>
             <div>
               <div style={{ fontSize: 10, color: '#22c55e', marginBottom: 6, fontWeight: 510 }}>{report.name}</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: '#8a8f98' }}>
@@ -621,7 +621,7 @@ function FieldAnalysisSection({
         {(report.penaltyStats || rival.penaltyStats) && (
           <div>
             <div style={sectionLabel}>PENALS</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 12 }}>
               <div>
                 <div style={{ fontSize: 10, color: '#22c55e', marginBottom: 6, fontWeight: 510 }}>{report.name}</div>
                 {report.penaltyStats ? (
@@ -837,14 +837,8 @@ function RefereeDeepReport({ referee }: { referee: RefereeStatsDB }) {
       {/* Divider */}
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }} />
 
-      {/* Section B — deep analysis, free for registered users / admins */}
-      <AdminGate fallback={
-        <RegisterBlur label="Anàlisi complet de l'àrbitre — Registra't gratis">
-          <RefereeDeepContent referee={referee} firstHalfPct={firstHalfPct} secondHalfPct={secondHalfPct} totalHalfCards={totalHalfCards} awayBias={awayBias} />
-        </RegisterBlur>
-      }>
-        <RefereeDeepContent referee={referee} firstHalfPct={firstHalfPct} secondHalfPct={secondHalfPct} totalHalfCards={totalHalfCards} awayBias={awayBias} />
-      </AdminGate>
+      {/* Section B — deep analysis, now public */}
+      <RefereeDeepContent referee={referee} firstHalfPct={firstHalfPct} secondHalfPct={secondHalfPct} totalHalfCards={totalHalfCards} awayBias={awayBias} />
     </div>
   )
 }
@@ -1059,27 +1053,14 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
           <NextMatchInfoCard nextMatch={report.nextMatch} competition={report.competition} />
         )}
 
-        {/* Row 3: Rival Scout Card */}
+        {/* Row 3: Rival Scout Card — now public */}
         {report.nextMatch && report.rival && (
-          <AdminGate
-            fallback={
-              <RegisterBlur label="Informe complet del Proper Rival — Registra't gratis">
-                <RivalScoutCard
-                  rival={report.rival as any}
-                  nextMatch={{ ...report.nextMatch, referee: null, referees: [] }}
-                  headToHead={report.headToHead as any}
-                  hasMinutes={hasMinutesData(report.competition, report.players)}
-                />
-              </RegisterBlur>
-            }
-          >
-            <RivalScoutCard
-              rival={report.rival as any}
-              nextMatch={report.nextMatch as any}
-              headToHead={report.headToHead as any}
-              hasMinutes={hasMinutesData(report.competition, report.players)}
-            />
-          </AdminGate>
+          <RivalScoutCard
+            rival={report.rival as any}
+            nextMatch={report.nextMatch as any}
+            headToHead={report.headToHead as any}
+            hasMinutes={hasMinutesData(report.competition, report.players)}
+          />
         )}
 
         {/* Row 3b: Pitch Compare */}

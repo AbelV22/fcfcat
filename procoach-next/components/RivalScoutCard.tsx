@@ -372,18 +372,18 @@ function RivalInsightsBlock({ insights }: { insights: RivalInsights | null }) {
   if (pills.length === 0) return null
 
   return (
-    <div className="mt-3 bg-black/20 rounded-xl px-4 py-3 border border-white/5">
-      <div className="flex items-center gap-1.5 mb-2">
-        <span className="text-[10px] font-black text-[#d0d6e0] uppercase tracking-wider">Tendències del rival</span>
-        <span className="text-[9px] text-[#8a8f98]">· {insights.matchesAnalyzed} partits</span>
+    <div className="mt-3 rounded-lg px-4 py-3 bg-white/[0.02] border border-white/[0.06]">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-xs font-medium text-white">Tendències del rival</span>
+        <span className="text-[11px] text-[#62666d]">· {insights.matchesAnalyzed} partits</span>
       </div>
-      <div className="grid grid-cols-2 gap-1.5">
+      <div className="grid grid-cols-2 gap-2">
         {pills.map((p, i) => (
-          <div key={i} className="flex items-center gap-1.5 bg-white/4 rounded-lg px-2.5 py-1.5 border border-white/5">
+          <div key={i} className="flex items-center gap-2 rounded-lg px-2.5 py-2 bg-white/[0.02] border border-white/[0.06]">
             <span className="text-sm shrink-0">{p.icon}</span>
             <div className="min-w-0">
-              <div className="text-[9px] text-[#d0d6e0] truncate">{p.label}</div>
-              <div className={`text-xs font-black ${p.color}`}>{p.value}</div>
+              <div className="text-[10px] text-[#8a8f98] truncate">{p.label}</div>
+              <div className={`text-xs font-medium ${p.color} tabular-nums`}>{p.value}</div>
             </div>
           </div>
         ))}
@@ -424,73 +424,66 @@ export function RivalScoutCard({
   const gd = rival.gf - rival.ga
 
   return (
-    <div className="relative overflow-hidden rounded-lg border border-[#22c55e]/15 bg-gradient-to-br from-[#0a1e36] via-[#0d1a2e] to-[#0f1011]">
-      {/* Top glow line */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#22c55e]/50 to-transparent" />
-
+    <div className="v2-card overflow-hidden">
       {/* ─── Header bar ─────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 gap-2 border-b border-white/5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between px-5 sm:px-6 pt-5 pb-4 gap-2 border-b border-white/[0.06]">
         <div className="flex items-center gap-2">
-          <Crosshair size={12} className="text-[#22c55e] shrink-0" />
-          <span className="text-[10px] font-black tracking-[0.15em] text-[#22c55e] uppercase">
-            Informe de Reconeixement
-          </span>
-          <span className="text-[10px] text-[#62666d]">·</span>
-          <span className="text-[10px] text-[#8a8f98] font-medium">J{nextMatch.jornada}</span>
+          <Crosshair size={14} className="text-[#22c55e] shrink-0" />
+          <span className="text-sm font-medium text-white">Informe de rival</span>
+          <span className="text-xs text-[#62666d]">·</span>
+          <span className="text-xs text-[#8a8f98]">J{nextMatch.jornada}</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-[#8a8f98]">{formatDate(nextMatch.date)}{nextMatch.time ? ` · ${nextMatch.time}h` : ''}</span>
-          <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${
+          <span className="text-xs text-[#8a8f98]">{formatDate(nextMatch.date)}{nextMatch.time ? ` · ${nextMatch.time}h` : ''}</span>
+          <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${
             nextMatch.isHome
-              ? 'bg-green-500/15 text-green-400 border border-green-500/20'
-              : 'bg-sky-500/15 text-sky-400 border border-sky-500/20'
+              ? 'bg-[#22c55e]/10 text-[#22c55e] border-[#22c55e]/20'
+              : 'bg-white/[0.04] text-[#8a8f98] border-white/[0.08]'
           }`}>
-            {nextMatch.isHome ? '🏠 Local' : '✈️ Visita'}
+            {nextMatch.isHome ? 'Local' : 'Visitant'}
           </span>
         </div>
       </div>
 
       {/* ─── Preview (always visible) ───────────────────────────────── */}
-      <div className="px-4 sm:px-6 py-4 sm:py-5">
+      <div className="px-5 sm:px-6 py-5">
 
         {/* Team identity + quick metrics */}
-        <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-5">
+        <div className="flex items-start gap-4 mb-5">
           {/* Crest */}
-          <div className="relative shrink-0">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-gradient-to-br from-[#22c55e]/20 to-purple-600/20 border border-[#22c55e]/20 flex items-center justify-center text-2xl font-black text-[#22c55e]">
-              {nextMatch.opponent.charAt(0)}
-            </div>
-            {rival.position && (
-              <div className="absolute -bottom-1 -right-1 text-[9px] font-black bg-yellow-500 text-black px-1.5 rounded-full">
-                #{rival.position}
-              </div>
-            )}
+          <div className="shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-white/[0.02] border border-white/[0.06] flex items-center justify-center text-2xl font-medium text-[#22c55e]">
+            {nextMatch.opponent.charAt(0)}
           </div>
 
           <div className="flex-1 min-w-0">
-            <h2 className="text-lg sm:text-xl font-black text-white leading-tight truncate mb-1">{nextMatch.opponent}</h2>
+            <div className="flex items-center gap-2 mb-1.5">
+              <h2 className="text-lg sm:text-xl font-medium text-white leading-tight truncate">{nextMatch.opponent}</h2>
+              {rival.position && (
+                <span className="shrink-0 text-[11px] font-medium text-[#8a8f98] bg-white/[0.04] border border-white/[0.06] px-2 py-0.5 rounded-full">
+                  #{rival.position}
+                </span>
+              )}
+            </div>
 
-            {/* Stats pills */}
-            <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-2 sm:mb-2.5">
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/6 text-[#8a8f98]">
+            {/* Stats pills — V2 neutral palette with selective accents */}
+            <div className="flex flex-wrap gap-1.5 mb-2.5">
+              <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-white/[0.04] text-[#8a8f98] border border-white/[0.06]">
                 {rival.played} PJ
               </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-green-500/10 text-green-400">
-                {rival.wins}V
-              </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400">
-                {rival.draws}E
-              </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/10 text-red-400">
-                {rival.losses}D
+              <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-white/[0.04] text-[#d0d6e0] border border-white/[0.06]">
+                <span className="text-[#22c55e]">{rival.wins}</span>V
+                <span className="text-[#62666d] mx-1">·</span>
+                <span className="text-amber-400">{rival.draws}</span>E
+                <span className="text-[#62666d] mx-1">·</span>
+                <span className="text-red-400">{rival.losses}</span>D
               </span>
               {rival.played > 0 && (
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/6 text-[#d0d6e0]">
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-white/[0.04] text-[#d0d6e0] border border-white/[0.06] tabular-nums">
                   {rival.gf}–{rival.ga} ({gd >= 0 ? '+' : ''}{gd})
                 </span>
               )}
               {rival.points > 0 && (
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#22c55e]/10 text-[#22c55e] border border-[#22c55e]/20">
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#22c55e]/10 text-[#22c55e] border border-[#22c55e]/20">
                   {rival.points} pts
                 </span>
               )}
@@ -499,21 +492,21 @@ export function RivalScoutCard({
             {/* Win rate bar */}
             {rival.played > 0 && (
               <div className="flex items-center gap-2">
-                <div className="flex-1 h-1.5 bg-white/8 rounded-full overflow-hidden">
+                <div className="flex-1 h-1 bg-white/[0.06] rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-[#22c55e] to-[#34d399] rounded-full"
+                    className="h-full bg-[#22c55e] rounded-full"
                     style={{ width: `${winRate}%` }}
                   />
                 </div>
-                <span className="text-[10px] text-[#8a8f98] shrink-0">{winRate}%</span>
+                <span className="text-[11px] text-[#8a8f98] shrink-0 tabular-nums">{winRate}%</span>
               </div>
             )}
           </div>
 
           {/* Form strip — hide on very small screens */}
           {rival.form.length > 0 && (
-            <div className="hidden xs:flex shrink-0 flex-col items-end gap-1">
-              <span className="text-[9px] text-[#62666d] uppercase tracking-wider">Forma</span>
+            <div className="hidden xs:flex shrink-0 flex-col items-end gap-1.5">
+              <span className="text-[10px] text-[#62666d]">Forma</span>
               <div className="flex gap-1">
                 {rival.form.slice(0, 5).reverse().map((r, i) => <FormDot key={i} result={r.result} />)}
               </div>
@@ -533,20 +526,20 @@ export function RivalScoutCard({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
 
           {/* Golejadors / Amenaces */}
-          <div className="bg-black/25 rounded-xl p-4 border border-green-500/10">
-            <div className="flex items-center gap-1.5 mb-3">
-              <Target size={11} className="text-green-400" />
-              <span className="text-[10px] font-black text-green-400 uppercase tracking-wider">Amenaces ofensives</span>
+          <div className="rounded-lg p-4 bg-white/[0.02] border border-white/[0.06]">
+            <div className="flex items-center gap-2 mb-3">
+              <Target size={13} className="text-[#22c55e]" />
+              <span className="text-xs font-medium text-white">Amenaces ofensives</span>
             </div>
             <div className="space-y-1.5">
               {rival.topScorers.length > 0
                 ? rival.topScorers.slice(0, 4).map((p, i) => (
                     <div key={i} className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <span className="text-[9px] text-[#62666d] w-3 shrink-0">{i + 1}</span>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-[10px] text-[#62666d] w-3 shrink-0 tabular-nums">{i + 1}</span>
                         <span className="text-xs text-[#d0d6e0] truncate">{p.name.split(',')[0]}</span>
                       </div>
-                      <span className="text-xs font-black text-green-400 shrink-0 ml-2">{p.goals} ⚽</span>
+                      <span className="text-xs font-medium text-[#22c55e] shrink-0 ml-2 tabular-nums">{p.goals} ⚽</span>
                     </div>
                   ))
                 : <p className="text-xs text-[#62666d] italic">Sense dades</p>}
@@ -554,23 +547,23 @@ export function RivalScoutCard({
           </div>
 
           {/* Timing / Quan marca */}
-          <div className="bg-black/25 rounded-xl p-4 border border-purple-500/10">
-            <div className="flex items-center gap-1.5 mb-2">
-              <Clock size={11} className="text-purple-400" />
-              <span className="text-[10px] font-black text-purple-400 uppercase tracking-wider">Quan marca</span>
+          <div className="rounded-lg p-4 bg-white/[0.02] border border-white/[0.06]">
+            <div className="flex items-center gap-2 mb-3">
+              <Clock size={13} className="text-[#8a8f98]" />
+              <span className="text-xs font-medium text-white">Quan marca</span>
             </div>
             <MiniGoalBars buckets={rival.goalBuckets} />
             {hasGoalData(rival.goalBuckets) && (
               <>
                 <div className="flex gap-0.5 mt-1 mb-2">
                   {rival.goalBuckets.map(b => (
-                    <div key={b.label} className="flex-1 text-center text-[8px] text-[#62666d]">{b.label.replace("'", '').replace('–', '-')}</div>
+                    <div key={b.label} className="flex-1 text-center text-[9px] text-[#62666d]">{b.label.replace("'", '').replace('–', '-')}</div>
                   ))}
                 </div>
                 {dangerBucket && dangerBucket.scored > 0 && (
-                  <div className="text-[10px] text-[#8a8f98] mt-1">
-                    Perill màxim: <span className="text-purple-300 font-bold">{dangerBucket.label}</span>
-                    <span className="text-[#62666d] ml-1">({dangerBucket.scored} gols)</span>
+                  <div className="text-[11px] text-[#8a8f98] mt-1">
+                    Perill màxim: <span className="text-white font-medium">{dangerBucket.label}</span>
+                    <span className="text-[#62666d] ml-1 tabular-nums">({dangerBucket.scored} gols)</span>
                   </div>
                 )}
               </>
@@ -578,23 +571,23 @@ export function RivalScoutCard({
           </div>
 
           {/* Risc targetes */}
-          <div className="bg-black/25 rounded-xl p-4 border border-amber-500/10">
-            <div className="flex items-center gap-1.5 mb-3">
-              <AlertTriangle size={11} className="text-amber-400" />
-              <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider">Jugadors en risc</span>
+          <div className="rounded-lg p-4 bg-white/[0.02] border border-white/[0.06]">
+            <div className="flex items-center gap-2 mb-3">
+              <AlertTriangle size={13} className="text-amber-400" />
+              <span className="text-xs font-medium text-white">Jugadors en risc</span>
             </div>
             <div className="space-y-1.5">
               {rival.apercibits.length > 0
                 ? rival.apercibits.slice(0, 4).map((p, i) => (
                     <div key={i} className="flex items-center justify-between">
                       <span className="text-xs text-[#d0d6e0] truncate pr-1">{p.name.split(',')[0]}</span>
-                      <span className="text-xs font-bold text-amber-400 shrink-0">🟨 {p.yellow_cards}</span>
+                      <span className="text-xs font-medium text-amber-400 shrink-0 tabular-nums">🟨 {p.yellow_cards}</span>
                     </div>
                   ))
                 : <p className="text-xs text-[#62666d] italic">Cap jugador en risc</p>}
             </div>
             {rival.apercibits.length > 0 && (
-              <p className="text-[9px] text-amber-600/60 mt-2">Una groga els suspèn</p>
+              <p className="text-[10px] text-[#62666d] mt-2">Una groga els suspèn</p>
             )}
           </div>
         </div>

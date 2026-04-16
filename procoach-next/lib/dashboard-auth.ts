@@ -56,20 +56,13 @@ export async function isAdminUser(): Promise<boolean> {
 }
 
 /**
- * Check if the current user has PRO status (2+ referrals or admin).
+ * Check if the current user has PRO status.
+ * Currently: any logged-in user gets full access (PRO unlocked by default).
  */
 export async function isProUser(): Promise<boolean> {
   if (await isAdminVerified()) return true
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return false
-
-  const { data } = await supabase
-    .from('user_referral_codes')
-    .select('pro_unlocked, referral_count')
-    .eq('user_id', user.id)
-    .single()
-
-  return data?.pro_unlocked || (data?.referral_count ?? 0) >= 2
+  return !!user
 }

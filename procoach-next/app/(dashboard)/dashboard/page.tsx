@@ -3,7 +3,6 @@ import { createClient } from '@/lib/supabase-server'
 import Link from 'next/link'
 import { BarChart3, Shield, Users, ListOrdered, ArrowRight, Settings, ClipboardList, RefreshCw, Dumbbell } from 'lucide-react'
 import { getDashboardTeam, isAdminUser } from '@/lib/dashboard-auth'
-import ReferralCard from '@/components/ReferralCard'
 
 export const dynamic = 'force-dynamic'
 
@@ -82,15 +81,12 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Referral system */}
-        <ReferralCard />
-
         {/* Feature cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" style={{ gap: 12 }}>
           {[
             { icon: BarChart3, title: "Intel·ligència de l'equip", desc: 'Estadístiques detallades de tots els teus jugadors per temporada.', href: '/dashboard/intel', badge: null },
             { icon: Users, title: 'Anàlisi del rival', desc: "XI probable, goleadors, patrons de joc i targetes de l'equip rival.", href: '/dashboard/rival', badge: null },
-            { icon: Shield, title: 'Informe arbitral complet', desc: "Percentils, patrons per període i historial del pròxim àrbitre.", href: '/dashboard/arbitre-pro', badge: 'PRO' },
+            { icon: Shield, title: 'Informe arbitral complet', desc: "Percentils, patrons per període i historial del pròxim àrbitre.", href: '/dashboard/arbitre-pro', badge: null },
             { icon: Shield, title: 'Equips', desc: 'Cerca i explora tots els equips de les competicions FCF.', href: '/entrenador', badge: null },
             { icon: ListOrdered, title: 'Classificació', desc: 'La taula de classificació del teu grup en temps real.', href: '/dashboard/classificacio', badge: null },
             { icon: ClipboardList, title: 'Apunts de Partit', desc: 'Registra lineups, esdeveniments, valoracions i notes tàctiques de cada partit.', href: '/dashboard/apunts', badge: null },
