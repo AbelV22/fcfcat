@@ -32,6 +32,17 @@ export default function NouExerciciPage() {
   const [showSeed, setShowSeed] = useState(false)
   const [hasExercises, setHasExercises] = useState(true)
   const [exerciseShare, setExerciseShare] = useState<Pick<TrainingExercise, 'id' | 'name' | 'is_public' | 'share_slug' | 'share_count' | 'clone_count' | 'shared_at'> | null>(null)
+  const [isAdminSession, setIsAdminSession] = useState(false)
+
+  // Detect admin-token session — admin cannot own exercises (no auth.users row)
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    const hasAdminToken = document.cookie.split(';').some(c => c.trim().startsWith('ns_admin_token='))
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setIsAdminSession(hasAdminToken && !user)
+    })
+  }, [])
 
   // Load exercise for editing
   useEffect(() => {
@@ -150,8 +161,24 @@ export default function NouExerciciPage() {
         )}
       </div>
 
+      {/* Admin session warning — admin has no Supabase auth user, cannot own exercises */}
+      {isAdminSession && (
+        <div style={{
+          padding: 14, borderRadius: 8, marginBottom: 20,
+          background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)',
+        }}>
+          <div style={{ fontSize: 14, fontWeight: 600, color: '#f59e0b', marginBottom: 4 }}>
+            Sessió d&apos;admin detectada
+          </div>
+          <p style={{ fontSize: 13, color: '#d0d6e0', lineHeight: 1.5 }}>
+            Els ejercicis es guarden a la biblioteca d&apos;un entrenador.
+            Tanca la sessió d&apos;admin i entra amb el teu compte d&apos;entrenador per crear o importar exercicis.
+          </p>
+        </div>
+      )}
+
       {/* Seed import banner */}
-      {showSeed && !hasExercises && (
+      {showSeed && !hasExercises && !isAdminSession && (
         <div style={{
           padding: 16, borderRadius: 8, marginBottom: 20,
           background: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.15)',

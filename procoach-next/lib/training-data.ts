@@ -47,7 +47,14 @@ export async function upsertExercise(
 ): Promise<string> {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Not authenticated')
+  if (!user) {
+    const hasAdminToken = typeof document !== 'undefined'
+      && document.cookie.split(';').some(c => c.trim().startsWith('ns_admin_token='))
+    if (hasAdminToken) {
+      throw new Error("Estàs en sessió d'admin. Tanca-la i entra com a entrenador per guardar exercicis.")
+    }
+    throw new Error('Not authenticated')
+  }
 
   const payload = {
     name: exercise.name,
@@ -90,7 +97,17 @@ export async function bulkInsertExercises(
   if (exercises.length === 0) return 0
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Not authenticated')
+  if (!user) {
+    // Detect admin-token bypass: middleware allows /dashboard access via
+    // ns_admin_token cookie, but admin has no Supabase Auth user, so RLS
+    // blocks inserts tied to user_id.
+    const hasAdminToken = typeof document !== 'undefined'
+      && document.cookie.split(';').some(c => c.trim().startsWith('ns_admin_token='))
+    if (hasAdminToken) {
+      throw new Error("Estàs en sessió d'admin. Tanca-la i entra com a entrenador per importar exercicis a la biblioteca.")
+    }
+    throw new Error("Sessió caducada. Torna a iniciar sessió com a entrenador i prova de nou.")
+  }
 
   const rows = exercises.map(exercise => ({
     user_id: user.id,
