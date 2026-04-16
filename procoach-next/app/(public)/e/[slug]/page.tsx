@@ -7,7 +7,7 @@ import { CATEGORY_LABELS, INTENSITY_LABELS } from '@/lib/training-types'
 import DrillPitchSVG from '@/components/entrenaments/DrillPitchSVG'
 import ExercisePublicActions from '@/components/entrenaments/ExercisePublicActions'
 import ExerciseDownloadPanel from '@/components/entrenaments/ExerciseDownloadPanel'
-import type { DiagramElement } from '@/lib/training-types'
+import DiagramElementView from '@/components/entrenaments/DiagramElementView'
 
 export const dynamic = 'force-dynamic'
 
@@ -82,9 +82,7 @@ export default async function PublicExercisePage({ params }: Props) {
       {/* Diagram */}
       <div style={{ marginBottom: 20, borderRadius: 10, overflow: 'hidden' }}>
         <DrillPitchSVG mode="full" style={{ borderRadius: 10 }}>
-          {exercise.diagram_data?.elements?.map((el: DiagramElement, i: number) => (
-            <DiagramElementRenderer key={i} el={el} />
-          ))}
+          <DiagramElementView elements={exercise.diagram_data?.elements ?? []} />
         </DrillPitchSVG>
       </div>
 
@@ -183,116 +181,3 @@ export default async function PublicExercisePage({ params }: Props) {
   )
 }
 
-// Inline read-only renderer (subset of ExerciseDiagramEditor's renderElement)
-function DiagramElementRenderer({ el }: { el: DiagramElement }) {
-  switch (el.type) {
-    case 'player': {
-      const isA = el.team !== 'b'
-      const baseColor = el.color || (isA ? '#3b82f6' : '#ef4444')
-      const ox = el.x - 14, oy = el.y - 14
-      return (
-        <g>
-          <g transform={`translate(${ox} ${oy})`}>
-            <path
-              d="M7 2 L3.5 4.5 L1.5 9 L4.5 11 L6 9.5 L6 21 Q6 22 7 22 L21 22 Q22 22 22 21 L22 9.5 L23.5 11 L26.5 9 L24.5 4.5 L21 2 L18 3.5 Q14 5.5 10 3.5 Z"
-              fill={baseColor} stroke="rgba(0,0,0,0.5)" strokeWidth="1" strokeLinejoin="round"
-            />
-            <text x="14" y="16" textAnchor="middle" dominantBaseline="middle"
-              fill="#fff" fontSize={10} fontWeight={700} style={{ pointerEvents: 'none' }}>
-              {el.label || '1'}
-            </text>
-          </g>
-        </g>
-      )
-    }
-    case 'opponent':
-      return (
-        <g>
-          <circle cx={el.x} cy={el.y} r={14} fill={el.color || '#0ea5e9'} stroke="rgba(0,0,0,0.4)" strokeWidth={1.5} />
-          <line x1={el.x - 5} y1={el.y - 5} x2={el.x + 5} y2={el.y + 5} stroke="#fff" strokeWidth={2} strokeLinecap="round" />
-          <line x1={el.x + 5} y1={el.y - 5} x2={el.x - 5} y2={el.y + 5} stroke="#fff" strokeWidth={2} strokeLinecap="round" />
-        </g>
-      )
-    case 'ball':
-      return (
-        <g transform={`translate(${el.x} ${el.y})`}>
-          <circle r={9} fill="#f0f0f0" stroke="#1a1a1a" strokeWidth={0.8} />
-          <polygon points="0,-4 3.8,-1.2 2.3,3.2 -2.3,3.2 -3.8,-1.2" fill="#1a1a1a" />
-          <line x1="0" y1="-4" x2="0" y2="-8.5" stroke="#1a1a1a" strokeWidth="0.7" />
-          <line x1="3.8" y1="-1.2" x2="8" y2="-2.8" stroke="#1a1a1a" strokeWidth="0.7" />
-          <line x1="2.3" y1="3.2" x2="5" y2="7.2" stroke="#1a1a1a" strokeWidth="0.7" />
-          <line x1="-2.3" y1="3.2" x2="-5" y2="7.2" stroke="#1a1a1a" strokeWidth="0.7" />
-          <line x1="-3.8" y1="-1.2" x2="-8" y2="-2.8" stroke="#1a1a1a" strokeWidth="0.7" />
-        </g>
-      )
-    case 'cone':
-      return (
-        <polygon
-          points={`${el.x},${el.y - 9} ${el.x - 7},${el.y + 5} ${el.x + 7},${el.y + 5}`}
-          fill={el.color || '#f97316'} opacity={0.9}
-        />
-      )
-    case 'arrow': {
-      const angle = Math.atan2((el.y2 || el.y) - el.y, (el.x2 || el.x) - el.x)
-      const tipX = el.x2 || el.x, tipY = el.y2 || el.y, aLen = 10
-      return (
-        <g>
-          <line x1={el.x} y1={el.y} x2={tipX} y2={tipY} stroke={el.color || '#fff'} strokeWidth={2} />
-          <polygon
-            points={`${tipX},${tipY} ${tipX - aLen * Math.cos(angle - 0.4)},${tipY - aLen * Math.sin(angle - 0.4)} ${tipX - aLen * Math.cos(angle + 0.4)},${tipY - aLen * Math.sin(angle + 0.4)}`}
-            fill={el.color || '#fff'}
-          />
-        </g>
-      )
-    }
-    case 'curved_arrow': {
-      const cx = el.cx ?? (el.x + (el.x2 || el.x)) / 2
-      const cy = el.cy ?? (el.y + (el.y2 || el.y)) / 2
-      const tipX = el.x2 || el.x, tipY = el.y2 || el.y
-      const angle = Math.atan2(tipY - cy, tipX - cx), aLen = 10
-      return (
-        <g>
-          <path d={`M ${el.x} ${el.y} Q ${cx} ${cy} ${tipX} ${tipY}`} fill="none" stroke={el.color || '#fff'} strokeWidth={2} />
-          <polygon
-            points={`${tipX},${tipY} ${tipX - aLen * Math.cos(angle - 0.4)},${tipY - aLen * Math.sin(angle - 0.4)} ${tipX - aLen * Math.cos(angle + 0.4)},${tipY - aLen * Math.sin(angle + 0.4)}`}
-            fill={el.color || '#fff'}
-          />
-        </g>
-      )
-    }
-    case 'zone':
-      return (
-        <rect
-          x={el.x} y={el.y} width={el.width || 60} height={el.height || 40}
-          fill={el.color || '#3b82f6'} opacity={el.opacity || 0.15}
-          stroke={el.color || '#3b82f6'} strokeWidth={1} rx={3}
-        />
-      )
-    case 'text':
-      return (
-        <text x={el.x} y={el.y} fill={el.color || '#fff'} fontSize={14} fontWeight={600} textAnchor="middle" dominantBaseline="middle">
-          {el.label || ''}
-        </text>
-      )
-    case 'goal': {
-      const isLarge = el.size !== 'small'
-      const halfW = isLarge ? 30 : 15
-      const h = isLarge ? 11 : 7
-      const netCount = isLarge ? 5 : 3
-      const c = el.color || '#fff'
-      return (
-        <g>
-          <rect x={el.x - halfW} y={el.y - h} width={halfW * 2} height={h * 2}
-            fill="rgba(255,255,255,0.04)" stroke={c} strokeWidth={2} rx={2} />
-          {Array.from({ length: netCount }).map((_, i) => {
-            const gx = el.x - halfW + (halfW * 2) * (i + 1) / (netCount + 1)
-            return <line key={i} x1={gx} y1={el.y - h} x2={gx + (isLarge ? 3 : 2)} y2={el.y + h}
-              stroke={c} strokeWidth={0.5} opacity={0.45} />
-          })}
-        </g>
-      )
-    }
-    default:
-      return null
-  }
-}

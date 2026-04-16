@@ -6,6 +6,7 @@ import { CATEGORY_LABELS, INTENSITY_LABELS, INTENSITY_COLORS } from '@/lib/train
 import DrillPitchSVG from './DrillPitchSVG'
 import Link from 'next/link'
 import ExerciseShareButton from './ExerciseShareButton'
+import DiagramElementView from './DiagramElementView'
 
 interface Props {
   exercise: TrainingExercise
@@ -58,62 +59,7 @@ export default function ExerciseDetailModal({ exercise, onClose, onUpdate }: Pro
         {exercise.diagram_data?.elements?.length > 0 && (
           <div style={{ padding: '16px 16px 0' }}>
             <DrillPitchSVG mode="full" style={{ borderRadius: 8 }}>
-              {exercise.diagram_data.elements.map((el, i) => {
-                switch (el.type) {
-                  case 'player':
-                    return (
-                      <g key={i}>
-                        <circle cx={el.x} cy={el.y} r={17} fill="url(#playerGrad)" stroke={el.color || '#22c55e'} strokeWidth={1.5} />
-                        <text x={el.x} y={el.y + 4} textAnchor="middle" fill="#fff" fontSize={9} fontWeight={600}>{el.label || 'J'}</text>
-                      </g>
-                    )
-                  case 'opponent':
-                    return (
-                      <g key={i}>
-                        <circle cx={el.x} cy={el.y} r={17} fill="url(#opponentGrad)" stroke={el.color || '#ef4444'} strokeWidth={1.5} />
-                        <text x={el.x} y={el.y + 4} textAnchor="middle" fill="#fff" fontSize={9} fontWeight={600}>{el.label || 'R'}</text>
-                      </g>
-                    )
-                  case 'ball':
-                    return <circle key={i} cx={el.x} cy={el.y} r={8} fill="#f59e0b" stroke="#fbbf24" strokeWidth={1.5} />
-                  case 'arrow':
-                    return (
-                      <line key={i} x1={el.x} y1={el.y} x2={el.x2 || el.x} y2={el.y2 || el.y}
-                        stroke={el.color || '#fff'} strokeWidth={2} markerEnd="url(#arrowhead)" />
-                    )
-                  case 'curved_arrow':
-                    return (
-                      <path key={i}
-                        d={`M ${el.x} ${el.y} Q ${el.cx ?? el.x} ${el.cy ?? el.y} ${el.x2 ?? el.x} ${el.y2 ?? el.y}`}
-                        fill="none" stroke={el.color || '#fff'} strokeWidth={2} />
-                    )
-                  case 'zone':
-                    return (
-                      <rect key={i} x={el.x} y={el.y} width={el.width || 60} height={el.height || 40}
-                        fill={el.color || '#3b82f6'} opacity={el.opacity || 0.15} rx={3} />
-                    )
-                  case 'cone':
-                    return (
-                      <polygon key={i}
-                        points={`${el.x},${el.y - 10} ${el.x - 8},${el.y + 6} ${el.x + 8},${el.y + 6}`}
-                        fill={el.color || '#f97316'} opacity={0.9} />
-                    )
-                  case 'text':
-                    return (
-                      <text key={i} x={el.x} y={el.y} fill={el.color || '#fff'}
-                        fontSize={14} fontWeight={600} textAnchor="middle" dominantBaseline="middle">
-                        {el.label || 'Text'}
-                      </text>
-                    )
-                  case 'goal':
-                    return (
-                      <rect key={i} x={el.x - 25} y={el.y - 8} width={50} height={16}
-                        fill="none" stroke={el.color || '#fff'} strokeWidth={2} rx={2} />
-                    )
-                  default:
-                    return null
-                }
-              })}
+              <DiagramElementView elements={exercise.diagram_data.elements} />
             </DrillPitchSVG>
           </div>
         )}
