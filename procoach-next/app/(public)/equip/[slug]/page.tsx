@@ -1,7 +1,8 @@
 import { notFound, permanentRedirect } from 'next/navigation'
 import Link from 'next/link'
 import { COMPETITION_NAMES, slugify, loadTeamData } from '@/lib/data'
-import { getFullTeamReportDB, resolveLegacyTeamSlug, hasMinutesData, type FullTeamReportDB, type RivalDataDB, type RefereeStatsDB, type FieldDimsDB } from '@/lib/supabase-data'
+import { getFullTeamReportDB, resolveLegacyTeamSlug, hasMinutesData, getLeagueProjectionDB, type FullTeamReportDB, type RivalDataDB, type RefereeStatsDB, type FieldDimsDB } from '@/lib/supabase-data'
+import LeagueProjection from '@/components/LeagueProjection'
 import { parseTeamSlug } from '@/lib/team-slug'
 import { PitchCompare } from '@/components/PitchCompare'
 import { RivalScoutCard } from '@/components/RivalScoutCard'
@@ -894,6 +895,11 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
   const compName = COMPETITION_NAMES[report.competition] || report.competition
   const apercibits = report.players.filter(p => p.risk)
   const topScorers = [...report.players].sort((a, b) => b.goals - a.goals).filter(p => p.goals > 0).slice(0, 5)
+
+  // League projection (only for competitions/groups where we've generated it).
+  const leagueProjection = report.competition && report.group
+    ? await getLeagueProjectionDB(report.competition, report.group)
+    : { entries: [], meta: null, updatedAt: null }
   const PRIORITY = new Set([
     'lliga-elit', 'primera-catalana', 'segona-catalana', 'tercera-catalana', 'quarta-catalana',
     'preferent-juvenils', 'juvenil-primera-divisio', 'divisio-honor-juvenil', 'lliga-nacional-juvenil',
@@ -1062,6 +1068,11 @@ export default async function EquipPage({ params }: { params: Promise<{ slug: st
             <MiniTable standings={report.standings} teamSlug={slug} />
           </div>
         </div>
+
+        {/* Row 1b: League projection (Monte Carlo) — only when generated */}
+        {leagueProjection.entries.length > 0 && (
+          <LeagueProjection projection={leagueProjection} teamSlug={slug} />
+        )}
 
         {/* Row 2: Next match card */}
         {report.nextMatch && (

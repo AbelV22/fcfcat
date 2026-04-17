@@ -187,6 +187,69 @@ export async function getCompetitionFCFStandingsDB(slug: string) {
   }))
 }
 
+/**
+ * League projection (Monte Carlo Dixon-Coles) for a competition+group.
+ * Returns an ordered list (best avg_pos first) with probabilities.
+ * Returns [] if no projection has been generated yet for this competition+group.
+ */
+export type LeagueProjectionEntry = {
+  team_slug: string
+  team_name: string
+  current_pts: number
+  current_gd: number
+  proj_pts: number
+  proj_gd: number
+  pct_champ: number
+  pct_top3: number
+  pct_bottom3: number
+  avg_pos: number
+  pos_pct: number[]
+}
+export type LeagueProjection = {
+  entries: LeagueProjectionEntry[]
+  meta: { mu?: number; home_adv?: number; rho?: number; home_mult?: number; half_life_days?: number | null } | null
+  updatedAt: string | null
+}
+
+export async function getLeagueProjectionDB(
+  competition: string,
+  group: string,
+  season = '2526',
+): Promise<LeagueProjection> {
+  const supabase = getSupabase()
+  if (!supabase) return { entries: [], meta: null, updatedAt: null }
+
+  const { data, error } = await supabase
+    .from('league_projections')
+    .select('team_slug, team_name, current_pts, current_gd, proj_pts, proj_gd, pct_champ, pct_top3, pct_bottom3, avg_pos, pos_pct, model_meta, updated_at')
+    .eq('season', season)
+    .eq('competition', competition)
+    .eq('group_name', group)
+    .order('avg_pos', { ascending: true })
+
+  if (error || !data || data.length === 0) {
+    return { entries: [], meta: null, updatedAt: null }
+  }
+
+  return {
+    entries: data.map(r => ({
+      team_slug: r.team_slug,
+      team_name: r.team_name,
+      current_pts: r.current_pts,
+      current_gd: r.current_gd,
+      proj_pts: Number(r.proj_pts),
+      proj_gd: Number(r.proj_gd),
+      pct_champ: Number(r.pct_champ),
+      pct_top3: Number(r.pct_top3),
+      pct_bottom3: Number(r.pct_bottom3),
+      avg_pos: Number(r.avg_pos),
+      pos_pct: (r.pos_pct as number[]) || [],
+    })),
+    meta: (data[0].model_meta as LeagueProjection['meta']) ?? null,
+    updatedAt: data[0].updated_at as string,
+  }
+}
+
 /** Teams list for a competition (from standings) */
 export async function getCompetitionTeamsDB(slug: string) {
   const supabase = getSupabase()

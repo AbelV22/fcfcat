@@ -1,0 +1,1922 @@
+[
+  {
+    "jornada": 1,
+    "date": "21-09-2025",
+    "home": "SANTFELIUENC, F.C. A",
+    "away": "EUROPA, C.E. A",
+    "home_score": 0,
+    "away_score": 4
+  },
+  {
+    "jornada": 1,
+    "date": "21-09-2025",
+    "home": "SANTS, U.E. A",
+    "away": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "home_score": 0,
+    "away_score": 3
+  },
+  {
+    "jornada": 1,
+    "date": "21-09-2025",
+    "home": "SANT ANDREU, U.E A",
+    "away": "L'HOSPITALET, CENTRE ESPORTS A",
+    "home_score": 3,
+    "away_score": 0
+  },
+  {
+    "jornada": 1,
+    "date": "21-09-2025",
+    "home": "MARTINENC, F.C. A",
+    "away": "SANT GABRIEL, C.D. B",
+    "home_score": 4,
+    "away_score": 0
+  },
+  {
+    "jornada": 1,
+    "date": "21-09-2025",
+    "home": "FUNDACIÓ FUTBOL BADALONA B",
+    "away": "Pª BARC. ANGUERA A",
+    "home_score": 2,
+    "away_score": 2
+  },
+  {
+    "jornada": 1,
+    "date": "21-09-2025",
+    "home": "CAN BUXERES, F.C. A",
+    "away": "SARRIA, C.P. A",
+    "home_score": 4,
+    "away_score": 1
+  },
+  {
+    "jornada": 1,
+    "date": "21-09-2025",
+    "home": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "away": "FUNDACIO ATLETIC SANT JUST  A",
+    "home_score": 3,
+    "away_score": 0
+  },
+  {
+    "jornada": 1,
+    "date": "21-09-2025",
+    "home": "UNIFICACION LLEFIA,CF. A",
+    "away": "BUFALA, C.F. A",
+    "home_score": 0,
+    "away_score": 4
+  },
+  {
+    "jornada": 2,
+    "date": "28-09-2025",
+    "home": "EUROPA, C.E. A",
+    "away": "UNIFICACION LLEFIA,CF. A",
+    "home_score": 4,
+    "away_score": 0
+  },
+  {
+    "jornada": 2,
+    "date": "28-09-2025",
+    "home": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "away": "SANTFELIUENC, F.C. A",
+    "home_score": 1,
+    "away_score": 1
+  },
+  {
+    "jornada": 2,
+    "date": "28-09-2025",
+    "home": "L'HOSPITALET, CENTRE ESPORTS A",
+    "away": "SANTS, U.E. A",
+    "home_score": 4,
+    "away_score": 0
+  },
+  {
+    "jornada": 2,
+    "date": "28-09-2025",
+    "home": "SANT GABRIEL, C.D. B",
+    "away": "SANT ANDREU, U.E A",
+    "home_score": 0,
+    "away_score": 11
+  },
+  {
+    "jornada": 2,
+    "date": "28-09-2025",
+    "home": "Pª BARC. ANGUERA A",
+    "away": "MARTINENC, F.C. A",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 2,
+    "date": "28-09-2025",
+    "home": "SARRIA, C.P. A",
+    "away": "FUNDACIÓ FUTBOL BADALONA B",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 2,
+    "date": "28-09-2025",
+    "home": "FUNDACIO ATLETIC SANT JUST  A",
+    "away": "CAN BUXERES, F.C. A",
+    "home_score": 0,
+    "away_score": 0
+  },
+  {
+    "jornada": 2,
+    "date": "28-09-2025",
+    "home": "BUFALA, C.F. A",
+    "away": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "home_score": 3,
+    "away_score": 2
+  },
+  {
+    "jornada": 3,
+    "date": "05-10-2025",
+    "home": "EUROPA, C.E. A",
+    "away": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "home_score": 3,
+    "away_score": 1
+  },
+  {
+    "jornada": 3,
+    "date": "05-10-2025",
+    "home": "SANTFELIUENC, F.C. A",
+    "away": "L'HOSPITALET, CENTRE ESPORTS A",
+    "home_score": 0,
+    "away_score": 8
+  },
+  {
+    "jornada": 3,
+    "date": "05-10-2025",
+    "home": "SANTS, U.E. A",
+    "away": "SANT GABRIEL, C.D. B",
+    "home_score": 3,
+    "away_score": 0
+  },
+  {
+    "jornada": 3,
+    "date": "05-10-2025",
+    "home": "SANT ANDREU, U.E A",
+    "away": "Pª BARC. ANGUERA A",
+    "home_score": 3,
+    "away_score": 1
+  },
+  {
+    "jornada": 3,
+    "date": "05-10-2025",
+    "home": "MARTINENC, F.C. A",
+    "away": "SARRIA, C.P. A",
+    "home_score": 3,
+    "away_score": 3
+  },
+  {
+    "jornada": 3,
+    "date": "05-10-2025",
+    "home": "FUNDACIÓ FUTBOL BADALONA B",
+    "away": "FUNDACIO ATLETIC SANT JUST  A",
+    "home_score": 1,
+    "away_score": 8
+  },
+  {
+    "jornada": 3,
+    "date": "05-10-2025",
+    "home": "CAN BUXERES, F.C. A",
+    "away": "BUFALA, C.F. A",
+    "home_score": 4,
+    "away_score": 1
+  },
+  {
+    "jornada": 3,
+    "date": "05-10-2025",
+    "home": "UNIFICACION LLEFIA,CF. A",
+    "away": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "home_score": 0,
+    "away_score": 2
+  },
+  {
+    "jornada": 4,
+    "date": "12-10-2025",
+    "home": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "away": "UNIFICACION LLEFIA,CF. A",
+    "home_score": 4,
+    "away_score": 1
+  },
+  {
+    "jornada": 4,
+    "date": "12-10-2025",
+    "home": "L'HOSPITALET, CENTRE ESPORTS A",
+    "away": "EUROPA, C.E. A",
+    "home_score": 4,
+    "away_score": 2
+  },
+  {
+    "jornada": 4,
+    "date": "12-10-2025",
+    "home": "SANT GABRIEL, C.D. B",
+    "away": "SANTFELIUENC, F.C. A",
+    "home_score": 4,
+    "away_score": 2
+  },
+  {
+    "jornada": 4,
+    "date": "12-10-2025",
+    "home": "Pª BARC. ANGUERA A",
+    "away": "SANTS, U.E. A",
+    "home_score": 1,
+    "away_score": 2
+  },
+  {
+    "jornada": 4,
+    "date": "12-10-2025",
+    "home": "SARRIA, C.P. A",
+    "away": "SANT ANDREU, U.E A",
+    "home_score": 1,
+    "away_score": 5
+  },
+  {
+    "jornada": 4,
+    "date": "12-10-2025",
+    "home": "FUNDACIO ATLETIC SANT JUST  A",
+    "away": "MARTINENC, F.C. A",
+    "home_score": 4,
+    "away_score": 0
+  },
+  {
+    "jornada": 4,
+    "date": "12-10-2025",
+    "home": "BUFALA, C.F. A",
+    "away": "FUNDACIÓ FUTBOL BADALONA B",
+    "home_score": 2,
+    "away_score": 0
+  },
+  {
+    "jornada": 4,
+    "date": "12-10-2025",
+    "home": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "away": "CAN BUXERES, F.C. A",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 5,
+    "date": "19-10-2025",
+    "home": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "away": "L'HOSPITALET, CENTRE ESPORTS A",
+    "home_score": 0,
+    "away_score": 1
+  },
+  {
+    "jornada": 5,
+    "date": "19-10-2025",
+    "home": "EUROPA, C.E. A",
+    "away": "SANT GABRIEL, C.D. B",
+    "home_score": 5,
+    "away_score": 1
+  },
+  {
+    "jornada": 5,
+    "date": "19-10-2025",
+    "home": "SANTFELIUENC, F.C. A",
+    "away": "Pª BARC. ANGUERA A",
+    "home_score": 1,
+    "away_score": 3
+  },
+  {
+    "jornada": 5,
+    "date": "19-10-2025",
+    "home": "SANTS, U.E. A",
+    "away": "SARRIA, C.P. A",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 5,
+    "date": "19-10-2025",
+    "home": "SANT ANDREU, U.E A",
+    "away": "FUNDACIO ATLETIC SANT JUST  A",
+    "home_score": 4,
+    "away_score": 1
+  },
+  {
+    "jornada": 5,
+    "date": "19-10-2025",
+    "home": "MARTINENC, F.C. A",
+    "away": "BUFALA, C.F. A",
+    "home_score": 2,
+    "away_score": 2
+  },
+  {
+    "jornada": 5,
+    "date": "19-10-2025",
+    "home": "FUNDACIÓ FUTBOL BADALONA B",
+    "away": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "home_score": 1,
+    "away_score": 2
+  },
+  {
+    "jornada": 5,
+    "date": "19-10-2025",
+    "home": "UNIFICACION LLEFIA,CF. A",
+    "away": "CAN BUXERES, F.C. A",
+    "home_score": 0,
+    "away_score": 2
+  },
+  {
+    "jornada": 6,
+    "date": "26-10-2025",
+    "home": "L'HOSPITALET, CENTRE ESPORTS A",
+    "away": "UNIFICACION LLEFIA,CF. A",
+    "home_score": 6,
+    "away_score": 1
+  },
+  {
+    "jornada": 6,
+    "date": "26-10-2025",
+    "home": "SANT GABRIEL, C.D. B",
+    "away": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "home_score": 2,
+    "away_score": 5
+  },
+  {
+    "jornada": 6,
+    "date": "26-10-2025",
+    "home": "Pª BARC. ANGUERA A",
+    "away": "EUROPA, C.E. A",
+    "home_score": 3,
+    "away_score": 0
+  },
+  {
+    "jornada": 6,
+    "date": "26-10-2025",
+    "home": "SARRIA, C.P. A",
+    "away": "SANTFELIUENC, F.C. A",
+    "home_score": 4,
+    "away_score": 1
+  },
+  {
+    "jornada": 6,
+    "date": "26-10-2025",
+    "home": "FUNDACIO ATLETIC SANT JUST  A",
+    "away": "SANTS, U.E. A",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 6,
+    "date": "26-10-2025",
+    "home": "BUFALA, C.F. A",
+    "away": "SANT ANDREU, U.E A",
+    "home_score": 1,
+    "away_score": 2
+  },
+  {
+    "jornada": 6,
+    "date": "26-10-2025",
+    "home": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "away": "MARTINENC, F.C. A",
+    "home_score": 2,
+    "away_score": 3
+  },
+  {
+    "jornada": 6,
+    "date": "26-10-2025",
+    "home": "CAN BUXERES, F.C. A",
+    "away": "FUNDACIÓ FUTBOL BADALONA B",
+    "home_score": 4,
+    "away_score": 2
+  },
+  {
+    "jornada": 7,
+    "date": "02-11-2025",
+    "home": "L'HOSPITALET, CENTRE ESPORTS A",
+    "away": "SANT GABRIEL, C.D. B",
+    "home_score": 5,
+    "away_score": 0
+  },
+  {
+    "jornada": 7,
+    "date": "02-11-2025",
+    "home": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "away": "Pª BARC. ANGUERA A",
+    "home_score": 1,
+    "away_score": 4
+  },
+  {
+    "jornada": 7,
+    "date": "02-11-2025",
+    "home": "EUROPA, C.E. A",
+    "away": "SARRIA, C.P. A",
+    "home_score": 3,
+    "away_score": 2
+  },
+  {
+    "jornada": 7,
+    "date": "02-11-2025",
+    "home": "SANTFELIUENC, F.C. A",
+    "away": "FUNDACIO ATLETIC SANT JUST  A",
+    "home_score": 0,
+    "away_score": 3
+  },
+  {
+    "jornada": 7,
+    "date": "02-11-2025",
+    "home": "SANTS, U.E. A",
+    "away": "BUFALA, C.F. A",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 7,
+    "date": "02-11-2025",
+    "home": "SANT ANDREU, U.E A",
+    "away": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "home_score": 5,
+    "away_score": 1
+  },
+  {
+    "jornada": 7,
+    "date": "02-11-2025",
+    "home": "MARTINENC, F.C. A",
+    "away": "CAN BUXERES, F.C. A",
+    "home_score": 3,
+    "away_score": 2
+  },
+  {
+    "jornada": 7,
+    "date": "02-11-2025",
+    "home": "UNIFICACION LLEFIA,CF. A",
+    "away": "FUNDACIÓ FUTBOL BADALONA B",
+    "home_score": 1,
+    "away_score": 4
+  },
+  {
+    "jornada": 8,
+    "date": "09-11-2025",
+    "home": "SANT GABRIEL, C.D. B",
+    "away": "UNIFICACION LLEFIA,CF. A",
+    "home_score": 4,
+    "away_score": 1
+  },
+  {
+    "jornada": 8,
+    "date": "09-11-2025",
+    "home": "Pª BARC. ANGUERA A",
+    "away": "L'HOSPITALET, CENTRE ESPORTS A",
+    "home_score": 0,
+    "away_score": 3
+  },
+  {
+    "jornada": 8,
+    "date": "09-11-2025",
+    "home": "SARRIA, C.P. A",
+    "away": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "home_score": 2,
+    "away_score": 3
+  },
+  {
+    "jornada": 8,
+    "date": "09-11-2025",
+    "home": "FUNDACIO ATLETIC SANT JUST  A",
+    "away": "EUROPA, C.E. A",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 8,
+    "date": "09-11-2025",
+    "home": "BUFALA, C.F. A",
+    "away": "SANTFELIUENC, F.C. A",
+    "home_score": 6,
+    "away_score": 0
+  },
+  {
+    "jornada": 8,
+    "date": "09-11-2025",
+    "home": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "away": "SANTS, U.E. A",
+    "home_score": 1,
+    "away_score": 0
+  },
+  {
+    "jornada": 8,
+    "date": "09-11-2025",
+    "home": "CAN BUXERES, F.C. A",
+    "away": "SANT ANDREU, U.E A",
+    "home_score": 2,
+    "away_score": 2
+  },
+  {
+    "jornada": 8,
+    "date": "09-11-2025",
+    "home": "FUNDACIÓ FUTBOL BADALONA B",
+    "away": "MARTINENC, F.C. A",
+    "home_score": 1,
+    "away_score": 1
+  },
+  {
+    "jornada": 9,
+    "date": "16-11-2025",
+    "home": "SANT GABRIEL, C.D. B",
+    "away": "Pª BARC. ANGUERA A",
+    "home_score": 1,
+    "away_score": 3
+  },
+  {
+    "jornada": 9,
+    "date": "16-11-2025",
+    "home": "L'HOSPITALET, CENTRE ESPORTS A",
+    "away": "SARRIA, C.P. A",
+    "home_score": 1,
+    "away_score": 0
+  },
+  {
+    "jornada": 9,
+    "date": "16-11-2025",
+    "home": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "away": "FUNDACIO ATLETIC SANT JUST  A",
+    "home_score": 1,
+    "away_score": 4
+  },
+  {
+    "jornada": 9,
+    "date": "16-11-2025",
+    "home": "EUROPA, C.E. A",
+    "away": "BUFALA, C.F. A",
+    "home_score": 2,
+    "away_score": 2
+  },
+  {
+    "jornada": 9,
+    "date": "16-11-2025",
+    "home": "SANTFELIUENC, F.C. A",
+    "away": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "home_score": 1,
+    "away_score": 4
+  },
+  {
+    "jornada": 9,
+    "date": "16-11-2025",
+    "home": "SANTS, U.E. A",
+    "away": "CAN BUXERES, F.C. A",
+    "home_score": 0,
+    "away_score": 0
+  },
+  {
+    "jornada": 9,
+    "date": "16-11-2025",
+    "home": "SANT ANDREU, U.E A",
+    "away": "FUNDACIÓ FUTBOL BADALONA B",
+    "home_score": 3,
+    "away_score": 0
+  },
+  {
+    "jornada": 9,
+    "date": "16-11-2025",
+    "home": "UNIFICACION LLEFIA,CF. A",
+    "away": "MARTINENC, F.C. A",
+    "home_score": 2,
+    "away_score": 0
+  },
+  {
+    "jornada": 10,
+    "date": "23-11-2025",
+    "home": "Pª BARC. ANGUERA A",
+    "away": "UNIFICACION LLEFIA,CF. A",
+    "home_score": 6,
+    "away_score": 0
+  },
+  {
+    "jornada": 10,
+    "date": "23-11-2025",
+    "home": "SARRIA, C.P. A",
+    "away": "SANT GABRIEL, C.D. B",
+    "home_score": 4,
+    "away_score": 1
+  },
+  {
+    "jornada": 10,
+    "date": "23-11-2025",
+    "home": "FUNDACIO ATLETIC SANT JUST  A",
+    "away": "L'HOSPITALET, CENTRE ESPORTS A",
+    "home_score": 1,
+    "away_score": 2
+  },
+  {
+    "jornada": 10,
+    "date": "23-11-2025",
+    "home": "BUFALA, C.F. A",
+    "away": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "home_score": 3,
+    "away_score": 2
+  },
+  {
+    "jornada": 10,
+    "date": "23-11-2025",
+    "home": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "away": "EUROPA, C.E. A",
+    "home_score": 2,
+    "away_score": 4
+  },
+  {
+    "jornada": 10,
+    "date": "23-11-2025",
+    "home": "CAN BUXERES, F.C. A",
+    "away": "SANTFELIUENC, F.C. A",
+    "home_score": 4,
+    "away_score": 1
+  },
+  {
+    "jornada": 10,
+    "date": "23-11-2025",
+    "home": "FUNDACIÓ FUTBOL BADALONA B",
+    "away": "SANTS, U.E. A",
+    "home_score": 1,
+    "away_score": 2
+  },
+  {
+    "jornada": 10,
+    "date": "23-11-2025",
+    "home": "MARTINENC, F.C. A",
+    "away": "SANT ANDREU, U.E A",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 11,
+    "date": "30-11-2025",
+    "home": "Pª BARC. ANGUERA A",
+    "away": "SARRIA, C.P. A",
+    "home_score": 4,
+    "away_score": 1
+  },
+  {
+    "jornada": 11,
+    "date": "30-11-2025",
+    "home": "SANT GABRIEL, C.D. B",
+    "away": "FUNDACIO ATLETIC SANT JUST  A",
+    "home_score": 1,
+    "away_score": 5
+  },
+  {
+    "jornada": 11,
+    "date": "30-11-2025",
+    "home": "L'HOSPITALET, CENTRE ESPORTS A",
+    "away": "BUFALA, C.F. A",
+    "home_score": 4,
+    "away_score": 2
+  },
+  {
+    "jornada": 11,
+    "date": "30-11-2025",
+    "home": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "away": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "home_score": 0,
+    "away_score": 2
+  },
+  {
+    "jornada": 11,
+    "date": "30-11-2025",
+    "home": "EUROPA, C.E. A",
+    "away": "CAN BUXERES, F.C. A",
+    "home_score": 2,
+    "away_score": 2
+  },
+  {
+    "jornada": 11,
+    "date": "30-11-2025",
+    "home": "SANTFELIUENC, F.C. A",
+    "away": "FUNDACIÓ FUTBOL BADALONA B",
+    "home_score": 1,
+    "away_score": 1
+  },
+  {
+    "jornada": 11,
+    "date": "30-11-2025",
+    "home": "SANTS, U.E. A",
+    "away": "MARTINENC, F.C. A",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 11,
+    "date": "30-11-2025",
+    "home": "UNIFICACION LLEFIA,CF. A",
+    "away": "SANT ANDREU, U.E A",
+    "home_score": 0,
+    "away_score": 1
+  },
+  {
+    "jornada": 12,
+    "date": "14-12-2025",
+    "home": "SARRIA, C.P. A",
+    "away": "UNIFICACION LLEFIA,CF. A",
+    "home_score": 2,
+    "away_score": 0
+  },
+  {
+    "jornada": 12,
+    "date": "14-12-2025",
+    "home": "FUNDACIO ATLETIC SANT JUST  A",
+    "away": "Pª BARC. ANGUERA A",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 12,
+    "date": "14-12-2025",
+    "home": "BUFALA, C.F. A",
+    "away": "SANT GABRIEL, C.D. B",
+    "home_score": 3,
+    "away_score": 1
+  },
+  {
+    "jornada": 12,
+    "date": "14-12-2025",
+    "home": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "away": "L'HOSPITALET, CENTRE ESPORTS A",
+    "home_score": 0,
+    "away_score": 3
+  },
+  {
+    "jornada": 12,
+    "date": "14-12-2025",
+    "home": "CAN BUXERES, F.C. A",
+    "away": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "home_score": 0,
+    "away_score": 2
+  },
+  {
+    "jornada": 12,
+    "date": "14-12-2025",
+    "home": "FUNDACIÓ FUTBOL BADALONA B",
+    "away": "EUROPA, C.E. A",
+    "home_score": 0,
+    "away_score": 3
+  },
+  {
+    "jornada": 12,
+    "date": "14-12-2025",
+    "home": "MARTINENC, F.C. A",
+    "away": "SANTFELIUENC, F.C. A",
+    "home_score": 0,
+    "away_score": 1
+  },
+  {
+    "jornada": 12,
+    "date": "14-12-2025",
+    "home": "SANT ANDREU, U.E A",
+    "away": "SANTS, U.E. A",
+    "home_score": 3,
+    "away_score": 1
+  },
+  {
+    "jornada": 13,
+    "date": "21-12-2025",
+    "home": "SARRIA, C.P. A",
+    "away": "FUNDACIO ATLETIC SANT JUST  A",
+    "home_score": 0,
+    "away_score": 2
+  },
+  {
+    "jornada": 13,
+    "date": "21-12-2025",
+    "home": "Pª BARC. ANGUERA A",
+    "away": "BUFALA, C.F. A",
+    "home_score": 5,
+    "away_score": 0
+  },
+  {
+    "jornada": 13,
+    "date": "21-12-2025",
+    "home": "SANT GABRIEL, C.D. B",
+    "away": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "home_score": 1,
+    "away_score": 2
+  },
+  {
+    "jornada": 13,
+    "date": "21-12-2025",
+    "home": "L'HOSPITALET, CENTRE ESPORTS A",
+    "away": "CAN BUXERES, F.C. A",
+    "home_score": 1,
+    "away_score": 0
+  },
+  {
+    "jornada": 13,
+    "date": "21-12-2025",
+    "home": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "away": "FUNDACIÓ FUTBOL BADALONA B",
+    "home_score": 1,
+    "away_score": 0
+  },
+  {
+    "jornada": 13,
+    "date": "21-12-2025",
+    "home": "EUROPA, C.E. A",
+    "away": "MARTINENC, F.C. A",
+    "home_score": 4,
+    "away_score": 0
+  },
+  {
+    "jornada": 13,
+    "date": "21-12-2025",
+    "home": "SANTFELIUENC, F.C. A",
+    "away": "SANT ANDREU, U.E A",
+    "home_score": 1,
+    "away_score": 5
+  },
+  {
+    "jornada": 13,
+    "date": "21-12-2025",
+    "home": "UNIFICACION LLEFIA,CF. A",
+    "away": "SANTS, U.E. A",
+    "home_score": 2,
+    "away_score": 0
+  },
+  {
+    "jornada": 14,
+    "date": "11-01-2026",
+    "home": "UNIFICACION LLEFIA,CF. A",
+    "away": "FUNDACIO ATLETIC SANT JUST  A",
+    "home_score": 0,
+    "away_score": 3
+  },
+  {
+    "jornada": 14,
+    "date": "11-01-2026",
+    "home": "BUFALA, C.F. A",
+    "away": "SARRIA, C.P. A",
+    "home_score": 5,
+    "away_score": 0
+  },
+  {
+    "jornada": 14,
+    "date": "11-01-2026",
+    "home": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "away": "Pª BARC. ANGUERA A",
+    "home_score": 3,
+    "away_score": 2
+  },
+  {
+    "jornada": 14,
+    "date": "11-01-2026",
+    "home": "CAN BUXERES, F.C. A",
+    "away": "SANT GABRIEL, C.D. B",
+    "home_score": 4,
+    "away_score": 1
+  },
+  {
+    "jornada": 14,
+    "date": "11-01-2026",
+    "home": "FUNDACIÓ FUTBOL BADALONA B",
+    "away": "L'HOSPITALET, CENTRE ESPORTS A",
+    "home_score": 1,
+    "away_score": 5
+  },
+  {
+    "jornada": 14,
+    "date": "11-01-2026",
+    "home": "MARTINENC, F.C. A",
+    "away": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "home_score": 2,
+    "away_score": 6
+  },
+  {
+    "jornada": 14,
+    "date": "11-01-2026",
+    "home": "SANT ANDREU, U.E A",
+    "away": "EUROPA, C.E. A",
+    "home_score": 3,
+    "away_score": 0
+  },
+  {
+    "jornada": 14,
+    "date": "11-01-2026",
+    "home": "SANTS, U.E. A",
+    "away": "SANTFELIUENC, F.C. A",
+    "home_score": 7,
+    "away_score": 0
+  },
+  {
+    "jornada": 15,
+    "date": "18-01-2026",
+    "home": "FUNDACIO ATLETIC SANT JUST  A",
+    "away": "BUFALA, C.F. A",
+    "home_score": 7,
+    "away_score": 0
+  },
+  {
+    "jornada": 15,
+    "date": "18-01-2026",
+    "home": "SARRIA, C.P. A",
+    "away": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "home_score": 2,
+    "away_score": 4
+  },
+  {
+    "jornada": 15,
+    "date": "18-01-2026",
+    "home": "Pª BARC. ANGUERA A",
+    "away": "CAN BUXERES, F.C. A",
+    "home_score": 0,
+    "away_score": 1
+  },
+  {
+    "jornada": 15,
+    "date": "18-01-2026",
+    "home": "SANT GABRIEL, C.D. B",
+    "away": "FUNDACIÓ FUTBOL BADALONA B",
+    "home_score": 1,
+    "away_score": 3
+  },
+  {
+    "jornada": 15,
+    "date": "18-01-2026",
+    "home": "L'HOSPITALET, CENTRE ESPORTS A",
+    "away": "MARTINENC, F.C. A",
+    "home_score": 1,
+    "away_score": 0
+  },
+  {
+    "jornada": 15,
+    "date": "18-01-2026",
+    "home": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "away": "SANT ANDREU, U.E A",
+    "home_score": 0,
+    "away_score": 2
+  },
+  {
+    "jornada": 15,
+    "date": "18-01-2026",
+    "home": "EUROPA, C.E. A",
+    "away": "SANTS, U.E. A",
+    "home_score": 3,
+    "away_score": 1
+  },
+  {
+    "jornada": 15,
+    "date": "18-01-2026",
+    "home": "SANTFELIUENC, F.C. A",
+    "away": "UNIFICACION LLEFIA,CF. A",
+    "home_score": 0,
+    "away_score": 0
+  },
+  {
+    "jornada": 16,
+    "date": "25-01-2026",
+    "home": "EUROPA, C.E. A",
+    "away": "SANTFELIUENC, F.C. A",
+    "home_score": 6,
+    "away_score": 1
+  },
+  {
+    "jornada": 16,
+    "date": "25-01-2026",
+    "home": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "away": "SANTS, U.E. A",
+    "home_score": 2,
+    "away_score": 2
+  },
+  {
+    "jornada": 16,
+    "date": "25-01-2026",
+    "home": "L'HOSPITALET, CENTRE ESPORTS A",
+    "away": "SANT ANDREU, U.E A",
+    "home_score": 3,
+    "away_score": 0
+  },
+  {
+    "jornada": 16,
+    "date": "25-01-2026",
+    "home": "SANT GABRIEL, C.D. B",
+    "away": "MARTINENC, F.C. A",
+    "home_score": 2,
+    "away_score": 0
+  },
+  {
+    "jornada": 16,
+    "date": "25-01-2026",
+    "home": "Pª BARC. ANGUERA A",
+    "away": "FUNDACIÓ FUTBOL BADALONA B",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 16,
+    "date": "25-01-2026",
+    "home": "SARRIA, C.P. A",
+    "away": "CAN BUXERES, F.C. A",
+    "home_score": 3,
+    "away_score": 0
+  },
+  {
+    "jornada": 16,
+    "date": "25-01-2026",
+    "home": "FUNDACIO ATLETIC SANT JUST  A",
+    "away": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "home_score": 1,
+    "away_score": 0
+  },
+  {
+    "jornada": 16,
+    "date": "25-01-2026",
+    "home": "BUFALA, C.F. A",
+    "away": "UNIFICACION LLEFIA,CF. A",
+    "home_score": 1,
+    "away_score": 2
+  },
+  {
+    "jornada": 17,
+    "date": "01-02-2026",
+    "home": "UNIFICACION LLEFIA,CF. A",
+    "away": "EUROPA, C.E. A",
+    "home_score": 4,
+    "away_score": 4
+  },
+  {
+    "jornada": 17,
+    "date": "01-02-2026",
+    "home": "SANTFELIUENC, F.C. A",
+    "away": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "home_score": 1,
+    "away_score": 5
+  },
+  {
+    "jornada": 17,
+    "date": "01-02-2026",
+    "home": "SANTS, U.E. A",
+    "away": "L'HOSPITALET, CENTRE ESPORTS A",
+    "home_score": 1,
+    "away_score": 0
+  },
+  {
+    "jornada": 17,
+    "date": "01-02-2026",
+    "home": "SANT ANDREU, U.E A",
+    "away": "SANT GABRIEL, C.D. B",
+    "home_score": 3,
+    "away_score": 0
+  },
+  {
+    "jornada": 17,
+    "date": "01-02-2026",
+    "home": "MARTINENC, F.C. A",
+    "away": "Pª BARC. ANGUERA A",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 17,
+    "date": "01-02-2026",
+    "home": "FUNDACIÓ FUTBOL BADALONA B",
+    "away": "SARRIA, C.P. A",
+    "home_score": 2,
+    "away_score": 0
+  },
+  {
+    "jornada": 17,
+    "date": "01-02-2026",
+    "home": "CAN BUXERES, F.C. A",
+    "away": "FUNDACIO ATLETIC SANT JUST  A",
+    "home_score": 0,
+    "away_score": 1
+  },
+  {
+    "jornada": 17,
+    "date": "01-02-2026",
+    "home": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "away": "BUFALA, C.F. A",
+    "home_score": 3,
+    "away_score": 1
+  },
+  {
+    "jornada": 18,
+    "date": "08-02-2026",
+    "home": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "away": "EUROPA, C.E. A",
+    "home_score": 1,
+    "away_score": 3
+  },
+  {
+    "jornada": 18,
+    "date": "08-02-2026",
+    "home": "L'HOSPITALET, CENTRE ESPORTS A",
+    "away": "SANTFELIUENC, F.C. A",
+    "home_score": 7,
+    "away_score": 0
+  },
+  {
+    "jornada": 18,
+    "date": "08-02-2026",
+    "home": "SANT GABRIEL, C.D. B",
+    "away": "SANTS, U.E. A",
+    "home_score": 1,
+    "away_score": 1
+  },
+  {
+    "jornada": 18,
+    "date": "08-02-2026",
+    "home": "Pª BARC. ANGUERA A",
+    "away": "SANT ANDREU, U.E A",
+    "home_score": 1,
+    "away_score": 2
+  },
+  {
+    "jornada": 18,
+    "date": "08-02-2026",
+    "home": "SARRIA, C.P. A",
+    "away": "MARTINENC, F.C. A",
+    "home_score": 1,
+    "away_score": 1
+  },
+  {
+    "jornada": 18,
+    "date": "08-02-2026",
+    "home": "FUNDACIO ATLETIC SANT JUST  A",
+    "away": "FUNDACIÓ FUTBOL BADALONA B",
+    "home_score": 1,
+    "away_score": 0
+  },
+  {
+    "jornada": 18,
+    "date": "08-02-2026",
+    "home": "BUFALA, C.F. A",
+    "away": "CAN BUXERES, F.C. A",
+    "home_score": 1,
+    "away_score": 1
+  },
+  {
+    "jornada": 18,
+    "date": "08-02-2026",
+    "home": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "away": "UNIFICACION LLEFIA,CF. A",
+    "home_score": 2,
+    "away_score": 0
+  },
+  {
+    "jornada": 19,
+    "date": "22-02-2026",
+    "home": "UNIFICACION LLEFIA,CF. A",
+    "away": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "home_score": 1,
+    "away_score": 1
+  },
+  {
+    "jornada": 19,
+    "date": "22-02-2026",
+    "home": "EUROPA, C.E. A",
+    "away": "L'HOSPITALET, CENTRE ESPORTS A",
+    "home_score": 2,
+    "away_score": 4
+  },
+  {
+    "jornada": 19,
+    "date": "22-02-2026",
+    "home": "SANTFELIUENC, F.C. A",
+    "away": "SANT GABRIEL, C.D. B",
+    "home_score": 1,
+    "away_score": 2
+  },
+  {
+    "jornada": 19,
+    "date": "22-02-2026",
+    "home": "SANTS, U.E. A",
+    "away": "Pª BARC. ANGUERA A",
+    "home_score": 0,
+    "away_score": 2
+  },
+  {
+    "jornada": 19,
+    "date": "22-02-2026",
+    "home": "SANT ANDREU, U.E A",
+    "away": "SARRIA, C.P. A",
+    "home_score": 3,
+    "away_score": 0
+  },
+  {
+    "jornada": 19,
+    "date": "22-02-2026",
+    "home": "MARTINENC, F.C. A",
+    "away": "FUNDACIO ATLETIC SANT JUST  A",
+    "home_score": 1,
+    "away_score": 4
+  },
+  {
+    "jornada": 19,
+    "date": "22-02-2026",
+    "home": "FUNDACIÓ FUTBOL BADALONA B",
+    "away": "BUFALA, C.F. A",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 19,
+    "date": "22-02-2026",
+    "home": "CAN BUXERES, F.C. A",
+    "away": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "home_score": 3,
+    "away_score": 1
+  },
+  {
+    "jornada": 20,
+    "date": "01-03-2026",
+    "home": "L'HOSPITALET, CENTRE ESPORTS A",
+    "away": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "home_score": 4,
+    "away_score": 1
+  },
+  {
+    "jornada": 20,
+    "date": "01-03-2026",
+    "home": "SANT GABRIEL, C.D. B",
+    "away": "EUROPA, C.E. A",
+    "home_score": 1,
+    "away_score": 1
+  },
+  {
+    "jornada": 20,
+    "date": "01-03-2026",
+    "home": "Pª BARC. ANGUERA A",
+    "away": "SANTFELIUENC, F.C. A",
+    "home_score": 2,
+    "away_score": 0
+  },
+  {
+    "jornada": 20,
+    "date": "01-03-2026",
+    "home": "SARRIA, C.P. A",
+    "away": "SANTS, U.E. A",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 20,
+    "date": "01-03-2026",
+    "home": "FUNDACIO ATLETIC SANT JUST  A",
+    "away": "SANT ANDREU, U.E A",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 20,
+    "date": "01-03-2026",
+    "home": "BUFALA, C.F. A",
+    "away": "MARTINENC, F.C. A",
+    "home_score": 1,
+    "away_score": 1
+  },
+  {
+    "jornada": 20,
+    "date": "01-03-2026",
+    "home": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "away": "FUNDACIÓ FUTBOL BADALONA B",
+    "home_score": 3,
+    "away_score": 0
+  },
+  {
+    "jornada": 20,
+    "date": "01-03-2026",
+    "home": "CAN BUXERES, F.C. A",
+    "away": "UNIFICACION LLEFIA,CF. A",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 21,
+    "date": "08-03-2026",
+    "home": "UNIFICACION LLEFIA,CF. A",
+    "away": "L'HOSPITALET, CENTRE ESPORTS A",
+    "home_score": 0,
+    "away_score": 3
+  },
+  {
+    "jornada": 21,
+    "date": "08-03-2026",
+    "home": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "away": "SANT GABRIEL, C.D. B",
+    "home_score": 2,
+    "away_score": 0
+  },
+  {
+    "jornada": 21,
+    "date": "08-03-2026",
+    "home": "EUROPA, C.E. A",
+    "away": "Pª BARC. ANGUERA A",
+    "home_score": 0,
+    "away_score": 1
+  },
+  {
+    "jornada": 21,
+    "date": "08-03-2026",
+    "home": "SANTFELIUENC, F.C. A",
+    "away": "SARRIA, C.P. A",
+    "home_score": 1,
+    "away_score": 3
+  },
+  {
+    "jornada": 21,
+    "date": "08-03-2026",
+    "home": "SANTS, U.E. A",
+    "away": "FUNDACIO ATLETIC SANT JUST  A",
+    "home_score": 0,
+    "away_score": 1
+  },
+  {
+    "jornada": 21,
+    "date": "08-03-2026",
+    "home": "SANT ANDREU, U.E A",
+    "away": "BUFALA, C.F. A",
+    "home_score": 4,
+    "away_score": 0
+  },
+  {
+    "jornada": 21,
+    "date": "08-03-2026",
+    "home": "MARTINENC, F.C. A",
+    "away": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "home_score": 1,
+    "away_score": 5
+  },
+  {
+    "jornada": 21,
+    "date": "08-03-2026",
+    "home": "FUNDACIÓ FUTBOL BADALONA B",
+    "away": "CAN BUXERES, F.C. A",
+    "home_score": 0,
+    "away_score": 3
+  },
+  {
+    "jornada": 22,
+    "date": "15-03-2026",
+    "home": "SANT GABRIEL, C.D. B",
+    "away": "L'HOSPITALET, CENTRE ESPORTS A",
+    "home_score": 2,
+    "away_score": 9
+  },
+  {
+    "jornada": 22,
+    "date": "15-03-2026",
+    "home": "Pª BARC. ANGUERA A",
+    "away": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "home_score": 2,
+    "away_score": 2
+  },
+  {
+    "jornada": 22,
+    "date": "15-03-2026",
+    "home": "SARRIA, C.P. A",
+    "away": "EUROPA, C.E. A",
+    "home_score": 1,
+    "away_score": 4
+  },
+  {
+    "jornada": 22,
+    "date": "15-03-2026",
+    "home": "FUNDACIO ATLETIC SANT JUST  A",
+    "away": "SANTFELIUENC, F.C. A",
+    "home_score": 5,
+    "away_score": 0
+  },
+  {
+    "jornada": 22,
+    "date": "15-03-2026",
+    "home": "BUFALA, C.F. A",
+    "away": "SANTS, U.E. A",
+    "home_score": 0,
+    "away_score": 3
+  },
+  {
+    "jornada": 22,
+    "date": "15-03-2026",
+    "home": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "away": "SANT ANDREU, U.E A",
+    "home_score": 2,
+    "away_score": 3
+  },
+  {
+    "jornada": 22,
+    "date": "15-03-2026",
+    "home": "CAN BUXERES, F.C. A",
+    "away": "MARTINENC, F.C. A",
+    "home_score": 6,
+    "away_score": 3
+  },
+  {
+    "jornada": 22,
+    "date": "15-03-2026",
+    "home": "FUNDACIÓ FUTBOL BADALONA B",
+    "away": "UNIFICACION LLEFIA,CF. A",
+    "home_score": 1,
+    "away_score": 1
+  },
+  {
+    "jornada": 23,
+    "date": "22-03-2026",
+    "home": "UNIFICACION LLEFIA,CF. A",
+    "away": "SANT GABRIEL, C.D. B",
+    "home_score": 3,
+    "away_score": 6
+  },
+  {
+    "jornada": 23,
+    "date": "22-03-2026",
+    "home": "L'HOSPITALET, CENTRE ESPORTS A",
+    "away": "Pª BARC. ANGUERA A",
+    "home_score": 3,
+    "away_score": 1
+  },
+  {
+    "jornada": 23,
+    "date": "22-03-2026",
+    "home": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "away": "SARRIA, C.P. A",
+    "home_score": 2,
+    "away_score": 4
+  },
+  {
+    "jornada": 23,
+    "date": "22-03-2026",
+    "home": "EUROPA, C.E. A",
+    "away": "FUNDACIO ATLETIC SANT JUST  A",
+    "home_score": 1,
+    "away_score": 3
+  },
+  {
+    "jornada": 23,
+    "date": "22-03-2026",
+    "home": "SANTFELIUENC, F.C. A",
+    "away": "BUFALA, C.F. A",
+    "home_score": 1,
+    "away_score": 1
+  },
+  {
+    "jornada": 23,
+    "date": "22-03-2026",
+    "home": "SANTS, U.E. A",
+    "away": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 23,
+    "date": "22-03-2026",
+    "home": "SANT ANDREU, U.E A",
+    "away": "CAN BUXERES, F.C. A",
+    "home_score": 0,
+    "away_score": 2
+  },
+  {
+    "jornada": 23,
+    "date": "22-03-2026",
+    "home": "MARTINENC, F.C. A",
+    "away": "FUNDACIÓ FUTBOL BADALONA B",
+    "home_score": 2,
+    "away_score": 3
+  },
+  {
+    "jornada": 24,
+    "date": "29-03-2026",
+    "home": "Pª BARC. ANGUERA A",
+    "away": "SANT GABRIEL, C.D. B",
+    "home_score": 3,
+    "away_score": 0
+  },
+  {
+    "jornada": 24,
+    "date": "29-03-2026",
+    "home": "SARRIA, C.P. A",
+    "away": "L'HOSPITALET, CENTRE ESPORTS A",
+    "home_score": 0,
+    "away_score": 6
+  },
+  {
+    "jornada": 24,
+    "date": "29-03-2026",
+    "home": "FUNDACIO ATLETIC SANT JUST  A",
+    "away": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "home_score": 3,
+    "away_score": 0
+  },
+  {
+    "jornada": 24,
+    "date": "29-03-2026",
+    "home": "BUFALA, C.F. A",
+    "away": "EUROPA, C.E. A",
+    "home_score": 4,
+    "away_score": 1
+  },
+  {
+    "jornada": 24,
+    "date": "29-03-2026",
+    "home": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "away": "SANTFELIUENC, F.C. A",
+    "home_score": 7,
+    "away_score": 1
+  },
+  {
+    "jornada": 24,
+    "date": "29-03-2026",
+    "home": "CAN BUXERES, F.C. A",
+    "away": "SANTS, U.E. A",
+    "home_score": 3,
+    "away_score": 2
+  },
+  {
+    "jornada": 24,
+    "date": "29-03-2026",
+    "home": "FUNDACIÓ FUTBOL BADALONA B",
+    "away": "SANT ANDREU, U.E A",
+    "home_score": 0,
+    "away_score": 6
+  },
+  {
+    "jornada": 24,
+    "date": "29-03-2026",
+    "home": "MARTINENC, F.C. A",
+    "away": "UNIFICACION LLEFIA,CF. A",
+    "home_score": 1,
+    "away_score": 1
+  },
+  {
+    "jornada": 25,
+    "date": "12-04-2026",
+    "home": "UNIFICACION LLEFIA,CF. A",
+    "away": "Pª BARC. ANGUERA A",
+    "home_score": 1,
+    "away_score": 2
+  },
+  {
+    "jornada": 25,
+    "date": "12-04-2026",
+    "home": "SANT GABRIEL, C.D. B",
+    "away": "SARRIA, C.P. A",
+    "home_score": 1,
+    "away_score": 1
+  },
+  {
+    "jornada": 25,
+    "date": "12-04-2026",
+    "home": "L'HOSPITALET, CENTRE ESPORTS A",
+    "away": "FUNDACIO ATLETIC SANT JUST  A",
+    "home_score": 2,
+    "away_score": 1
+  },
+  {
+    "jornada": 25,
+    "date": "12-04-2026",
+    "home": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "away": "BUFALA, C.F. A",
+    "home_score": 0,
+    "away_score": 5
+  },
+  {
+    "jornada": 25,
+    "date": "12-04-2026",
+    "home": "EUROPA, C.E. A",
+    "away": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "home_score": 2,
+    "away_score": 2
+  },
+  {
+    "jornada": 25,
+    "date": "12-04-2026",
+    "home": "SANTFELIUENC, F.C. A",
+    "away": "CAN BUXERES, F.C. A",
+    "home_score": 1,
+    "away_score": 0
+  },
+  {
+    "jornada": 25,
+    "date": "12-04-2026",
+    "home": "SANTS, U.E. A",
+    "away": "FUNDACIÓ FUTBOL BADALONA B",
+    "home_score": 1,
+    "away_score": 4
+  },
+  {
+    "jornada": 25,
+    "date": "12-04-2026",
+    "home": "SANT ANDREU, U.E A",
+    "away": "MARTINENC, F.C. A",
+    "home_score": 1,
+    "away_score": 0
+  },
+  {
+    "jornada": 26,
+    "date": "19-04-2026",
+    "home": "SARRIA, C.P. A",
+    "away": "Pª BARC. ANGUERA A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 26,
+    "date": "19-04-2026",
+    "home": "FUNDACIO ATLETIC SANT JUST  A",
+    "away": "SANT GABRIEL, C.D. B",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 26,
+    "date": "19-04-2026",
+    "home": "BUFALA, C.F. A",
+    "away": "L'HOSPITALET, CENTRE ESPORTS A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 26,
+    "date": "19-04-2026",
+    "home": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "away": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 26,
+    "date": "19-04-2026",
+    "home": "CAN BUXERES, F.C. A",
+    "away": "EUROPA, C.E. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 26,
+    "date": "19-04-2026",
+    "home": "FUNDACIÓ FUTBOL BADALONA B",
+    "away": "SANTFELIUENC, F.C. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 26,
+    "date": "19-04-2026",
+    "home": "MARTINENC, F.C. A",
+    "away": "SANTS, U.E. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 26,
+    "date": "19-04-2026",
+    "home": "SANT ANDREU, U.E A",
+    "away": "UNIFICACION LLEFIA,CF. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 27,
+    "date": "26-04-2026",
+    "home": "UNIFICACION LLEFIA,CF. A",
+    "away": "SARRIA, C.P. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 27,
+    "date": "26-04-2026",
+    "home": "Pª BARC. ANGUERA A",
+    "away": "FUNDACIO ATLETIC SANT JUST  A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 27,
+    "date": "26-04-2026",
+    "home": "SANT GABRIEL, C.D. B",
+    "away": "BUFALA, C.F. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 27,
+    "date": "26-04-2026",
+    "home": "L'HOSPITALET, CENTRE ESPORTS A",
+    "away": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 27,
+    "date": "26-04-2026",
+    "home": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "away": "CAN BUXERES, F.C. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 27,
+    "date": "26-04-2026",
+    "home": "EUROPA, C.E. A",
+    "away": "FUNDACIÓ FUTBOL BADALONA B",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 27,
+    "date": "26-04-2026",
+    "home": "SANTFELIUENC, F.C. A",
+    "away": "MARTINENC, F.C. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 27,
+    "date": "26-04-2026",
+    "home": "SANTS, U.E. A",
+    "away": "SANT ANDREU, U.E A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 28,
+    "date": "03-05-2026",
+    "home": "FUNDACIO ATLETIC SANT JUST  A",
+    "away": "SARRIA, C.P. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 28,
+    "date": "03-05-2026",
+    "home": "BUFALA, C.F. A",
+    "away": "Pª BARC. ANGUERA A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 28,
+    "date": "03-05-2026",
+    "home": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "away": "SANT GABRIEL, C.D. B",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 28,
+    "date": "03-05-2026",
+    "home": "CAN BUXERES, F.C. A",
+    "away": "L'HOSPITALET, CENTRE ESPORTS A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 28,
+    "date": "03-05-2026",
+    "home": "FUNDACIÓ FUTBOL BADALONA B",
+    "away": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 28,
+    "date": "03-05-2026",
+    "home": "MARTINENC, F.C. A",
+    "away": "EUROPA, C.E. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 28,
+    "date": "03-05-2026",
+    "home": "SANT ANDREU, U.E A",
+    "away": "SANTFELIUENC, F.C. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 28,
+    "date": "03-05-2026",
+    "home": "SANTS, U.E. A",
+    "away": "UNIFICACION LLEFIA,CF. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 29,
+    "date": "10-05-2026",
+    "home": "FUNDACIO ATLETIC SANT JUST  A",
+    "away": "UNIFICACION LLEFIA,CF. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 29,
+    "date": "10-05-2026",
+    "home": "SARRIA, C.P. A",
+    "away": "BUFALA, C.F. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 29,
+    "date": "10-05-2026",
+    "home": "Pª BARC. ANGUERA A",
+    "away": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 29,
+    "date": "10-05-2026",
+    "home": "SANT GABRIEL, C.D. B",
+    "away": "CAN BUXERES, F.C. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 29,
+    "date": "10-05-2026",
+    "home": "L'HOSPITALET, CENTRE ESPORTS A",
+    "away": "FUNDACIÓ FUTBOL BADALONA B",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 29,
+    "date": "10-05-2026",
+    "home": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "away": "MARTINENC, F.C. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 29,
+    "date": "10-05-2026",
+    "home": "EUROPA, C.E. A",
+    "away": "SANT ANDREU, U.E A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 29,
+    "date": "10-05-2026",
+    "home": "SANTFELIUENC, F.C. A",
+    "away": "SANTS, U.E. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 30,
+    "date": "17-05-2026",
+    "home": "BUFALA, C.F. A",
+    "away": "FUNDACIO ATLETIC SANT JUST  A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 30,
+    "date": "17-05-2026",
+    "home": "ESCOLA DE FUTBOL PREMIER BARCELONA A",
+    "away": "SARRIA, C.P. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 30,
+    "date": "17-05-2026",
+    "home": "CAN BUXERES, F.C. A",
+    "away": "Pª BARC. ANGUERA A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 30,
+    "date": "17-05-2026",
+    "home": "FUNDACIÓ FUTBOL BADALONA B",
+    "away": "SANT GABRIEL, C.D. B",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 30,
+    "date": "17-05-2026",
+    "home": "MARTINENC, F.C. A",
+    "away": "L'HOSPITALET, CENTRE ESPORTS A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 30,
+    "date": "17-05-2026",
+    "home": "SANT ANDREU, U.E A",
+    "away": "FUNDACIÓ ESPORTIVA GRAMA A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 30,
+    "date": "17-05-2026",
+    "home": "SANTS, U.E. A",
+    "away": "EUROPA, C.E. A",
+    "home_score": null,
+    "away_score": null
+  },
+  {
+    "jornada": 30,
+    "date": "17-05-2026",
+    "home": "UNIFICACION LLEFIA,CF. A",
+    "away": "SANTFELIUENC, F.C. A",
+    "home_score": null,
+    "away_score": null
+  }
+]
