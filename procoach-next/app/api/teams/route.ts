@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase-server'
 import { NextResponse } from 'next/server'
+import { composeTeamSlug } from '@/lib/team-slug'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -13,7 +14,7 @@ export async function GET(req: Request) {
 
   const { data, error } = await supabase
     .from('fcf_standings')
-    .select('team_name, group_name')
+    .select('team_name, team_slug, group_name')
     .eq('competition', competition)
     .eq('season', '2526')
     .order('team_name')
@@ -23,15 +24,22 @@ export async function GET(req: Request) {
     return NextResponse.json({ teams: [], error: error.message }, { status: 500 })
   }
 
-  // Deduplicate team names (a team may appear in multiple rows)
+  // Deduplicate by (team_name, group_name) so clubs that field multiple teams
+  // in different groups of the same competition still show as separate entries.
   const seen = new Set<string>()
   const teams = (data || [])
     .filter(r => {
-      if (!r.team_name || seen.has(r.team_name)) return false
-      seen.add(r.team_name)
+      if (!r.team_name) return false
+      const key = `${r.team_name}::${r.group_name ?? ''}`
+      if (seen.has(key)) return false
+      seen.add(key)
       return true
     })
-    .map(r => ({ name: r.team_name, group: r.group_name }))
+    .map(r => ({
+      name: r.team_name as string,
+      group: (r.group_name ?? '') as string,
+      slug: (r.team_slug || composeTeamSlug(r.team_name as string, competition, r.group_name ?? '')) as string,
+    }))
 
   return NextResponse.json({ teams })
 }

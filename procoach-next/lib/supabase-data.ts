@@ -483,8 +483,14 @@ export async function getAllCompetitionGroupsDB() {
  * The legacy slug has no `-{compCode}-g{n}` suffix, so we search for rows
  * whose current `team_slug` starts with `${legacy}-` and pick the one with
  * the highest competition priority (adult > juvenil > cadet > infantil).
+ *
+ * If `competitionHint` is provided and matches at least one row, that row
+ * wins regardless of the priority list.
  */
-export async function resolveLegacyTeamSlug(legacySlug: string): Promise<string | null> {
+export async function resolveLegacyTeamSlug(
+  legacySlug: string,
+  competitionHint?: string,
+): Promise<string | null> {
   const supabase = getSupabase()
   if (!supabase) return null
 
@@ -495,6 +501,11 @@ export async function resolveLegacyTeamSlug(legacySlug: string): Promise<string 
     .limit(50)
 
   if (error || !data || data.length === 0) return null
+
+  if (competitionHint) {
+    const hinted = data.find((r: any) => r.competition === competitionHint)
+    if (hinted?.team_slug) return hinted.team_slug
+  }
 
   const winner = data.slice().sort((a: any, b: any) => {
     const ai = COMPETITION_PRIORITY.indexOf(a.competition ?? '')

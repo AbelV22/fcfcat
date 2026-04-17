@@ -5,16 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Search, ChevronDown, X, CheckCircle } from 'lucide-react'
 import Image from 'next/image'
 
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9\s-]/g, '')
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-}
+type TeamOption = { name: string; group: string; slug: string }
 
 const COMPETITIONS: { label: string; slug: string }[] = [
   { label: 'Primera Catalana',          slug: 'primera-catalana' },
@@ -48,7 +39,8 @@ export default function SetupPage() {
   const router = useRouter()
   const [competition, setCompetition] = useState('')
   const [team, setTeam] = useState('')
-  const [teams, setTeams] = useState<{ name: string; group: string }[]>([])
+  const [teamSlug, setTeamSlug] = useState('')
+  const [teams, setTeams] = useState<TeamOption[]>([])
   const [teamsLoading, setTeamsLoading] = useState(false)
   const [teamSearch, setTeamSearch] = useState('')
   const [teamOpen, setTeamOpen] = useState(false)
@@ -57,10 +49,11 @@ export default function SetupPage() {
   const teamRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!competition) { setTeams([]); setTeam(''); setTeamSearch(''); return }
+    if (!competition) { setTeams([]); setTeam(''); setTeamSlug(''); setTeamSearch(''); return }
     let cancelled = false
     setTeamsLoading(true)
     setTeam('')
+    setTeamSlug('')
     setTeamSearch('')
     fetch(`/api/teams?competition=${encodeURIComponent(competition)}`)
       .then(r => r.json())
@@ -81,12 +74,12 @@ export default function SetupPage() {
   const filteredTeams = teams.filter(t => t.name.toLowerCase().includes(teamSearch.toLowerCase()))
 
   const handleSave = () => {
-    if (!team || !competition) return
+    if (!team || !competition || !teamSlug) return
     setSaving(true)
     setError('')
 
     const maxAge = 60 * 60 * 24 * 365
-    document.cookie = `ns_team_slug=${encodeURIComponent(slugify(team))}; path=/; max-age=${maxAge}`
+    document.cookie = `ns_team_slug=${encodeURIComponent(teamSlug)}; path=/; max-age=${maxAge}`
     document.cookie = `ns_team_name=${encodeURIComponent(team)}; path=/; max-age=${maxAge}`
     document.cookie = `ns_competition=${encodeURIComponent(competition)}; path=/; max-age=${maxAge}`
 
@@ -130,13 +123,13 @@ export default function SetupPage() {
                 type="text"
                 disabled={!competition}
                 value={team || teamSearch}
-                onChange={e => { setTeamSearch(e.target.value); setTeam(''); setTeamOpen(true) }}
+                onChange={e => { setTeamSearch(e.target.value); setTeam(''); setTeamSlug(''); setTeamOpen(true) }}
                 onFocus={() => competition && setTeamOpen(true)}
                 placeholder={!competition ? 'Selecciona primer la competicio' : teamsLoading ? 'Carregant equips...' : `Cerca entre ${teams.length} equips...`}
                 className="w-full pl-11 pr-10 py-3 bg-white/5 border border-white/[0.06] rounded-lg text-white placeholder-[#62666d] focus:outline-none focus:border-green-500/50 focus:bg-white/8 transition-all text-sm disabled:opacity-40 disabled:cursor-not-allowed"
               />
               {team ? (
-                <button type="button" onClick={() => { setTeam(''); setTeamSearch('') }}
+                <button type="button" onClick={() => { setTeam(''); setTeamSlug(''); setTeamSearch('') }}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-[#62666d] hover:text-[#d0d6e0]">
                   <X size={16} />
                 </button>
@@ -148,8 +141,8 @@ export default function SetupPage() {
                   {filteredTeams.length === 0 ? (
                     <div className="px-4 py-3 text-sm text-[#62666d]">{teamSearch ? 'Cap equip trobat' : 'No hi ha equips'}</div>
                   ) : filteredTeams.map(t => (
-                    <button key={t.name} type="button"
-                      onClick={() => { setTeam(t.name); setTeamSearch(t.name); setTeamOpen(false) }}
+                    <button key={t.slug || `${t.name}-${t.group}`} type="button"
+                      onClick={() => { setTeam(t.name); setTeamSlug(t.slug); setTeamSearch(t.name); setTeamOpen(false) }}
                       className="w-full text-left px-4 py-2.5 text-sm text-white hover:bg-white/10 transition-colors flex items-center justify-between">
                       <span>{t.name}</span>
                       {t.group && <span className="text-xs text-[#62666d] ml-2">{t.group}</span>}
@@ -174,7 +167,7 @@ export default function SetupPage() {
 
           <button
             onClick={handleSave}
-            disabled={saving || !team}
+            disabled={saving || !team || !teamSlug}
             className="w-full py-3 bg-[#22c55e] hover:bg-[#34d399]
                        disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg
                        transition-all flex items-center justify-center gap-2 shadow-lg shadow-green-900/30"

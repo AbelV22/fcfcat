@@ -2,11 +2,25 @@ import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase-server'
 import { slugify } from '@/lib/utils'
 import { isAdminUser as isAdminVerified } from '@/lib/admin-auth'
+import { parseTeamSlug } from '@/lib/team-slug'
+import { resolveLegacyTeamSlug } from '@/lib/supabase-data'
 
 export type DashboardTeam = {
   slug: string
   name: string
   competition: string
+}
+
+/**
+ * Upgrade a possibly-legacy baseSlug to its canonical disambiguated form.
+ * Returns the input unchanged when it's already canonical or when no match
+ * can be found in `fcf_standings`.
+ */
+async function canonicaliseSlug(slug: string, competitionHint?: string): Promise<string> {
+  if (!slug) return slug
+  if (parseTeamSlug(slug).competition) return slug // already canonical
+  const resolved = await resolveLegacyTeamSlug(slug, competitionHint)
+  return resolved ?? slug
 }
 
 /**
@@ -22,7 +36,10 @@ export async function getDashboardTeam(): Promise<DashboardTeam | null> {
   const name = cookieStore.get('ns_team_name')?.value
   const competition = cookieStore.get('ns_competition')?.value
   if (slug && name && competition) {
-    return { slug, name, competition }
+    // Self-heal: legacy base slugs from pre-disambiguation cookies are
+    // rewritten transparently to the canonical form.
+    const canonical = await canonicaliseSlug(slug, competition)
+    return { slug: canonical, name, competition }
   }
 
   // 2. Check Supabase user metadata
@@ -32,10 +49,12 @@ export async function getDashboardTeam(): Promise<DashboardTeam | null> {
     const { data: { user } } = await supabase.auth.getUser()
     if (user?.user_metadata?.club_name) {
       const clubName = user.user_metadata.club_name
+      const metaCompetition = user.user_metadata.competition || ''
+      const canonical = await canonicaliseSlug(slugify(clubName), metaCompetition)
       return {
-        slug: slugify(clubName),
+        slug: canonical,
         name: clubName,
-        competition: user.user_metadata.competition || '',
+        competition: metaCompetition,
       }
     }
   }
