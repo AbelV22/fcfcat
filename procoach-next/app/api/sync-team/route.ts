@@ -25,9 +25,11 @@ export async function POST() {
   }
 
   // user_metadata stores the plain club name — convert to the canonical
-  // disambiguated team_slug used in fcf_standings.
+  // disambiguated team_slug used in fcf_standings. Pass the raw club name
+  // so clubs whose legacy slug diverges from the FCF's own slug (e.g. names
+  // with apostrophes) still resolve by exact name lookup.
   const legacy = slugify(clubName)
-  const canonical = (await resolveLegacyTeamSlug(legacy, competition)) ?? legacy
+  const canonical = (await resolveLegacyTeamSlug(legacy, competition, clubName)) ?? legacy
 
   const cookieStore = await cookies()
   const opts = { path: '/', maxAge: 60 * 60 * 24 * 365, httpOnly: false } as const

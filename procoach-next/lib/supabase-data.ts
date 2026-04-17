@@ -477,37 +477,59 @@ export async function getAllCompetitionGroupsDB() {
 }
 
 /**
- * Resolve a legacy (pre-disambiguation) team slug to its current canonical slug.
- * Returns `null` when no matching team exists.
+ * Resolve a legacy (pre-disambiguation) team identifier to its current
+ * canonical team_slug. Returns `null` when no matching team exists.
  *
- * The legacy slug has no `-{compCode}-g{n}` suffix, so we search for rows
- * whose current `team_slug` starts with `${legacy}-` and pick the one with
- * the highest competition priority (adult > juvenil > cadet > infantil).
+ * Strategy, in order:
+ *   1. LIKE `${legacySlug}-%` on `team_slug` — works when the legacy slug
+ *      shares its base with the canonical one.
+ *   2. Exact (case-insensitive) match on `team_name` — works for clubs
+ *      whose legacy `slugify()` output diverges from the FCF's own slug
+ *      (punctuation, whitespace, special characters like apostrophes).
  *
- * If `competitionHint` is provided and matches at least one row, that row
- * wins regardless of the priority list.
+ * When multiple competitions host a team of the same name/base, prefer
+ * `competitionHint` if supplied; otherwise fall back to the adult-first
+ * priority list.
  */
 export async function resolveLegacyTeamSlug(
   legacySlug: string,
   competitionHint?: string,
+  teamNameHint?: string,
 ): Promise<string | null> {
   const supabase = getSupabase()
   if (!supabase) return null
 
-  const { data, error } = await supabase
-    .from('fcf_standings')
-    .select('team_slug, competition')
-    .like('team_slug', `${legacySlug}-%`)
-    .limit(50)
+  // Strategy 1 — slug-prefix LIKE
+  let { data }: { data: Array<{ team_slug: string; competition: string; team_name?: string }> | null } =
+    legacySlug
+      ? await supabase
+          .from('fcf_standings')
+          .select('team_slug, competition, team_name')
+          .like('team_slug', `${legacySlug}-%`)
+          .limit(50)
+      : { data: null }
 
-  if (error || !data || data.length === 0) return null
+  // Strategy 2 — exact team_name lookup (case-insensitive)
+  if ((!data || data.length === 0) && teamNameHint) {
+    const trimmed = teamNameHint.trim()
+    if (trimmed) {
+      const res = await supabase
+        .from('fcf_standings')
+        .select('team_slug, competition, team_name')
+        .ilike('team_name', trimmed)
+        .limit(50)
+      data = res.data
+    }
+  }
+
+  if (!data || data.length === 0) return null
 
   if (competitionHint) {
-    const hinted = data.find((r: any) => r.competition === competitionHint)
+    const hinted = data.find(r => r.competition === competitionHint)
     if (hinted?.team_slug) return hinted.team_slug
   }
 
-  const winner = data.slice().sort((a: any, b: any) => {
+  const winner = data.slice().sort((a, b) => {
     const ai = COMPETITION_PRIORITY.indexOf(a.competition ?? '')
     const bi = COMPETITION_PRIORITY.indexOf(b.competition ?? '')
     return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi)

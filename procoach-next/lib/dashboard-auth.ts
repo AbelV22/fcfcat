@@ -15,11 +15,18 @@ export type DashboardTeam = {
  * Upgrade a possibly-legacy baseSlug to its canonical disambiguated form.
  * Returns the input unchanged when it's already canonical or when no match
  * can be found in `fcf_standings`.
+ *
+ * `teamNameHint` lets us resolve clubs whose legacy `slugify()` output does
+ * not share a base with the FCF's own slug (e.g. names with apostrophes).
  */
-async function canonicaliseSlug(slug: string, competitionHint?: string): Promise<string> {
+async function canonicaliseSlug(
+  slug: string,
+  competitionHint?: string,
+  teamNameHint?: string,
+): Promise<string> {
   if (!slug) return slug
   if (parseTeamSlug(slug).competition) return slug // already canonical
-  const resolved = await resolveLegacyTeamSlug(slug, competitionHint)
+  const resolved = await resolveLegacyTeamSlug(slug, competitionHint, teamNameHint)
   return resolved ?? slug
 }
 
@@ -37,8 +44,10 @@ export async function getDashboardTeam(): Promise<DashboardTeam | null> {
   const competition = cookieStore.get('ns_competition')?.value
   if (slug && name && competition) {
     // Self-heal: legacy base slugs from pre-disambiguation cookies are
-    // rewritten transparently to the canonical form.
-    const canonical = await canonicaliseSlug(slug, competition)
+    // rewritten transparently to the canonical form. Pass `name` so clubs
+    // whose legacy slug differs from the FCF's slug (apostrophes, punctuation)
+    // still resolve correctly.
+    const canonical = await canonicaliseSlug(slug, competition, name)
     return { slug: canonical, name, competition }
   }
 
@@ -50,7 +59,7 @@ export async function getDashboardTeam(): Promise<DashboardTeam | null> {
     if (user?.user_metadata?.club_name) {
       const clubName = user.user_metadata.club_name
       const metaCompetition = user.user_metadata.competition || ''
-      const canonical = await canonicaliseSlug(slugify(clubName), metaCompetition)
+      const canonical = await canonicaliseSlug(slugify(clubName), metaCompetition, clubName)
       return {
         slug: canonical,
         name: clubName,
