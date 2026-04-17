@@ -18,10 +18,16 @@ function pctColor(p: number, kind: 'good' | 'bad') {
 }
 
 /**
- * Largest-remainder (Hamilton) rounding so that the displayed integers
- * sum to exactly the target (default 100). Avoids "porcentajes que suman 101".
- * Returns integers ≥ 0 with the same length as input, summing to round(target).
+ * Largest-remainder (Hamilton) rounding so that displayed ints sum to target.
+ * Avoids "porcentajes que suman 101".
+ *
+ * Cap final: ningún valor mostrado puede ser 100 (no existen certezas absolutas
+ * en una predicción estocástica). Tras redondear, cualquier celda ≥ MAX_DISPLAY
+ * se rebaja a MAX_DISPLAY y la diferencia se redistribuye a la siguiente más
+ * probable. Igualmente, los muy pequeños no positivos (entre 0 y 0.5) que
+ * realmente ocurrieron en la simulación se elevan a 1 si hay holgura.
  */
+const MAX_DISPLAY = 99
 function roundPreservingSum(values: number[], target = 100): number[] {
   const floored = values.map(v => Math.floor(v))
   const remainders = values.map((v, i) => ({ i, frac: v - Math.floor(v) }))
@@ -29,8 +35,6 @@ function roundPreservingSum(values: number[], target = 100): number[] {
   const targetInt = Math.round(target)
   let diff = targetInt - sum
   const result = [...floored]
-  // Need to add |diff| units, distributed to entries with largest fractional part
-  // (or smallest, when subtracting).
   if (diff > 0) {
     remainders.sort((a, b) => b.frac - a.frac)
     for (let k = 0; k < diff; k++) result[remainders[k % remainders.length].i] += 1
@@ -41,7 +45,29 @@ function roundPreservingSum(values: number[], target = 100): number[] {
       if (result[idx] > 0) result[idx] -= 1
     }
   }
+  // Cap a MAX_DISPLAY (99): redistribuye el excedente a la siguiente celda
+  // con mayor probabilidad real (segundo argmax) para mantener la suma = 100.
+  const sortedByValueDesc = values.map((v, i) => ({ v, i })).sort((a, b) => b.v - a.v)
+  for (let cap = 0; cap < result.length; cap++) {
+    if (result[cap] > MAX_DISPLAY) {
+      const excess = result[cap] - MAX_DISPLAY
+      result[cap] = MAX_DISPLAY
+      // Buscar siguiente celda no saturada (no puede ser la propia)
+      for (const { i } of sortedByValueDesc) {
+        if (i === cap) continue
+        if (result[i] + excess <= MAX_DISPLAY) { result[i] += excess; break }
+      }
+    }
+  }
   return result
+}
+
+/** Formatea un porcentaje del resumen evitando 0,0% y 100% absolutos. */
+function formatSummaryPct(raw: number): string {
+  if (raw >= 99.95) return '>99,9%'
+  if (raw <= 0)     return '—'
+  if (raw < 0.05)   return '<0,1%'
+  return `${raw.toFixed(1).replace('.', ',')}%`
 }
 
 function HeatCell({ value, displayInt }: { value: number; displayInt: number }) {
@@ -189,13 +215,13 @@ export default function LeagueProjection({
                       {dg > 0 ? '+' : ''}{dg.toFixed(1)}
                     </td>
                     <td style={{ padding: '10px 6px', textAlign: 'center', color: pctColor(e.pct_champ, 'good'), fontWeight: 510, fontVariantNumeric: 'tabular-nums' }}>
-                      {e.pct_champ < 0.05 ? '—' : `${e.pct_champ.toFixed(1)}%`}
+                      {formatSummaryPct(e.pct_champ)}
                     </td>
                     <td style={{ padding: '10px 6px', textAlign: 'center', color: pctColor(e.pct_top3, 'good'), fontWeight: 510, fontVariantNumeric: 'tabular-nums' }}>
-                      {e.pct_top3 < 0.05 ? '—' : `${e.pct_top3.toFixed(1)}%`}
+                      {formatSummaryPct(e.pct_top3)}
                     </td>
                     <td style={{ padding: '10px 6px', textAlign: 'center', color: pctColor(e.pct_bottom3, 'bad'), fontWeight: 510, fontVariantNumeric: 'tabular-nums' }}>
-                      {e.pct_bottom3 < 0.05 ? '—' : `${e.pct_bottom3.toFixed(1)}%`}
+                      {formatSummaryPct(e.pct_bottom3)}
                     </td>
                   </tr>
                 )
