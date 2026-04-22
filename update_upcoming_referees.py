@@ -32,7 +32,7 @@ load_dotenv('.env')
 
 from supabase import create_client
 from scraper.http_client import FCFClient
-from scraper.calendar_results import extract_referee_from_upcoming_acta
+from scraper.calendar_results import extract_referee_from_upcoming_acta, get_acta_url_for_team_in_jornada
 
 SUPABASE_URL = os.environ['SUPABASE_URL']
 SUPABASE_KEY = os.environ['SUPABASE_SERVICE_KEY']
@@ -268,20 +268,10 @@ def main():
     skipped_already = 0
     errors = 0
 
+    BASE = "https://www.fcf.cat"
+    SPORT = "futbol-11"
+
     for i, m in enumerate(matches):
-        # Build acta URL — use stored one if available, else construct it
-        acta_url = m.get('acta_url') or ''
-        if not acta_url:
-            if m.get('home_slug') and m.get('away_slug'):
-                acta_url = build_acta_url(
-                    m['season'], m['competition'], m['group_name'],
-                    m['home_slug'], m['away_slug']
-                )
-
-        if not acta_url:
-            errors += 1
-            continue
-
         # Skip if already has referee
         if m.get('referee'):
             skipped_already += 1
@@ -291,10 +281,45 @@ def main():
         if i > 0 and i % 10 == 0:
             time.sleep(0.5)
 
-        try:
-            refs = extract_referee_from_upcoming_acta(client, acta_url)
-        except Exception as e:
-            print(f"  ERROR scraping {acta_url}: {e}")
+        season = m.get('season', '2526')
+        competition = m['competition']
+        group = m['group_name']
+        jornada = m.get('jornada')
+
+        # 1. Use stored acta_url if available
+        acta_url = m.get('acta_url') or ''
+
+        # 2. Construct from slugs (fallback)
+        if not acta_url and m.get('home_slug') and m.get('away_slug'):
+            acta_url = build_acta_url(season, competition, group,
+                                      m['home_slug'], m['away_slug'])
+
+        # 3. Try to get referee; if not found, resolve real URL from FCF resultats page
+        refs = []
+        if acta_url:
+            try:
+                refs = extract_referee_from_upcoming_acta(client, acta_url)
+            except Exception as e:
+                print(f"  WARN scraping {acta_url}: {e}")
+
+        if not refs and jornada and m.get('home_team'):
+            # Fetch actual acta URL from FCF /resultats/ page (same as scraper does)
+            resultats_url = f"{BASE}/resultats/{season}/{SPORT}/{competition}/{group}"
+            info = get_acta_url_for_team_in_jornada(client, resultats_url, jornada, m['home_team'])
+            real_url = info.get('acta_url', '')
+            if real_url and real_url != acta_url:
+                try:
+                    refs = extract_referee_from_upcoming_acta(client, real_url)
+                    if refs:
+                        # Persist correct URL back to Supabase so next run is instant
+                        try:
+                            sb.table('fcf_matches').update({'acta_url': real_url}).eq('id', m['id']).execute()
+                        except Exception:
+                            pass
+                except Exception as e:
+                    print(f"  WARN scraping resultats URL {real_url}: {e}")
+
+        if not acta_url and not refs:
             errors += 1
             continue
 
