@@ -18,7 +18,9 @@ import io
 import os
 import sys
 import time
-from datetime import date
+from collections import Counter, defaultdict
+from datetime import date, timedelta
+from typing import Optional
 
 # Force UTF-8 output on Windows to handle special characters (✓, accented names, etc.)
 if sys.stdout.encoding and sys.stdout.encoding.lower() not in ('utf-8', 'utf8'):
@@ -36,6 +38,7 @@ SUPABASE_URL = os.environ['SUPABASE_URL']
 SUPABASE_KEY = os.environ['SUPABASE_SERVICE_KEY']
 
 PRIORITY_COMPETITIONS = [
+    'lliga-elit',
     'primera-catalana',
     'segona-catalana',
     'tercera-catalana',
@@ -46,6 +49,7 @@ PRIORITY_COMPETITIONS = [
 
 # Competition slug → short code used in FCF acta URLs
 COMP_CODES = {
+    'lliga-elit':              'elit',
     'primera-catalana':        '1cat',
     'segona-catalana':         '2cat',
     'tercera-catalana':        '3cat',
@@ -59,7 +63,18 @@ def build_acta_url(season: str, competition: str, group: str, home_slug: str, aw
     return f"https://www.fcf.cat/acta/{season}/futbol-11/{competition}/{group}/{code}/{home_slug}/{code}/{away_slug}"
 
 
-def fetch_upcoming_matches(sb, competition: str | None = None, jornada: int | None = None):
+def _parse_match_date(d_str: str) -> Optional[date]:
+    """Parse dd-mm-yyyy date string into a date object."""
+    if not d_str:
+        return None
+    try:
+        parts = d_str.split('-')
+        return date(int(parts[2]), int(parts[1]), int(parts[0]))
+    except Exception:
+        return None
+
+
+def fetch_upcoming_matches(sb, competition: Optional[str] = None, jornada: Optional[int] = None):
     today = date.today()
     query = (
         sb.table('fcf_matches')
@@ -88,22 +103,142 @@ def fetch_upcoming_matches(sb, competition: str | None = None, jornada: int | No
     # Filter to matches on or after today
     upcoming = []
     for r in all_rows:
-        d_str = r.get('match_date', '')
-        try:
-            parts = d_str.split('-')
-            d = date(int(parts[2]), int(parts[1]), int(parts[0]))
-            if d >= today:
-                upcoming.append(r)
-        except Exception:
-            pass
+        d = _parse_match_date(r.get('match_date', ''))
+        if d and d >= today:
+            r['_parsed_date'] = d
+            upcoming.append(r)
 
     return upcoming
+
+
+def filter_next_jornada(matches: list) -> list:
+    """
+    Detect the next jornada per (competition, group) and return only those matches.
+
+    Strategy:
+    1. Group matches by (competition, group_name)
+    2. For each group, find the jornada whose earliest match date is closest to today
+    3. Return only matches belonging to those jornadas
+
+    This handles cases where different competitions/groups may be on different
+    jornada numbers, and where a single jornada spans multiple days (Sat+Sun).
+    """
+    # Group by (competition, group) → list of matches
+    by_comp_group = defaultdict(list)
+    for m in matches:
+        key = (m['competition'], m['group_name'])
+        by_comp_group[key].append(m)
+
+    result = []
+    for (comp, group), group_matches in by_comp_group.items():
+        # For each jornada in this group, find its earliest date
+        jornada_earliest = {}
+        jornada_matches = defaultdict(list)
+        for m in group_matches:
+            j = m.get('jornada')
+            if j is None:
+                continue
+            jornada_matches[j].append(m)
+            d = m.get('_parsed_date')
+            if d:
+                if j not in jornada_earliest or d < jornada_earliest[j]:
+                    jornada_earliest[j] = d
+
+        if not jornada_earliest:
+            continue
+
+        # Pick the jornada with the earliest date (the next one to be played)
+        next_jornada = min(jornada_earliest, key=lambda j: jornada_earliest[j])
+        result.extend(jornada_matches[next_jornada])
+
+    return result
+
+
+def _fetch_with_date_window(sb, competition: Optional[str], date_strings: list) -> list:
+    """Fetch unplayed matches whose match_date is in the given list of dd-mm-yyyy strings."""
+    all_rows = []
+    # Supabase `in_` has a size limit, so batch if needed
+    for i in range(0, len(date_strings), 50):
+        batch = date_strings[i:i+50]
+        query = (
+            sb.table('fcf_matches')
+            .select('id, season, competition, group_name, jornada, match_date, home_slug, away_slug, acta_url, referee')
+            .is_('home_score', 'null')
+            .in_('match_date', batch)
+        )
+        if competition:
+            query = query.eq('competition', competition)
+        else:
+            query = query.in_('competition', PRIORITY_COMPETITIONS)
+
+        offset = 0
+        while True:
+            res = query.range(offset, offset + 999).execute()
+            if not res.data:
+                break
+            all_rows.extend(res.data)
+            if len(res.data) < 1000:
+                break
+            offset += 1000
+
+    # Attach parsed dates
+    for r in all_rows:
+        r['_parsed_date'] = _parse_match_date(r.get('match_date', ''))
+
+    return all_rows
+
+
+def _fetch_next_jornada_fast(sb, competition: Optional[str] = None) -> list:
+    """
+    Efficiently fetch only the next jornada's matches.
+
+    1. Generate date strings for the next 14 days (covers a full jornada weekend window)
+    2. Query Supabase filtering by those specific dates (much smaller result set)
+    3. Detect next jornada per (competition, group) from the results
+    4. If some groups have no matches in 14 days, extend to 28 days for those
+    """
+    today = date.today()
+
+    # Generate dd-mm-yyyy strings for next 14 days
+    date_strings_14 = []
+    for i in range(14):
+        d = today + timedelta(days=i)
+        date_strings_14.append(d.strftime('%d-%m-%Y'))
+
+    print(f"  Querying matches for {date_strings_14[0]} to {date_strings_14[-1]}...")
+    matches_14 = _fetch_with_date_window(sb, competition, date_strings_14)
+    print(f"  Found {len(matches_14)} matches in next 14 days")
+
+    # Detect next jornada per group from 14-day window
+    result = filter_next_jornada(matches_14)
+
+    # Check which comp/groups we found — if any priority comp has 0 matches, extend window
+    found_comps = set(m['competition'] for m in result)
+    comps_to_check = [c for c in PRIORITY_COMPETITIONS if c not in found_comps]
+    if competition:
+        comps_to_check = [competition] if competition not in found_comps else []
+
+    if comps_to_check:
+        # Extend to 28 days for missing competitions
+        date_strings_28 = []
+        for i in range(14, 28):
+            d = today + timedelta(days=i)
+            date_strings_28.append(d.strftime('%d-%m-%Y'))
+
+        print(f"  Extending search to 28 days for: {', '.join(comps_to_check)}")
+        for comp in comps_to_check:
+            extra = _fetch_with_date_window(sb, comp, date_strings_28)
+            if extra:
+                result.extend(filter_next_jornada(extra))
+
+    return result
 
 
 def main():
     parser = argparse.ArgumentParser(description='Update referee assignments for upcoming matches')
     parser.add_argument('--competition', help='Filter to one competition slug')
     parser.add_argument('--jornada', type=int, help='Filter to a specific jornada number')
+    parser.add_argument('--next', action='store_true', help='Only process the next jornada per competition/group (auto-detected)')
     parser.add_argument('--dry-run', action='store_true', help='Print what would be updated without writing')
     args = parser.parse_args()
 
@@ -111,11 +246,19 @@ def main():
     client = FCFClient()
 
     print("Fetching upcoming matches from Supabase...")
-    matches = fetch_upcoming_matches(sb, competition=args.competition, jornada=args.jornada)
-    print(f"Found {len(matches)} upcoming matches")
+    if args.next and not args.jornada:
+        # Two-pass approach for --next:
+        # 1) Fetch only matches in the next 2 weeks (small payload)
+        # 2) Detect next jornada per group from that window
+        # 3) If a group has no matches in 2 weeks, widen to 4 weeks
+        matches = _fetch_next_jornada_fast(sb, competition=args.competition)
+        dates = sorted(set(m.get('match_date', '') for m in matches))
+        print(f"--next: {len(matches)} matches (next jornada per group)")
+        print(f"  Dates: {', '.join(dates)}")
+    else:
+        matches = fetch_upcoming_matches(sb, competition=args.competition, jornada=args.jornada)
+        print(f"Found {len(matches)} total upcoming matches")
 
-    # Group by competition for reporting
-    from collections import Counter
     comp_counts = Counter(r['competition'] for r in matches)
     for comp, cnt in sorted(comp_counts.items()):
         print(f"  {comp}: {cnt} matches")

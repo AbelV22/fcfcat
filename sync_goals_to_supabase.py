@@ -33,13 +33,18 @@ def fp(*args, **kwargs):
     print(*args, **kwargs)
     sys.stdout.flush()
 
-def load_actas():
+def load_actas(competition=None, group=None):
     db = sqlite3.connect(str(DB_PATH))
     db.row_factory = sqlite3.Row
-    rows = db.execute("""
-        SELECT competition, grp, jornada, home_team, away_team, data_json
-        FROM actas
-    """).fetchall()
+    sql = "SELECT competition, grp, jornada, home_team, away_team, data_json FROM actas"
+    where, params = [], []
+    if competition:
+        where.append("competition = ?"); params.append(competition)
+    if group:
+        where.append("grp = ?"); params.append(group)
+    if where:
+        sql += " WHERE " + " AND ".join(where)
+    rows = db.execute(sql, params).fetchall()
     db.close()
     return rows
 
@@ -66,12 +71,20 @@ def patch_row(competition, jornada, home_team, away_team, goals, subs, home_line
     return resp.status_code in (200, 204)
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--competition", default=None)
+    ap.add_argument("--group", default=None)
+    args = ap.parse_args()
+
     fp("=" * 60)
     fp("  Sync Goals & Lineups: SQLite -> Supabase (PATCH mode)")
+    if args.competition or args.group:
+        fp(f"  Filter: {args.competition or '*'}/{args.group or '*'}")
     fp("=" * 60)
 
     fp(f"\n  Loading actas from {DB_PATH}...")
-    actas = load_actas()
+    actas = load_actas(competition=args.competition, group=args.group)
     fp(f"  Found {len(actas)} actas")
 
     ok = 0

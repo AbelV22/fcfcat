@@ -16,7 +16,7 @@ KEY = os.environ.get("SUPABASE_SERVICE_KEY") or os.environ.get("SUPABASE_SERVICE
 assert URL and KEY, "Need SUPABASE_URL + SUPABASE_SERVICE_KEY in .env"
 sb = create_client(URL, KEY)
 
-proj = json.loads(Path(__file__).parent.joinpath("data/pc15_g2_projection_v3.json").read_text())
+proj = json.loads(Path(__file__).parent.joinpath("data/pc15_g2_projection_v4.json").read_text())
 
 # Get slugs from fcf_standings
 res = sb.table("fcf_standings").select("team_name,team_slug").eq("season", SEASON).eq("competition", COMPETITION).eq("group_name", GROUP).execute()
@@ -37,7 +37,7 @@ for t in proj["teams"]:
         "proj_gd":  round(t["proj_gd"], 2),
         "pct_champ": round(t["pct_champ"], 2),
         "pct_top3":  round(t["pct_top3"], 2),
-        "pct_bottom3": round(t["pct_bottom3"], 2),
+        "pct_bottom3": round(t["pct_bottom4"], 2),  # columna DB pct_bottom3 → ara conté prob. bottom-4
         "avg_pos":  round(t["avg_pos"], 2),
         "pos_pct":  [round(x, 2) for x in t["pos_pct"]],
         "model_meta": proj["model"],

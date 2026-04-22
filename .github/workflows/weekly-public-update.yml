@@ -25,7 +25,7 @@ permissions:
 
 on:
   schedule:
-    - cron: '0 8 * * 1'   # Monday    08:00 UTC — weekend results are published
+    - cron: '0 18 * * 1'  # Monday    20:00 CET (18:00 UTC) — weekend results are published
     - cron: '0 9 * * 3'   # Wednesday 09:00 UTC — referee designations are published
   workflow_dispatch:
     inputs:
@@ -87,9 +87,8 @@ jobs:
   update-teams:
     name: Update team data (weekly_update.py)
     runs-on: ubuntu-latest
-    # First cold-start run may take up to 3h (scrapes all historical actas).
-    # Once data/fcf.db is committed, subsequent runs take ~15-30 min.
-    timeout-minutes: 180
+    # Incremental runs (no --all) take ~20-40 min. 240 min is generous headroom.
+    timeout-minutes: 240
 
     steps:
       - uses: actions/checkout@v4
@@ -120,18 +119,21 @@ jobs:
 
       - name: Run weekly update
         run: |
-          CMD="python weekly_update.py --all"
+          # No --all: only update teams whose next_match has passed (incremental).
+          # --all is reserved for manual force_full runs via workflow_dispatch.
+          CMD="python weekly_update.py"
           if [ "${{ steps.mode.outputs.skip_groups }}" = "true" ]; then
             CMD="$CMD --skip-groups"
           fi
           if [ "${{ inputs.force_full || 'false' }}" = "true" ]; then
-            CMD="$CMD"   # --all already forces all teams; scraper handles full re-scrape
-            echo "Note: force_full set — DB will be rebuilt from scratch"
+            CMD="$CMD --all"
+            echo "Note: force_full set — forcing full update of all teams"
           fi
           echo "Running: $CMD"
           eval $CMD
 
       - name: Upload teams + DB artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: teams-and-db
@@ -142,7 +144,80 @@ jobs:
           retention-days: 1
 
 
-  # ── Job 2: Rebuild referee DB — one job per competition (parallel) ─────────
+  # ── Job 2a: Liga Elit — fast standalone build + commit (<30 min) ────────────
+  update-lliga-elit-refs:
+    name: Referee DB — lliga-elit (fast commit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: ${{ inputs.skip_referee_db != true }}
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Scrape referee actas — lliga-elit
+        run: |
+          python -m scraper.build_referee_db \
+            --competition lliga-elit \
+            --season 2526 \
+            --rate-limit 1.5
+
+      - name: Push Liga Elit referee DB to Supabase
+        if: ${{ env.SUPABASE_URL != '' && env.SUPABASE_SERVICE_KEY != '' }}
+        env:
+          SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          pip install supabase -q
+          python -c "
+          import json
+          from pathlib import Path
+          from scraper.supabase_uploader import push_referee_matches
+          refs = json.loads(Path('data/global_referees.json').read_text(encoding='utf-8'))
+          elit = {k: v for k, v in refs.items() if v.get('competition') == 'lliga-elit'}
+          n = push_referee_matches(elit)
+          print(f'Pushed {n} Liga Elit referee matches to Supabase')
+          "
+        continue-on-error: true
+
+      - name: Commit Liga Elit referee data
+        run: |
+          git config user.name  "FCF Bot"
+          git config user.email "bot@fcfcat.github.io"
+          git add data/global_referees.json
+          if git diff --staged --quiet; then
+            echo "No new Liga Elit referee data"
+          else
+            for attempt in 1 2 3 4 5; do
+              if git pull --rebase origin master && git push origin HEAD; then
+                echo "✓ Liga Elit referee data committed"
+                break
+              fi
+              git rebase --abort 2>/dev/null || true
+              sleep 15
+            done
+          fi
+
+      - name: Upload lliga-elit artifact (for merge step)
+        uses: actions/upload-artifact@v4
+        with:
+          name: referees-lliga-elit
+          path: data/global_referees.json
+          retention-days: 1
+
+
+  # ── Job 2b: Rebuild referee DB — one job per competition (parallel) ─────────
   update-referee-db:
     name: Referee DB — ${{ matrix.competition }}
     runs-on: ubuntu-latest
@@ -156,7 +231,6 @@ jobs:
           # Adult
           - primera-catalana
           - segona-catalana
-          - lliga-elit
           - tercera-federacio
           # Juvenil
           - divisio-honor-juvenil
@@ -205,7 +279,7 @@ jobs:
   merge-push-commit:
     name: Merge + rebuild goals + push + commit
     runs-on: ubuntu-latest
-    needs: [update-beta-groups, update-teams, update-referee-db]
+    needs: [update-beta-groups, update-teams, update-lliga-elit-refs, update-referee-db]
     if: always() && !cancelled()
     timeout-minutes: 30
 
@@ -342,6 +416,14 @@ jobs:
           n = push_referee_matches(refs)
           print(f'Pushed {n} referee matches to Supabase')
           "
+        continue-on-error: true
+
+      - name: Update upcoming match referee assignments
+        if: ${{ env.SUPABASE_URL != '' && env.SUPABASE_SERVICE_KEY != '' }}
+        env:
+          SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python update_upcoming_referees.py --next
         continue-on-error: true
 
       # ── Commit everything back to the repo ────────────────────────────────

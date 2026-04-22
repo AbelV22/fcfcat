@@ -40,6 +40,7 @@ SPORT     = "futbol-11"
 
 # One JSON per group covers ALL teams in that group via cross-group lookup.
 BETA_GROUPS = {
+    "lliga-elit":       ["grup-1"],
     "segona-catalana":  ["grup-1","grup-2","grup-3","grup-4","grup-5","grup-6","grup-7","grup-8"],
     "tercera-catalana": ["grup-1","grup-2","grup-3","grup-4","grup-5","grup-6","grup-7","grup-8","grup-9","grup-10"],
 }

@@ -15,6 +15,7 @@ Usage:
   python -m scraper.build_public_db --categories primera-catalana segona-catalana
   python -m scraper.build_public_db --full --no-push   # dry-run, no Supabase
 """
+from __future__ import annotations
 import argparse
 import json
 import logging
